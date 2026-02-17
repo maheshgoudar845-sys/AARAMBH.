@@ -1,323 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Arambh - Clothing Store</title>
+  <title>Arambh - Premium T-Shirts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(150deg, #f4a896, #358597);
+      overflow-x: hidden;
+    }
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif;
-  scroll-behavior: smooth;
-}
+    /* LOGO SECTION */
+    .logo-section {
+      text-align: center;
+      padding: 20px;
+      background: white;
+    }
 
-body {
-  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #111);
-  background-size: 400% 400%;
-  animation: gradientMove 12s ease infinite;
-  color: #fff;
-}
+    .logo-section img {
+      height: 80px;
+    }
 
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+    /* HERO MODEL SECTION */
+    .hero {
+      position: relative;
+      text-align: center;
+      padding: 40px 20px;
+    }
 
-/* HEADER */
-header {
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(15px);
-  padding: 18px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+    .hero video,
+    .hero img {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: 15px;
+    }
 
-header h1 {
-  font-size: 24px;
-  letter-spacing: 4px;
-}
+    .hero h1 {
+      margin-top: 20px;
+      font-size: 45px;
+      font-family: Cambria;
+      color: white;
+    }
 
-nav a {
-  color: #fff;
-  text-decoration: none;
-  margin-left: 25px;
-  font-size: 14px;
-  position: relative;
-  transition: 0.3s;
-}
+    /* COLLECTION BUTTONS */
+    .collections {
+      padding: 60px 20px;
+      text-align: center;
+    }
 
-nav a::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  left: 0;
-  bottom: -5px;
-  background: #ffb703;
-  transition: 0.3s;
-}
+    .collection-btn {
+      display: inline-block;
+      margin: 20px;
+      padding: 16px 40px;
+      background: black;
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
 
-nav a:hover {
-  color: #ffb703;
-}
+    .collection-btn:hover {
+      transform: translateY(-5px);
+      background: #333;
+    }
 
-nav a:hover::after {
-  width: 100%;
-}
+    /* SCROLL REVEAL ANIMATION */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 0.8s ease;
+    }
 
-/* HERO */
-.hero {
-  position: relative;
-  height: 75vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-.hero-video {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.6);
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, rgba(0,0,0,0.4), rgba(0,0,0,0.85));
-}
-
-.hero-content {
-  position: relative;
-  text-align: center;
-  animation: fadeUp 1.5s ease;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.brand-logo {
-  width: 260px;
-  margin-bottom: 25px;
-  filter: drop-shadow(0 0 35px rgba(255,183,3,0.7));
-}
-
-.hero-content h2 {
-  font-size: 30px;
-  letter-spacing: 5px;
-}
-
-/* SECTIONS */
-.section {
-  padding: 90px 40px;
-}
-
-.section h2 {
-  text-align: center;
-  margin-bottom: 50px;
-  font-size: 36px;
-  position: relative;
-}
-
-.section h2::after {
-  content: "";
-  width: 80px;
-  height: 3px;
-  background: #ffb703;
-  display: block;
-  margin: 15px auto 0;
-}
-
-/* PRODUCTS */
-.products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 35px;
-}
-
-.product-card {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-  overflow: hidden;
-  text-decoration: none;
-  color: #fff;
-  transition: 0.4s ease;
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.product-card:hover {
-  transform: translateY(-12px) scale(1.03);
-  box-shadow: 0 25px 50px rgba(0,0,0,0.7);
-}
-
-.product-card img,
-.product-card video {
-  width: 100%;
-  height: 420px;
-  object-fit: cover;
-  transition: 0.5s;
-}
-
-.product-card:hover img,
-.product-card:hover video {
-  transform: scale(1.08);
-}
-
-.product-card h3 {
-  padding: 15px;
-  font-size: 20px;
-}
-
-.product-card p {
-  padding: 0 15px 15px;
-  font-size: 14px;
-  color: #ddd;
-}
-
-/* VIDEO SECTION */
-.video-section {
-  padding: 90px 30px;
-  text-align: center;
-  background: #000;
-}
-
-.video-section video {
-  width: 45%;
-  max-width: 500px;
-  margin: 15px;
-  border-radius: 15px;
-  transition: 0.4s;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-}
-
-.video-section video:hover {
-  transform: scale(1.05);
-}
-
-/* FOOTER */
-footer {
-  background: #000;
-  padding: 40px 20px;
-  text-align: center;
-  font-size: 14px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-footer p {
-  margin: 8px 0;
-  color: #aaa;
-}
-
-/* SCROLL REVEAL ANIMATION */
-.reveal {
-  opacity: 0;
-  transform: translateY(60px);
-  transition: all 1s ease;
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-</style>
+  </style>
 </head>
 
 <body>
 
-<header>
-  <h1>ARAMBH</h1>
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#products">Products</a>
-    <a href="#video">Showcase</a>
-    <a href="#contact">Contact</a>
-  </nav>
-</header>
-
-<section class="hero" id="home">
-  <video class="hero-video" autoplay muted loop playsinline>
-    <source src="hero-promo.mp4" type="video/mp4">
-  </video>
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <img src="Logo.jpg" class="brand-logo" alt="Arambh Logo">
-    <h2>WEAR IT. STYLE IT.</h2>
+  <!-- LOGO -->
+  <div class="logo-section reveal">
+    <img src="logo.png" alt="Arambh Logo">
   </div>
-</section>
 
-<section class="section reveal" id="products">
-  <h2>Our Collection</h2>
-  <div class="products">
-    <a href="polo.html" class="product-card reveal">
-      <img src="polo1.jpg" alt="Polo T-Shirts">
-      <h3>Polo T-Shirts</h3>
-      <p>Premium formal & casual polos</p>
-    </a>
+  <!-- MODEL PHOTO / VIDEO SECTION -->
+  <div class="hero reveal">
+    <!-- Use either video OR image -->
 
-    <a href="printed.html" class="product-card reveal">
-      <video autoplay muted loop playsinline>
-        <source src="printed2.mp4" type="video/mp4">
-      </video>
-      <h3>Printed T-Shirts</h3>
-      <p>Trendy graphic street designs</p>
-    </a>
+    <!-- If using VIDEO -->
+    <video autoplay muted loop playsinline>
+      <source src="model.mp4" type="video/mp4">
+    </video>
 
-    <a href="oversized.html" class="product-card reveal">
-      <img src="oversized1.jpg" alt="Oversized & Hoodies">
-      <h3>Oversized & Hoodies</h3>
-      <p>Streetwear oversized collection</p>
-    </a>
+    <!-- If using IMAGE instead, comment video and use below -->
+    <!-- <img src="model.jpg" alt="Model Wearing Arambh"> -->
+
+    <h1>Wear Your Vibe</h1>
   </div>
-</section>
 
-<section class="video-section reveal" id="video">
-  <h2>Product Showcase</h2>
-  <video autoplay muted loop controls>
-    <source src="promo1.mp4">
-  </video>
-  <video autoplay muted loop controls>
-    <source src="promo2.mp4">
-  </video>
-</section>
+  <!-- COLLECTION LINKS -->
+  <div class="collections reveal">
+    <a href="printed.html" class="collection-btn">Printed Collection</a>
+    <a href="oversized.html" class="collection-btn">Oversized Collection</a>
+  </div>
 
-<footer id="contact" class="reveal">
-  <p><b>Owner:</b> Mahesh Goudar</p>
-  <p><b>Brand:</b> Arambh Clothing</p>
-  <p><b>Email:</b> arambhofficial2025@gmail.com</p>
-  <p><b>Phone:</b> +91-9637748622</p>
-  <p>© 2025 Arambh. All Rights Reserved.</p>
-</footer>
+  <!-- SCROLL REVEAL SCRIPT -->
+  <script>
+    function revealOnScroll() {
+      var reveals = document.querySelectorAll(".reveal");
 
-<script>
-window.addEventListener("scroll", reveal);
+      for (var i = 0; i < reveals.length; i++) {
+        var windowHeight = window.innerHeight;
+        var elementTop = reveals[i].getBoundingClientRect().top;
+        var elementVisible = 100;
 
-function reveal() {
-  let reveals = document.querySelectorAll(".reveal");
-  for (let i = 0; i < reveals.length; i++) {
-    let windowHeight = window.innerHeight;
-    let elementTop = reveals[i].getBoundingClientRect().top;
-    let elementVisible = 120;
-    if (elementTop < windowHeight - elementVisible) {
-      reveals[i].classList.add("active");
+        if (elementTop < windowHeight - elementVisible) {
+          reveals[i].classList.add("active");
+        }
+      }
     }
-  }
-}
-</script>
+
+    window.addEventListener("scroll", revealOnScroll);
+  </script>
 
 </body>
 </html>

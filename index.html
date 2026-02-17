@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Arambh - Premium T-Shirts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -21,11 +22,11 @@
 
     .logo-section img {
       height: 80px;
+      max-width: 90%;
     }
 
-    /* HERO MODEL SECTION */
+    /* HERO SECTION */
     .hero {
-      position: relative;
       text-align: center;
       padding: 40px 20px;
     }
@@ -40,8 +41,8 @@
 
     .hero h1 {
       margin-top: 20px;
-      font-size: 45px;
-      font-family: Cambria;
+      font-size: 40px;
+      font-family: Cambria, serif;
       color: white;
     }
 
@@ -53,8 +54,8 @@
 
     .collection-btn {
       display: inline-block;
-      margin: 20px;
-      padding: 16px 40px;
+      margin: 15px;
+      padding: 15px 35px;
       background: black;
       color: white;
       text-decoration: none;
@@ -70,7 +71,7 @@
       background: #333;
     }
 
-    /* SCROLL REVEAL ANIMATION */
+    /* SCROLL REVEAL */
     .reveal {
       opacity: 0;
       transform: translateY(60px);
@@ -92,16 +93,17 @@
     <img src="logo.png" alt="Arambh Logo">
   </div>
 
-  <!-- MODEL PHOTO / VIDEO SECTION -->
+  <!-- MODEL SECTION -->
   <div class="hero reveal">
-    <!-- Use either video OR image -->
 
-    <!-- If using VIDEO -->
+    <!-- Use VIDEO -->
     <video autoplay muted loop playsinline>
       <source src="model.mp4" type="video/mp4">
+      <!-- If video fails, show image -->
+      Your browser does not support video.
     </video>
 
-    <!-- If using IMAGE instead, comment video and use below -->
+    <!-- If you want image instead, comment video and use below -->
     <!-- <img src="model.jpg" alt="Model Wearing Arambh"> -->
 
     <h1>Wear Your Vibe</h1>
@@ -113,23 +115,23 @@
     <a href="oversized.html" class="collection-btn">Oversized Collection</a>
   </div>
 
-  <!-- SCROLL REVEAL SCRIPT -->
+  <!-- SCROLL REVEAL SCRIPT (Error-Free Version) -->
   <script>
-    function revealOnScroll() {
-      var reveals = document.querySelectorAll(".reveal");
+    document.addEventListener("DOMContentLoaded", function () {
 
-      for (var i = 0; i < reveals.length; i++) {
-        var windowHeight = window.innerHeight;
-        var elementTop = reveals[i].getBoundingClientRect().top;
-        var elementVisible = 100;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      }, { threshold: 0.1 });
 
-        if (elementTop < windowHeight - elementVisible) {
-          reveals[i].classList.add("active");
-        }
-      }
-    }
+      document.querySelectorAll(".reveal").forEach(el => {
+        observer.observe(el);
+      });
 
-    window.addEventListener("scroll", revealOnScroll);
+    });
   </script>
 
 </body>

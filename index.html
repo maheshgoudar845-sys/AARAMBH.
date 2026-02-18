@@ -133,6 +133,34 @@
       transform: scale(1.05);
     }
 
+    /* FOOTER */
+    footer {
+      background: #050507;
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid #222;
+    }
+
+    footer h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    footer p {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin: 6px 0;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
     /* SCROLL REVEAL */
     .reveal {
       opacity: 0;
@@ -145,7 +173,6 @@
       transform: translateY(0);
     }
 
-    /* MOBILE */
     @media (max-width: 600px) {
       .hero h1 {
         font-size: 34px;
@@ -162,7 +189,7 @@
 
   <!-- LOGO -->
   <div class="logo-section reveal">
-    <img src="Logo.jpg" alt="Arambh Logo">
+    <img src="logo.png" alt="Arambh Logo">
   </div>
 
   <!-- HERO -->
@@ -178,9 +205,10 @@
   <!-- COLLECTIONS -->
   <section class="collections">
 
-    <!-- POLO -->
     <div class="collection-card reveal">
-      <img src="polo2.jpg>
+      <video autoplay muted loop playsinline>
+        <source src="polo1.jpg" type="video/mp4">
+      </video>
       <div class="card-content">
         <h2>Polo Collection</h2>
         <p>Sharp. Clean. Premium GSM fabric.</p>
@@ -188,9 +216,10 @@
       </div>
     </div>
 
-    <!-- OVERSIZED -->
     <div class="collection-card reveal">
-      <imag src="oversized1.jpg">
+      <video autoplay muted loop playsinline>
+        <source src="oversized2.jpg" type="video/mp4">
+      </video>
       <div class="card-content">
         <h2>Oversized Collection</h2>
         <p>Relaxed fits with bold presence.</p>
@@ -198,21 +227,29 @@
       </div>
     </div>
 
-    <!-- PRINTED -->
     <div class="collection-card reveal">
       <video autoplay muted loop playsinline>
-        <source src="printed-sample.mp4" type="video/mp4">
+        <source src="printed2e.mp4" type="video/mp4">
       </video>
       <div class="card-content">
         <h2>Printed Collection</h2>
         <p>Graphics that speak loud.</p>
-        <a href="printed2.html" class="card-btn">Explore Prints</a>
+        <a href="printed.html" class="card-btn">Explore Prints</a>
       </div>
     </div>
 
   </section>
 
-  <!-- SCROLL REVEAL SCRIPT -->
+  <!-- FOOTER -->
+  <footer class="reveal">
+    <h3>ARAMBH</h3>
+    <p>Owner: <strong>Mahesh Goudar</strong></p>
+    <p>📞 <a href="tel:9637748622">9637748622</a></p>
+    <p>✉️ <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a></p>
+    <p style="margin-top:15px; font-size:13px;">© 2025 Arambh. All rights reserved.</p>
+  </footer>
+
+  <!-- SCROLL REVEAL -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const observer = new IntersectionObserver(entries => {

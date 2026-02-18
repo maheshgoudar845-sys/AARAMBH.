@@ -2,80 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Arambh - Premium T-Shirts</title>
+  <title>Arambh — Premium Streetwear</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    :root {
+      --bg-dark: #0b0b0f;
+      --bg-light: #14141a;
+      --accent: #ff3c38;
+      --text-main: #ffffff;
+      --text-muted: #bdbdbd;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(150deg, #f4a896, #358597);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(circle at top, #1a1a24, #000);
+      color: var(--text-main);
       overflow-x: hidden;
     }
 
-    /* LOGO SECTION */
+    /* LOGO */
     .logo-section {
+      background: black;
+      padding: 18px;
       text-align: center;
-      padding: 20px;
-      background: white;
+      border-bottom: 1px solid #222;
     }
 
     .logo-section img {
-      height: 80px;
-      max-width: 90%;
+      height: 70px;
     }
 
-    /* HERO SECTION */
+    /* HERO */
     .hero {
+      padding: 50px 20px 70px;
       text-align: center;
-      padding: 40px 20px;
     }
 
     .hero video,
     .hero img {
       width: 100%;
-      max-height: 500px;
+      max-width: 1100px;
+      height: 420px;
       object-fit: cover;
-      border-radius: 15px;
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
     }
 
     .hero h1 {
-      margin-top: 20px;
-      font-size: 40px;
-      font-family: Cambria, serif;
-      color: white;
+      margin-top: 30px;
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: 1px;
     }
 
-    /* COLLECTION BUTTONS */
+    .hero p {
+      color: var(--text-muted);
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    /* COLLECTION GRID */
     .collections {
-      padding: 60px 20px;
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 35px;
+    }
+
+    /* CARD */
+    .collection-card {
+      background: linear-gradient(160deg, #111, #1c1c26);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .collection-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+    }
+
+    .collection-card video,
+    .collection-card img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 25px;
       text-align: center;
     }
 
-    .collection-btn {
-      display: inline-block;
-      margin: 15px;
-      padding: 15px 35px;
-      background: black;
-      color: white;
-      text-decoration: none;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: bold;
-      transition: 0.3s ease;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    .card-content h2 {
+      font-size: 26px;
+      margin-bottom: 10px;
     }
 
-    .collection-btn:hover {
-      transform: translateY(-5px);
-      background: #333;
+    .card-content p {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    /* BUTTON */
+    .card-btn {
+      display: inline-block;
+      padding: 14px 34px;
+      border-radius: 40px;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: 0.3s ease;
+      box-shadow: 0 10px 25px rgba(255,60,56,0.4);
+    }
+
+    .card-btn:hover {
+      background: #ff1f1a;
+      transform: scale(1.05);
     }
 
     /* SCROLL REVEAL */
     .reveal {
       opacity: 0;
       transform: translateY(60px);
-      transition: all 0.8s ease;
+      transition: 0.9s ease;
     }
 
     .reveal.active {
@@ -83,6 +145,16 @@
       transform: translateY(0);
     }
 
+    /* MOBILE */
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .hero video {
+        height: 300px;
+      }
+    }
   </style>
 </head>
 
@@ -90,48 +162,68 @@
 
   <!-- LOGO -->
   <div class="logo-section reveal">
-    <img src="Logo.png" alt="Arambh Logo">
+    <img src="Logo.jpg" alt="Arambh Logo">
   </div>
 
-  <!-- MODEL SECTION -->
-  <div class="hero reveal">
-
-    <!-- Use VIDEO -->
+  <!-- HERO -->
+  <section class="hero reveal">
     <video autoplay muted loop playsinline>
       <source src="model.mp4" type="video/mp4">
-      <!-- If video fails, show image -->
-      Your browser does not support video.
     </video>
 
-    <!-- If you want image instead, comment video and use below -->
-    <!-- <img src="model.jpg" alt="Model Wearing Arambh"> -->
+    <h1>WEAR YOUR VIBE</h1>
+    <p>Premium streetwear. Built different.</p>
+  </section>
 
-    <h1>Wear Your Vibe</h1>
-  </div>
+  <!-- COLLECTIONS -->
+  <section class="collections">
 
-  <!-- COLLECTION LINKS -->
-  <div class="collections reveal">
-    <a href="printed.html" class="collection-btn">Printed Collection</a>
-    <a href="oversized.html" class="collection-btn">Oversized Collection</a>
-    <a href="polo.html" class="collection-btn">Polo Collection</a>
-  </div>
+    <!-- POLO -->
+    <div class="collection-card reveal">
+      <img src="polo2.jpg>
+      <div class="card-content">
+        <h2>Polo Collection</h2>
+        <p>Sharp. Clean. Premium GSM fabric.</p>
+        <a href="polo.html" class="card-btn">Explore Polos</a>
+      </div>
+    </div>
 
-  <!-- SCROLL REVEAL SCRIPT (Error-Free Version) -->
+    <!-- OVERSIZED -->
+    <div class="collection-card reveal">
+      <imag src="oversized1.jpg">
+      <div class="card-content">
+        <h2>Oversized Collection</h2>
+        <p>Relaxed fits with bold presence.</p>
+        <a href="oversized.html" class="card-btn">Explore Oversized</a>
+      </div>
+    </div>
+
+    <!-- PRINTED -->
+    <div class="collection-card reveal">
+      <video autoplay muted loop playsinline>
+        <source src="printed-sample.mp4" type="video/mp4">
+      </video>
+      <div class="card-content">
+        <h2>Printed Collection</h2>
+        <p>Graphics that speak loud.</p>
+        <a href="printed2.html" class="card-btn">Explore Prints</a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- SCROLL REVEAL SCRIPT -->
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-      const observer = new IntersectionObserver((entries) => {
+    document.addEventListener("DOMContentLoaded", () => {
+      const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add("active");
           }
         });
-      }, { threshold: 0.1 });
+      }, { threshold: 0.15 });
 
-      document.querySelectorAll(".reveal").forEach(el => {
-        observer.observe(el);
-      });
-
+      document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
     });
   </script>
 

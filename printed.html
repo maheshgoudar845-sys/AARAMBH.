@@ -1,4 +1,4 @@
-8<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -83,8 +83,9 @@ body{
   box-shadow:0 25px 50px rgba(255,255,255,0.08);
 }
 
-/* VIDEO */
-.product-card video{
+/* MEDIA */
+.product-card video,
+.product-card img{
   width:100%;
   height:300px;
   object-fit:cover;
@@ -92,7 +93,8 @@ body{
   transition:0.4s;
 }
 
-.product-card:hover video{
+.product-card:hover video,
+.product-card:hover img{
   transform:scale(1.05);
 }
 
@@ -179,6 +181,7 @@ body{
 
   <div class="products">
 
+    <!-- VIDEO PRODUCTS -->
     <div class="product-card reveal">
       <video autoplay muted loop playsinline>
         <source src="printed1.mp4" type="video/mp4">
@@ -227,27 +230,31 @@ body{
         <h3>HELLO</h3>
         <div class="price">₹349</div>
       </div>
-              <div class="product-card reveal">
-        <img src="Kufu_white.jpeg">
+    </div>
+
+    <!-- IMAGE PRODUCTS -->
+    <div class="product-card reveal">
+      <img src="Kufu_white.jpeg" alt="Kufu Panda White">
       <div class="product-info">
-        <h3>Kufu Panda Themed White Version</h3>
+        <h3>Kufu Panda White</h3>
         <div class="price">₹349</div>
       </div>
     </div>
-      <div class="product-card reveal">
-        <img src="Kufu_black.jpeg">
+
+    <div class="product-card reveal">
+      <img src="Kufu_black.jpeg" alt="Kufu Panda Black">
       <div class="product-info">
-        <h3>Kufu Panda Themed White Black</h3>
+        <h3>Kufu Panda Black</h3>
         <div class="price">₹349</div>
       </div>
     </div>
 
   </div>
-   
 </div>
 
+<!-- SIZE CHART -->
 <div class="size-section reveal">
-  <img src="Size chat.png" alt="">
+  <img src="sizechart.png" alt="Size Chart">
   <h3>Please Check Size Chart Before Ordering</h3>
 </div>
 
@@ -256,17 +263,19 @@ body{
 </a>
 
 <script>
-window.addEventListener("scroll", function(){
+function reveal(){
   let reveals = document.querySelectorAll(".reveal");
-  for(let i=0;i<reveals.length;i++){
+  reveals.forEach(el=>{
     let windowHeight = window.innerHeight;
-    let elementTop = reveals[i].getBoundingClientRect().top;
-    let elementVisible = 120;
-    if(elementTop < windowHeight - elementVisible){
-      reveals[i].classList.add("active");
+    let elementTop = el.getBoundingClientRect().top;
+    if(elementTop < windowHeight - 120){
+      el.classList.add("active");
     }
-  }
-});
+  });
+}
+
+window.addEventListener("scroll", reveal);
+window.addEventListener("load", reveal);
 </script>
 
 </body>

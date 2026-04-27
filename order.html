@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Order - Arambh</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial;
+  background:#000;
+  color:#fff;
+}
+
+.container{
+  max-width:500px;
+  margin:50px auto;
+  background:#111;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.5);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border:none;
+  border-radius:8px;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  background:#fff;
+  color:#000;
+  border:none;
+  font-weight:bold;
+  border-radius:30px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#ddd;
+}
+
+.success{
+  text-align:center;
+  color:#0f0;
+  margin-top:15px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Place Your Order</h2>
+
+  <form id="orderForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+
+    <input type="text" name="name" placeholder="Full Name" required>
+    <input type="tel" name="phone" placeholder="Phone Number" required>
+    <input type="email" name="email" placeholder="Email Address" required>
+
+    <select name="product">
+      <option>Printed T-Shirt</option>
+      <option>Oversized T-Shirt</option>
+      <option>Polo T-Shirt</option>
+    </select>
+
+    <input type="text" name="design" placeholder="Design Name">
+
+    <select name="size">
+      <option>S</option>
+      <option>M</option>
+      <option>L</option>
+      <option>XL</option>
+    </select>
+
+    <textarea name="address" placeholder="Delivery Address" required></textarea>
+
+    <button type="submit">Confirm Order</button>
+
+  </form>
+
+  <div class="success" id="successMsg">
+    ✅ Order placed successfully! Check your email.
+  </div>
+</div>
+
+<script>
+(function(){
+  emailjs.init("YOUR_PUBLIC_KEY"); // replace
+})();
+
+document.getElementById("orderForm").addEventListener("submit", function(e){
+
+  e.preventDefault();
+
+  const form = this;
+
+  const data = {
+    name: form.name.value,
+    email: form.email.value,
+    product: form.product.value,
+    design: form.design.value,
+    size: form.size.value
+  };
+
+  // Send EmailJS confirmation
+  emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID", data)
+  .then(function(){
+
+    // Send to Formspree
+    fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+
+    document.getElementById("successMsg").style.display = "block";
+    form.reset();
+
+  }, function(error){
+    alert("Error sending email. Try again.");
+  });
+
+});
+</script>
+
+</body>
+</html>

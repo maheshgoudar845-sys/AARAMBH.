@@ -3,256 +3,701 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polo Collection - Arambh</title>
+<title>Polo Collection — Arambh</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-  scroll-behavior:smooth;
-}
+  *, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
 
-body{
-  background:#000;
-  color:#fff;
-}
+  :root {
+    --black:     #080808;
+    --card-bg:   #101010;
+    --border:    rgba(255,255,255,0.07);
+    --white:     #f5f5f0;
+    --gold:      #e8a735;
+    --gold-dim:  rgba(232,167,53,0.15);
+    --muted:     #555;
+    --cream:     #d4c9b0;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+  }
 
-/* HEADER */
-.page-header{
-  background:linear-gradient(to right,#000,#111,#000);
-  padding:80px 20px;
-  text-align:center;
-}
+  html { scroll-behavior: smooth; }
 
-.page-header h1{
-  font-size:55px;
-  font-weight:800;
-  letter-spacing:3px;
-}
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: none;
+  }
 
-.page-header p{
-  margin-top:10px;
-  color:#aaa;
-}
+  /* ── CURSOR ── */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: width .2s, height .2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: left .07s ease, top .07s ease, width .3s, height .3s, opacity .3s;
+    opacity: .5;
+  }
 
-.back-link{
-  display:inline-block;
-  margin-top:25px;
-  color:#fff;
-  text-decoration:none;
-  font-weight:600;
-  border:1px solid #fff;
-  padding:8px 22px;
-  border-radius:30px;
-  transition:0.3s;
-}
+  /* ── NOISE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: .35;
+  }
 
-.back-link:hover{
-  background:#fff;
-  color:#000;
-}
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--cream);
+    color: #1a1a1a;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 10px 0;
+    position: sticky; top: 0; z-index: 500;
+  }
+  .ticker-track {
+    display: inline-flex;
+    animation: ticker 26s linear infinite;
+  }
+  .ticker-track span {
+    font-family: var(--font-display);
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 0 40px;
+  }
+  .ticker-track span::after { content: '✦'; margin-left: 40px; opacity: .4; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
 
-/* SECTION */
-.section{
-  padding:80px 40px;
-}
+  /* ── HERO ── */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 60px 70px;
+    position: relative;
+    overflow: hidden;
+  }
 
-/* GRID */
-.products{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:35px;
-}
+  /* subtle weave pattern — fits polo fabric feel */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 28px);
+  }
 
-/* CARD */
-.product-card{
-  background:#111;
-  border-radius:20px;
-  overflow:hidden;
-  transition:0.4s;
-  text-align:center;
-  border:1px solid rgba(255,255,255,0.08);
-}
+  /* large ghost number */
+  .hero-bg-num {
+    position: absolute;
+    right: -30px; bottom: -40px;
+    font-family: var(--font-display);
+    font-size: clamp(260px, 38vw, 520px);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.04);
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -10px;
+  }
 
-.product-card:hover{
-  transform:translateY(-10px);
-  box-shadow:0 25px 50px rgba(255,255,255,0.08);
-}
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 5px; text-transform: uppercase;
+    color: var(--cream);
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 14px;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 36px; height: 1px; background: var(--cream);
+  }
 
-.product-card img{
-  width:100%;
-  height:280px;
-  object-fit:contain;
-  padding:25px;
-  background:#000;
-  transition:0.4s;
-}
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(72px, 13vw, 190px);
+    line-height: .85;
+    letter-spacing: 3px;
+    position: relative; z-index: 2;
+  }
+  .hero-title em {
+    font-style: normal;
+    -webkit-text-stroke: 1.5px var(--white);
+    color: transparent;
+  }
 
-.product-card:hover img{
-  transform:scale(1.05);
-}
+  .hero-meta {
+    margin-top: 28px;
+    display: flex; gap: 40px; flex-wrap: wrap;
+    position: relative; z-index: 2;
+  }
+  .hero-meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .hero-meta-item strong {
+    font-family: var(--font-display);
+    font-size: 26px; letter-spacing: 1px; color: var(--cream);
+  }
+  .hero-meta-item span {
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+  }
 
-.product-info{
-  padding:20px;
-}
+  .hero-actions {
+    margin-top: 44px;
+    display: flex; gap: 16px; align-items: center;
+    position: relative; z-index: 2; flex-wrap: wrap;
+  }
 
-.product-info h3{
-  font-size:18px;
-  font-weight:600;
-  margin-bottom:8px;
-}
+  .btn-primary {
+    background: var(--cream);
+    color: var(--black);
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 2px; text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 40px; border-radius: 4px;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(212,201,176,.3);
+  }
 
-.price{
-  color:#ffb703;
-  font-weight:700;
-  font-size:18px;
-}
+  .btn-ghost {
+    color: var(--white); font-size: 13px;
+    font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; text-decoration: none;
+    padding: 16px 28px;
+    border: 1px solid rgba(255,255,255,.15); border-radius: 4px;
+    transition: border-color .25s, background .25s;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(255,255,255,.45);
+    background: rgba(255,255,255,.04);
+  }
 
-.gsm{
-  color:#aaa;
-  font-size:14px;
-  margin-top:5px;
-}
+  /* rotating badge */
+  .hero-badge {
+    position: absolute; top: 55px; right: 60px;
+    width: 100px; height: 100px;
+    border: 1px solid var(--cream);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 1.5px; line-height: 1.5;
+    color: var(--cream);
+    animation: spin 20s linear infinite;
+    z-index: 2;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-/* SIZE CHART */
-.size-section{
-  max-width:600px;
-  margin:100px auto 50px;
-  background:#111;
-  padding:30px;
-  border-radius:20px;
-  text-align:center;
-  border:1px solid rgba(255,255,255,0.1);
-}
+  /* ── COLOUR STRIP ── */
+  .colour-strip {
+    display: flex;
+    padding: 0 60px;
+    gap: 0;
+    margin-bottom: 70px;
+    overflow: hidden;
+  }
+  .colour-dot {
+    flex: 1;
+    height: 4px;
+    transition: flex .3s;
+  }
+  .colour-dot:hover { flex: 3; }
+  .c1 { background: #7a8c72; }
+  .c2 { background: #f5ede0; }
+  .c3 { background: #c2a77d; }
+  .c4 { background: #1a1a1a; border: 1px solid #333; }
+  .c5 { background: #3a6ea8; }
 
-.size-section img{
-  width:100%;
-  border-radius:12px;
-}
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 5px; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
 
-.size-section h3{
-  margin-top:20px;
-}
+  /* ── GRID ── */
+  .grid-section {
+    padding: 0 40px 120px;
+  }
 
-/* ORDER BUTTON */
-.order-btn{
-  display:block;
-  width:fit-content;
-  margin:40px auto 80px;
-  padding:16px 45px;
-  background:linear-gradient(135deg,#fff,#ccc);
-  color:#000;
-  text-decoration:none;
-  font-weight:700;
-  border-radius:50px;
-  font-size:18px;
-  transition:0.3s;
-}
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2px;
+  }
 
-.order-btn:hover{
-  transform:scale(1.05);
-  box-shadow:0 10px 30px rgba(255,255,255,0.3);
-}
+  /* ── CARD ── */
+  .product-card {
+    background: var(--card-bg);
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
 
-/* SCROLL REVEAL */
-.reveal{
-  opacity:0;
-  transform:translateY(60px);
-  transition:1s;
-}
+  .card-index {
+    position: absolute; top: 16px; left: 18px;
+    font-family: var(--font-display);
+    font-size: 13px; color: rgba(255,255,255,.18);
+    z-index: 3; letter-spacing: 1px;
+  }
 
-.reveal.active{
-  opacity:1;
-  transform:translateY(0);
-}
+  .card-tag {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--cream); color: var(--black);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 10px; border-radius: 2px; z-index: 3;
+    opacity: 0; transform: translateY(-6px);
+    transition: opacity .3s, transform .3s;
+  }
+  .product-card:hover .card-tag { opacity: 1; transform: translateY(0); }
+
+  .card-media {
+    width: 100%; height: 340px;
+    overflow: hidden; position: relative;
+    background: #0a0a0a;
+  }
+  .card-media img {
+    width: 100%; height: 100%;
+    object-fit: contain; display: block;
+    padding: 24px;
+    transition: transform .6s cubic-bezier(.25,.46,.45,.94);
+  }
+  .product-card:hover .card-media img { transform: scale(1.06); }
+
+  /* gradient overlay */
+  .card-media::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.55) 0%, transparent 55%);
+    opacity: 0; transition: opacity .35s;
+  }
+  .product-card:hover .card-media::after { opacity: 1; }
+
+  /* colour swatch indicator */
+  .card-swatch {
+    position: absolute; bottom: 16px; left: 16px;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.4);
+    z-index: 4;
+    opacity: 0; transform: scale(.7);
+    transition: opacity .3s, transform .3s;
+  }
+  .product-card:hover .card-swatch { opacity: 1; transform: scale(1); }
+
+  .quick-add {
+    position: absolute; bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--cream); color: var(--black);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 10px 24px; border-radius: 3px;
+    white-space: nowrap; opacity: 0;
+    transition: opacity .3s, transform .3s;
+    z-index: 4; text-decoration: none;
+  }
+  .product-card:hover .quick-add {
+    opacity: 1; transform: translateX(-50%) translateY(0);
+  }
+
+  .product-info {
+    padding: 18px 20px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+  }
+  .product-info-left { display: flex; flex-direction: column; gap: 3px; }
+  .product-info h3 {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 400;
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .gsm {
+    font-size: 11px; color: var(--muted); letter-spacing: 1px;
+  }
+  .price {
+    font-size: 15px; font-weight: 600;
+    color: var(--gold); letter-spacing: 1px;
+  }
+
+  /* ── GSM CALLOUT ── */
+  .gsm-bar {
+    margin: 0 60px 80px;
+    padding: 36px 50px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex; gap: 60px; align-items: center; flex-wrap: wrap;
+  }
+  .gsm-bar-num {
+    font-family: var(--font-display);
+    font-size: 80px; line-height: 1; color: var(--cream); letter-spacing: -2px;
+  }
+  .gsm-bar-text h4 {
+    font-family: var(--font-display);
+    font-size: 28px; letter-spacing: 2px; margin-bottom: 8px;
+  }
+  .gsm-bar-text p {
+    font-size: 14px; color: var(--muted); line-height: 1.75; max-width: 420px;
+  }
+
+  /* ── SIZE SECTION ── */
+  .size-wrap {
+    margin: 0 60px 60px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px; overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    .size-wrap { grid-template-columns: 1fr; margin: 0 20px 60px; }
+    .hero { padding: 0 28px 50px; }
+    .hero-badge { display: none; }
+    .colour-strip { padding: 0 28px; }
+    .grid-section { padding: 0 0 80px; }
+    .gsm-bar { margin: 0 20px 60px; padding: 30px 24px; gap: 20px; }
+    .gsm-bar-num { font-size: 54px; }
+    .cta-strip { margin: 0 20px 80px; padding: 50px 28px; }
+  }
+
+  .size-img-panel img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .size-text-panel {
+    padding: 50px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .size-text-panel h2 {
+    font-family: var(--font-display);
+    font-size: 46px; letter-spacing: 2px; line-height: 1; margin-bottom: 14px;
+  }
+  .size-text-panel p {
+    color: var(--muted); font-size: 14px;
+    line-height: 1.75; margin-bottom: 28px;
+  }
+  .size-chips {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .size-chip {
+    border: 1px solid var(--border); color: var(--white);
+    font-size: 13px; font-weight: 600; letter-spacing: 1px;
+    padding: 8px 18px; border-radius: 3px;
+    transition: all .2s; cursor: none;
+  }
+  .size-chip:hover {
+    border-color: var(--cream); color: var(--cream);
+    background: rgba(212,201,176,.1);
+  }
+
+  /* ── CTA ── */
+  .cta-strip {
+    margin: 0 40px 120px;
+    background: var(--cream); color: var(--black);
+    border-radius: 6px; padding: 70px 60px;
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 40px; flex-wrap: wrap;
+    position: relative; overflow: hidden;
+  }
+  .cta-strip::before {
+    content: 'POLO';
+    font-family: var(--font-display);
+    font-size: 220px; letter-spacing: -8px; line-height: 1;
+    position: absolute; right: -20px; top: 50%;
+    transform: translateY(-50%);
+    opacity: .07; pointer-events: none;
+  }
+  .cta-strip h2 {
+    font-family: var(--font-display);
+    font-size: clamp(34px, 5vw, 60px);
+    letter-spacing: 2px; line-height: 1;
+  }
+  .cta-strip p {
+    font-size: 14px; opacity: .6;
+    margin-top: 8px; max-width: 340px; line-height: 1.7;
+  }
+  .btn-dark {
+    background: var(--black); color: var(--cream);
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 2px; text-transform: uppercase;
+    text-decoration: none; padding: 18px 44px;
+    border-radius: 4px; white-space: nowrap;
+    transition: transform .2s, box-shadow .2s; flex-shrink: 0;
+  }
+  .btn-dark:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,0,0,.4);
+  }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity .7s cubic-bezier(.25,.46,.45,.94),
+                transform .7s cubic-bezier(.25,.46,.45,.94);
+  }
+  .reveal.active { opacity: 1; transform: translateY(0); }
 </style>
 </head>
-
 <body>
 
-<div class="page-header">
-  <h1>POLO COLLECTION</h1>
-  <p>Premium. Structured. Timeless.</p>
-  <a href="index.html" class="back-link">← Back to Home</a>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <span>310 GSM PREMIUM FABRIC</span>
+    <span>STRUCTURED COLLAR</span>
+    <span>5 CLASSIC COLOURWAYS</span>
+    <span>FREE SHIPPING ABOVE ₹499</span>
+    <span>ARAMBH — A NEW BEGINNING</span>
+    <span>310 GSM PREMIUM FABRIC</span>
+    <span>STRUCTURED COLLAR</span>
+    <span>5 CLASSIC COLOURWAYS</span>
+    <span>FREE SHIPPING ABOVE ₹499</span>
+    <span>ARAMBH — A NEW BEGINNING</span>
+  </div>
 </div>
 
-<div class="section">
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-num">310</div>
+  <div class="hero-badge">310<br>GSM<br>POLO</div>
 
+  <div class="hero-eyebrow">Arambh Originals</div>
+
+  <h1 class="hero-title">
+    POLO<br><em>COLLECTION</em>
+  </h1>
+
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <strong>5</strong>
+      <span>Colourways</span>
+    </div>
+    <div class="hero-meta-item">
+      <strong>310</strong>
+      <span>GSM Fabric</span>
+    </div>
+    <div class="hero-meta-item">
+      <strong>₹349</strong>
+      <span>All Pieces</span>
+    </div>
+  </div>
+
+  <div class="hero-actions">
+    <a href="order.html" class="btn-primary">Order Now</a>
+    <a href="index.html" class="btn-ghost">← Back to Home</a>
+  </div>
+</section>
+
+<!-- COLOUR SWATCH STRIP -->
+<div class="colour-strip reveal">
+  <div class="colour-dot c1"></div>
+  <div class="colour-dot c2"></div>
+  <div class="colour-dot c3"></div>
+  <div class="colour-dot c4"></div>
+  <div class="colour-dot c5"></div>
+</div>
+
+<!-- PRODUCT GRID -->
+<div class="grid-section">
   <div class="products">
 
     <div class="product-card reveal">
-      <img src="polo1.jpg" alt="">
+      <span class="card-index">01</span>
+      <div class="card-tag">Earthy</div>
+      <div class="card-media">
+        <div class="card-swatch" style="background:#7a8c72;"></div>
+        <img src="polo1.jpg" alt="Grayish Green Polo">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
       <div class="product-info">
-        <h3>Grayish Green</h3>
-        <div class="price">₹349</div>
-        <div class="gsm">310 GSM</div>
+        <div class="product-info-left">
+          <h3>Grayish Green</h3>
+          <div class="gsm">310 GSM · Polo</div>
+        </div>
+        <span class="price">₹349</span>
       </div>
     </div>
 
     <div class="product-card reveal">
-      <img src="polo2.jpg" alt="">
+      <span class="card-index">02</span>
+      <div class="card-tag">Bestseller</div>
+      <div class="card-media">
+        <div class="card-swatch" style="background:#f5ede0;"></div>
+        <img src="polo2.jpg" alt="Cream Polo">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
       <div class="product-info">
-        <h3>Cream</h3>
-        <div class="price">₹349</div>
-        <div class="gsm">310 GSM</div>
+        <div class="product-info-left">
+          <h3>Cream</h3>
+          <div class="gsm">310 GSM · Polo</div>
+        </div>
+        <span class="price">₹349</span>
       </div>
     </div>
 
     <div class="product-card reveal">
-      <img src="polo3.jpg" alt="">
+      <span class="card-index">03</span>
+      <div class="card-media">
+        <div class="card-swatch" style="background:#c2a77d;"></div>
+        <img src="polo3.jpg" alt="Beige Polo">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
       <div class="product-info">
-        <h3>Beige</h3>
-        <div class="price">₹349</div>
-        <div class="gsm">310 GSM</div>
+        <div class="product-info-left">
+          <h3>Beige</h3>
+          <div class="gsm">310 GSM · Polo</div>
+        </div>
+        <span class="price">₹349</span>
       </div>
     </div>
 
     <div class="product-card reveal">
-      <img src="polo4.jpg" alt="">
+      <span class="card-index">04</span>
+      <div class="card-tag">Classic</div>
+      <div class="card-media">
+        <div class="card-swatch" style="background:#1a1a1a; border:2px solid #444;"></div>
+        <img src="polo4.jpg" alt="Black Polo">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
       <div class="product-info">
-        <h3>Black</h3>
-        <div class="price">₹349</div>
-        <div class="gsm">310 GSM</div>
+        <div class="product-info-left">
+          <h3>Black</h3>
+          <div class="gsm">310 GSM · Polo</div>
+        </div>
+        <span class="price">₹349</span>
       </div>
     </div>
 
     <div class="product-card reveal">
-      <img src="Polo5.jpg" alt="">
+      <span class="card-index">05</span>
+      <div class="card-tag">New</div>
+      <div class="card-media">
+        <div class="card-swatch" style="background:#3a6ea8;"></div>
+        <img src="Polo5.jpg" alt="Blue Polo">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
       <div class="product-info">
-        <h3>Blue</h3>
-        <div class="price">₹349</div>
-        <div class="gsm">310 GSM</div>
+        <div class="product-info-left">
+          <h3>Blue</h3>
+          <div class="gsm">310 GSM · Polo</div>
+        </div>
+        <span class="price">₹349</span>
       </div>
     </div>
 
   </div>
-
 </div>
 
-<div class="size-section reveal">
-  <img src="Size chat.png" alt="">
-  <h3>Please Check Size Chart Before Ordering</h3>
+<!-- GSM CALLOUT -->
+<div class="gsm-bar reveal">
+  <div class="gsm-bar-num">310</div>
+  <div class="gsm-bar-text">
+    <h4>GSM HEAVYWEIGHT FABRIC</h4>
+    <p>
+      Our polos are woven from 310 GSM piqué cotton — heavier and more structured than standard tees.
+      That means a better drape, a defined collar, and a fit that holds its shape wash after wash.
+    </p>
+  </div>
 </div>
 
-<a href="order.html" class="order-btn">ORDER NOW</a>
+<!-- SIZE CHART -->
+<div class="size-wrap reveal">
+  <div class="size-img-panel">
+    <img src="Size chat.png" alt="Size Chart">
+  </div>
+  <div class="size-text-panel">
+    <div class="section-label">Fit Guide</div>
+    <h2>FIND YOUR SIZE</h2>
+    <p>
+      Polos are cut on a structured semi-slim fit. Measure your chest and match below.
+      If you prefer a relaxed look, size up one.
+    </p>
+    <div class="size-chips">
+      <div class="size-chip">XS</div>
+      <div class="size-chip">S</div>
+      <div class="size-chip">M</div>
+      <div class="size-chip">L</div>
+      <div class="size-chip">XL</div>
+      <div class="size-chip">XXL</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-strip reveal">
+  <div>
+    <h2>PREMIUM.<br>STRUCTURED.<br>YOURS.</h2>
+    <p>All polos ₹349. Free shipping on orders above ₹499. Ships in 3–5 days.</p>
+  </div>
+  <a href="order.html" class="btn-dark">Place Your Order →</a>
+</div>
 
 <script>
-window.addEventListener("scroll", function(){
-  let reveals = document.querySelectorAll(".reveal");
-  for(let i=0;i<reveals.length;i++){
-    let windowHeight = window.innerHeight;
-    let elementTop = reveals[i].getBoundingClientRect().top;
-    let elementVisible = 120;
-    if(elementTop < windowHeight - elementVisible){
-      reveals[i].classList.add("active");
-    }
-  }
-});
-</script>
+  /* Cursor */
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top  = e.clientY + 'px';
+    }, 65);
+  });
+  document.querySelectorAll('a, button, .product-card, .size-chip, .colour-dot').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cur.style.width = '20px'; cur.style.height = '20px';
+      ring.style.width = '54px'; ring.style.height = '54px'; ring.style.opacity = '.85';
+    });
+    el.addEventListener('mouseleave', () => {
+      cur.style.width = '12px'; cur.style.height = '12px';
+      ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '.5';
+    });
+  });
 
+  /* Scroll Reveal */
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('active'), i * 70);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
 </body>
 </html>

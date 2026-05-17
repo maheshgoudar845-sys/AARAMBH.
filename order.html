@@ -2,143 +2,398 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Order - Arambh</title>
+<title>Order — Arambh</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-body{
-  margin:0;
-  font-family: Arial;
-  background:#000;
-  color:#fff;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.container{
-  max-width:500px;
-  margin:50px auto;
-  background:#111;
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 20px 40px rgba(0,0,0,0.5);
-}
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #e8ff47;
+    --text: #f0f0f0;
+    --muted: #666;
+    --radius: 12px;
+    --error: #ff4d4d;
+    --success: #47ffb2;
+  }
 
-h2{
-  text-align:center;
-  margin-bottom:20px;
-}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(232,255,71,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 10% 90%, rgba(232,255,71,0.03) 0%, transparent 60%);
+  }
 
-input, select, textarea{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:none;
-  border-radius:8px;
-}
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 36px;
+    animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 
-button{
-  width:100%;
-  padding:15px;
-  background:#fff;
-  color:#000;
-  border:none;
-  font-weight:bold;
-  border-radius:30px;
-  cursor:pointer;
-  transition:0.3s;
-}
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-button:hover{
-  background:#ddd;
-}
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
 
-.success{
-  text-align:center;
-  color:#0f0;
-  margin-top:15px;
-  display:none;
-}
+  .brand-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .brand-sub {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    padding-bottom: 4px;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin: 24px 0 10px;
+  }
+
+  .section-label:first-of-type { margin-top: 0; }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .row { display: flex; gap: 10px; }
+  .row .field { flex: 1; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.93rem;
+    font-weight: 400;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(232,255,71,0.1);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #3d3d3d;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+  }
+
+  select option { background: #1a1a1a; }
+
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+
+  .submit-btn {
+    margin-top: 28px;
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,255,71,0.25);
+  }
+
+  .submit-btn:active:not(:disabled) { transform: translateY(0); }
+
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-text, .btn-loading { transition: opacity 0.2s; }
+  .btn-loading { display: none; }
+
+  .submit-btn.loading .btn-text { display: none; }
+  .submit-btn.loading .btn-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .toast.success {
+    display: flex;
+    background: rgba(71,255,178,0.08);
+    border: 1px solid rgba(71,255,178,0.25);
+    color: var(--success);
+  }
+
+  .toast.error {
+    display: flex;
+    background: rgba(255,77,77,0.08);
+    border: 1px solid rgba(255,77,77,0.25);
+    color: var(--error);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0 0;
+  }
 </style>
 </head>
-
 <body>
 
-<div class="container">
-  <h2>Place Your Order</h2>
-
-  <form id="orderForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-
-    <input type="text" name="name" placeholder="Full Name" required>
-    <input type="tel" name="phone" placeholder="Phone Number" required>
-    <input type="email" name="email" placeholder="Email Address" required>
-
-    <select name="product">
-      <option>Printed T-Shirt</option>
-      <option>Oversized T-Shirt</option>
-      <option>Polo T-Shirt</option>
-    </select>
-
-    <input type="text" name="design" placeholder="Design Name">
-
-    <select name="size">
-      <option>S</option>
-      <option>M</option>
-      <option>L</option>
-      <option>XL</option>
-      <option>XXL</option>
-    </select>
-
-    <textarea name="address" placeholder="Delivery Address" required></textarea>
-
-    <button type="submit">Confirm Order</button>
-
-  </form>
-
-  <div class="success" id="successMsg">
-    ✅ Order placed successfully! Check your email.
+<div class="card">
+  <div class="brand">
+    <span class="brand-name">Arambh</span>
+    <span class="brand-sub">Place an Order</span>
   </div>
+
+  <form id="orderForm" novalidate>
+
+    <p class="section-label">Your Details</p>
+    <div class="field-group">
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Rahul Sharma" required>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@email.com" required>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Product</p>
+    <div class="field-group">
+      <div class="row">
+        <div class="field">
+          <label for="product">Type</label>
+          <select id="product" name="product">
+            <option value="Printed T-Shirt">Printed T-Shirt</option>
+            <option value="Oversized T-Shirt">Oversized T-Shirt</option>
+            <option value="Polo T-Shirt">Polo T-Shirt</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="size">Size</label>
+          <select id="size" name="size">
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="design">Design Name / Reference</label>
+        <input type="text" id="design" name="design" placeholder="e.g. Sunset Drop, Custom #3">
+      </div>
+    </div>
+
+    <p class="section-label">Delivery</p>
+    <div class="field-group">
+      <div class="field">
+        <label for="address">Full Delivery Address</label>
+        <textarea id="address" name="address" placeholder="House / Flat No., Street, City, State, PIN" required></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <button type="submit" class="submit-btn" id="submitBtn">
+      <span class="btn-text">Confirm Order</span>
+      <span class="btn-loading">
+        <span class="spinner"></span> Placing Order…
+      </span>
+    </button>
+
+    <div class="toast" id="toast"></div>
+  </form>
 </div>
 
 <script>
-(function(){
-  emailjs.init("arambhofficial2025@gamil.com"); // replace
-})();
+  // ─── CONFIG ────────────────────────────────────────────────────────────────
+  // BUG FIX: emailjs.init() takes your PUBLIC KEY (found in EmailJS dashboard),
+  // NOT your email address. Replace the value below.
+  const EMAILJS_PUBLIC_KEY  = "YOUR_EMAILJS_PUBLIC_KEY";   // e.g. "abc123XYZ"
+  const EMAILJS_SERVICE_ID  = "service_2xfx4td";
+  const EMAILJS_TEMPLATE_ID = "template_j3gxuwf";
 
-document.getElementById("orderForm").addEventListener("submit", function(e){
+  // BUG FIX: Replace with your actual Formspree endpoint
+  const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
+  // ───────────────────────────────────────────────────────────────────────────
 
-  e.preventDefault();
+  emailjs.init(EMAILJS_PUBLIC_KEY);
 
-  const form = this;
+  const form      = document.getElementById("orderForm");
+  const btn       = document.getElementById("submitBtn");
+  const toast     = document.getElementById("toast");
 
-  const data = {
-    name: form.name.value,
-    email: form.email.value,
-    product: form.product.value,
-    design: form.design.value,
-    size: form.size.value
-  };
+  function showToast(type, message) {
+    toast.className = "toast " + type;
+    toast.textContent = message;
+    toast.style.display = "flex";
+    if (type === "success") {
+      setTimeout(() => { toast.style.display = "none"; }, 6000);
+    }
+  }
 
-  // Send EmailJS confirmation
-  emailjs.send("service_2xfx4td","template_j3gxuwf", data)
-  .then(function(){
+  function setLoading(on) {
+    btn.disabled = on;
+    btn.classList.toggle("loading", on);
+  }
 
-    // Send to Formspree
-    fetch(form.action, {
-      method: "POST",
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
-    });
+  // Basic client-side validation
+  function validate() {
+    const els = form.elements;
+    if (!els["name"].value.trim())    { els["name"].focus();    return "Please enter your full name."; }
+    if (!els["phone"].value.trim())   { els["phone"].focus();   return "Please enter your phone number."; }
+    if (!/\S+@\S+\.\S+/.test(els["email"].value)) { els["email"].focus(); return "Please enter a valid email."; }
+    if (!els["address"].value.trim()) { els["address"].focus(); return "Please enter a delivery address."; }
+    return null;
+  }
 
-    document.getElementById("successMsg").style.display = "block";
-    form.reset();
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    toast.style.display = "none";
 
-  }, function(error){
-    alert("Error sending email. Try again.");
+    const err = validate();
+    if (err) { showToast("error", err); return; }
+
+    setLoading(true);
+
+    const els = form.elements;
+    const templateParams = {
+      name:    els["name"].value.trim(),
+      email:   els["email"].value.trim(),
+      phone:   els["phone"].value.trim(),
+      product: els["product"].value,
+      design:  els["design"].value.trim() || "—",
+      size:    els["size"].value,
+      address: els["address"].value.trim(),
+    };
+
+    try {
+      // 1. Send confirmation email via EmailJS
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
+      // 2. Store order via Formspree (best-effort — don't block on failure)
+      try {
+        const res = await fetch(FORMSPREE_URL, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { "Accept": "application/json" },
+        });
+        if (!res.ok) console.warn("Formspree submission failed:", res.status);
+      } catch (fsErr) {
+        console.warn("Formspree network error:", fsErr);
+      }
+
+      showToast("success", "✓ Order placed! A confirmation has been sent to your email.");
+      form.reset();
+
+    } catch (emailErr) {
+      console.error("EmailJS error:", emailErr);
+      showToast("error", "Failed to place order. Please try again or contact us directly.");
+    } finally {
+      setLoading(false);
+    }
   });
-
-});
 </script>
-
 </body>
 </html>

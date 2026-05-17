@@ -110,18 +110,26 @@
   }
 
   /* large ghost number */
-  .hero-bg-num {
-    position: absolute;
-    right: -30px; bottom: -40px;
-    font-family: var(--font-display);
-    font-size: clamp(260px, 38vw, 520px);
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.04);
-    pointer-events: none;
-    user-select: none;
-    letter-spacing: -10px;
-  }
+.hero-bg-num {
+  position: absolute;
+  right: -30px;
+  bottom: -40px;
+  font-family: var(--font-display);
+  font-size: clamp(260px, 38vw, 520px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.04);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -10px;
+
+  /* Add background image */
+  background-image: url('Polo6.jpg');
+  background-size: cover;   /* or contain */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 
   .hero-eyebrow {
     font-size: 11px; font-weight: 600;

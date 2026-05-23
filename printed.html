@@ -590,7 +590,7 @@
     PRINTED<br><em>COLLECTION</em>
   </h1>
   <p class="hero-sub">
-    Eight bold statements. One uncompromising fabric. Wear what you mean.
+    Twelve bold statements. One uncompromising fabric. Wear what you mean.
   </p>
   <div class="hero-actions">
     <a href="order.html" class="btn-primary">Order Now</a>
@@ -600,19 +600,20 @@
 
 <!-- FILTER BAR -->
 <div class="filter-bar reveal">
-  <button class="filter-btn active">All</button>
-  <button class="filter-btn">Graphic</button>
-  <button class="filter-btn">Minimal</button>
-  <button class="filter-btn">Cars</button>
-  <button class="filter-btn">Nature</button>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="graphic">Graphic</button>
+  <button class="filter-btn" data-filter="anime">Anime</button>
+  <button class="filter-btn" data-filter="minimal">Minimal</button>
+  <button class="filter-btn" data-filter="cars">Cars</button>
+  <button class="filter-btn" data-filter="nature">Nature</button>
 </div>
 
 <!-- GRID -->
 <div class="grid-section">
-  <div class="products">
+  <div class="products" id="productsGrid">
 
     <!-- 01 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="graphic">
       <span class="card-index">01</span>
       <div class="card-tag">Popular</div>
       <div class="card-media">
@@ -628,7 +629,7 @@
     </div>
 
     <!-- 02 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="graphic">
       <span class="card-index">02</span>
       <div class="card-media">
         <video autoplay muted loop playsinline>
@@ -643,7 +644,7 @@
     </div>
 
     <!-- 03 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="graphic">
       <span class="card-index">03</span>
       <div class="card-media">
         <video autoplay muted loop playsinline>
@@ -658,7 +659,7 @@
     </div>
 
     <!-- 04 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="cars">
       <span class="card-index">04</span>
       <div class="card-tag">Fan Fav</div>
       <div class="card-media">
@@ -674,7 +675,7 @@
     </div>
 
     <!-- 05 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="minimal">
       <span class="card-index">05</span>
       <div class="card-media">
         <video autoplay muted loop playsinline>
@@ -689,7 +690,7 @@
     </div>
 
     <!-- 06 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="graphic anime">
       <span class="card-index">06</span>
       <div class="card-media">
         <img src="Kufu_white.jpeg" alt="Kufu Panda White">
@@ -702,7 +703,7 @@
     </div>
 
     <!-- 07 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="graphic anime">
       <span class="card-index">07</span>
       <div class="card-media">
         <img src="Kufu_black.jpeg" alt="Kufu Panda Black">
@@ -715,7 +716,7 @@
     </div>
 
     <!-- 08 -->
-    <div class="product-card reveal">
+    <div class="product-card reveal" data-category="nature">
       <span class="card-index">08</span>
       <div class="card-tag">New</div>
       <div class="card-media">
@@ -724,6 +725,62 @@
       </div>
       <div class="product-info">
         <h3>Mountain Lovers</h3>
+        <span class="price">₹349</span>
+      </div>
+    </div>
+
+    <!-- 09 — Demon Slayer Maroon -->
+    <div class="product-card reveal" data-category="anime graphic">
+      <span class="card-index">09</span>
+      <div class="card-tag">New</div>
+      <div class="card-media">
+        <img src="1000222960.png" alt="Demon Slayer Maroon">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
+      <div class="product-info">
+        <h3>Flame Duo — Maroon</h3>
+        <span class="price">₹349</span>
+      </div>
+    </div>
+
+    <!-- 10 — Demon Slayer Beige -->
+    <div class="product-card reveal" data-category="anime graphic">
+      <span class="card-index">10</span>
+      <div class="card-tag">New</div>
+      <div class="card-media">
+        <img src="1000222959.png" alt="Demon Slayer Beige">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
+      <div class="product-info">
+        <h3>Flame Duo — Beige</h3>
+        <span class="price">₹349</span>
+      </div>
+    </div>
+
+    <!-- 11 — Itachi White -->
+    <div class="product-card reveal" data-category="anime graphic">
+      <span class="card-index">11</span>
+      <div class="card-tag">New</div>
+      <div class="card-media">
+        <img src="1000219844.png" alt="Itachi Uchiha White">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
+      <div class="product-info">
+        <h3>Itachi Uchiha — White</h3>
+        <span class="price">₹349</span>
+      </div>
+    </div>
+
+    <!-- 12 — Itachi Black -->
+    <div class="product-card reveal" data-category="anime graphic">
+      <span class="card-index">12</span>
+      <div class="card-tag">New</div>
+      <div class="card-media">
+        <img src="1000219840.png" alt="Itachi Uchiha Black">
+        <a href="order.html" class="quick-add">+ Quick Order</a>
+      </div>
+      <div class="product-info">
+        <h3>Itachi Uchiha — Black</h3>
         <span class="price">₹349</span>
       </div>
     </div>
@@ -786,11 +843,38 @@
     });
   });
 
-  /* ── Filter Buttons (visual toggle only) ── */
-  document.querySelectorAll('.filter-btn').forEach(btn => {
+  /* ── Filter Buttons — real filtering ── */
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('#productsGrid .product-card');
+
+  filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      // toggle active state
+      filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      cards.forEach((card, i) => {
+        const cats = card.dataset.category || '';
+        const match = filter === 'all' || cats.split(' ').includes(filter);
+
+        if (match) {
+          card.style.display = '';
+          // stagger re-reveal
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          setTimeout(() => {
+            card.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, i * 55);
+        } else {
+          card.style.transition = 'opacity 0.2s ease';
+          card.style.opacity = '0';
+          setTimeout(() => { card.style.display = 'none'; }, 200);
+        }
+      });
     });
   });
 

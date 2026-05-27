@@ -5,6 +5,12 @@
 <title>Order — Arambh</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- Formspree Ajax SDK (no bundler needed) -->
+<script>
+  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+  formspree('initForm', { formElement: '#orderForm', formId: 'xqejgjzw' });
+</script>
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -128,6 +134,14 @@
     box-shadow: 0 0 0 3px rgba(232,255,71,0.1);
   }
 
+  /* Formspree SDK sets aria-invalid on error; mirror it visually */
+  input[aria-invalid="true"],
+  select[aria-invalid="true"],
+  textarea[aria-invalid="true"] {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(255,77,77,0.1);
+  }
+
   input::placeholder, textarea::placeholder {
     color: #3d3d3d;
   }
@@ -144,6 +158,39 @@
 
   textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
 
+  /* Field-level error messages populated by Formspree SDK */
+  .field-error, [data-fs-error] {
+    font-size: 0.72rem;
+    color: var(--error);
+    min-height: 1em;
+  }
+
+  /* Form-level success / error banners (Formspree SDK targets [data-fs-success] / [data-fs-error]) */
+  .banner {
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    display: none;        /* SDK will toggle display */
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .banner-success {
+    background: rgba(71,255,178,0.08);
+    border: 1px solid rgba(71,255,178,0.25);
+    color: var(--success);
+  }
+
+  .banner-error {
+    background: rgba(255,77,77,0.08);
+    border: 1px solid rgba(255,77,77,0.25);
+    color: var(--error);
+  }
+
   .submit-btn {
     margin-top: 28px;
     width: 100%;
@@ -158,7 +205,7 @@
     text-transform: uppercase;
     letter-spacing: 0.18em;
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    transition: transform 0.15s, box-shadow 0.15s;
     position: relative;
     overflow: hidden;
   }
@@ -170,57 +217,11 @@
 
   .submit-btn:active:not(:disabled) { transform: translateY(0); }
 
+  /* Formspree SDK sets disabled during submission via data-fs-submit-btn */
   .submit-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-  }
-
-  .btn-text, .btn-loading { transition: opacity 0.2s; }
-  .btn-loading { display: none; }
-
-  .submit-btn.loading .btn-text { display: none; }
-  .submit-btn.loading .btn-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid rgba(0,0,0,0.3);
-    border-top-color: #000;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .toast {
-    margin-top: 16px;
-    padding: 14px 16px;
-    border-radius: var(--radius);
-    font-size: 0.85rem;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    animation: fadeIn 0.3s ease;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-
-  .toast.success {
-    display: flex;
-    background: rgba(71,255,178,0.08);
-    border: 1px solid rgba(71,255,178,0.25);
-    color: var(--success);
-  }
-
-  .toast.error {
-    display: flex;
-    background: rgba(255,77,77,0.08);
-    border: 1px solid rgba(255,77,77,0.25);
-    color: var(--error);
+    transform: none;
   }
 
   .divider {
@@ -238,22 +239,33 @@
     <span class="brand-sub">Place an Order</span>
   </div>
 
+  <!-- Formspree SDK success banner: shown automatically after a successful submit -->
+  <div data-fs-success class="banner banner-success">
+    ✓ Order placed! A confirmation has been sent to your email.
+  </div>
+
+  <!-- Formspree SDK form-level error banner -->
+  <div data-fs-error class="banner banner-error"></div>
+
   <form id="orderForm" novalidate>
 
     <p class="section-label">Your Details</p>
     <div class="field-group">
       <div class="field">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" name="name" placeholder="Rahul Sharma" required>
+        <label for="fname">Full Name</label>
+        <input type="text" id="fname" name="name" placeholder="Rahul Sharma" required data-fs-field>
+        <span data-fs-error="name" class="field-error"></span>
       </div>
       <div class="row">
         <div class="field">
           <label for="phone">Phone</label>
-          <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required>
+          <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required data-fs-field>
+          <span data-fs-error="phone" class="field-error"></span>
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="you@email.com" required>
+          <input type="email" id="email" name="email" placeholder="you@email.com" required data-fs-field>
+          <span data-fs-error="email" class="field-error"></span>
         </div>
       </div>
     </div>
@@ -263,7 +275,7 @@
       <div class="row">
         <div class="field">
           <label for="product">Type</label>
-          <select id="product" name="product">
+          <select id="product" name="product" data-fs-field>
             <option value="Printed T-Shirt">Printed T-Shirt</option>
             <option value="Oversized T-Shirt">Oversized T-Shirt</option>
             <option value="Polo T-Shirt">Polo T-Shirt</option>
@@ -271,7 +283,7 @@
         </div>
         <div class="field">
           <label for="size">Size</label>
-          <select id="size" name="size">
+          <select id="size" name="size" data-fs-field>
             <option value="S">S</option>
             <option value="M">M</option>
             <option value="L">L</option>
@@ -282,7 +294,7 @@
       </div>
       <div class="field">
         <label for="design">Design Name / Reference</label>
-        <input type="text" id="design" name="design" placeholder="e.g. Sunset Drop, Custom #3">
+        <input type="text" id="design" name="design" placeholder="e.g. Sunset Drop, Custom #3" data-fs-field>
       </div>
     </div>
 
@@ -290,74 +302,32 @@
     <div class="field-group">
       <div class="field">
         <label for="address">Full Delivery Address</label>
-        <textarea id="address" name="address" placeholder="House / Flat No., Street, City, State, PIN" required></textarea>
+        <textarea id="address" name="address" placeholder="House / Flat No., Street, City, State, PIN" required data-fs-field></textarea>
+        <span data-fs-error="address" class="field-error"></span>
       </div>
     </div>
 
     <div class="divider"></div>
-    <button type="submit" class="submit-btn" id="submitBtn">
-      <span class="btn-text">Confirm Order</span>
-      <span class="btn-loading">
-        <span class="spinner"></span> Placing Order…
-      </span>
+    <button type="submit" class="submit-btn" data-fs-submit-btn>
+      Confirm Order
     </button>
 
-    <div class="toast" id="toast"></div>
   </form>
 </div>
 
 <script>
-  // ─── CONFIG ────────────────────────────────────────────────────────────────
-  // BUG FIX: emailjs.init() takes your PUBLIC KEY (found in EmailJS dashboard),
-  // NOT your email address. Replace the value below.
-  const EMAILJS_PUBLIC_KEY  = "YOUR_EMAILJS_PUBLIC_KEY";   // e.g. "abc123XYZ"
+  // ─── EmailJS: send a confirmation email to the customer on successful order ─
+  // Your PUBLIC KEY is in EmailJS → Account → API Keys (NOT your email address)
+  const EMAILJS_PUBLIC_KEY  = "ZXVO8aPvZTkk1NLI6";
   const EMAILJS_SERVICE_ID  = "service_2xfx4td";
   const EMAILJS_TEMPLATE_ID = "template_j3gxuwf";
 
-  // BUG FIX: Replace with your actual Formspree endpoint
-  const FORMSPREE_URL = "https://formspree.io/f/YOUR_FORM_ID";
-  // ───────────────────────────────────────────────────────────────────────────
-
   emailjs.init(EMAILJS_PUBLIC_KEY);
 
-  const form      = document.getElementById("orderForm");
-  const btn       = document.getElementById("submitBtn");
-  const toast     = document.getElementById("toast");
-
-  function showToast(type, message) {
-    toast.className = "toast " + type;
-    toast.textContent = message;
-    toast.style.display = "flex";
-    if (type === "success") {
-      setTimeout(() => { toast.style.display = "none"; }, 6000);
-    }
-  }
-
-  function setLoading(on) {
-    btn.disabled = on;
-    btn.classList.toggle("loading", on);
-  }
-
-  // Basic client-side validation
-  function validate() {
-    const els = form.elements;
-    if (!els["name"].value.trim())    { els["name"].focus();    return "Please enter your full name."; }
-    if (!els["phone"].value.trim())   { els["phone"].focus();   return "Please enter your phone number."; }
-    if (!/\S+@\S+\.\S+/.test(els["email"].value)) { els["email"].focus(); return "Please enter a valid email."; }
-    if (!els["address"].value.trim()) { els["address"].focus(); return "Please enter a delivery address."; }
-    return null;
-  }
-
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    toast.style.display = "none";
-
-    const err = validate();
-    if (err) { showToast("error", err); return; }
-
-    setLoading(true);
-
-    const els = form.elements;
+  // The Formspree SDK fires this custom event after a successful submission.
+  // Hook into it to also fire the EmailJS confirmation email.
+  document.getElementById("orderForm").addEventListener("formspree:success", function () {
+    const els = this.elements;
     const templateParams = {
       name:    els["name"].value.trim(),
       email:   els["email"].value.trim(),
@@ -368,32 +338,13 @@
       address: els["address"].value.trim(),
     };
 
-    try {
-      // 1. Send confirmation email via EmailJS
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-
-      // 2. Store order via Formspree (best-effort — don't block on failure)
-      try {
-        const res = await fetch(FORMSPREE_URL, {
-          method: "POST",
-          body: new FormData(form),
-          headers: { "Accept": "application/json" },
-        });
-        if (!res.ok) console.warn("Formspree submission failed:", res.status);
-      } catch (fsErr) {
-        console.warn("Formspree network error:", fsErr);
-      }
-
-      showToast("success", "✓ Order placed! A confirmation has been sent to your email.");
-      form.reset();
-
-    } catch (emailErr) {
-      console.error("EmailJS error:", emailErr);
-      showToast("error", "Failed to place order. Please try again or contact us directly.");
-    } finally {
-      setLoading(false);
-    }
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+      .catch(function (err) {
+        // Order is already saved in Formspree; email is best-effort
+        console.warn("EmailJS confirmation failed:", err);
+      });
   });
 </script>
+
 </body>
 </html>

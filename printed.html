@@ -1,899 +1,621 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Printed Collection — Arambh</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Printed Collection — Arambh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080810;
+      --surface: #0f0f1a;
+      --accent: #ff3c38;
+      --accent2: #ff7b22;
+      --text: #f0f0f0;
+      --muted: #888;
+      --border: rgba(255,255,255,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; cursor: none; }
 
-<style>
-  /* ─── RESET & BASE ─── */
-  *, *::before, *::after {
-    margin: 0; padding: 0; box-sizing: border-box;
-  }
+    .cursor { position: fixed; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
+    .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(255,60,56,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
 
-  :root {
-    --black:   #080808;
-    --off-black: #0e0e0e;
-    --card-bg: #111111;
-    --border:  rgba(255,255,255,0.07);
-    --white:   #f5f5f0;
-    --gold:    #e8a735;
-    --gold-dim: rgba(232,167,53,0.18);
-    --accent:  #ff3c3c;
-    --muted:   #5a5a5a;
-    --font-display: 'Bebas Neue', sans-serif;
-    --font-body:    'DM Sans', sans-serif;
-  }
+    /* Disable custom cursor on touch / no-hover devices */
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
 
-  html { scroll-behavior: smooth; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: 0.5; }
 
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: var(--font-body);
-    overflow-x: hidden;
-    cursor: none;
-  }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; background: rgba(8,8,16,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: padding 0.3s; }
+    nav.scrolled { padding: 12px 40px; }
+    .nav-logo img { height: 44px; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; position: relative; transition: color 0.3s; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: white; background: var(--accent); padding: 10px 24px; border-radius: 100px; text-decoration: none; transition: background 0.3s, transform 0.2s; box-shadow: 0 4px 20px rgba(255,60,56,0.3); }
+    .nav-cta:hover { background: #ff1f1a; transform: scale(1.04); }
 
-  /* ─── CUSTOM CURSOR ─── */
-  .cursor {
-    position: fixed;
-    width: 12px; height: 12px;
-    background: var(--gold);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
-    mix-blend-mode: difference;
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1.5px solid var(--gold);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: transform 0.15s ease, width 0.3s, height 0.3s, opacity 0.3s;
-    opacity: 0.55;
-  }
-  body:hover .cursor { opacity: 1; }
+    /* HAMBURGER */
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
+    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* ─── NOISE OVERLAY ─── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
+    .mobile-menu {
+      position: fixed; top: 0; right: 0; height: 100vh; width: min(78vw, 320px);
+      background: #0c0c16; border-left: 1px solid var(--border);
+      z-index: 150; padding: 100px 32px 40px;
+      transform: translateX(100%); transition: transform 0.4s ease;
+      display: flex; flex-direction: column; gap: 26px;
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .mobile-menu a.active { color: var(--accent); }
+    .menu-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
-  /* ─── MARQUEE TICKER ─── */
-  .ticker-wrap {
-    background: var(--gold);
-    color: var(--black);
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 10px 0;
-    position: sticky;
-    top: 0;
-    z-index: 500;
-  }
-  .ticker-track {
-    display: inline-flex;
-    animation: ticker 22s linear infinite;
-  }
-  .ticker-track span {
-    font-family: var(--font-display);
-    font-size: 15px;
-    letter-spacing: 2px;
-    padding: 0 40px;
-  }
-  .ticker-track span::after {
-    content: '✦';
-    margin-left: 40px;
-    opacity: 0.5;
-  }
-  @keyframes ticker {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+    /* HEADER */
+    .page-header { min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 140px 40px 80px; text-align: center; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(255,60,56,0.12) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 6s ease-in-out infinite; }
+    /* Animated dots bg */
+    .page-header::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,60,56,0.08) 1px, transparent 1px); background-size: 40px 40px; animation: dots-drift 20s linear infinite; pointer-events: none; }
+    @keyframes dots-drift { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.12); } }
+    .breadcrumb { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; z-index: 1; position: relative; }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb span { opacity: 0.4; }
+    .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 10vw, 130px); line-height: 0.9; letter-spacing: 2px; animation: fade-up 0.8s ease both; position: relative; z-index: 1; }
+    .page-header h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-header p { color: var(--muted); font-size: 17px; font-weight: 300; margin-top: 16px; letter-spacing: 1px; animation: fade-up 0.8s 0.1s ease both; position: relative; z-index: 1; }
+    .header-meta { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.2s ease both; position: relative; z-index: 1; }
+    .meta-chip { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px; color: var(--muted); }
+    .meta-chip.hot { border-color: rgba(255,60,56,0.3); color: var(--accent); background: rgba(255,60,56,0.07); }
 
-  /* ─── HERO HEADER ─── */
-  .hero {
-    min-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 60px 70px;
-    position: relative;
-    overflow: hidden;
-    background: var(--black);
-  }
+    .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
+    .ticker { display: inline-flex; animation: ticker 24s linear infinite; }
+    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: white; }
+    .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-  /* diagonal grid lines */
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        -45deg,
-        rgba(255,255,255,0.025) 0px,
-        rgba(255,255,255,0.025) 1px,
-        transparent 1px,
-        transparent 60px
-      );
-  }
+    /* PRODUCTS */
+    .products-section { padding: 100px 40px; max-width: 1280px; margin: auto; }
+    .section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 14px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 5vw, 64px); letter-spacing: 2px; margin-bottom: 50px; }
 
-  /* big label */
-  .hero-eyebrow {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 18px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .hero-eyebrow::before {
-    content: '';
-    display: block;
-    width: 36px; height: 1px;
-    background: var(--gold);
-  }
+    /* MASONRY-STYLE: video cards taller */
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
 
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(80px, 14vw, 200px);
-    line-height: 0.85;
-    letter-spacing: 3px;
-    position: relative;
-    z-index: 2;
-  }
+    .product-card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); }
 
-  .hero-title em {
-    font-style: normal;
-    -webkit-text-stroke: 1.5px var(--white);
-    color: transparent;
-  }
+    .card-media { position: relative; overflow: hidden; background: #0a0a14; }
+    .card-media video, .card-media img { width: 100%; display: block; transition: transform 0.6s ease; }
+    .card-media video { height: 340px; object-fit: cover; }
+    .card-media img { height: 300px; object-fit: cover; }
+    .product-card:hover .card-media video,
+    .product-card:hover .card-media img { transform: scale(1.05); }
 
-  .hero-sub {
-    margin-top: 30px;
-    font-size: 14px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    max-width: 380px;
-    line-height: 1.7;
-    position: relative;
-    z-index: 2;
-  }
+    /* Overlay gradient */
+    .card-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,8,16,0.85) 0%, transparent 50%); pointer-events: none; }
 
-  .hero-actions {
-    margin-top: 40px;
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-    flex-wrap: wrap;
-  }
+    /* Title overlaid on bottom of media */
+    .card-overlay-title { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 20px 22px 0; }
+    .card-overlay-title h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; line-height: 1; }
 
-  .btn-primary {
-    background: var(--gold);
-    color: var(--black);
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 16px 38px;
-    border-radius: 4px;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(232,167,53,0.35);
-  }
+    .card-badge { position: absolute; top: 14px; right: 14px; z-index: 3; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; }
+    .card-badge.video-badge { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(6px); }
+    .card-badge.video-badge::before { content: '▶ '; font-size: 8px; }
 
-  .btn-ghost {
-    color: var(--white);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 16px 28px;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 4px;
-    transition: border-color 0.25s, background 0.25s;
-  }
-  .btn-ghost:hover {
-    border-color: rgba(255,255,255,0.5);
-    background: rgba(255,255,255,0.04);
-  }
+    .card-body { padding: 14px 22px 24px; }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; }
+    .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 1px; }
+    .type-tag { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 100px; }
 
-  /* floating badge */
-  .hero-badge {
-    position: absolute;
-    top: 55px; right: 60px;
-    width: 100px; height: 100px;
-    border: 1px solid var(--gold);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    line-height: 1.4;
-    color: var(--gold);
-    animation: spin-badge 18s linear infinite;
-    z-index: 2;
-  }
-  @keyframes spin-badge {
-    to { transform: rotate(360deg); }
-  }
+    /* COLOR SWATCHES */
+    .color-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .color-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-right: 2px; white-space: nowrap; }
+    .swatches { display: flex; gap: 7px; flex-wrap: wrap; }
+    .swatch {
+      width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+      border: 2px solid transparent;
+      outline: 2px solid transparent;
+      transition: transform 0.2s, outline-color 0.2s;
+      position: relative;
+    }
+    .swatch:hover { transform: scale(1.2); }
+    .swatch.active { outline-color: var(--accent); outline-offset: 2px; }
+    .swatch[title]:hover::after {
+      content: attr(title);
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      background: rgba(15,15,26,0.95); border: 1px solid var(--border);
+      color: var(--text); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 1px; white-space: nowrap; padding: 4px 10px; border-radius: 6px;
+      pointer-events: none; z-index: 10;
+    }
+    .selected-color { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--text); margin-left: auto; font-weight: 600; letter-spacing: 1px; transition: color 0.2s; }
 
-  /* ─── SECTION LABEL ─── */
-  .section-label {
-    font-family: var(--font-body);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+    /* SIZE CHART */
+    .size-section { max-width: 720px; margin: 0 auto 80px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+    .size-header { padding: 30px 36px 0; display: flex; align-items: center; gap: 14px; }
+    .size-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
+    .size-note { padding: 14px 36px 20px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .size-section img { width: 100%; display: block; }
+    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(255,60,56,0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
 
-  /* ─── FILTER BAR ─── */
-  .filter-bar {
-    padding: 0 60px 50px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .filter-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: var(--font-body);
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 9px 20px;
-    border-radius: 3px;
-    cursor: none;
-    transition: all 0.2s;
-  }
-  .filter-btn:hover,
-  .filter-btn.active {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: var(--gold-dim);
-  }
+    .order-section { text-align: center; padding: 0 20px 120px; }
+    .order-section p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
+    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--accent); color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: background 0.3s, transform 0.2s; box-shadow: 0 10px 40px rgba(255,60,56,0.35); }
+    .order-btn:hover { background: #ff1f1a; transform: scale(1.04); }
+    .whatsapp-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: transparent; color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; border: 1px solid rgba(255,255,255,0.15); transition: border-color 0.3s, background 0.3s, transform 0.2s; margin-left: 16px; }
+    .whatsapp-btn:hover { border-color: #25d366; background: rgba(37,211,102,0.08); transform: scale(1.04); }
 
-  /* ─── PRODUCTS GRID ─── */
-  .grid-section {
-    padding: 0 40px 120px;
-  }
+    footer { background: #04040a; border-top: 1px solid var(--border); padding: 40px; text-align: center; }
+    footer p { color: var(--muted); font-size: 13px; }
+    footer a { color: var(--accent); text-decoration: none; }
 
-  .products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    gap: 2px;
-  }
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+    .reveal-delay-4 { transition-delay: 0.32s; }
 
-  /* ─── PRODUCT CARD ─── */
-  .product-card {
-    background: var(--card-bg);
-    position: relative;
-    overflow: hidden;
-    cursor: none;
-    group: true;
-  }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* index number */
-  .card-index {
-    position: absolute;
-    top: 16px; left: 18px;
-    font-family: var(--font-display);
-    font-size: 13px;
-    color: rgba(255,255,255,0.18);
-    z-index: 3;
-    letter-spacing: 1px;
-  }
+    /* NEW DROPS SECTION */
+    .drops-section { padding: 20px 40px 100px; max-width: 1280px; margin: auto; }
+    .drops-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+    .drops-header-left .section-label { margin-bottom: 14px; }
+    .drops-header-left .section-title { margin-bottom: 0; }
+    .drops-countdown { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(255,60,56,0.3); background: rgba(255,60,56,0.07); padding: 10px 20px; border-radius: 100px; display: flex; align-items: center; gap: 8px; }
+    .drops-countdown::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: blink 1.4s ease-in-out infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-  /* badge tag */
-  .card-tag {
-    position: absolute;
-    top: 16px; right: 16px;
-    background: var(--gold);
-    color: var(--black);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 5px 10px;
-    border-radius: 2px;
-    z-index: 3;
-    opacity: 0;
-    transform: translateY(-6px);
-    transition: opacity 0.3s, transform 0.3s;
-  }
-  .product-card:hover .card-tag { opacity: 1; transform: translateY(0); }
+    .drops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .drop-card {
+      background: linear-gradient(160deg, var(--surface), #16161f);
+      border: 1px solid rgba(255,60,56,0.18);
+      border-radius: 20px; overflow: hidden; position: relative;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
+    }
+    .drop-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); border-color: rgba(255,60,56,0.4); }
+    .drop-card .card-media { height: 320px; display: flex; align-items: center; justify-content: center; background: #0a0a14; }
+    .drop-card .card-media img { width: 100%; height: 100%; object-fit: cover; }
+    .coming-soon-badge {
+      position: absolute; top: 14px; left: 14px; z-index: 3;
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; padding: 6px 14px; border-radius: 100px;
+    }
+    .drop-card .card-body { padding: 20px 22px 26px; }
+    .drop-card .card-body h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 6px; }
+    .drop-card .card-body p { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+    .notify-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); text-decoration: none; border: 1px solid rgba(255,60,56,0.3); padding: 9px 18px; border-radius: 100px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .notify-btn:hover { background: var(--accent); color: white; }
 
-  /* media */
-  .card-media {
-    width: 100%; height: 340px;
-    overflow: hidden;
-    position: relative;
-  }
-  .card-media video,
-  .card-media img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-  .product-card:hover .card-media video,
-  .product-card:hover .card-media img {
-    transform: scale(1.07);
-  }
+    /* Placeholder drop card (no image yet) */
+    .drop-card.placeholder .card-media {
+      background: repeating-linear-gradient(135deg, #0e0e18, #0e0e18 12px, #13131e 12px, #13131e 24px);
+      flex-direction: column; gap: 10px;
+    }
+    .drop-card.placeholder .placeholder-icon { font-size: 36px; opacity: 0.4; }
+    .drop-card.placeholder .placeholder-text { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
 
-  /* overlay on hover */
-  .card-media::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.35s;
-  }
-  .product-card:hover .card-media::after { opacity: 1; }
+    /* DISCLAIMER / CARE NOTE */
+    .care-section { max-width: 720px; margin: 0 auto 60px; }
+    .care-card {
+      background: rgba(255,123,34,0.06); border: 1px solid rgba(255,123,34,0.25);
+      border-radius: 18px; padding: 26px 30px; display: flex; gap: 18px; align-items: flex-start;
+    }
+    .care-icon {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(255,123,34,0.15); display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .care-text h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+    .care-text p { font-size: 14px; color: var(--text); line-height: 1.7; opacity: 0.9; }
+    .care-text p strong { color: var(--accent2); }
 
-  /* quick add */
-  .quick-add {
-    position: absolute;
-    bottom: 20px; left: 50%;
-    transform: translateX(-50%) translateY(12px);
-    background: var(--gold);
-    color: var(--black);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 10px 24px;
-    border-radius: 3px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
-    z-index: 4;
-    text-decoration: none;
-  }
-  .product-card:hover .quick-add {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
 
-  /* info strip */
-  .product-info {
-    padding: 18px 20px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid var(--border);
-  }
+    @media (max-width: 768px) {
+      .drops-header { flex-direction: column; align-items: flex-start; }
+      .care-card { flex-direction: column; }
+      nav { padding: 14px 20px; }
+      .nav-logo img { height: 36px; }
+      .nav-cta { padding: 9px 16px; font-size: 11px; }
+      .page-header { padding: 100px 20px 50px; min-height: auto; }
+      .page-header::before { width: 500px; height: 500px; }
+      .header-meta { gap: 12px; }
+      .meta-chip { font-size: 10px; padding: 7px 14px; }
+      .ticker span { font-size: 16px; padding: 0 22px; }
+      .ticker span::after { margin-left: 22px; }
+      .products-section { padding: 60px 20px; }
+      .section-title { margin-bottom: 32px; }
+      .products-grid { grid-template-columns: 1fr; gap: 18px; }
+      .card-media video { height: 280px; }
+      .card-media img { height: 260px; }
+      .card-overlay-title h3 { font-size: 24px; }
+      .drops-section { padding: 0 20px 70px; }
+      .drops-grid { grid-template-columns: 1fr; gap: 18px; }
+      .drop-card .card-media { height: 220px; }
+      .size-section { margin: 0 20px 40px; }
+      .size-header { padding: 24px 24px 0; }
+      .size-note { padding: 12px 24px 16px; }
+      .size-warning { padding: 16px 24px; font-size: 11px; }
+      .care-section { margin: 0 20px 40px; }
+      .care-card { padding: 20px; }
+      .order-section { padding: 0 20px 80px; }
+      .order-btn, .whatsapp-btn { width: 100%; justify-content: center; padding: 16px 20px; }
+      .whatsapp-btn { margin-left: 0; margin-top: 12px; }
+      footer { padding: 30px 20px; }
+      footer p { font-size: 12px; line-height: 1.8; }
+    }
 
-  .product-info h3 {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 400;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
+    @media (max-width: 420px) {
+      .page-header h1 { font-size: clamp(48px, 14vw, 72px); }
+      .swatches { gap: 5px; }
+      .swatch { width: 20px; height: 20px; }
+      .color-label { width: 100%; margin-bottom: 4px; }
+      .selected-color { margin-left: 0; }
+    }
 
-  .price {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--gold);
-    letter-spacing: 1px;
-  }
-
-  /* ─── SIZE CHART ─── */
-  .size-wrap {
-    margin: 0 60px 60px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  @media (max-width: 768px) { .size-wrap { grid-template-columns: 1fr; margin: 0 20px 60px; } }
-
-  .size-img-panel img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-  }
-
-  .size-text-panel {
-    padding: 50px 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .size-text-panel h2 {
-    font-family: var(--font-display);
-    font-size: 46px;
-    letter-spacing: 2px;
-    line-height: 1;
-    margin-bottom: 16px;
-  }
-
-  .size-text-panel p {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.75;
-    margin-bottom: 30px;
-  }
-
-  .size-chips {
-    display: flex; gap: 10px; flex-wrap: wrap;
-  }
-  .size-chip {
-    border: 1px solid var(--border);
-    color: var(--white);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    padding: 8px 18px;
-    border-radius: 3px;
-    transition: all 0.2s;
-    cursor: none;
-  }
-  .size-chip:hover {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: var(--gold-dim);
-  }
-
-  /* ─── CTA STRIP ─── */
-  .cta-strip {
-    margin: 0 40px 120px;
-    background: var(--gold);
-    color: var(--black);
-    border-radius: 6px;
-    padding: 70px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 40px;
-    flex-wrap: wrap;
-    position: relative;
-    overflow: hidden;
-  }
-  .cta-strip::before {
-    content: 'ORDER';
-    font-family: var(--font-display);
-    font-size: 200px;
-    position: absolute;
-    right: -20px; top: 50%;
-    transform: translateY(-50%);
-    opacity: 0.08;
-    letter-spacing: -5px;
-    line-height: 1;
-    pointer-events: none;
-  }
-
-  .cta-strip h2 {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 5vw, 62px);
-    letter-spacing: 2px;
-    line-height: 1;
-  }
-
-  .cta-strip p {
-    font-size: 14px;
-    opacity: 0.65;
-    margin-top: 8px;
-    max-width: 340px;
-    line-height: 1.7;
-  }
-
-  .btn-dark {
-    background: var(--black);
-    color: var(--gold);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 18px 44px;
-    border-radius: 4px;
-    white-space: nowrap;
-    transition: transform 0.2s, box-shadow 0.2s;
-    flex-shrink: 0;
-  }
-  .btn-dark:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
-  }
-
-  /* ─── SCROLL REVEAL ─── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s cubic-bezier(0.25,0.46,0.45,0.94),
-                transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
-  }
-  .reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 900px) {
-    .hero { padding: 0 28px 50px; }
-    .hero-badge { display: none; }
-    .filter-bar { padding: 0 28px 40px; }
-    .grid-section { padding: 0 0 80px; }
-    .products { gap: 1px; }
-    .size-wrap { margin: 0 20px 60px; }
-    .cta-strip { margin: 0 20px 80px; padding: 50px 32px; }
-  }
-</style>
+  </style>
 </head>
 <body>
 
-<!-- CUSTOM CURSOR -->
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-track" id="ticker">
-    <span>FREE SHIPPING ABOVE ₹999</span>
-    <span>PREMIUM QUALITY PRINTS</span>
-    <span>100% COTTON</span>
-    <span>EXPRESS. BOLD. STREET.</span>
-    <span>ARAMBH — A NEW BEGINNING</span>
-    <span>FREE SHIPPING ABOVE ₹999</span>
-    <span>PREMIUM QUALITY PRINTS</span>
-    <span>100% COTTON</span>
-    <span>EXPRESS. BOLD. STREET.</span>
-    <span>ARAMBH — A NEW BEGINNING</span>
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="Arambh"></a>
+    <ul class="nav-links">
+      <li><a href="polo.html">Polos</a></li>
+      <li><a href="oversized.html">Oversized</a></li>
+      <li><a href="printed.html" class="active">Printed</a></li>
+      <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
+    </ul>
+    <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="polo.html">Polos</a>
+    <a href="oversized.html">Oversized</a>
+    <a href="printed.html" class="active">Printed</a>
+    <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
+    <a href="tel:9637748622">📞 Order Now</a>
   </div>
-</div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">NEW<br>DROP<br>SS26</div>
-  <div class="hero-eyebrow">Arambh Originals</div>
-  <h1 class="hero-title">
-    PRINTED<br><em>COLLECTION</em>
-  </h1>
-  <p class="hero-sub">
-    Twelve bold statements. One uncompromising fabric. Wear what you mean.
-  </p>
-  <div class="hero-actions">
-    <a href="order.html" class="btn-primary">Order Now</a>
-    <a href="index.html" class="btn-ghost">← Back to Home</a>
+  <header class="page-header">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
+    <h1>PRINTED<br><span>COLLECTION</span></h1>
+    <p>Express. Bold. Street.</p>
+    <div class="header-meta">
+      <span class="meta-chip hot">Limited Runs</span>
+      <span class="meta-chip">8 Designs</span>
+    </div>
+  </header>
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>Bold Graphics</span><span>Original Prints</span><span>Arambh</span>
+      <span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
+      <span>Bold Graphics</span><span>Original Prints</span><span>Arambh</span>
+      <span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
+    </div>
   </div>
-</section>
 
-<!-- FILTER BAR -->
-<div class="filter-bar reveal">
-  <button class="filter-btn active" data-filter="all">All</button>
-  <button class="filter-btn" data-filter="graphic">Graphic</button>
-  <button class="filter-btn" data-filter="anime">Anime</button>
-  <button class="filter-btn" data-filter="minimal">Minimal</button>
-  <button class="filter-btn" data-filter="cars">Cars</button>
-  <button class="filter-btn" data-filter="nature">Nature</button>
-</div>
+  <section class="products-section">
+    <span class="section-label reveal">The Drops</span>
+    <h2 class="section-title reveal">GRAPHICS THAT SPEAK</h2>
 
-<!-- GRID -->
-<div class="grid-section">
-  <div class="products" id="productsGrid">
+    <div class="products-grid">
 
-    <!-- 01 -->
-    <div class="product-card reveal" data-category="graphic">
-      <span class="card-index">01</span>
-      <div class="card-tag">Popular</div>
-      <div class="card-media">
-        <video autoplay muted loop playsinline>
-          <source src="printed1.mp4" type="video/mp4">
-        </video>
-        <a href="order.html" class="quick-add">+ Quick Order</a>
+      <!-- VIDEO CARDS -->
+      <div class="product-card reveal">
+        <div class="card-media">
+          <span class="card-badge video-badge">Video</span>
+          <video autoplay muted loop playsinline><source src="printed1.mp4" type="video/mp4"></video>
+          <div class="card-overlay-title"><h3>Stay Wild</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#6b6b6b;border-color:#888;" title="Grey" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">Black</span>
+          </div>
+        </div>
       </div>
-      <div class="product-info">
-        <h3>Stay Wild</h3>
-        <span class="price">₹349</span>
+
+      <div class="product-card reveal reveal-delay-1">
+        <div class="card-media">
+          <span class="card-badge video-badge">Video</span>
+          <video autoplay muted loop playsinline><source src="printed2.mp4" type="video/mp4"></video>
+          <div class="card-overlay-title"><h3>Self Love Club</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#c0a890;border-color:#a08060;" title="Beige" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#d4a0b0;border-color:#c08090;" title="Blush Pink" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+        </div>
       </div>
+
+      <div class="product-card reveal reveal-delay-2">
+        <div class="card-media">
+          <span class="card-badge video-badge">Video</span>
+          <video autoplay muted loop playsinline><source src="printed3.mp4" type="video/mp4"></video>
+          <div class="card-overlay-title"><h3>The Good Life</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#1e3a2f;border-color:#2d5e46;" title="Forest Green" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">Forest Green</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-3">
+        <div class="card-media">
+          <span class="card-badge video-badge">Video</span>
+          <video autoplay muted loop playsinline><source src="printed4.mp4" type="video/mp4"></video>
+          <div class="card-overlay-title"><h3>Porsche Car</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#1b2a4a;border-color:#2a4070;" title="Navy Blue" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">Black</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-4">
+        <div class="card-media">
+          <span class="card-badge video-badge">Video</span>
+          <video autoplay muted loop playsinline><source src="printed5.mp4" type="video/mp4"></video>
+          <div class="card-overlay-title"><h3>Hello</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#6b6b6b;border-color:#888;" title="Grey" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#c0a890;border-color:#a08060;" title="Beige" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGE CARDS -->
+      <div class="product-card reveal">
+        <div class="card-media">
+          <span class="card-badge">New</span>
+          <img src="Kufu_white.jpeg" alt="Kung Fu Panda White">
+          <div class="card-overlay-title"><h3>Kung Fu Panda White</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-1">
+        <div class="card-media">
+          <span class="card-badge">New</span>
+          <img src="Kufu_black.jpeg" alt="Kung Fu Panda Black">
+          <div class="card-overlay-title"><h3>Kung Fu Panda Black</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">Black</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-2">
+        <div class="card-media">
+          <span class="card-badge hot" style="background:var(--accent2);">Hot</span>
+          <img src="20260426_183356_0002.png" alt="Mountain Lovers Maroon">
+          <div class="card-overlay-title"><h3>Mountain Lovers</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+          <div class="color-row">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#6b1a2a;border-color:#9b2a3a;" title="Maroon" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+              <div class="swatch" style="background:#1b2a4a;border-color:#2a4070;" title="Navy Blue" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">Maroon</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- NEW DROPS -->
+  <section class="drops-section">
+    <div class="drops-header">
+      <div class="drops-header-left">
+        <span class="section-label reveal">Just Landed</span>
+        <h2 class="section-title reveal">NEW DROPS</h2>
+      </div>
+      <span class="drops-countdown reveal">Restocking Weekly</span>
     </div>
 
-    <!-- 02 -->
-    <div class="product-card reveal" data-category="graphic">
-      <span class="card-index">02</span>
-      <div class="card-media">
-        <video autoplay muted loop playsinline>
-          <source src="printed2.mp4" type="video/mp4">
-        </video>
-        <a href="order.html" class="quick-add">+ Quick Order</a>
+    <div class="drops-grid">
+
+      <div class="drop-card placeholder reveal">
+        <div class="card-media">
+          <span class="coming-soon-badge">Coming Soon</span>
+          <span class="placeholder-icon">🎨</span>
+          <span class="placeholder-text">Design Reveal Soon</span>
+        </div>
+        <div class="card-body">
+          <h3>Mystery Drop 01</h3>
+          <p>Something bold is in the works. Be the first to see it when it lands.</p>
+          <a href="https://wa.me/919637748622" class="notify-btn">🔔 Notify Me</a>
+        </div>
       </div>
-      <div class="product-info">
-        <h3>Self Love Club</h3>
-        <span class="price">₹349</span>
+
+      <div class="drop-card placeholder reveal reveal-delay-1">
+        <div class="card-media">
+          <span class="coming-soon-badge">Coming Soon</span>
+          <span class="placeholder-icon">🎨</span>
+          <span class="placeholder-text">Design Reveal Soon</span>
+        </div>
+        <div class="card-body">
+          <h3>Mystery Drop 02</h3>
+          <p>New graphics, new story. Drop date announced soon on our socials.</p>
+          <a href="https://wa.me/919637748622" class="notify-btn">🔔 Notify Me</a>
+        </div>
       </div>
+
+      <div class="drop-card placeholder reveal reveal-delay-2">
+        <div class="card-media">
+          <span class="coming-soon-badge">Coming Soon</span>
+          <span class="placeholder-icon">🎨</span>
+          <span class="placeholder-text">Design Reveal Soon</span>
+        </div>
+        <div class="card-body">
+          <h3>Mystery Drop 03</h3>
+          <p>Limited run. Once it's gone, it's gone for good — stay locked in.</p>
+          <a href="https://wa.me/919637748622" class="notify-btn">🔔 Notify Me</a>
+        </div>
+      </div>
+
     </div>
+  </section>
 
-    <!-- 03 -->
-    <div class="product-card reveal" data-category="graphic">
-      <span class="card-index">03</span>
-      <div class="card-media">
-        <video autoplay muted loop playsinline>
-          <source src="printed3.mp4" type="video/mp4">
-        </video>
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>The Good Life</h3>
-        <span class="price">₹349</span>
-      </div>
-    </div>
-
-    <!-- 04 -->
-    <div class="product-card reveal" data-category="cars">
-      <span class="card-index">04</span>
-      <div class="card-tag">Fan Fav</div>
-      <div class="card-media">
-        <video autoplay muted loop playsinline>
-          <source src="printed4.mp4" type="video/mp4">
-        </video>
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Porsche Car</h3>
-        <span class="price">₹349</span>
-      </div>
-    </div>
-
-    <!-- 05 -->
-    <div class="product-card reveal" data-category="minimal">
-      <span class="card-index">05</span>
-      <div class="card-media">
-        <video autoplay muted loop playsinline>
-          <source src="printed5.mp4" type="video/mp4">
-        </video>
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Hello</h3>
-        <span class="price">₹349</span>
-      </div>
-    </div>
-
-    <!-- 06 -->
-    <div class="product-card reveal" data-category="graphic anime">
-      <span class="card-index">06</span>
-      <div class="card-media">
-        <img src="Kufu_white.jpeg" alt="Kufu Panda White">
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Kungfu Panda White</h3>
-        <h3>Also available in: Maroon, Beige</h3>
-        <span class="price">₹1099</span>
-      </div>
-    </div>
-
-    <!-- 07 -->
-    <div class="product-card reveal" data-category="graphic anime">
-      <span class="card-index">07</span>
-      <div class="card-media">
-        <img src="Kufu_black.jpeg" alt="Kufu Panda Black">
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Kungfu Panda Black</h3>
-        <h3>Also available in: Maroon, Beige</h3>
-        <span class="price">₹1099</span>
-      </div>
-    </div>
-
-    <!-- 08 -->
-    <div class="product-card reveal" data-category="nature">
-      <span class="card-index">08</span>
-      <div class="card-tag">New</div>
-      <div class="card-media">
-        <img src="20260426_183356_0002.png" alt="Mountain Lovers In Maroon">
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Mountain Lovers</h3>
-        <h3>Also available in: White, Beige</h3>
-        <span class="price">₹999</span>
-      </div>
-    </div>
-
-    <!-- 09 — Demon Slayer Maroon -->
-    <div class="product-card reveal" data-category="anime graphic">
-      <span class="card-index">09</span>
-      <div class="card-tag">New</div>
-      <div class="card-media">
-        <img src="Anime_maroon.png" alt="Demon Slayer Maroon">
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Flame Duo — Maroon</h3>
-        <h3>Also available in: White</h3>
-        <span class="price">₹999</span>
-      </div>
-    </div>
-
-    <!-- 10 — Demon Slayer Beige -->
-    <div class="product-card reveal" data-category="anime graphic">
-      <span class="card-index">10</span>
-      <div class="card-tag">New</div>
-      <div class="card-media">
-        <img src="Anime_beige.png" alt="Demon Slayer Beige">
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Flame Duo — Beige</h3>
-        <h3>Also available in: White</h3>
-        <span class="price">₹999</span>
-      </div>
-    </div>
-
-    <!-- 11 — Itachi White -->
-    <div class="product-card reveal" data-category="anime graphic">
-      <span class="card-index">11</span>
-      <div class="card-tag">New</div>
-      <div class="card-media">
-        <img src="Itachi_white.png" alt="Itachi Uchiha White">
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Itachi Uchiha — White</h3>
-        <span class="price">₹1099</span>
-      </div>
-    </div>
-
-    <!-- 12 — Itachi Black -->
-    <div class="product-card reveal" data-category="anime graphic">
-      <span class="card-index">12</span>
-      <div class="card-tag">New</div>
-      <div class="card-media">
-        <img src="Itachi_black.png" alt="Itachi Uchiha Black">
-        <a href="order.html" class="quick-add">+ Quick Order</a>
-      </div>
-      <div class="product-info">
-        <h3>Itachi Uchiha — Black</h3>
-        <span class="price">₹1099</span>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- SIZE CHART -->
-<div class="size-wrap reveal">
-  <div class="size-img-panel">
+  <div class="size-section reveal">
+    <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>
+    <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit before placing your order.</p>
     <img src="Size chart.png" alt="Size Chart">
+    <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering</div>
   </div>
-  <div class="size-text-panel">
-    <div class="section-label">Fit Guide</div>
-    <h2>FIND YOUR SIZE</h2>
-    <p>
-      Our tees run true to size on a relaxed unisex fit. Measure your chest and compare with the chart.
-      When in between sizes, go up for a looser look.
-    </p>
-    <div class="size-chips">
-      <div class="size-chip">XS</div>
-      <div class="size-chip">S</div>
-      <div class="size-chip">M</div>
-      <div class="size-chip">L</div>
-      <div class="size-chip">XL</div>
-      <div class="size-chip">XXL</div>
+
+  <!-- CARE DISCLAIMER -->
+  <div class="care-section reveal">
+    <div class="care-card">
+      <div class="care-icon">🧺</div>
+      <div class="care-text">
+        <h4>Care Instructions</h4>
+        <p>These tees are <strong>DTF (Direct-to-Film) printed</strong>. For the design to last wash after wash, always turn the t-shirt <strong>inside out before washing</strong>. Avoid direct ironing on the print and skip the dryer when possible — air dry inside out for best results.</p>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- CTA STRIP -->
-<div class="cta-strip reveal">
-  <div>
-    <h2>READY TO<br>WEAR YOUR VIBE?</h2>
-    <p>All tees ₹349. Free shipping on orders above ₹499. Ships in 3–5 days.</p>
+  <div class="order-section reveal">
+    <p>Graphics that speak before you do — grab yours while stocks last.</p>
+    <a href="order.html" class="order-btn">🛒 Place Order</a>
+    <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
   </div>
-  <a href="order.html" class="btn-dark">Place Your Order →</a>
-</div>
 
-<script>
-  /* ── Cursor ── */
-  const cur = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  document.addEventListener('mousemove', e => {
-    cur.style.left = e.clientX + 'px';
-    cur.style.top  = e.clientY + 'px';
-    setTimeout(() => {
-      ring.style.left = e.clientX + 'px';
-      ring.style.top  = e.clientY + 'px';
-    }, 60);
-  });
-  document.querySelectorAll('a, button, .product-card, .size-chip').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cur.style.width = '20px'; cur.style.height = '20px';
-      ring.style.width = '54px'; ring.style.height = '54px'; ring.style.opacity = '0.85';
+  <footer>
+    <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+  </footer>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    function closeMenu() { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      menuBackdrop.classList.toggle('open', isOpen);
     });
-    el.addEventListener('mouseleave', () => {
-      cur.style.width = '12px'; cur.style.height = '12px';
-      ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.55';
+    menuBackdrop.addEventListener('click', closeMenu);
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    function selectColor(el) {
+      const row = el.closest('.color-row');
+      row.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      const label = row.querySelector('.selected-color');
+      if (label) label.textContent = el.getAttribute('title');
+    }
+
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+    function animateRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px'; requestAnimationFrame(animateRing); }
+    animateRing();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursorRing.style.width = '60px'; cursorRing.style.height = '60px'; });
+      el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursorRing.style.width = '40px'; cursorRing.style.height = '40px'; });
     });
-  });
-
-  /* ── Filter Buttons — real filtering ── */
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const cards = document.querySelectorAll('#productsGrid .product-card');
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // toggle active state
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const filter = btn.dataset.filter;
-
-      cards.forEach((card, i) => {
-        const cats = card.dataset.category || '';
-        const match = filter === 'all' || cats.split(' ').includes(filter);
-
-        if (match) {
-          card.style.display = '';
-          // stagger re-reveal
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(20px)';
-          setTimeout(() => {
-            card.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          }, i * 55);
-        } else {
-          card.style.transition = 'opacity 0.2s ease';
-          card.style.opacity = '0';
-          setTimeout(() => { card.style.display = 'none'; }, 200);
-        }
-      });
-    });
-  });
-
-  /* ── Scroll Reveal ── */
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('active'), i * 60);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  reveals.forEach(el => observer.observe(el));
-</script>
+    const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
+  </script>
 </body>
 </html>

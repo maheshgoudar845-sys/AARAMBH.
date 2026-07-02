@@ -33,16 +33,19 @@
 
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: 0.5; }
 
-/* SPLIT VIEW FOR FRONT & BACK DESIGNS */
-.card-media.double-view {
-  flex-direction: row;
-  gap: 2px; /* Creates a sleek line between front and back */
-}
-.card-media.double-view img {
-  width: calc(50% - 1px);
-  height: 100%;
-  object-fit: cover;
-}
+    /* SPLIT VIEW FOR FRONT & BACK DESIGNS */
+    .card-media.double-view {
+      display: flex;
+      flex-direction: row;
+      gap: 2px; /* Creates a sleek line between front and back */
+      height: 320px; /* Aligns smoothly with other cards */
+      background: #0a0a14;
+    }
+    .card-media.double-view img {
+      width: calc(50% - 1px);
+      height: 100%;
+      object-fit: contain; /* Keeps the entire front and back graphic visible without cropping */
+    }
 
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; background: rgba(8,8,16,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: padding 0.3s; }
     nav.scrolled { padding: 12px 40px; }
@@ -269,8 +272,11 @@
       .card-media img { height: 260px; }
       .card-overlay-title h3 { font-size: 24px; }
       .drops-section { padding: 0 20px 70px; }
-      .drops-grid { grid-template-columns: 1fr; gap: 18px; }
-      .drop-card .card-media { height: 220px; }
+      
+      /* Fixed: Forces 2 columns for New Arrivals on mobile so split images remain side by side */
+      .drops-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
+      .card-media.double-view { height: 180px; }
+      
       .size-section { margin: 0 20px 40px; }
       .size-header { padding: 24px 24px 0; }
       .size-note { padding: 12px 24px 16px; }
@@ -290,6 +296,9 @@
       .swatch { width: 20px; height: 20px; }
       .color-label { width: 100%; margin-bottom: 4px; }
       .selected-color { margin-left: 0; }
+      
+      /* Optional adjustment for extra narrow mobile viewports */
+      .card-media.double-view { height: 140px; }
     }
 
   </style>

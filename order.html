@@ -1,507 +1,427 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Order — Arambh</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Printed Collection — Arambh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#080810; --surface:#0f0f1a; --accent:#ff3c38; --accent2:#ff7b22; --text:#f0f0f0; --muted:#888; --border:rgba(255,255,255,0.06); --gold:#ffb703; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
+    .cursor{position:fixed;width:12px;height:12px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference;}
+    .cursor-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(255,60,56,0.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .15s ease,width .3s,height .3s;}
+    @media(hover:none),(pointer:coarse){body{cursor:auto;}.cursor,.cursor-ring{display:none;}}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;opacity:.5;}
 
-<!-- EmailJS v3 (stable — v4 has a charset bug that breaks sending) -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(8,8,16,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s;}
+    nav.scrolled{padding:12px 40px;}
+    .nav-logo img{height:58px;filter:brightness(1.1);}
+    .nav-links{display:flex;gap:32px;list-style:none;}
+    .nav-links a{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;position:relative;transition:color .3s;}
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s;}
+    .nav-links a:hover{color:var(--text);}.nav-links a:hover::after,.nav-links a.active::after{width:100%;}.nav-links a.active{color:var(--accent);}
+    .nav-cta{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:white;background:var(--accent);padding:10px 24px;border-radius:100px;text-decoration:none;transition:background .3s,transform .2s;box-shadow:0 4px 20px rgba(255,60,56,.3);}
+    .nav-cta:hover{background:#ff1f1a;transform:scale(1.04);}
+    .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:200;}
+    .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s;}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .hamburger.open span:nth-child(2){opacity:0;}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+    .mobile-menu{position:fixed;top:0;right:0;height:100vh;width:min(78vw,320px);background:#0c0c16;border-left:1px solid var(--border);z-index:150;padding:100px 32px 40px;transform:translateX(100%);transition:transform .4s ease;display:flex;flex-direction:column;gap:26px;}
+    .mobile-menu.open{transform:translateX(0);}
+    .mobile-menu a{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;}
+    .mobile-menu a.active{color:var(--accent);}
+    .menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:140;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .menu-backdrop.open{opacity:1;pointer-events:auto;}
 
-<!-- Formspree Ajax SDK -->
-<script>
-  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
-  formspree('initForm', { formElement: '#orderForm', formId: 'xqejgjzw' });
-</script>
-<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+    /* PAGE HEADER */
+    .page-header{min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:140px 40px 80px;text-align:center;position:relative;overflow:hidden;}
+    .page-header::before{content:'';position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(255,60,56,.12) 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);animation:pulse 6s ease-in-out infinite;}
+    .page-header::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,60,56,.07) 1px,transparent 1px);background-size:40px 40px;animation:dots-drift 20s linear infinite;pointer-events:none;}
+    @keyframes dots-drift{0%{background-position:0 0}100%{background-position:40px 40px}}
+    @keyframes pulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.12)}}
+    .breadcrumb{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px;z-index:1;position:relative;}
+    .breadcrumb a{color:var(--accent);text-decoration:none;}.breadcrumb span{opacity:.4;}
+    .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,10vw,130px);line-height:.9;letter-spacing:2px;animation:fade-up .8s ease both;position:relative;z-index:1;}
+    .page-header h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .page-header p{color:var(--muted);font-size:17px;font-weight:300;margin-top:16px;letter-spacing:1px;animation:fade-up .8s .1s ease both;position:relative;z-index:1;}
+    .header-meta{display:flex;gap:30px;margin-top:30px;flex-wrap:wrap;justify-content:center;animation:fade-up .8s .2s ease both;position:relative;z-index:1;}
+    .meta-chip{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);padding:8px 18px;border-radius:100px;color:var(--muted);}
+    .meta-chip.hot{border-color:rgba(255,60,56,.3);color:var(--accent);background:rgba(255,60,56,.07);}
 
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* TICKER */
+    .ticker-wrap{background:var(--accent);padding:12px 0;overflow:hidden;white-space:nowrap;}
+    .ticker{display:inline-flex;animation:ticker 24s linear infinite;}
+    .ticker span{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;padding:0 36px;color:white;}
+    .ticker span::after{content:'✦';margin-left:36px;opacity:.6;}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface2: #1a1a1a;
-    --border: #2a2a2a;
-    --accent: #e8ff47;
-    --text: #f0f0f0;
-    --muted: #666;
-    --radius: 12px;
-    --error: #ff4d4d;
-    --success: #47ffb2;
-  }
+    /* SECTION LABELS */
+    .products-section{padding:100px 40px;max-width:1280px;margin:auto;}
+    .section-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:14px;}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px);letter-spacing:2px;margin-bottom:50px;}
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 16px;
-    background-image:
-      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(232,255,71,0.06) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 30% at 10% 90%, rgba(232,255,71,0.03) 0%, transparent 60%);
-  }
+    /* PRODUCT CARD */
+    .product-card{background:var(--surface);border-radius:20px;overflow:hidden;border:1px solid var(--border);transition:transform .4s ease,box-shadow .4s ease;position:relative;}
+    .product-card:hover{transform:translateY(-8px);box-shadow:0 40px 70px rgba(0,0,0,.7);}
+    .card-media{position:relative;overflow:hidden;background:#0a0a14;}
+    .card-media video,.card-media img{width:100%;display:block;transition:transform .6s ease;}
+    .card-media video{height:340px;object-fit:cover;}
+    .card-media img{height:300px;object-fit:cover;}
+    .product-card:hover .card-media video,.product-card:hover .card-media img{transform:scale(1.05);}
+    .card-media::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,16,.88) 0%,transparent 55%);pointer-events:none;}
+    .card-overlay-title{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:20px 22px 0;}
+    .card-overlay-title h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:1;}
+    .card-badge{position:absolute;top:14px;right:14px;z-index:3;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:var(--accent);color:white;padding:5px 12px;border-radius:100px;}
+    .card-badge.video-badge{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(6px);}
+    .card-badge.video-badge::before{content:'▶ ';font-size:8px;}
+    .card-body{padding:14px 22px 24px;}
+    .card-meta{display:flex;align-items:center;justify-content:space-between;}
+    .price{font-family:'Bebas Neue',sans-serif;font-size:28px;color:white;letter-spacing:1px;}
+    .type-tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:100px;}
 
-  .card {
-    width: 100%;
-    max-width: 480px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 40px 36px;
-    animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
+    /* SWATCHES */
+    .color-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;}
+    .color-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-right:2px;white-space:nowrap;}
+    .swatches{display:flex;gap:7px;flex-wrap:wrap;}
+    .swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;outline:2px solid transparent;transition:transform .2s,outline-color .2s;position:relative;}
+    .swatch:hover{transform:scale(1.2);}
+    .swatch.active{outline-color:var(--accent);outline-offset:2px;}
+    .swatch[title]:hover::after{content:attr(title);position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(15,15,26,.95);border:1px solid var(--border);color:var(--text);font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;white-space:nowrap;padding:4px 10px;border-radius:6px;pointer-events:none;z-index:10;}
+    .selected-color{font-family:'Syne',sans-serif;font-size:11px;color:var(--text);margin-left:auto;font-weight:600;letter-spacing:1px;}
 
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+    /* BUY NOW — works for both card types */
+    .buy-now-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:13px 20px;background:var(--accent);color:white;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:100px;cursor:pointer;text-decoration:none;transition:background .3s,transform .2s,box-shadow .3s;box-shadow:0 8px 24px rgba(255,60,56,.25);}
+    .buy-now-btn:hover{background:#ff1f1a;transform:scale(1.02);box-shadow:0 14px 36px rgba(255,60,56,.4);}
 
-  .brand { display: flex; align-items: baseline; gap: 10px; margin-bottom: 32px; }
-  .brand-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.4rem;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .brand-sub {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    padding-bottom: 4px;
-  }
+    /* NEW ARRIVALS */
+    .drops-section{padding:20px 40px 100px;max-width:1280px;margin:auto;}
+    .drops-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;flex-wrap:wrap;gap:20px;}
+    .drops-countdown{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);border:1px solid rgba(255,60,56,.3);background:rgba(255,60,56,.07);padding:10px 20px;border-radius:100px;display:flex;align-items:center;gap:8px;}
+    .drops-countdown::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 1.4s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .drops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;}
 
-  .section-label {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.25em;
-    color: var(--muted);
-    margin: 24px 0 10px;
-  }
+    /* DROP CARD */
+    .drop-card{background:linear-gradient(160deg,var(--surface),#14141e);border:1px solid rgba(255,60,56,.18);border-radius:20px;overflow:hidden;position:relative;transition:transform .4s ease,box-shadow .4s ease,border-color .3s;}
+    .drop-card:hover{transform:translateY(-8px);box-shadow:0 40px 70px rgba(0,0,0,.7);border-color:rgba(255,60,56,.4);}
 
-  .field-group { display: flex; flex-direction: column; gap: 10px; }
-  .row { display: flex; gap: 10px; }
-  .row .field { flex: 1; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
+    /* DOUBLE VIEW — side by side front & back */
+    .card-media.double-view{display:flex;flex-direction:row;height:280px;gap:2px;position:relative;}
+    .card-media.double-view img{width:calc(50% - 1px);height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
+    .drop-card:hover .card-media.double-view img{transform:scale(1.04);}
 
-  label {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-  }
+    .view-labels{position:absolute;top:10px;left:10px;display:flex;gap:6px;z-index:3;}
+    .view-label{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:4px 10px;border-radius:100px;}
+    .new-badge{position:absolute;top:10px;right:10px;z-index:4;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;padding:5px 12px;border-radius:100px;}
 
-  input, select, textarea {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.93rem;
-    font-weight: 400;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
-  }
+    .drop-card .card-body{padding:18px 22px 24px;}
+    .drop-card .card-body h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:4px;}
+    .drop-desc{color:var(--muted);font-size:12px;letter-spacing:.5px;margin-bottom:14px;}
+    .drop-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
+    .drop-price{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);letter-spacing:1px;}
+    .front-back-tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);border:1px solid rgba(255,60,56,.3);padding:5px 11px;border-radius:100px;}
 
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(232,255,71,0.1);
-  }
+    /* CARE */
+    .care-section{max-width:720px;margin:0 auto 60px;padding:0 20px;}
+    .care-card{background:rgba(255,123,34,.06);border:1px solid rgba(255,123,34,.25);border-radius:18px;padding:26px 30px;display:flex;gap:18px;align-items:flex-start;}
+    .care-icon{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:rgba(255,123,34,.15);display:flex;align-items:center;justify-content:center;font-size:20px;}
+    .care-text h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;}
+    .care-text p{font-size:14px;color:var(--text);line-height:1.7;opacity:.9;}
+    .care-text p strong{color:var(--accent2);}
 
-  input[aria-invalid="true"],
-  select[aria-invalid="true"],
-  textarea[aria-invalid="true"] {
-    border-color: var(--error);
-    box-shadow: 0 0 0 3px rgba(255,77,77,0.1);
-  }
+    /* SIZE CHART */
+    .size-section{max-width:720px;margin:0 auto 60px;background:var(--surface);border:1px solid var(--border);border-radius:24px;overflow:hidden;}
+    .size-header{padding:30px 36px 0;display:flex;align-items:center;gap:14px;}
+    .size-header h3{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;}
+    .size-note{padding:14px 36px 20px;font-size:13px;color:var(--muted);line-height:1.6;}
+    .size-section img{width:100%;display:block;}
+    .size-warning{padding:20px 36px;display:flex;align-items:center;gap:12px;background:rgba(255,60,56,.06);border-top:1px solid var(--border);font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);}
 
-  input::placeholder, textarea::placeholder { color: #3d3d3d; }
+    /* CTA */
+    .order-section{text-align:center;padding:0 20px 120px;}
+    .order-section p{color:var(--muted);font-size:15px;margin-bottom:30px;}
+    .order-btn{display:inline-flex;align-items:center;gap:14px;padding:18px 50px;background:var(--accent);color:white;text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border-radius:100px;transition:background .3s,transform .2s;box-shadow:0 10px 40px rgba(255,60,56,.35);}
+    .order-btn:hover{background:#ff1f1a;transform:scale(1.04);}
+    .whatsapp-btn{display:inline-flex;align-items:center;gap:14px;padding:18px 50px;background:transparent;color:white;text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border-radius:100px;border:1px solid rgba(255,255,255,.15);transition:border-color .3s,background .3s,transform .2s;margin-left:16px;}
+    .whatsapp-btn:hover{border-color:#25d366;background:rgba(37,211,102,.08);transform:scale(1.04);}
 
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 38px;
-    cursor: pointer;
-  }
+    footer{background:#04040a;border-top:1px solid var(--border);padding:40px;text-align:center;}
+    footer p{color:var(--muted);font-size:13px;}
+    footer a{color:var(--accent);text-decoration:none;}
 
-  select option { background: #1a1a1a; }
-  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+    .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease;}
+    .reveal.active{opacity:1;transform:translateY(0);}
+    .reveal-delay-1{transition-delay:.08s;}.reveal-delay-2{transition-delay:.16s;}.reveal-delay-3{transition-delay:.24s;}.reveal-delay-4{transition-delay:.32s;}
+    @keyframes fade-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
-  .field-error, [data-fs-error] {
-    font-size: 0.72rem;
-    color: var(--error);
-    min-height: 1em;
-  }
-
-  .banner {
-    padding: 14px 16px;
-    border-radius: var(--radius);
-    font-size: 0.85rem;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    animation: fadeIn 0.3s ease;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-
-  .banner-error {
-    background: rgba(255,77,77,0.08);
-    border: 1px solid rgba(255,77,77,0.25);
-    color: var(--error);
-  }
-
-  .submit-btn {
-    margin-top: 28px;
-    width: 100%;
-    padding: 16px;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: 50px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-
-  .submit-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(232,255,71,0.25);
-  }
-  .submit-btn:active:not(:disabled) { transform: translateY(0); }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  .divider { height: 1px; background: var(--border); margin: 28px 0 0; }
-
-  /* ── Payment Panel ── */
-  #paymentPanel { display: none; animation: fadeIn 0.4s ease; }
-
-  .pay-header { text-align: center; margin-bottom: 24px; }
-  .pay-header .check {
-    width: 52px; height: 52px;
-    background: rgba(71,255,178,0.1);
-    border: 1px solid rgba(71,255,178,0.3);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem;
-    margin: 0 auto 14px;
-  }
-  .pay-header h3 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-  .pay-header p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-
-  .steps { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
-  .step {
-    display: flex; align-items: flex-start; gap: 14px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px;
-  }
-  .step-num {
-    width: 24px; height: 24px;
-    background: var(--accent); color: #000;
-    border-radius: 50%; font-size: 0.72rem; font-weight: 600;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-  }
-  .step-body { flex: 1; }
-  .step-body strong {
-    display: block; font-size: 0.82rem; font-weight: 500;
-    color: var(--text); margin-bottom: 3px;
-    text-transform: uppercase; letter-spacing: 0.08em;
-  }
-  .step-body span { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
-
-  .upi-box {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 12px 14px; margin: 12px 0; gap: 10px;
-  }
-  .upi-id { font-size: 0.9rem; font-weight: 500; color: var(--accent); letter-spacing: 0.03em; word-break: break-all; }
-  .copy-btn {
-    background: var(--border); border: none; color: var(--text);
-    padding: 6px 12px; border-radius: 6px; font-size: 0.72rem;
-    font-family: 'DM Sans', sans-serif; cursor: pointer;
-    transition: background 0.2s; white-space: nowrap; flex-shrink: 0;
-  }
-  .copy-btn:hover { background: #3a3a3a; }
-  .copy-btn.copied { background: rgba(71,255,178,0.15); color: var(--success); }
-
-  .pay-apps { display: flex; gap: 10px; margin: 16px 0; }
-  .pay-app-btn {
-    flex: 1; padding: 12px 8px; border-radius: var(--radius);
-    border: 1px solid var(--border); background: var(--surface2);
-    color: var(--text); font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem; cursor: pointer; text-align: center;
-    text-decoration: none; transition: border-color 0.2s, background 0.2s;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-  }
-  .pay-app-btn:hover { border-color: var(--accent); background: rgba(232,255,71,0.05); }
-  .pay-app-btn .app-icon { font-size: 1.3rem; }
-
-  .amount-note { text-align: center; font-size: 0.75rem; color: var(--muted); margin-top: 4px; line-height: 1.5; }
-
-  .whatsapp-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; margin-top: 16px; padding: 14px;
-    background: #25d366; color: #fff; border: none; border-radius: 50px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.12em;
-    cursor: pointer; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.25); }
-</style>
+    @media(max-width:900px){.nav-links{display:none;}.hamburger{display:flex;}.nav-logo img{height:48px;}}
+    @media(max-width:768px){
+      nav{padding:14px 20px;}.nav-cta{padding:9px 16px;font-size:11px;}
+      .page-header{padding:100px 20px 50px;min-height:auto;}.header-meta{gap:12px;}
+      .products-section{padding:60px 20px;}.section-title{margin-bottom:32px;}
+      .products-grid{grid-template-columns:1fr;gap:18px;}
+      .card-media video{height:260px;}.card-media img{height:240px;}.card-media.double-view{height:200px;}
+      .drops-section{padding:0 20px 70px;}.drops-grid{grid-template-columns:1fr;gap:18px;}
+      .size-section{margin:0 20px 40px;}.size-header{padding:24px 24px 0;}.size-note{padding:12px 24px 16px;}.size-warning{padding:16px 24px;font-size:11px;}
+      .care-section{margin:0 20px 40px;padding:0;}.care-card{flex-direction:column;padding:20px;}
+      .order-section{padding:0 20px 80px;}.order-btn,.whatsapp-btn{width:100%;justify-content:center;padding:16px 20px;}.whatsapp-btn{margin-left:0;margin-top:12px;}
+      footer{padding:30px 20px;}
+    }
+    @media(max-width:420px){.page-header h1{font-size:clamp(48px,14vw,72px);}.swatch{width:20px;height:20px;}}
+  </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="brand">
-    <span class="brand-name">Arambh</span>
-    <span class="brand-sub">Place an Order</span>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
+  <ul class="nav-links">
+    <li><a href="polo.html">Polos</a></li>
+    <li><a href="oversized.html">Oversized</a></li>
+    <li><a href="printed.html" class="active">Printed</a></li>
+    <li><a href="hoodie.html">Hoodies</a></li>
+  </ul>
+  <a href="order.html?type=Printed+T-Shirt" class="nav-cta">📞 Order Now</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="menu-backdrop" id="menuBackdrop"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="polo.html">Polos</a>
+  <a href="oversized.html">Oversized</a>
+  <a href="printed.html" class="active">Printed</a>
+  <a href="hoodie.html">Hoodies</a>
+  <a href="order.html?type=Printed+T-Shirt">📞 Order Now</a>
+</div>
+
+<header class="page-header">
+  <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
+  <h1>PRINTED<br><span>COLLECTION</span></h1>
+  <p>Express. Bold. Street.</p>
+  <div class="header-meta">
+    <span class="meta-chip hot">Limited Runs</span>
+    <span class="meta-chip">16 Designs</span>
   </div>
+</header>
 
-  <!-- Formspree error banner -->
-  <div data-fs-error class="banner banner-error"></div>
-
-  <!-- ORDER FORM -->
-  <form id="orderForm" novalidate>
-
-    <p class="section-label">Your Details</p>
-    <div class="field-group">
-      <div class="field">
-        <label for="fname">Full Name</label>
-        <input type="text" id="fname" name="name" placeholder="Rahul Sharma" required data-fs-field>
-        <span data-fs-error="name" class="field-error"></span>
-      </div>
-      <div class="row">
-        <div class="field">
-          <label for="phone">Phone</label>
-          <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required data-fs-field>
-          <span data-fs-error="phone" class="field-error"></span>
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="you@email.com" required data-fs-field>
-          <span data-fs-error="email" class="field-error"></span>
-        </div>
-      </div>
-    </div>
-
-    <p class="section-label">Product</p>
-    <div class="field-group">
-      <div class="row">
-        <div class="field">
-          <label for="product">Type</label>
-          <select id="product" name="product" data-fs-field>
-            <option value="Printed T-Shirt">Printed T-Shirt</option>
-            <option value="Oversized T-Shirt">Oversized T-Shirt</option>
-            <option value="Polo T-Shirt">Polo T-Shirt</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="size">Size</label>
-          <select id="size" name="size" data-fs-field>
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-            <option value="XXL">XXL</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="design">Design Name / Reference</label>
-        <input type="text" id="design" name="design" placeholder="e.g. Sunset Drop, Custom #3" data-fs-field>
-      </div>
-    </div>
-
-    <p class="section-label">Delivery</p>
-    <div class="field-group">
-      <div class="field">
-        <label for="address">Full Delivery Address</label>
-        <textarea id="address" name="address" placeholder="House / Flat No., Street, City, State, PIN" required data-fs-field></textarea>
-        <span data-fs-error="address" class="field-error"></span>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <button type="submit" class="submit-btn" data-fs-submit-btn>
-      Confirm Order
-    </button>
-
-  </form>
-
-  <!-- PAYMENT PANEL -->
-  <div id="paymentPanel">
-    <div class="pay-header">
-      <div class="check">✓</div>
-      <h3>Order Confirmed!</h3>
-      <p>Your order has been received. Complete payment via UPI to confirm dispatch.</p>
-    </div>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-body">
-          <strong>Copy UPI ID or open your app</strong>
-          <span>Use any UPI app — GPay, PhonePe, Paytm, or your bank app.</span>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-body">
-          <strong>Enter the amount</strong>
-          <span>We'll confirm the exact amount via email/WhatsApp. Pay only after confirmation.</span>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-body">
-          <strong>Send payment screenshot</strong>
-          <span>WhatsApp us the screenshot so we can confirm and dispatch your order.</span>
-        </div>
-      </div>
-    </div>
-
-    <p class="section-label" style="margin-top:0">Pay via UPI</p>
-    <div class="upi-box">
-      <span class="upi-id">maheshgoudar076@pingpay</span>
-      <button class="copy-btn" id="copyBtn" onclick="copyUPI()">Copy</button>
-    </div>
-
-    <div class="pay-apps">
-      <a class="pay-app-btn" id="gpayLink" href="#" target="_blank" rel="noopener">
-        <span class="app-icon">💸</span>Google Pay
-      </a>
-      <a class="pay-app-btn" id="phonepeLink" href="#" target="_blank" rel="noopener">
-        <span class="app-icon">📲</span>PhonePe
-      </a>
-      <a class="pay-app-btn" id="paytmLink" href="#" target="_blank" rel="noopener">
-        <span class="app-icon">🔵</span>Paytm
-      </a>
-    </div>
-
-    <p class="amount-note">
-      ⚠️ Pay only after you receive the invoice from us.<br>
-      Amount will be confirmed on WhatsApp / email.
-    </p>
-
-    <a class="whatsapp-btn" id="whatsappBtn" href="#" target="_blank" rel="noopener">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      Send Payment Screenshot
-    </a>
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>Bold Graphics</span><span>Original Prints</span><span>Arambh</span><span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
+    <span>Bold Graphics</span><span>Original Prints</span><span>Arambh</span><span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
   </div>
 </div>
 
+<!-- EXISTING PRODUCTS -->
+<section class="products-section">
+  <span class="section-label reveal">The Drops</span>
+  <h2 class="section-title reveal">GRAPHICS THAT SPEAK</h2>
+  <div class="products-grid">
+
+    <div class="product-card reveal">
+      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed1.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Stay Wild</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div><div class="swatch" style="background:#6b6b6b;border-color:#888;" title="Grey" onclick="selectColor(this)"></div></div><span class="selected-color">Black</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'Stay Wild','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-1">
+      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed2.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Self Love Club</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#c0a890;border-color:#a08060;" title="Beige" onclick="selectColor(this)"></div><div class="swatch" style="background:#d4a0b0;border-color:#c08090;" title="Blush Pink" onclick="selectColor(this)"></div></div><span class="selected-color">White</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'Self Love Club','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-2">
+      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed3.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>The Good Life</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1e3a2f;border-color:#2d5e46;" title="Forest Green" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div></div><span class="selected-color">Forest Green</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'The Good Life','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-3">
+      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed4.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Porsche Car</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#1b2a4a;border-color:#2a4070;" title="Navy Blue" onclick="selectColor(this)"></div><div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div></div><span class="selected-color">Black</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'Porsche Car','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-4">
+      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed5.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Hello</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#6b6b6b;border-color:#888;" title="Grey" onclick="selectColor(this)"></div><div class="swatch" style="background:#c0a890;border-color:#a08060;" title="Beige" onclick="selectColor(this)"></div></div><span class="selected-color">White</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'Hello','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product-card reveal">
+      <div class="card-media"><span class="card-badge">New</span><img src="Kufu_white.jpeg" alt="Kung Fu Panda White"><div class="card-overlay-title"><h3>Kung Fu Panda White</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div></div><span class="selected-color">White</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'Kung Fu Panda White','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-1">
+      <div class="card-media"><span class="card-badge">New</span><img src="Kufu_black.jpeg" alt="Kung Fu Panda Black"><div class="card-overlay-title"><h3>Kung Fu Panda Black</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div></div><span class="selected-color">Black</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'Kung Fu Panda Black','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+    <div class="product-card reveal reveal-delay-2">
+      <div class="card-media"><span class="card-badge" style="background:var(--accent2);">Hot</span><img src="20260426_183356_0002.png" alt="Mountain Lovers Maroon"><div class="card-overlay-title"><h3>Mountain Lovers</h3></div></div>
+      <div class="card-body">
+        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
+        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#6b1a2a;border-color:#9b2a3a;" title="Maroon" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#1b2a4a;border-color:#2a4070;" title="Navy Blue" onclick="selectColor(this)"></div></div><span class="selected-color">Maroon</span></div>
+        <button class="buy-now-btn" onclick="buyNow(this,'Mountain Lovers','Printed T-Shirt','349')">🛍️ Buy Now</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NEW ARRIVALS — Front & Back prints -->
+<section class="drops-section">
+  <div class="drops-header">
+    <div><span class="section-label reveal">🔥 Just Landed</span><h2 class="section-title reveal">NEW ARRIVALS</h2></div>
+    <span class="drops-countdown reveal">Front &amp; Back Prints · ₹549</span>
+  </div>
+  <div class="drops-grid">
+
+    <div class="drop-card reveal">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="luffy_b_f.png" alt="Luffy Black Front"><img src="luffy_b_b.png" alt="Luffy Black Back"></div>
+      <div class="card-body"><h3>Luffy Black</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Luffy Black','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+    <div class="drop-card reveal reveal-delay-1">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="luffy_r_f.png" alt="Luffy Red Front"><img src="luffy_r_b.png" alt="Luffy Red Back"></div>
+      <div class="card-body"><h3>Luffy Red</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Luffy Red','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+    <div class="drop-card reveal reveal-delay-2">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="luffy_w_f.png" alt="Luffy White Front"><img src="luffy_w_b.png" alt="Luffy White Back"></div>
+      <div class="card-body"><h3>Luffy White</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Luffy White','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+    <div class="drop-card reveal">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Justice_r_f.png" alt="Justice Red Front"><img src="Justice_r_b.png" alt="Justice Red Back"></div>
+      <div class="card-body"><h3>Justice Red</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Justice Red','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+    <div class="drop-card reveal reveal-delay-1">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Justice_w_f.png" alt="Justice White Front"><img src="Justice_w_b.png" alt="Justice White Back"></div>
+      <div class="card-body"><h3>Justice White</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Justice White','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+    <div class="drop-card reveal reveal-delay-2">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Porsche_black_front.png" alt="Porsche Black Front"><img src="Porsche_black_back.png" alt="Porsche Black Back"></div>
+      <div class="card-body"><h3>Porsche Black</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Porsche Black','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+    <div class="drop-card reveal">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Porsche_red_front.png" alt="Porsche Red Front"><img src="Porsche_red_back.png" alt="Porsche Red Back"></div>
+      <div class="card-body"><h3>Porsche Red</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Porsche Red','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+    <div class="drop-card reveal reveal-delay-1">
+      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Porsche_white_front.png" alt="Porsche White Front"><img src="Porsche_white_back.png" alt="Porsche White Back"></div>
+      <div class="card-body"><h3>Porsche White</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Porsche White','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SIZE CHART -->
+<div class="size-section reveal">
+  <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>
+  <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit before placing your order.</p>
+  <img src="Size chat.png" alt="Size Chart">
+  <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering</div>
+</div>
+
+<!-- CARE DISCLAIMER -->
+<div class="care-section reveal">
+  <div class="care-card">
+    <div class="care-icon">🧺</div>
+    <div class="care-text">
+      <h4>Care Instructions</h4>
+      <p>These tees are <strong>DTF (Direct-to-Film) printed</strong>. For the design to last wash after wash, always turn the t-shirt <strong>inside out before washing</strong>. Avoid direct ironing on the print and skip the dryer when possible — air dry inside out for best results.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER CTA -->
+<div class="order-section reveal">
+  <p>Graphics that speak before you do — grab yours while stocks last.</p>
+  <a href="order.html?type=Printed+T-Shirt" class="order-btn">🛒 Place Order</a>
+  <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+</div>
+
+<footer>
+  <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+</footer>
+
 <script>
-  const UPI_ID       = "maheshgoudar076@pingpay";
-  const WHATSAPP_NUM = "919637748622"; // 91 + your 10-digit number
+  // Mobile menu
+  const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobileMenu'),menuBackdrop=document.getElementById('menuBackdrop');
+  function closeMenu(){hamburger.classList.remove('open');mobileMenu.classList.remove('open');menuBackdrop.classList.remove('open');}
+  hamburger.addEventListener('click',()=>{const o=mobileMenu.classList.toggle('open');hamburger.classList.toggle('open',o);menuBackdrop.classList.toggle('open',o);});
+  menuBackdrop.addEventListener('click',closeMenu);
+  mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
 
-  const EMAILJS_PUBLIC_KEY  = "ZXVO8aPvZTkk1NLI6";
-  const EMAILJS_SERVICE_ID  = "service_2xfx4td";
-  const EMAILJS_TEMPLATE_ID = "template_j3gxuwf";
-
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-
-  function upiLink(app) {
-    const base = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=Arambh&cu=INR`;
-    if (app === "gpay")    return base.replace("upi://", "tez://upi/");
-    if (app === "phonepe") return base.replace("upi://", "phonepe://pay?");
-    if (app === "paytm")   return base.replace("upi://", "paytmmp://upi/");
-    return base;
+  // Color swatch
+  function selectColor(el){
+    el.closest('.color-row').querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+    const label=el.closest('.color-row').querySelector('.selected-color');
+    if(label)label.textContent=el.getAttribute('title');
   }
 
-  function copyUPI() {
-    navigator.clipboard.writeText(UPI_ID).then(() => {
-      const btn = document.getElementById("copyBtn");
-      btn.textContent = "Copied!";
-      btn.classList.add("copied");
-      setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
-    });
+  // Buy Now — reads selected color if present (product-card), falls back to empty (drop-card color is in name)
+  function buyNow(btn,productName,typeName,price){
+    const card=btn.closest('.product-card,.drop-card');
+    const colorEl=card?card.querySelector('.selected-color'):null;
+    const color=colorEl?colorEl.textContent.trim():'';
+    const params=new URLSearchParams({product:productName,type:typeName,color:color,price:price});
+    window.location.href='order.html?'+params.toString();
   }
 
-  document.getElementById("orderForm").addEventListener("formspree:success", function () {
-    // ── CRITICAL: snapshot values HERE, before Formspree resets the form ──
-    // Reading els["x"].value after the event ends returns "" because
-    // Formspree calls form.reset() immediately after firing this event.
-    const els = this.elements;
-    const params = {
-      name:     els["name"].value.trim(),
-      email:    els["email"].value.trim(),
-      phone:    els["phone"].value.trim(),
-      product:  els["product"].value,
-      design:   els["design"].value.trim() || "—",
-      size:     els["size"].value,
-      address:  els["address"].value.trim(),
-    };
-
-    console.log("Sending EmailJS:", JSON.stringify(params));
-
-    // 1. Send confirmation email via EmailJS
-    // Using raw XHR with explicit charset header to avoid the v4 charset bug
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://api.emailjs.com/api/v1.0/email/send");
-    xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        console.log("✅ Email sent successfully to:", params.email);
-      } else {
-        console.error("❌ EmailJS XHR failed:", xhr.status, xhr.responseText);
-      }
-    };
-    xhr.onerror = () => console.error("❌ EmailJS network error");
-    xhr.send(JSON.stringify({
-      service_id:      EMAILJS_SERVICE_ID,
-      template_id:     EMAILJS_TEMPLATE_ID,
-      user_id:         EMAILJS_PUBLIC_KEY,
-      template_params: params
-    }));
-
-    // 2. Set UPI deep-links
-    document.getElementById("gpayLink").href    = upiLink("gpay");
-    document.getElementById("phonepeLink").href = upiLink("phonepe");
-    document.getElementById("paytmLink").href   = upiLink("paytm");
-
-    // 3. Build pre-filled WhatsApp message
-    const msg = encodeURIComponent(
-      `Hi Arambh! 👋\n\nI've placed an order and completed UPI payment.\n\n` +
-      `📦 *Order Details*\n` +
-      `Name: ${params.name}\n` +
-      `Phone: ${params.phone}\n` +
-      `Product: ${params.product}\n` +
-      `Design: ${params.design}\n` +
-      `Size: ${params.size}\n\n` +
-      `📍 *Delivery Address*\n${params.address}\n\n` +
-      `Please find the payment screenshot attached.`
-    );
-    document.getElementById("whatsappBtn").href = `https://wa.me/${WHATSAPP_NUM}?text=${msg}`;
-
-    // 4. Swap form → payment panel
-    document.getElementById("orderForm").style.display = "none";
-    document.getElementById("paymentPanel").style.display = "block";
+  // Cursor
+  const cursor=document.getElementById('cursor'),cursorRing=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+  (function animR(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursorRing.style.left=rx+'px';cursorRing.style.top=ry+'px';requestAnimationFrame(animR);})();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cursor.style.width='20px';cursor.style.height='20px';cursorRing.style.width='60px';cursorRing.style.height='60px';});
+    el.addEventListener('mouseleave',()=>{cursor.style.width='12px';cursor.style.height='12px';cursorRing.style.width='40px';cursorRing.style.height='40px';});
   });
-</script>
 
+  // Scroll reveal
+  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active');}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60));
+</script>
 </body>
 </html>

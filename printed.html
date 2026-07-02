@@ -33,6 +33,17 @@
 
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: 0.5; }
 
+/* SPLIT VIEW FOR FRONT & BACK DESIGNS */
+.card-media.double-view {
+  flex-direction: row;
+  gap: 2px; /* Creates a sleek line between front and back */
+}
+.card-media.double-view img {
+  width: calc(50% - 1px);
+  height: 100%;
+  object-fit: cover;
+}
+
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; background: rgba(8,8,16,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: padding 0.3s; }
     nav.scrolled { padding: 12px 40px; }
     .nav-logo img { height: 44px; }
@@ -501,23 +512,118 @@
   </section>
 
   
-<section class="drops-section">
-<div class="drops-header"><div class="drops-header-left">
-<span class="section-label">🔥 Just Landed</span>
-<h2 class="section-title">NEW ARRIVALS</h2></div></div>
-<div class="drops-grid">
-<div class="drop-card"><div class="card-media"><img src="luffy_b_f.png"></div><div class="card-media"><img src="luffy_b_b.png"></div ><div class="card-body"><h3>Luffy Collection</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
-<div class="drop-card"><div class="card-media"><img src="luffy_r_f.png"></div>< div class="card-media"><img src="luffy_r_b.png"></div><div class="card-body"><h3>Luffy Collection</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
-<div class="drop-card"><div class="card-media"><img src="luffy_w_f.png"></div>< div class="card-media"><img src="luffy_w_b.png"></div><div class="card-body"><h3>Luffy Collection</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
+<section class="drops-section">  
+  <div class="drops-header">
+    <div class="drops-header-left">  
+      <span class="section-label">🔥 Just Landed</span>  
+      <h2 class="section-title">NEW ARRIVALS</h2>
+    </div>
+  </div>  
+  
+  <div class="drops-grid">  
+    
+    <!-- Luffy Collection -->
+    <div class="drop-card reveal">
+      <div class="card-media double-view">
+        <img src="luffy_b_f.png" alt="Luffy Black Front">
+        <img src="luffy_b_b.png" alt="Luffy Black Back">
+      </div>
+      <div class="card-body">
+        <h3>Luffy Black</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
 
+    <div class="drop-card reveal reveal-delay-1">
+      <div class="card-media double-view">
+        <img src="luffy_r_f.png" alt="Luffy Red Front">
+        <img src="luffy_r_b.png" alt="Luffy Red Back">
+      </div>
+      <div class="card-body">
+        <h3>Luffy Red</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
 
-<div class="drop-card"><div class="card-media"><img src="Justice_r_f.png"></div>< div class="card-media"><img src="Justice_r_b.png"></div><div class="card-body"><h3>Justice</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
-<div class="drop-card"><div class="card-media"><img src="Justice_w_f.png"></div>< div class="card-media"><img src="Justice_w_b.png"></div><div class="card-body"><h3>Justice</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
-<div class="drop-card"><div class="card-media"><img src="Porsche_black_front.png"></div>< div class="card-media"><img src="Porsche_black_back.png"></div><div class="card-body"><h3>Porsche Collection</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
-<div class="drop-card"><div class="card-media"><img src="Porsche_red_front.png"></div>< div class="card-media"><img src="Porsche_red_back.png"></div><div class="card-body"><h3>Porsche Collection</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
-<div class="drop-card"><div class="card-media"><img src="Porsche_white_front.png"></div>< div class="card-media"><img src="Porsche_white_back.png"></div><div class="card-body"><h3>Porsche Collection</h3><p>Front & Back Designs Included</p><div class="price">₹549</div></div></div>
+    <div class="drop-card reveal reveal-delay-2">
+      <div class="card-media double-view">
+        <img src="luffy_w_f.png" alt="Luffy White Front">
+        <img src="luffy_w_b.png" alt="Luffy White Back">
+      </div>
+      <div class="card-body">
+        <h3>Luffy White</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
 
-</div></section>
+    <!-- Justice Collection -->
+    <div class="drop-card reveal">
+      <div class="card-media double-view">
+        <img src="Justice_r_f.png" alt="Justice Red Front">
+        <img src="Justice_r_b.png" alt="Justice Red Back">
+      </div>
+      <div class="card-body">
+        <h3>Justice Red</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
+
+    <div class="drop-card reveal reveal-delay-1">
+      <div class="card-media double-view">
+        <img src="Justice_w_f.png" alt="Justice White Front">
+        <img src="Justice_w_b.png" alt="Justice White Back">
+      </div>
+      <div class="card-body">
+        <h3>Justice White</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
+
+    <!-- Porsche Collection -->
+    <div class="drop-card reveal reveal-delay-2">
+      <div class="card-media double-view">
+        <img src="Porsche_black_front.png" alt="Porsche Black Front">
+        <img src="Porsche_black_back.png" alt="Porsche Black Back">
+      </div>
+      <div class="card-body">
+        <h3>Porsche Black</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
+
+    <div class="drop-card reveal">
+      <div class="card-media double-view">
+        <img src="Porsche_red_front.png" alt="Porsche Red Front">
+        <img src="Porsche_red_back.png" alt="Porsche Red Back">
+      </div>
+      <div class="card-body">
+        <h3>Porsche Red</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
+
+    <div class="drop-card reveal reveal-delay-1">
+      <div class="card-media double-view">
+        <img src="Porsche_white_front.png" alt="Porsche White Front">
+        <img src="Porsche_white_back.png" alt="Porsche White Back">
+      </div>
+      <div class="card-body">
+        <h3>Porsche White</h3>
+        <p>Front & Back Designs Included</p>
+        <div class="price">₹549</div>
+      </div>
+    </div>  
+
+  </div>
+</section>
+
 
 <div class="size-section reveal">
     <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>

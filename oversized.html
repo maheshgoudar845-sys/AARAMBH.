@@ -97,23 +97,38 @@
     .products-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
     .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; margin-bottom: 60px; }
 
-    .product-card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative; }
+    .product-card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
     .product-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); }
     .card-media { position: relative; overflow: hidden; background: #0a0a14; }
     .card-media img { width: 100%; height: 300px; object-fit: contain; padding: 20px; display: block; transition: transform 0.6s ease; }
     .product-card:hover .card-media img { transform: scale(1.06); }
-    .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; }
+    .card-badge { position: absolute; top: 14px; right: 14px; z-index: 3; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; }
     .card-badge.gold { background: #c9a84c; }
-    .card-body { padding: 22px 24px 26px; }
+    .card-body { padding: 22px 24px 10px; flex-grow: 1; }
     .card-body h3 { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
     .card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
     .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 1px; }
     .type-tag { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 100px; }
 
+    /* LOOKBOOK SPLIT VIEW FOR MODEL PHOTOS */
+    .card-media.split-lookbook {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,255,255,0.02);
+    }
+    .card-media.split-lookbook img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover !important;
+      padding: 0 !important;
+    }
+
     /* BUY NOW BUTTON */
+    .card-cta-wrap { padding: 0 24px 24px; }
     .buy-now-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; margin-top: 16px; padding: 13px 20px;
+      width: 100%; padding: 13px 20px;
       background: var(--accent); color: white; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       border-radius: 100px; transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
@@ -165,6 +180,7 @@
       .products-section { padding: 60px 20px; }
       .products-grid { grid-template-columns: 1fr; gap: 18px; margin-bottom: 40px; }
       .card-media img { height: 260px; }
+      .card-media.split-lookbook img { height: 260px; }
       .size-section { margin: 0 20px 60px; }
       .size-header { padding: 24px 24px 0; }
       .size-note { padding: 12px 24px 16px; }
@@ -244,6 +260,8 @@
         <div class="card-body">
           <h3>Light Blue</h3>
           <div class="card-meta"><span class="price">₹329</span><span class="type-tag">Oversized</span></div>
+        </div>
+        <div class="card-cta-wrap">
           <a href="order.html?product=Light+Blue+Oversized+Tee&type=Oversized&color=Light+Blue&price=329" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
@@ -255,6 +273,8 @@
         <div class="card-body">
           <h3>Dark Blue</h3>
           <div class="card-meta"><span class="price">₹329</span><span class="type-tag">Oversized</span></div>
+        </div>
+        <div class="card-cta-wrap">
           <a href="order.html?product=Dark+Blue+Oversized+Tee&type=Oversized&color=Dark+Blue&price=329" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
@@ -266,6 +286,8 @@
         <div class="card-body">
           <h3>Beige</h3>
           <div class="card-meta"><span class="price">₹329</span><span class="type-tag">Oversized</span></div>
+        </div>
+        <div class="card-cta-wrap">
           <a href="order.html?product=Beige+Oversized+Tee&type=Oversized&color=Beige&price=329" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
@@ -277,6 +299,8 @@
         <div class="card-body">
           <h3>White</h3>
           <div class="card-meta"><span class="price">₹329</span><span class="type-tag">Oversized</span></div>
+        </div>
+        <div class="card-cta-wrap">
           <a href="order.html?product=White+Oversized+Tee&type=Oversized&color=White&price=329" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
@@ -288,14 +312,31 @@
         <div class="card-body">
           <h3>Black</h3>
           <div class="card-meta"><span class="price">₹329</span><span class="type-tag">Oversized</span></div>
+        </div>
+        <div class="card-cta-wrap">
           <a href="order.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=329" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <!-- New Dedicated White Oversized Lookbook Card -->
+      <div class="product-card reveal">
+        <div class="card-media split-lookbook">
+          <span class="card-badge">Lookbook</span>
+          <img src="oversized_por1.jpg" alt="White Oversized Tee Front View">
+          <img src="oversized_por2.jpg" alt="White Oversized Tee Back View">
+        </div>
+        <div class="card-body">
+          <h3>White (Premium Edition)</h3>
+          <div class="card-meta"><span class="price">₹329</span><span class="type-tag">Oversized</span></div>
+        </div>
+        <div class="card-cta-wrap">
+          <a href="order.html?product=White+Oversized+Tee+Premium&type=Oversized&color=White&price=329" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
     </div>
 
     <!-- HOODIES -->
-    <div id="hoodies"></div>
     <div class="products-label reveal">Hoodies — ₹599 each</div>
     <div class="products-grid">
 
@@ -307,6 +348,8 @@
         <div class="card-body">
           <h3>Beige Hoodie</h3>
           <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
+        </div>
+        <div class="card-cta-wrap">
           <a href="order.html?product=Beige+Hoodie&type=Hoodie&color=Beige&price=599" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
@@ -319,6 +362,8 @@
         <div class="card-body">
           <h3>Black Hoodie</h3>
           <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
+        </div>
+        <div class="card-cta-wrap">
           <a href="order.html?product=Black+Hoodie&type=Hoodie&color=Black&price=599" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>

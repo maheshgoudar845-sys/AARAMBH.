@@ -59,6 +59,12 @@
     }
     body:hover .cursor { opacity: 1; }
 
+    /* Disable custom cursor on touch / no-hover devices */
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
+
     /* GRAIN OVERLAY */
     body::before {
       content: '';
@@ -87,7 +93,7 @@
     nav.scrolled { padding: 12px 40px; }
 
     .nav-logo img {
-      height: 44px;
+      height: 58px;
       filter: brightness(1.1);
     }
 
@@ -133,6 +139,29 @@
       box-shadow: 0 4px 20px rgba(255,60,56,0.3);
     }
     .nav-cta:hover { background: #ff1f1a; transform: scale(1.04); }
+
+    /* HAMBURGER */
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
+    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed; top: 0; right: 0; height: 100vh; width: min(78vw, 320px);
+      background: #0c0c16; border-left: 1px solid var(--border);
+      z-index: 150; padding: 100px 32px 40px;
+      transform: translateX(100%); transition: transform 0.4s ease;
+      display: flex; flex-direction: column; gap: 26px;
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .mobile-menu a.active { color: var(--accent); }
+    .menu-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
     /* HERO */
     .hero {
@@ -313,59 +342,75 @@
     /* COLLECTIONS */
     .collections-section {
       padding: 120px 40px;
-      max-width: 1240px;
+      max-width: 1400px;
       margin: auto;
     }
 
     .collections-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
     }
 
+    /* Each card is a full <a> link — the whole thing is clickable */
     .collection-card {
       position: relative;
       border-radius: 20px;
       overflow: hidden;
+      display: block;
+      text-decoration: none;
+      color: inherit;
       background: var(--surface);
       border: 1px solid var(--border);
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      group: true;
+      cursor: pointer;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
     }
     .collection-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+      border-color: rgba(255,60,56,0.25);
     }
 
-    .collection-card .media-wrap {
-      position: relative;
-      overflow: hidden;
-    }
+    /* Image / video fills the card */
     .collection-card img,
     .collection-card video {
       width: 100%;
-      height: 320px;
+      height: 480px;
       object-fit: cover;
       display: block;
       transition: transform 0.6s ease;
     }
     .collection-card:hover img,
     .collection-card:hover video {
-      transform: scale(1.06);
+      transform: scale(1.07);
     }
 
-    /* Overlay gradient on card */
-    .collection-card .media-wrap::after {
-      content: '';
+    /* Dark gradient over image — stronger at bottom for text legibility */
+    .collection-card .card-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(8,8,16,0.9) 0%, transparent 60%);
+      background: linear-gradient(
+        to top,
+        rgba(4,4,10,0.95) 0%,
+        rgba(4,4,10,0.4) 45%,
+        transparent 75%
+      );
+      transition: background 0.4s ease;
       pointer-events: none;
     }
+    .collection-card:hover .card-overlay {
+      background: linear-gradient(
+        to top,
+        rgba(4,4,10,0.98) 0%,
+        rgba(4,4,10,0.55) 50%,
+        rgba(255,60,56,0.08) 100%
+      );
+    }
 
+    /* Badge top-left */
     .card-tag {
       position: absolute;
-      top: 18px; left: 18px;
+      top: 16px; left: 16px;
       font-family: 'Syne', sans-serif;
       font-size: 10px;
       font-weight: 700;
@@ -373,65 +418,96 @@
       text-transform: uppercase;
       background: var(--accent);
       color: white;
-      padding: 6px 14px;
+      padding: 5px 13px;
       border-radius: 100px;
-      z-index: 2;
+      z-index: 3;
     }
 
-    .card-body {
-      padding: 28px 28px 32px;
-    }
-    .card-body h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 36px;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .card-body p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-
-    .card-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 13px 28px;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 100px;
-      color: white;
-      text-decoration: none;
+    /* "TAP" indicator top-right — appears on hover */
+    .card-tap {
+      position: absolute;
+      top: 16px; right: 16px;
       font-family: 'Syne', sans-serif;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+      color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 5px 13px;
+      border-radius: 100px;
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
-    .card-btn .arrow {
-      width: 22px; height: 22px;
+    .collection-card:hover .card-tap {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Text at bottom of card */
+    .card-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 24px 22px 26px;
+      z-index: 3;
+    }
+    .card-info h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1.5px;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 6px;
+      transition: color 0.3s;
+    }
+    .collection-card:hover .card-info h2 { color: #fff; }
+    .card-info p {
+      color: rgba(255,255,255,0.55);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      transition: color 0.3s;
+    }
+    .collection-card:hover .card-info p { color: rgba(255,255,255,0.75); }
+
+    /* Arrow pill at bottom */
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 8px 16px 8px 14px;
+      border-radius: 100px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .collection-card:hover .card-cta {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .card-cta .cta-arrow {
+      width: 18px; height: 18px;
       background: var(--accent);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      transition: transform 0.3s;
+      font-size: 10px;
+      transition: transform 0.3s, background 0.3s;
     }
-    .card-btn:hover {
-      background: rgba(255,60,56,0.1);
-      border-color: var(--accent);
+    .collection-card:hover .card-cta .cta-arrow {
+      background: white;
+      color: var(--accent);
+      transform: translateX(3px);
     }
-    .card-btn:hover .arrow { transform: translateX(3px); }
 
-    /* FEATURED CARD (large) */
-    .collection-card.featured {
-      grid-column: span 2;
-    }
-    .collection-card.featured img {
-      height: 420px;
-    }
 
     /* WHY US */
     .why-section {
@@ -526,7 +602,7 @@
       padding-bottom: 60px;
       border-bottom: 1px solid var(--border);
     }
-    .footer-brand img { height: 44px; margin-bottom: 20px; }
+    .footer-brand img { height: 62px; margin-bottom: 20px; }
     .footer-brand p {
       color: var(--muted);
       font-size: 14px;
@@ -601,17 +677,20 @@
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
 
     /* RESPONSIVE */
     @media (max-width: 900px) {
       nav { padding: 16px 20px; }
       .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-logo img { height: 48px; }
       .hero { padding: 100px 20px 60px; }
       .hero-strip { grid-template-columns: 1fr; }
       .hero-strip .right-col { display: none; }
       .hero-strip img { height: 300px; }
-      .collections-grid { grid-template-columns: 1fr; }
-      .collection-card.featured { grid-column: span 1; }
+      .collections-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .collection-card img, .collection-card video { height: 340px; }
       .why-grid { grid-template-columns: 1fr 1fr; gap: 0; }
       .why-item { border-bottom: 1px solid var(--border); }
       .stats-grid { grid-template-columns: 1fr; }
@@ -620,6 +699,20 @@
       .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
       .collections-section { padding: 80px 20px; }
     }
+
+    @media (max-width: 540px) {
+      .collections-grid { grid-template-columns: 1fr; }
+      .collection-card img, .collection-card video { height: 300px; }
+      .nav-logo img { height: 40px; }
+      .nav-cta { padding: 8px 16px; font-size: 11px; }
+      .hero-badge { font-size: 10px; padding: 7px 16px; }
+      .hero-sub { font-size: 15px; }
+      .ticker span { font-size: 16px; padding: 0 20px; }
+      .ticker span::after { margin-left: 20px; }
+      .why-grid { grid-template-columns: 1fr; }
+      .stat-num { font-size: 56px; }
+    }
+
   </style>
 </head>
 <body>
@@ -630,7 +723,7 @@
 
   <!-- NAV -->
   <nav id="navbar">
-    <a href="#" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
+    <a href="#" class="nav-logo"><img src="logo.png" alt="Arambh"></a>
     <ul class="nav-links">
       <li><a href="polo.html">Polos</a></li>
       <li><a href="oversized.html">Oversized</a></li>
@@ -638,6 +731,21 @@
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
     <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#" class="active">Home</a>
+    <a href="polo.html">Polos</a>
+    <a href="oversized.html">Oversized</a>
+    <a href="printed.html">Printed</a>
+    <a href="oversized.html#hoodies">Hoodies</a>
+    <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
+    <a href="tel:9637748622">📞 Order Now</a>
+  </div>
   </nav>
 
   <!-- HERO -->
@@ -685,60 +793,64 @@
     <div class="section-header reveal">
       <span class="section-label">Our Collections</span>
       <h2 class="section-title">SHOP THE DROPS</h2>
-      <p class="section-desc">Three distinct collections. One unmistakable identity.</p>
+      <p class="section-desc">Four distinct collections. One unmistakable identity.</p>
     </div>
 
     <div class="collections-grid">
 
-      <!-- POLO — Featured -->
-      <div class="collection-card featured reveal">
-        <div class="media-wrap">
-          <span class="card-tag">Bestseller</span>
-          <img src="polo1.jpg" alt="Polo Collection">
-        </div>
-        <div class="card-body">
+      <!-- POLO -->
+      <a href="polo.html" class="collection-card reveal">
+        <img src="polo1.jpg" alt="Polo Collection">
+        <div class="card-overlay"></div>
+        <span class="card-tag">Bestseller</span>
+        <span class="card-tap">Tap to shop</span>
+        <div class="card-info">
           <h2>Polo Collection</h2>
-          <p>Sharp silhouettes. Premium GSM cotton. Collars that command attention — from the streets to the sidelines.</p>
-          <a href="polo.html" class="card-btn">
-            Explore Polos
-            <span class="arrow">→</span>
-          </a>
+          <p>Sharp silhouettes. Premium GSM cotton. Collars that command.</p>
+          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
         </div>
-      </div>
+      </a>
 
       <!-- OVERSIZED -->
-      <div class="collection-card reveal reveal-delay-1">
-        <div class="media-wrap">
-          <span class="card-tag">New</span>
-          <img src="oversized2.jpg" alt="Oversized Collection">
-        </div>
-        <div class="card-body">
+      <a href="oversized.html" class="collection-card reveal reveal-delay-1">
+        <img src="oversized2.jpg" alt="Oversized Collection">
+        <div class="card-overlay"></div>
+        <span class="card-tag">New Drop</span>
+        <span class="card-tap">Tap to shop</span>
+        <div class="card-info">
           <h2>Oversized</h2>
-          <p>Relaxed fits with bold presence. Drop shoulders, heavy fabric, maximum attitude.</p>
-          <a href="oversized.html" class="card-btn">
-            Explore
-            <span class="arrow">→</span>
-          </a>
+          <p>Relaxed fits with bold presence. Drop shoulders, heavy fabric.</p>
+          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
         </div>
-      </div>
+      </a>
 
       <!-- PRINTED -->
-      <div class="collection-card reveal reveal-delay-2" style="grid-column: span 2;">
-        <div class="media-wrap">
-          <span class="card-tag">Limited</span>
-          <video autoplay muted loop playsinline>
-            <source src="printed2.mp4" type="video/mp4">
-          </video>
+      <a href="printed.html" class="collection-card reveal reveal-delay-2">
+        <video autoplay muted loop playsinline>
+          <source src="printed2.mp4" type="video/mp4">
+        </video>
+        <div class="card-overlay"></div>
+        <span class="card-tag">Limited</span>
+        <span class="card-tap">Tap to shop</span>
+        <div class="card-info">
+          <h2>Printed Tees</h2>
+          <p>Graphics that speak before you do. Bold art, sharp prints.</p>
+          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
         </div>
-        <div class="card-body">
-          <h2>Printed Collection</h2>
-          <p>Graphics that speak before you do. Bold art, sharp prints, cultural statements on every piece.</p>
-          <a href="printed.html" class="card-btn">
-            Explore Prints
-            <span class="arrow">→</span>
-          </a>
+      </a>
+
+      <!-- HOODIE -->
+      <a href="oversized.html#hoodies" class="collection-card reveal reveal-delay-3">
+        <img src="hoodie1.jpg" alt="Hoodie Collection">
+        <div class="card-overlay"></div>
+        <span class="card-tag">Premium</span>
+        <span class="card-tap">Tap to shop</span>
+        <div class="card-info">
+          <h2>Hoodies</h2>
+          <p>Heavy-weight comfort. Street-ready silhouettes. Made to last.</p>
+          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
         </div>
-      </div>
+      </a>
 
     </div>
   </section>
@@ -783,7 +895,7 @@
         <div class="stat-label">Happy Customers</div>
       </div>
       <div class="stat-item reveal reveal-delay-1">
-        <div class="stat-num">3</div>
+        <div class="stat-num">4</div>
         <div class="stat-label">Signature Collections</div>
       </div>
       <div class="stat-item reveal reveal-delay-2">
@@ -807,6 +919,7 @@
             <li><a href="polo.html">Polo Collection</a></li>
             <li><a href="oversized.html">Oversized Collection</a></li>
             <li><a href="printed.html">Printed Collection</a></li>
+            <li><a href="oversized.html#hoodies">Hoodies</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -830,6 +943,19 @@
   </footer>
 
   <script>
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    function closeMenu() { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      menuBackdrop.classList.toggle('open', isOpen);
+    });
+    menuBackdrop.addEventListener('click', closeMenu);
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
     // Custom Cursor
     const cursor = document.getElementById('cursor');
     const cursorRing = document.getElementById('cursorRing');

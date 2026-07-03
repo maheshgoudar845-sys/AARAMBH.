@@ -1,382 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Printed Collection — Arambh</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    :root { --bg:#080810; --surface:#0f0f1a; --accent:#ff3c38; --accent2:#ff7b22; --text:#f0f0f0; --muted:#888; --border:rgba(255,255,255,0.06); --gold:#ffb703; }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
-    .cursor{position:fixed;width:12px;height:12px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference;}
-    .cursor-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(255,60,56,0.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .15s ease,width .3s,height .3s;}
-    @media(hover:none),(pointer:coarse){body{cursor:auto;}.cursor,.cursor-ring{display:none;}}
-    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;opacity:.5;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Place Your Order — Arambh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root{
+    --bg:#080810; --surface:#0f0f1a; --surface2:#151521; --accent:#ff3c38; --accent2:#ff7b22;
+    --text:#f0f0f0; --muted:#888; --border:rgba(255,255,255,0.08); --gold:#ffb703; --green:#25d366;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
 
-    /* NAV */
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(8,8,16,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s;}
-    nav.scrolled{padding:12px 40px;}
-    .nav-logo img{height:58px;filter:brightness(1.1);}
-    .nav-links{display:flex;gap:32px;list-style:none;}
-    .nav-links a{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;position:relative;transition:color .3s;}
-    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s;}
-    .nav-links a:hover{color:var(--text);}.nav-links a:hover::after,.nav-links a.active::after{width:100%;}.nav-links a.active{color:var(--accent);}
-    .nav-cta{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:white;background:var(--accent);padding:10px 24px;border-radius:100px;text-decoration:none;transition:background .3s,transform .2s;box-shadow:0 4px 20px rgba(255,60,56,.3);}
-    .nav-cta:hover{background:#ff1f1a;transform:scale(1.04);}
-    .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:200;}
-    .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s;}
-    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-    .hamburger.open span:nth-child(2){opacity:0;}
-    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-    .mobile-menu{position:fixed;top:0;right:0;height:100vh;width:min(78vw,320px);background:#0c0c16;border-left:1px solid var(--border);z-index:150;padding:100px 32px 40px;transform:translateX(100%);transition:transform .4s ease;display:flex;flex-direction:column;gap:26px;}
-    .mobile-menu.open{transform:translateX(0);}
-    .mobile-menu a{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;}
-    .mobile-menu a.active{color:var(--accent);}
-    .menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:140;opacity:0;pointer-events:none;transition:opacity .3s;}
-    .menu-backdrop.open{opacity:1;pointer-events:auto;}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;opacity:.5;}
 
-    /* PAGE HEADER */
-    .page-header{min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:140px 40px 80px;text-align:center;position:relative;overflow:hidden;}
-    .page-header::before{content:'';position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(255,60,56,.12) 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);animation:pulse 6s ease-in-out infinite;}
-    .page-header::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,60,56,.07) 1px,transparent 1px);background-size:40px 40px;animation:dots-drift 20s linear infinite;pointer-events:none;}
-    @keyframes dots-drift{0%{background-position:0 0}100%{background-position:40px 40px}}
-    @keyframes pulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.12)}}
-    .breadcrumb{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px;z-index:1;position:relative;}
-    .breadcrumb a{color:var(--accent);text-decoration:none;}.breadcrumb span{opacity:.4;}
-    .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,10vw,130px);line-height:.9;letter-spacing:2px;animation:fade-up .8s ease both;position:relative;z-index:1;}
-    .page-header h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .page-header p{color:var(--muted);font-size:17px;font-weight:300;margin-top:16px;letter-spacing:1px;animation:fade-up .8s .1s ease both;position:relative;z-index:1;}
-    .header-meta{display:flex;gap:30px;margin-top:30px;flex-wrap:wrap;justify-content:center;animation:fade-up .8s .2s ease both;position:relative;z-index:1;}
-    .meta-chip{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);padding:8px 18px;border-radius:100px;color:var(--muted);}
-    .meta-chip.hot{border-color:rgba(255,60,56,.3);color:var(--accent);background:rgba(255,60,56,.07);}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(8,8,16,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+  .nav-logo img{height:52px;}
+  .nav-links{display:flex;gap:32px;list-style:none;}
+  .nav-links a{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;}
+  .nav-links a:hover{color:var(--text);}
+  @media(max-width:900px){.nav-links{display:none;}}
 
-    /* TICKER */
-    .ticker-wrap{background:var(--accent);padding:12px 0;overflow:hidden;white-space:nowrap;}
-    .ticker{display:inline-flex;animation:ticker 24s linear infinite;}
-    .ticker span{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;padding:0 36px;color:white;}
-    .ticker span::after{content:'✦';margin-left:36px;opacity:.6;}
-    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  .page-header{padding:130px 20px 40px;text-align:center;}
+  .breadcrumb{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+  .breadcrumb a{color:var(--accent);text-decoration:none;}
+  .breadcrumb span{opacity:.4;margin:0 8px;}
+  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,9vw,90px);letter-spacing:2px;line-height:.95;}
+  .page-header h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .page-header p{color:var(--muted);margin-top:12px;font-size:15px;}
 
-    /* SECTION LABELS */
-    .products-section{padding:100px 40px;max-width:1280px;margin:auto;}
-    .section-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:14px;}
-    .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px);letter-spacing:2px;margin-bottom:50px;}
-    .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;}
+  .order-wrap{max-width:640px;margin:0 auto;padding:20px 20px 100px;}
 
-    /* PRODUCT CARD */
-    .product-card{background:var(--surface);border-radius:20px;overflow:hidden;border:1px solid var(--border);transition:transform .4s ease,box-shadow .4s ease;position:relative;}
-    .product-card:hover{transform:translateY(-8px);box-shadow:0 40px 70px rgba(0,0,0,.7);}
-    .card-media{position:relative;overflow:hidden;background:#0a0a14;}
-    .card-media video,.card-media img{width:100%;display:block;transition:transform .6s ease;}
-    .card-media video{height:340px;object-fit:cover;}
-    .card-media img{height:300px;object-fit:cover;}
-    .product-card:hover .card-media video,.product-card:hover .card-media img{transform:scale(1.05);}
-    .card-media::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,16,.88) 0%,transparent 55%);pointer-events:none;}
-    .card-overlay-title{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:20px 22px 0;}
-    .card-overlay-title h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:1;}
-    .card-badge{position:absolute;top:14px;right:14px;z-index:3;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:var(--accent);color:white;padding:5px 12px;border-radius:100px;}
-    .card-badge.video-badge{background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(6px);}
-    .card-badge.video-badge::before{content:'▶ ';font-size:8px;}
-    .card-body{padding:14px 22px 24px;}
-    .card-meta{display:flex;align-items:center;justify-content:space-between;}
-    .price{font-family:'Bebas Neue',sans-serif;font-size:28px;color:white;letter-spacing:1px;}
-    .type-tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:100px;}
+  /* SELECTED PRODUCT SUMMARY */
+  .product-summary{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 24px;margin-bottom:28px;display:flex;align-items:center;gap:16px;}
+  .product-summary .icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+  .product-summary .info{flex:1;min-width:0;}
+  .product-summary .info .name{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:4px;word-break:break-word;}
+  .product-summary .info .meta{font-size:12px;color:var(--muted);letter-spacing:.5px;}
+  .product-summary .price{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);white-space:nowrap;}
+  .product-summary.empty .info .name{color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;font-size:14px;}
 
-    /* SWATCHES */
-    .color-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;}
-    .color-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-right:2px;white-space:nowrap;}
-    .swatches{display:flex;gap:7px;flex-wrap:wrap;}
-    .swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;outline:2px solid transparent;transition:transform .2s,outline-color .2s;position:relative;}
-    .swatch:hover{transform:scale(1.2);}
-    .swatch.active{outline-color:var(--accent);outline-offset:2px;}
-    .swatch[title]:hover::after{content:attr(title);position:absolute;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(15,15,26,.95);border:1px solid var(--border);color:var(--text);font-family:'Syne',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;white-space:nowrap;padding:4px 10px;border-radius:6px;pointer-events:none;z-index:10;}
-    .selected-color{font-family:'Syne',sans-serif;font-size:11px;color:var(--text);margin-left:auto;font-weight:600;letter-spacing:1px;}
+  form{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px;}
+  .field-group{margin-bottom:20px;}
+  .field-group label{display:block;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .field-group input, .field-group select, .field-group textarea{
+    width:100%;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;
+    color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .2s;
+  }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus{outline:none;border-color:var(--accent);}
+  .field-group textarea{resize:vertical;min-height:80px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:520px){.field-row{grid-template-columns:1fr;}}
 
-    /* BUY NOW — works for both card types */
-    .buy-now-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:13px 20px;background:var(--accent);color:white;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:100px;cursor:pointer;text-decoration:none;transition:background .3s,transform .2s,box-shadow .3s;box-shadow:0 8px 24px rgba(255,60,56,.25);}
-    .buy-now-btn:hover{background:#ff1f1a;transform:scale(1.02);box-shadow:0 14px 36px rgba(255,60,56,.4);}
+  /* PAYMENT CHOICE */
+  .pay-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px;}
+  @media(max-width:520px){.pay-options{grid-template-columns:1fr;}}
+  .pay-option{position:relative;}
+  .pay-option input{position:absolute;opacity:0;width:0;height:0;}
+  .pay-option label{
+    display:flex;flex-direction:column;gap:4px;padding:18px 18px;border:1px solid var(--border);border-radius:14px;
+    background:var(--surface2);cursor:pointer;transition:border-color .2s,background .2s;width:auto;
+  }
+  .pay-option label .pt{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;}
+  .pay-option label .ps{font-size:12px;color:var(--muted);}
+  .pay-option input:checked + label{border-color:var(--accent);background:rgba(255,60,56,0.08);}
+  .pay-option input:checked + label .pt{color:var(--accent);}
 
-    /* NEW ARRIVALS */
-    .drops-section{padding:20px 40px 100px;max-width:1280px;margin:auto;}
-    .drops-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;flex-wrap:wrap;gap:20px;}
-    .drops-countdown{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);border:1px solid rgba(255,60,56,.3);background:rgba(255,60,56,.07);padding:10px 20px;border-radius:100px;display:flex;align-items:center;gap:8px;}
-    .drops-countdown::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);animation:blink 1.4s ease-in-out infinite;}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-    .drops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;}
+  .submit-btn{
+    width:100%;margin-top:10px;padding:17px 20px;background:var(--accent);color:white;border:none;border-radius:100px;
+    font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;
+    transition:background .3s,transform .2s;box-shadow:0 10px 30px rgba(255,60,56,.3);
+  }
+  .submit-btn:hover{background:#ff1f1a;transform:scale(1.01);}
+  .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
 
-    /* DROP CARD */
-    .drop-card{background:linear-gradient(160deg,var(--surface),#14141e);border:1px solid rgba(255,60,56,.18);border-radius:20px;overflow:hidden;position:relative;transition:transform .4s ease,box-shadow .4s ease,border-color .3s;}
-    .drop-card:hover{transform:translateY(-8px);box-shadow:0 40px 70px rgba(0,0,0,.7);border-color:rgba(255,60,56,.4);}
+  .form-note{font-size:12px;color:var(--muted);margin-top:14px;text-align:center;line-height:1.6;}
 
-    /* DOUBLE VIEW — side by side front & back */
-    .card-media.double-view{display:flex;flex-direction:row;height:280px;gap:2px;position:relative;}
-    .card-media.double-view img{width:calc(50% - 1px);height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
-    .drop-card:hover .card-media.double-view img{transform:scale(1.04);}
+  /* UPI PAYMENT PANEL (shown after submit, if prepaid chosen) */
+  .upi-panel{display:none;background:var(--surface);border:1px solid rgba(255,183,3,.3);border-radius:24px;padding:30px;margin-top:24px;text-align:center;}
+  .upi-panel.show{display:block;}
+  .upi-panel h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:8px;color:var(--gold);}
+  .upi-panel p{color:var(--muted);font-size:13px;margin-bottom:6px;}
+  .upi-amount{font-family:'Bebas Neue',sans-serif;font-size:44px;color:white;margin:14px 0;}
+  .upi-id-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .copy-btn{background:var(--accent);border:none;color:white;padding:6px 14px;border-radius:100px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
+  .upi-apps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+  .upi-app-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:100px;text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid var(--border);color:var(--text);transition:transform .2s,border-color .2s;}
+  .upi-app-btn:hover{transform:scale(1.02);border-color:var(--accent);}
+  .whatsapp-confirm-btn{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;background:var(--green);color:white;text-decoration:none;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:8px;}
 
-    .view-labels{position:absolute;top:10px;left:10px;display:flex;gap:6px;z-index:3;}
-    .view-label{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);padding:4px 10px;border-radius:100px;}
-    .new-badge{position:absolute;top:10px;right:10px;z-index:4;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;padding:5px 12px;border-radius:100px;}
+  /* SUCCESS / COD panel */
+  .success-panel{display:none;text-align:center;padding:30px;background:var(--surface);border:1px solid rgba(37,211,102,.3);border-radius:24px;margin-top:24px;}
+  .success-panel.show{display:block;}
+  .success-panel .check{font-size:44px;margin-bottom:10px;}
+  .success-panel h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:10px;color:var(--green);}
+  .success-panel p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:18px;}
 
-    .drop-card .card-body{padding:18px 22px 24px;}
-    .drop-card .card-body h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:4px;}
-    .drop-desc{color:var(--muted);font-size:12px;letter-spacing:.5px;margin-bottom:14px;}
-    .drop-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:0;}
-    .drop-price{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);letter-spacing:1px;}
-    .front-back-tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);border:1px solid rgba(255,60,56,.3);padding:5px 11px;border-radius:100px;}
-
-    /* CARE */
-    .care-section{max-width:720px;margin:0 auto 60px;padding:0 20px;}
-    .care-card{background:rgba(255,123,34,.06);border:1px solid rgba(255,123,34,.25);border-radius:18px;padding:26px 30px;display:flex;gap:18px;align-items:flex-start;}
-    .care-icon{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:rgba(255,123,34,.15);display:flex;align-items:center;justify-content:center;font-size:20px;}
-    .care-text h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;}
-    .care-text p{font-size:14px;color:var(--text);line-height:1.7;opacity:.9;}
-    .care-text p strong{color:var(--accent2);}
-
-    /* SIZE CHART */
-    .size-section{max-width:720px;margin:0 auto 60px;background:var(--surface);border:1px solid var(--border);border-radius:24px;overflow:hidden;}
-    .size-header{padding:30px 36px 0;display:flex;align-items:center;gap:14px;}
-    .size-header h3{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;}
-    .size-note{padding:14px 36px 20px;font-size:13px;color:var(--muted);line-height:1.6;}
-    .size-section img{width:100%;display:block;}
-    .size-warning{padding:20px 36px;display:flex;align-items:center;gap:12px;background:rgba(255,60,56,.06);border-top:1px solid var(--border);font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);}
-
-    /* CTA */
-    .order-section{text-align:center;padding:0 20px 120px;}
-    .order-section p{color:var(--muted);font-size:15px;margin-bottom:30px;}
-    .order-btn{display:inline-flex;align-items:center;gap:14px;padding:18px 50px;background:var(--accent);color:white;text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border-radius:100px;transition:background .3s,transform .2s;box-shadow:0 10px 40px rgba(255,60,56,.35);}
-    .order-btn:hover{background:#ff1f1a;transform:scale(1.04);}
-    .whatsapp-btn{display:inline-flex;align-items:center;gap:14px;padding:18px 50px;background:transparent;color:white;text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border-radius:100px;border:1px solid rgba(255,255,255,.15);transition:border-color .3s,background .3s,transform .2s;margin-left:16px;}
-    .whatsapp-btn:hover{border-color:#25d366;background:rgba(37,211,102,.08);transform:scale(1.04);}
-
-    footer{background:#04040a;border-top:1px solid var(--border);padding:40px;text-align:center;}
-    footer p{color:var(--muted);font-size:13px;}
-    footer a{color:var(--accent);text-decoration:none;}
-
-    .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease;}
-    .reveal.active{opacity:1;transform:translateY(0);}
-    .reveal-delay-1{transition-delay:.08s;}.reveal-delay-2{transition-delay:.16s;}.reveal-delay-3{transition-delay:.24s;}.reveal-delay-4{transition-delay:.32s;}
-    @keyframes fade-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-
-    @media(max-width:900px){.nav-links{display:none;}.hamburger{display:flex;}.nav-logo img{height:48px;}}
-    @media(max-width:768px){
-      nav{padding:14px 20px;}.nav-cta{padding:9px 16px;font-size:11px;}
-      .page-header{padding:100px 20px 50px;min-height:auto;}.header-meta{gap:12px;}
-      .products-section{padding:60px 20px;}.section-title{margin-bottom:32px;}
-      .products-grid{grid-template-columns:1fr;gap:18px;}
-      .card-media video{height:260px;}.card-media img{height:240px;}.card-media.double-view{height:200px;}
-      .drops-section{padding:0 20px 70px;}.drops-grid{grid-template-columns:1fr;gap:18px;}
-      .size-section{margin:0 20px 40px;}.size-header{padding:24px 24px 0;}.size-note{padding:12px 24px 16px;}.size-warning{padding:16px 24px;font-size:11px;}
-      .care-section{margin:0 20px 40px;padding:0;}.care-card{flex-direction:column;padding:20px;}
-      .order-section{padding:0 20px 80px;}.order-btn,.whatsapp-btn{width:100%;justify-content:center;padding:16px 20px;}.whatsapp-btn{margin-left:0;margin-top:12px;}
-      footer{padding:30px 20px;}
-    }
-    @media(max-width:420px){.page-header h1{font-size:clamp(48px,14vw,72px);}.swatch{width:20px;height:20px;}}
-  </style>
+  footer{background:#04040a;border-top:1px solid var(--border);padding:40px 20px;text-align:center;margin-top:40px;}
+  footer p{color:var(--muted);font-size:13px;}
+  footer a{color:var(--accent);text-decoration:none;}
+</style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<nav id="navbar">
+<nav>
   <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
   <ul class="nav-links">
     <li><a href="polo.html">Polos</a></li>
     <li><a href="oversized.html">Oversized</a></li>
-    <li><a href="printed.html" class="active">Printed</a></li>
-    <li><a href="hoodie.html">Hoodies</a></li>
+    <li><a href="printed.html">Printed</a></li>
+    <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
   </ul>
-  <a href="order.html?type=Printed+T-Shirt" class="nav-cta">📞 Order Now</a>
-  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
-<div class="menu-backdrop" id="menuBackdrop"></div>
-<div class="mobile-menu" id="mobileMenu">
-  <a href="index.html">Home</a>
-  <a href="polo.html">Polos</a>
-  <a href="oversized.html">Oversized</a>
-  <a href="printed.html" class="active">Printed</a>
-  <a href="hoodie.html">Hoodies</a>
-  <a href="order.html?type=Printed+T-Shirt">📞 Order Now</a>
-</div>
-
 <header class="page-header">
-  <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
-  <h1>PRINTED<br><span>COLLECTION</span></h1>
-  <p>Express. Bold. Street.</p>
-  <div class="header-meta">
-    <span class="meta-chip hot">Limited Runs</span>
-    <span class="meta-chip">16 Designs</span>
-  </div>
+  <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Place Order</div>
+  <h1>COMPLETE YOUR<br><span>ORDER</span></h1>
+  <p>Fill in your details — we'll confirm on WhatsApp shortly after.</p>
 </header>
 
-<div class="ticker-wrap">
-  <div class="ticker">
-    <span>Bold Graphics</span><span>Original Prints</span><span>Arambh</span><span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
-    <span>Bold Graphics</span><span>Original Prints</span><span>Arambh</span><span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
+<div class="order-wrap">
+
+  <!-- SELECTED PRODUCT (auto-filled summary, read only) -->
+  <div class="product-summary" id="productSummary">
+    <div class="icon">🛍️</div>
+    <div class="info">
+      <div class="name" id="summaryName">No product selected</div>
+      <div class="meta" id="summaryMeta">Browse a collection and hit Buy Now</div>
+    </div>
+    <div class="price" id="summaryPrice"></div>
   </div>
-</div>
 
-<!-- EXISTING PRODUCTS -->
-<section class="products-section">
-  <span class="section-label reveal">The Drops</span>
-  <h2 class="section-title reveal">GRAPHICS THAT SPEAK</h2>
-  <div class="products-grid">
+  <form id="orderForm">
+    <!-- hidden auto-filled product fields -->
+    <input type="hidden" id="product" name="product">
+    <input type="hidden" id="type" name="type">
+    <input type="hidden" id="color" name="color">
+    <input type="hidden" id="price" name="price">
+    <input type="hidden" id="paymentMethod" name="paymentMethod" value="COD">
 
-    <div class="product-card reveal">
-      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed1.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Stay Wild</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div><div class="swatch" style="background:#6b6b6b;border-color:#888;" title="Grey" onclick="selectColor(this)"></div></div><span class="selected-color">Black</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'Stay Wild','Printed T-Shirt','349')">🛍️ Buy Now</button>
+    <div class="field-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="Your full name" required>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+      </div>
+      <div class="field-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@email.com" required>
       </div>
     </div>
 
-    <div class="product-card reveal reveal-delay-1">
-      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed2.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Self Love Club</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#c0a890;border-color:#a08060;" title="Beige" onclick="selectColor(this)"></div><div class="swatch" style="background:#d4a0b0;border-color:#c08090;" title="Blush Pink" onclick="selectColor(this)"></div></div><span class="selected-color">White</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'Self Love Club','Printed T-Shirt','349')">🛍️ Buy Now</button>
+    <div class="field-group">
+      <label for="address">Delivery Address</label>
+      <textarea id="address" name="address" placeholder="House no, street, area, landmark" required></textarea>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" placeholder="City" required>
+      </div>
+      <div class="field-group">
+        <label for="pincode">Pincode</label>
+        <input type="text" id="pincode" name="pincode" placeholder="6-digit pincode" pattern="[0-9]{6}" required>
       </div>
     </div>
 
-    <div class="product-card reveal reveal-delay-2">
-      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed3.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>The Good Life</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1e3a2f;border-color:#2d5e46;" title="Forest Green" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div></div><span class="selected-color">Forest Green</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'The Good Life','Printed T-Shirt','349')">🛍️ Buy Now</button>
+    <div class="field-row">
+      <div class="field-group">
+        <label for="size">Size</label>
+        <select id="size" name="size" required>
+          <option value="">Select size</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="XXL">XXL</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" required>
       </div>
     </div>
 
-    <div class="product-card reveal reveal-delay-3">
-      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed4.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Porsche Car</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#1b2a4a;border-color:#2a4070;" title="Navy Blue" onclick="selectColor(this)"></div><div class="swatch" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div></div><span class="selected-color">Black</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'Porsche Car','Printed T-Shirt','349')">🛍️ Buy Now</button>
+    <div class="field-group">
+      <label for="notes">Order Notes (optional)</label>
+      <textarea id="notes" name="notes" placeholder="Anything else we should know?"></textarea>
+    </div>
+
+    <!-- PAYMENT METHOD -->
+    <div class="field-group">
+      <label>Payment Method</label>
+      <div class="pay-options">
+        <div class="pay-option">
+          <input type="radio" id="payCOD" name="payChoice" value="COD" checked>
+          <label for="payCOD">
+            <span class="pt">💵 Cash on Delivery</span>
+            <span class="ps">Pay when your order arrives</span>
+          </label>
+        </div>
+        <div class="pay-option">
+          <input type="radio" id="payUPI" name="payChoice" value="UPI">
+          <label for="payUPI">
+            <span class="pt">📲 Pay via UPI</span>
+            <span class="ps">GPay / PhonePe / Paytm</span>
+          </label>
+        </div>
       </div>
     </div>
 
-    <div class="product-card reveal reveal-delay-4">
-      <div class="card-media"><span class="card-badge video-badge">Video</span><video autoplay muted loop playsinline><source src="printed5.mp4" type="video/mp4"></video><div class="card-overlay-title"><h3>Hello</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#6b6b6b;border-color:#888;" title="Grey" onclick="selectColor(this)"></div><div class="swatch" style="background:#c0a890;border-color:#a08060;" title="Beige" onclick="selectColor(this)"></div></div><span class="selected-color">White</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'Hello','Printed T-Shirt','349')">🛍️ Buy Now</button>
-      </div>
-    </div>
+    <button type="submit" class="submit-btn" id="submitBtn">🛒 Confirm Order</button>
+    <p class="form-note">By placing this order you agree to be contacted on WhatsApp/phone/email for order confirmation and delivery updates.</p>
+  </form>
 
-    <div class="product-card reveal">
-      <div class="card-media"><span class="card-badge">New</span><img src="Kufu_white.jpeg" alt="Kung Fu Panda White"><div class="card-overlay-title"><h3>Kung Fu Panda White</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div></div><span class="selected-color">White</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'Kung Fu Panda White','Printed T-Shirt','349')">🛍️ Buy Now</button>
-      </div>
+  <!-- UPI PANEL — shown after submit if UPI selected -->
+  <div class="upi-panel" id="upiPanel">
+    <h3>Complete Your Payment</h3>
+    <p>Pay the exact amount below via any UPI app</p>
+    <div class="upi-amount" id="upiAmount">₹0</div>
+    <div class="upi-id-box">
+      <span id="upiIdText">maheshgoudar076@pingpay</span>
+      <button class="copy-btn" onclick="copyUPI()">Copy</button>
     </div>
-
-    <div class="product-card reveal reveal-delay-1">
-      <div class="card-media"><span class="card-badge">New</span><img src="Kufu_black.jpeg" alt="Kung Fu Panda Black"><div class="card-overlay-title"><h3>Kung Fu Panda Black</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div></div><span class="selected-color">Black</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'Kung Fu Panda Black','Printed T-Shirt','349')">🛍️ Buy Now</button>
-      </div>
-    </div>
-
-    <div class="product-card reveal reveal-delay-2">
-      <div class="card-media"><span class="card-badge" style="background:var(--accent2);">Hot</span><img src="20260426_183356_0002.png" alt="Mountain Lovers Maroon"><div class="card-overlay-title"><h3>Mountain Lovers</h3></div></div>
-      <div class="card-body">
-        <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Printed Tee</span></div>
-        <div class="color-row"><span class="color-label">Color:</span><div class="swatches"><div class="swatch active" style="background:#6b1a2a;border-color:#9b2a3a;" title="Maroon" onclick="selectColor(this)"></div><div class="swatch" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div><div class="swatch" style="background:#1b2a4a;border-color:#2a4070;" title="Navy Blue" onclick="selectColor(this)"></div></div><span class="selected-color">Maroon</span></div>
-        <button class="buy-now-btn" onclick="buyNow(this,'Mountain Lovers','Printed T-Shirt','349')">🛍️ Buy Now</button>
-      </div>
-    </div>
-
+    <div class="upi-apps" id="upiApps"></div>
+    <p style="margin-bottom:6px;">Once paid, confirm your payment with us on WhatsApp:</p>
+    <a href="#" id="whatsappConfirmBtn" class="whatsapp-confirm-btn">💬 Confirm Payment on WhatsApp</a>
   </div>
-</section>
 
-<!-- NEW ARRIVALS — Front & Back prints -->
-<section class="drops-section">
-  <div class="drops-header">
-    <div><span class="section-label reveal">🔥 Just Landed</span><h2 class="section-title reveal">NEW ARRIVALS</h2></div>
-    <span class="drops-countdown reveal">Front &amp; Back Prints · ₹549</span>
+  <!-- COD SUCCESS PANEL -->
+  <div class="success-panel" id="successPanel">
+    <div class="check">✅</div>
+    <h3>Order Placed!</h3>
+    <p>Thanks for your order. We've received your details and will confirm via WhatsApp shortly. Pay in cash when it arrives at your door.</p>
+    <a href="#" id="whatsappCodBtn" class="whatsapp-confirm-btn">💬 Message Us on WhatsApp</a>
   </div>
-  <div class="drops-grid">
 
-    <div class="drop-card reveal">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="luffy_b_f.png" alt="Luffy Black Front"><img src="luffy_b_b.png" alt="Luffy Black Back"></div>
-      <div class="card-body"><h3>Luffy Black</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Luffy Black','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-    <div class="drop-card reveal reveal-delay-1">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="luffy_r_f.png" alt="Luffy Red Front"><img src="luffy_r_b.png" alt="Luffy Red Back"></div>
-      <div class="card-body"><h3>Luffy Red</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Luffy Red','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-    <div class="drop-card reveal reveal-delay-2">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="luffy_w_f.png" alt="Luffy White Front"><img src="luffy_w_b.png" alt="Luffy White Back"></div>
-      <div class="card-body"><h3>Luffy White</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Luffy White','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-    <div class="drop-card reveal">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Justice_r_f.png" alt="Justice Red Front"><img src="Justice_r_b.png" alt="Justice Red Back"></div>
-      <div class="card-body"><h3>Justice Red</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Justice Red','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-    <div class="drop-card reveal reveal-delay-1">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Justice_w_f.png" alt="Justice White Front"><img src="Justice_w_b.png" alt="Justice White Back"></div>
-      <div class="card-body"><h3>Justice White</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Justice White','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-    <div class="drop-card reveal reveal-delay-2">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Porsche_black_front.png" alt="Porsche Black Front"><img src="Porsche_black_back.png" alt="Porsche Black Back"></div>
-      <div class="card-body"><h3>Porsche Black</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Porsche Black','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-    <div class="drop-card reveal">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Porsche_red_front.png" alt="Porsche Red Front"><img src="Porsche_red_back.png" alt="Porsche Red Back"></div>
-      <div class="card-body"><h3>Porsche Red</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Porsche Red','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-    <div class="drop-card reveal reveal-delay-1">
-      <div class="card-media double-view"><div class="view-labels"><span class="view-label">Front</span><span class="view-label">Back</span></div><span class="new-badge">New</span><img src="Porsche_white_front.png" alt="Porsche White Front"><img src="Porsche_white_back.png" alt="Porsche White Back"></div>
-      <div class="card-body"><h3>Porsche White</h3><p class="drop-desc">Front &amp; Back Designs Included</p><div class="drop-meta"><span class="drop-price">₹549</span><span class="front-back-tag">F+B Print</span></div><button class="buy-now-btn" onclick="buyNow(this,'Porsche White','Printed T-Shirt','549')">🛍️ Buy Now</button></div>
-    </div>
-
-  </div>
-</section>
-
-<!-- SIZE CHART -->
-<div class="size-section reveal">
-  <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>
-  <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit before placing your order.</p>
-  <img src="Size chat.png" alt="Size Chart">
-  <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering</div>
-</div>
-
-<!-- CARE DISCLAIMER -->
-<div class="care-section reveal">
-  <div class="care-card">
-    <div class="care-icon">🧺</div>
-    <div class="care-text">
-      <h4>Care Instructions</h4>
-      <p>These tees are <strong>DTF (Direct-to-Film) printed</strong>. For the design to last wash after wash, always turn the t-shirt <strong>inside out before washing</strong>. Avoid direct ironing on the print and skip the dryer when possible — air dry inside out for best results.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ORDER CTA -->
-<div class="order-section reveal">
-  <p>Graphics that speak before you do — grab yours while stocks last.</p>
-  <a href="order.html?type=Printed+T-Shirt" class="order-btn">🛒 Place Order</a>
-  <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
 </div>
 
 <footer>
@@ -384,44 +253,128 @@
 </footer>
 
 <script>
-  // Mobile menu
-  const hamburger=document.getElementById('hamburger'),mobileMenu=document.getElementById('mobileMenu'),menuBackdrop=document.getElementById('menuBackdrop');
-  function closeMenu(){hamburger.classList.remove('open');mobileMenu.classList.remove('open');menuBackdrop.classList.remove('open');}
-  hamburger.addEventListener('click',()=>{const o=mobileMenu.classList.toggle('open');hamburger.classList.toggle('open',o);menuBackdrop.classList.toggle('open',o);});
-  menuBackdrop.addEventListener('click',closeMenu);
-  mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+  // ---- CONFIG ----
+  const UPI_ID = "maheshgoudar076@pingpay";
+  const WHATSAPP_NUMBER = "919637748622";
+  const EMAILJS_PUBLIC_KEY = "ZXVO8aPvZTkk1NLI6";
+  const EMAILJS_SERVICE_ID = "service_2xfx4td";
+  const EMAILJS_TEMPLATE_ID = "template_j3gxuwf";
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqejgjzw";
 
-  // Color swatch
-  function selectColor(el){
-    el.closest('.color-row').querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
-    el.classList.add('active');
-    const label=el.closest('.color-row').querySelector('.selected-color');
-    if(label)label.textContent=el.getAttribute('title');
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  // ---- PREFILL FROM URL QUERY PARAMS ----
+  function prefillFromQuery(){
+    const params = new URLSearchParams(window.location.search);
+    const product = params.get('product') || '';
+    const type = params.get('type') || '';
+    const color = params.get('color') || '';
+    const price = params.get('price') || '';
+
+    document.getElementById('product').value = product;
+    document.getElementById('type').value = type;
+    document.getElementById('color').value = color;
+    document.getElementById('price').value = price;
+
+    const summaryEl = document.getElementById('productSummary');
+    const nameEl = document.getElementById('summaryName');
+    const metaEl = document.getElementById('summaryMeta');
+    const priceEl = document.getElementById('summaryPrice');
+
+    if(product){
+      summaryEl.classList.remove('empty');
+      nameEl.textContent = product;
+      metaEl.textContent = [type, color].filter(Boolean).join(' · ');
+      priceEl.textContent = price ? '₹' + price : '';
+    } else {
+      summaryEl.classList.add('empty');
+    }
   }
+  prefillFromQuery();
 
-  // Buy Now — reads selected color if present (product-card), falls back to empty (drop-card color is in name)
-  function buyNow(btn,productName,typeName,price){
-    const card=btn.closest('.product-card,.drop-card');
-    const colorEl=card?card.querySelector('.selected-color'):null;
-    const color=colorEl?colorEl.textContent.trim():'';
-    const params=new URLSearchParams({product:productName,type:typeName,color:color,price:price});
-    window.location.href='order.html?'+params.toString();
-  }
-
-  // Cursor
-  const cursor=document.getElementById('cursor'),cursorRing=document.getElementById('cursorRing');
-  let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
-  (function animR(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursorRing.style.left=rx+'px';cursorRing.style.top=ry+'px';requestAnimationFrame(animR);})();
-  document.querySelectorAll('a,button').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{cursor.style.width='20px';cursor.style.height='20px';cursorRing.style.width='60px';cursorRing.style.height='60px';});
-    el.addEventListener('mouseleave',()=>{cursor.style.width='12px';cursor.style.height='12px';cursorRing.style.width='40px';cursorRing.style.height='40px';});
+  // ---- PAYMENT METHOD TOGGLE ----
+  document.querySelectorAll('input[name="payChoice"]').forEach(r=>{
+    r.addEventListener('change', ()=>{
+      document.getElementById('paymentMethod').value = r.value;
+    });
   });
 
-  // Scroll reveal
-  const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active');}),{threshold:.1});
-  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-  window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60));
+  function copyUPI(){
+    navigator.clipboard.writeText(UPI_ID).then(()=>{
+      const btn = document.querySelector('.copy-btn');
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(()=>btn.textContent = old, 1500);
+    });
+  }
+
+  function buildUpiDeepLinks(amount, note){
+    const encNote = encodeURIComponent(note);
+    return {
+      gpay: `tez://upi/pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`,
+      phonepe: `phonepe://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`,
+      paytm: `paytmmp://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`,
+      generic: `upi://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`
+    };
+  }
+
+  // ---- FORM SUBMIT ----
+  const form = document.getElementById('orderForm');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Placing Order...';
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    const orderSummary = `${data.product || 'Item'} (${data.type || ''}${data.color ? ', ' + data.color : ''}) — Size ${data.size}, Qty ${data.quantity}`;
+    const totalAmount = (parseFloat(data.price) || 0) * (parseInt(data.quantity) || 1);
+
+    // 1. Send to Formspree
+    fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    }).catch(err => console.error('Formspree error:', err));
+
+    // 2. Send confirmation email via EmailJS
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_name: data.name,
+      to_email: data.email,
+      order_summary: orderSummary,
+      total_amount: totalAmount,
+      payment_method: data.paymentMethod,
+      address: `${data.address}, ${data.city} - ${data.pincode}`,
+      phone: data.phone
+    }).catch(err => console.error('EmailJS error:', err));
+
+    // 3. Show correct panel based on payment method
+    form.style.display = 'none';
+
+    const waMessage = encodeURIComponent(
+      `Hi Arambh! I just placed an order:\n\n${orderSummary}\nTotal: ₹${totalAmount}\nPayment: ${data.paymentMethod}\nName: ${data.name}\nAddress: ${data.address}, ${data.city} - ${data.pincode}\nPhone: ${data.phone}`
+    );
+
+    if(data.paymentMethod === 'UPI'){
+      document.getElementById('upiAmount').textContent = '₹' + totalAmount;
+      const links = buildUpiDeepLinks(totalAmount, `Arambh Order - ${data.product || 'Item'}`);
+      const upiApps = document.getElementById('upiApps');
+      upiApps.innerHTML = `
+        <a href="${links.gpay}" class="upi-app-btn">Pay with GPay</a>
+        <a href="${links.phonepe}" class="upi-app-btn">Pay with PhonePe</a>
+        <a href="${links.paytm}" class="upi-app-btn">Pay with Paytm</a>
+        <a href="${links.generic}" class="upi-app-btn">Other UPI App</a>
+      `;
+      document.getElementById('whatsappConfirmBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
+      document.getElementById('upiPanel').classList.add('show');
+    } else {
+      document.getElementById('whatsappCodBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
+      document.getElementById('successPanel').classList.add('show');
+    }
+
+    window.scrollTo({ top: document.getElementById('productSummary').offsetTop - 100, behavior: 'smooth' });
+  });
 </script>
 </body>
 </html>

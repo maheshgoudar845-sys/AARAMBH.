@@ -1,4 +1,4 @@
-`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -68,10 +68,73 @@
     }
     .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
-    /* HERO */
-    .page-header { min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 140px 40px 80px; text-align: center; position: relative; overflow: hidden; }
-    .page-header::before { content: ''; position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(255,123,34,0.1) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 7s ease-in-out infinite; }
+    /* --- UPDATED HEADER WITH INTEGRATED STREET IMAGES --- */
+    .page-header { 
+      min-height: 70vh; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 160px 40px 80px; 
+      text-align: center; 
+      position: relative; 
+      overflow: hidden; 
+    }
+    
+    /* Radial lighting flash container */
+    .page-header .pulse-glow { 
+      position: absolute; 
+      width: 700px; 
+      height: 700px; 
+      background: radial-gradient(circle, rgba(255,123,34,0.08) 0%, transparent 70%); 
+      top: -100px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      animation: pulse 7s ease-in-out infinite; 
+      pointer-events: none;
+      z-index: 1;
+    }
     @keyframes pulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.12); } }
+
+    /* Left Image Layer (Front Profile) */
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      left: 4%;
+      width: 24%;
+      height: 85%;
+      background-image: url('oversized_por1.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: 16px;
+      opacity: 0.5;
+      mask-image: linear-gradient(to right, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+      z-index: 0;
+    }
+
+    /* Right Image Layer (Back Profile) */
+    .page-header::after {
+      content: '';
+      position: absolute;
+      top: 10%;
+      right: 4%;
+      width: 24%;
+      height: 85%;
+      background-image: url('oversized_por2.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: 16px;
+      opacity: 0.5;
+      mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+      z-index: 0;
+    }
+
+    /* Enforce stacking order so header texts sit proudly on top */
+    .page-header * { position: relative; z-index: 5; }
+
     .breadcrumb { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
     .breadcrumb a { color: var(--accent); text-decoration: none; }
     .breadcrumb span { opacity: 0.4; }
@@ -152,13 +215,16 @@
     @media (max-width: 900px) {
       .nav-links { display: none; }
       .hamburger { display: flex; }
+      /* Responsive stacking settings for header elements */
+      .page-header { min-height: auto; padding-top: 130px; padding-bottom: 40px; }
+      .page-header::before { width: 44%; height: 100%; top: 0; left: 0; opacity: 0.18; border-radius: 0; mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); }
+      .page-header::after { width: 44%; height: 100%; top: 0; right: 0; opacity: 0.18; border-radius: 0; mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); }
     }
 
     @media (max-width: 768px) {
       nav { padding: 14px 20px; }
       .nav-logo img { height: 36px; }
       .nav-cta { padding: 9px 16px; font-size: 11px; }
-      .page-header { padding: 100px 20px 50px; min-height: auto; }
       .header-meta { gap: 12px; }
       .ticker span { font-size: 16px; padding: 0 22px; }
       .ticker span::after { margin-left: 22px; }
@@ -210,6 +276,9 @@
   </div>
 
   <header class="page-header">
+    <!-- Pulsing lighting element inside structure -->
+    <div class="pulse-glow"></div>
+    
     <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
     <h1>OVER<span>SIZED</span></h1>
     <p>Comfort. Street. Power.</p>

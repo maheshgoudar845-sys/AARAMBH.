@@ -224,6 +224,30 @@
     .care-text p { font-size: 14px; color: var(--text); line-height: 1.7; opacity: 0.9; }
     .care-text p strong { color: var(--accent2); }
 
+    /* JUST DROPPED — highlight section for new priority launches */
+    .justdropped-section { padding: 60px 40px 20px; max-width: 1280px; margin: auto; }
+    .justdropped-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+    .justdropped-badge {
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--bg); background: linear-gradient(135deg, var(--accent2), var(--accent));
+      padding: 10px 20px; border-radius: 100px; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .justdropped-badge::before { content: '⚡'; }
+    .justdropped-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .jd-card {
+      background: linear-gradient(160deg, var(--surface), #1a141a);
+      border: 1px solid rgba(255,123,34,0.3);
+      border-radius: 20px; overflow: hidden; position: relative;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
+    }
+    .jd-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); border-color: rgba(255,123,34,0.55); }
+    .jd-card .card-badge { background: linear-gradient(135deg, var(--accent2), var(--accent)); }
+    .jd-card .card-body { padding: 20px 22px 26px; }
+    .jd-card .card-body h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 6px; }
+    .jd-card .card-body p { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+    .jd-card .card-media.single-view { height: 340px; }
+    .jd-card .card-media.single-view img { width: 100%; height: 100%; object-fit: contain; }
+
     @media (max-width: 900px) {
       .nav-links { display: none; }
       .hamburger { display: flex; }
@@ -231,6 +255,7 @@
 
     @media (max-width: 768px) {
       .drops-header { flex-direction: column; align-items: flex-start; }
+      .justdropped-header { flex-direction: column; align-items: flex-start; }
       .care-card { flex-direction: column; }
       nav { padding: 14px 20px; }
       .nav-logo img { height: 36px; }
@@ -248,8 +273,11 @@
       .card-media img { height: 260px; }
       .card-overlay-title h3 { font-size: 24px; }
       .drops-section { padding: 0 20px 70px; }
+      .justdropped-section { padding: 40px 20px 10px; }
       .drops-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
+      .justdropped-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
       .card-media.double-view { height: 180px; }
+      .jd-card .card-media.single-view { height: 220px; }
       .size-section { margin: 0 20px 40px; }
       .size-header { padding: 24px 24px 0; }
       .size-note { padding: 12px 24px 16px; }
@@ -270,6 +298,7 @@
       .color-label { width: 100%; margin-bottom: 4px; }
       .selected-color { margin-left: 0; }
       .card-media.double-view { height: 140px; }
+      .jd-card .card-media.single-view { height: 180px; }
     }
 
   </style>
@@ -322,6 +351,195 @@
       <span>More Anime Designs</span><span>Coming soon</span><span>Street Art</span>
     </div>
   </div>
+
+  <!-- JUST DROPPED — highest priority, new Anime collection -->
+  <section class="justdropped-section">
+    <div class="justdropped-header">
+      <div>
+        <span class="justdropped-badge">Just Dropped</span>
+        <h2 class="section-title" style="margin-top:14px;margin-bottom:0;">ANIME COLLECTION</h2>
+      </div>
+    </div>
+
+    <div class="justdropped-grid">
+
+      <div class="jd-card reveal">
+        <div class="card-media double-view">
+          <img src="anime_b_f.png" alt="Anime Black Front">
+          <img src="anime_b_b.png" alt="Anime Black Back">
+        </div>
+        <div class="card-body">
+          <h3>Anime Black</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#1a1a1a;border-color:#555;" title="Black" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">Black</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime Black','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+
+      <div class="jd-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="anime_w_f.png" alt="Anime White Front">
+          <img src="anime_w_b.png" alt="Anime White Back">
+        </div>
+        <div class="card-body">
+          <h3>Anime White</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+
+      <div class="jd-card reveal reveal-delay-2">
+        <div class="card-media single-view">
+          <span class="card-badge">Back Print</span>
+          <img src="anime_r_f.png" alt="Anime Red Front">
+          <img src="anime_r_b.png" alt="Anime Red Back">
+        </div>
+        <div class="card-body">
+          <h3>Anime Red</h3>
+          <p>Front & Back Design Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#c0272d;border-color:#e0403f;" title="Red" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">Red</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime Red','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+      <div class="jd-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="naruto_w_f.png" alt="Naruto White Front">
+          <img src="naruto_w_b.png" alt="Naruto White Back">
+        </div>
+        <div class="card-body">
+          <h3>Naruto white</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+       <div class="jd-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="naruto_b_f.png" alt="Naruto Black Front">
+          <img src="naruto_b_b.png" alt="Naruto Black Back">
+        </div>
+        <div class="card-body">
+          <h3>Naruto Black</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+       <div class="jd-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="naruto_r_f.png" alt="Naruto Red Front">
+          <img src="naruto_r_b.png" alt="Naruto Red Back">
+        </div>
+        <div class="card-body">
+          <h3>Naruto Red</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+       <div class="jd-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="one_w_f.png" alt="One Piece White Front">
+          <img src="one_w_b.png" alt="One Piece White Back">
+        </div>
+        <div class="card-body">
+          <h3>One Piece white</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+       <div class="jd-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="one_b_f.png" alt="One Piece Black Front">
+          <img src="one_b_b.png" alt="One Piece Black Back">
+        </div>
+        <div class="card-body">
+          <h3>One Piece Black</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+       <div class="jd-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="one_r_f.png" alt="One Piece Red Front">
+          <img src="one_r_b.png" alt="One Piece Red Back">
+        </div>
+        <div class="card-body">
+          <h3>One Piece Red</h3>
+          <p>Front & Back Designs Included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Color:</span>
+            <div class="swatches">
+              <div class="swatch active" style="background:#f5f5f5;border-color:#ccc;" title="White" onclick="selectColor(this)"></div>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <section class="products-section">
     <span class="section-label reveal">The Drops</span>
@@ -666,7 +884,7 @@
 
     // BUY NOW — reads selected color if present, redirects to order.html with product details
     function buyNow(btn, productName, typeName, price) {
-      const card = btn.closest('.product-card, .drop-card');
+      const card = btn.closest('.product-card, .drop-card, .jd-card');
       const colorEl = card ? card.querySelector('.selected-color') : null;
       const color = colorEl ? colorEl.textContent.trim() : '';
       const params = new URLSearchParams({ product: productName, type: typeName, color: color, price: price });

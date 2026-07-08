@@ -79,7 +79,7 @@
     }
     .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
-    .page-header { min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 140px 40px 80px; text-align: center; position: relative; overflow: hidden; }
+    .page-header {position:relative;overflow:hidden; min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 140px 40px 80px; text-align: center; position: relative; overflow: hidden; }
     .page-header::before { content: ''; position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(255,60,56,0.12) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 6s ease-in-out infinite; }
     .page-header::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,60,56,0.08) 1px, transparent 1px); background-size: 40px 40px; animation: dots-drift 20s linear infinite; pointer-events: none; }
     @keyframes dots-drift { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
@@ -340,7 +340,7 @@
       <span class="meta-chip hot">Limited Runs</span>
       <span class="meta-chip">16 Designs</span>
     </div>
-  </header>
+  <div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;pointer-events:none;z-index:0;"><img src="dornat-demonslayer-tee.png" style="width:min(900px,85vw);opacity:.18;filter:drop-shadow(0 40px 80px rgba(0,0,0,.6));transform:translateY(20px);"></div></header>
 
   <div class="ticker-wrap">
     <div class="ticker">
@@ -828,6 +828,18 @@
           <p>Front & Back Designs Included</p>
           <div class="price">₹549</div>
           <button class="buy-now-btn" onclick="buyNow(this,'Porsche White','Printed T-Shirt','549')">🛍️ Buy Now</button>
+        </div>
+      </div>
+            <div class="drop-card reveal reveal-delay-1">
+        <div class="card-media double-view">
+          <img src="dornat-demonslayer-tee.png" alt="Tanjiro in Black">
+        </div>
+        <div class="card-body">
+          <h3>Tanjiro Black</h3>
+          <p>Front & Back Designs Included</p>
+          <h4>Also available in white</h4>
+          <div class="price">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Tanjiro Black','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
       </div>
 

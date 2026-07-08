@@ -175,6 +175,27 @@
       overflow: hidden;
     }
 
+    /* Hero video background — sits behind everything */
+    .hero-video-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.45;
+    }
+    .hero-video-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(8,8,16,0.55) 0%, rgba(8,8,16,0.8) 60%, var(--bg) 100%);
+      z-index: 1;
+    }
+    .hero > *:not(.hero-video-bg):not(.hero-video-overlay) {
+      position: relative;
+      z-index: 2;
+    }
+
     /* Animated bg glow */
     .hero::before {
       content: '';
@@ -256,6 +277,25 @@
     .hero-strip img:hover { transform: scale(1.03); }
     .hero-strip .right-col { display: flex; flex-direction: column; gap: 14px; }
     .hero-strip .right-col img { height: 223px; }
+
+    /* Drop label chip on hero photos */
+    .hero-strip .strip-item { position: relative; overflow: hidden; }
+    .hero-strip .strip-tag {
+      position: absolute;
+      bottom: 14px; left: 14px;
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(8,8,16,0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 6px 14px;
+      border-radius: 100px;
+      z-index: 2;
+    }
 
     .hero-scroll {
       margin-top: 40px;
@@ -746,19 +786,33 @@
     <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
     <a href="tel:9637748622">📞 Order Now</a>
   </div>
-  </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-badge">SS 2025 Collection</div>
+    <!-- Promo video background: upload your video to the repo and set the filename below -->
+    <video class="hero-video-bg" autoplay muted loop playsinline>
+      <source src="hero-promo.mp4" type="video/mp4">
+    </video>
+    <div class="hero-video-overlay"></div>
+
+    <div class="hero-badge">Just Dropped — New Collection</div>
     <h1 class="hero-heading">WEAR YOUR<br><span>VIBE</span></h1>
     <p class="hero-sub">Premium streetwear. Built different. Designed for the bold.</p>
 
     <div class="hero-strip">
-      <img src="IMG-20260408-WA0002.jpg" alt="Arambh Hero">
+      <div class="strip-item">
+        <img src="promo-squad-aarambh.jpg" alt="Arambh Squad">
+        <span class="strip-tag">On the Streets</span>
+      </div>
       <div class="right-col">
-        <img src="promo2.jpg" alt="Arambh Promo">
-        <img src="polo1.jpg" alt="Polo">
+        <div class="strip-item">
+          <img src="promo-cap-fit.webp" alt="Arambh Cap Fit">
+          <span class="strip-tag">Fit Check</span>
+        </div>
+        <div class="strip-item">
+          <img src="dornat-demonslayer-tee.png" alt="Demon Slayer Anime Tee">
+          <span class="strip-tag">Just Dropped</span>
+        </div>
       </div>
     </div>
 

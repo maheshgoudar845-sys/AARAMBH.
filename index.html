@@ -59,13 +59,11 @@
     }
     body:hover .cursor { opacity: 1; }
 
-    /* Disable custom cursor on touch / no-hover devices */
     @media (hover: none), (pointer: coarse) {
       body { cursor: auto; }
       .cursor, .cursor-ring { display: none; }
     }
 
-    /* GRAIN OVERLAY */
     body::before {
       content: '';
       position: fixed;
@@ -140,7 +138,6 @@
     }
     .nav-cta:hover { background: #ff1f1a; transform: scale(1.04); }
 
-    /* HAMBURGER */
     .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
     .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -175,28 +172,29 @@
       overflow: hidden;
     }
 
-    /* Hero video background — sits behind everything */
-    .hero-video-bg {
+    /* Full-bleed squad photo behind the headline */
+    .hero-bg-photo {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      background-image: url('promo-squad-aarambh.jpg');
+      background-size: cover;
+      background-position: center 20%;
       z-index: 0;
-      opacity: 0.45;
+      opacity: 0.55;
     }
     .hero-video-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(8,8,16,0.55) 0%, rgba(8,8,16,0.8) 60%, var(--bg) 100%);
+      background: linear-gradient(180deg, rgba(8,8,16,0.55) 0%, rgba(8,8,16,0.82) 60%, var(--bg) 100%);
       z-index: 1;
     }
-    .hero > *:not(.hero-video-bg):not(.hero-video-overlay) {
+    .hero > *:not(.hero-bg-photo):not(.hero-video-overlay) {
       position: relative;
       z-index: 2;
     }
 
-    /* Animated bg glow */
     .hero::before {
       content: '';
       position: absolute;
@@ -205,6 +203,7 @@
       top: -200px; left: 50%;
       transform: translateX(-50%);
       animation: pulse-glow 6s ease-in-out infinite;
+      z-index: 1;
     }
     @keyframes pulse-glow {
       0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
@@ -233,6 +232,7 @@
       letter-spacing: 2px;
       text-align: center;
       position: relative;
+      text-shadow: 0 8px 40px rgba(0,0,0,0.6);
       animation: fade-up 0.9s 0.1s ease both;
     }
     .hero-heading span {
@@ -253,14 +253,14 @@
       animation: fade-up 0.9s 0.2s ease both;
     }
 
-    /* Hero image strip */
+    /* Hero image strip — now just the two enlarged product shots */
     .hero-strip {
       width: 100%;
       max-width: 1100px;
       margin-top: 50px;
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 14px;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
       border-radius: 24px;
       overflow: hidden;
       box-shadow: 0 60px 120px rgba(0,0,0,0.8);
@@ -269,17 +269,14 @@
 
     .hero-strip img {
       width: 100%;
-      height: 460px;
+      height: 560px;
       object-fit: cover;
       display: block;
       transition: transform 0.6s ease;
     }
     .hero-strip img:hover { transform: scale(1.03); }
-    .hero-strip .right-col { display: flex; flex-direction: column; gap: 14px; }
-    .hero-strip .right-col img { height: 223px; }
 
-    /* Drop label chip on hero photos */
-    .hero-strip .strip-item { position: relative; overflow: hidden; }
+    .hero-strip .strip-item { position: relative; overflow: hidden; border-radius: 18px; }
     .hero-strip .strip-tag {
       position: absolute;
       bottom: 14px; left: 14px;
@@ -349,7 +346,6 @@
       100% { transform: translateX(-50%); }
     }
 
-    /* SECTION HEADER */
     .section-header {
       text-align: center;
       margin-bottom: 60px;
@@ -392,7 +388,6 @@
       gap: 16px;
     }
 
-    /* Each card is a full <a> link — the whole thing is clickable */
     .collection-card {
       position: relative;
       border-radius: 20px;
@@ -411,7 +406,6 @@
       border-color: rgba(255,60,56,0.25);
     }
 
-    /* Image / video fills the card */
     .collection-card img,
     .collection-card video {
       width: 100%;
@@ -425,7 +419,6 @@
       transform: scale(1.07);
     }
 
-    /* Dark gradient over image — stronger at bottom for text legibility */
     .collection-card .card-overlay {
       position: absolute;
       inset: 0;
@@ -447,7 +440,6 @@
       );
     }
 
-    /* Badge top-left */
     .card-tag {
       position: absolute;
       top: 16px; left: 16px;
@@ -463,7 +455,6 @@
       z-index: 3;
     }
 
-    /* "TAP" indicator top-right — appears on hover */
     .card-tap {
       position: absolute;
       top: 16px; right: 16px;
@@ -488,7 +479,6 @@
       transform: translateY(0);
     }
 
-    /* Text at bottom of card */
     .card-info {
       position: absolute;
       bottom: 0; left: 0; right: 0;
@@ -514,7 +504,6 @@
     }
     .collection-card:hover .card-info p { color: rgba(255,255,255,0.75); }
 
-    /* Arrow pill at bottom */
     .card-cta {
       display: inline-flex;
       align-items: center;
@@ -547,7 +536,6 @@
       color: var(--accent);
       transform: translateX(3px);
     }
-
 
     /* WHY US */
     .why-section {
@@ -695,7 +683,6 @@
       background: rgba(255,60,56,0.08);
     }
 
-    /* ANIMATIONS */
     @keyframes fade-up {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -717,9 +704,7 @@
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
 
-    /* RESPONSIVE */
     @media (max-width: 900px) {
       nav { padding: 16px 20px; }
       .nav-links { display: none; }
@@ -727,8 +712,7 @@
       .nav-logo img { height: 48px; }
       .hero { padding: 100px 20px 60px; }
       .hero-strip { grid-template-columns: 1fr; }
-      .hero-strip .right-col { display: none; }
-      .hero-strip img { height: 300px; }
+      .hero-strip img { height: 340px; }
       .collections-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .collection-card img, .collection-card video { height: 340px; }
       .why-grid { grid-template-columns: 1fr 1fr; gap: 0; }
@@ -757,7 +741,6 @@
 </head>
 <body>
 
-  <!-- CUSTOM CURSOR -->
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
@@ -768,6 +751,7 @@
       <li><a href="polo.html">Polos</a></li>
       <li><a href="oversized.html">Oversized</a></li>
       <li><a href="printed.html">Printed</a></li>
+      <li><a href="hoodie.html">Hoodies</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
     <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
@@ -782,17 +766,15 @@
     <a href="polo.html">Polos</a>
     <a href="oversized.html">Oversized</a>
     <a href="printed.html">Printed</a>
-    <a href="oversized.html#hoodies">Hoodies</a>
+    <a href="hoodie.html">Hoodies</a>
     <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
     <a href="tel:9637748622">📞 Order Now</a>
   </div>
 
   <!-- HERO -->
   <section class="hero">
-    <!-- Promo video background: upload your video to the repo and set the filename below -->
-    <video class="hero-video-bg" autoplay muted loop playsinline>
-      <source src="hero-promo.mp4" type="video/mp4">
-    </video>
+    <!-- Squad photo now sits full-bleed behind the headline -->
+    <div class="hero-bg-photo"></div>
     <div class="hero-video-overlay"></div>
 
     <div class="hero-badge">Just Dropped — New Collection</div>
@@ -801,18 +783,12 @@
 
     <div class="hero-strip">
       <div class="strip-item">
-        <img src="promo-squad-aarambh.jpg" alt="Arambh Squad">
-        <span class="strip-tag">On the Streets</span>
+        <img src="promo-cap-fit.webp" alt="Arambh Cap Fit">
+        <span class="strip-tag">Fit Check</span>
       </div>
-      <div class="right-col">
-        <div class="strip-item">
-          <img src="promo-cap-fit.webp" alt="Arambh Cap Fit">
-          <span class="strip-tag">Fit Check</span>
-        </div>
-        <div class="strip-item">
-          <img src="dornat-demonslayer-tee.png" alt="Demon Slayer Anime Tee">
-          <span class="strip-tag">Just Dropped</span>
-        </div>
+      <div class="strip-item">
+        <img src="dornat-demonslayer-tee.png" alt="Demon Slayer Anime Tee">
+        <span class="strip-tag">Just Dropped</span>
       </div>
     </div>
 
@@ -894,7 +870,7 @@
       </a>
 
       <!-- HOODIE -->
-      <a href="oversized.html#hoodies" class="collection-card reveal reveal-delay-3">
+      <a href="hoodie.html" class="collection-card reveal reveal-delay-3">
         <img src="hoodie1.jpg" alt="Hoodie Collection">
         <div class="card-overlay"></div>
         <span class="card-tag">Premium</span>
@@ -973,7 +949,7 @@
             <li><a href="polo.html">Polo Collection</a></li>
             <li><a href="oversized.html">Oversized Collection</a></li>
             <li><a href="printed.html">Printed Collection</a></li>
-            <li><a href="oversized.html#hoodies">Hoodies</a></li>
+            <li><a href="hoodie.html">Hoodies</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -997,7 +973,6 @@
   </footer>
 
   <script>
-    // Mobile menu
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');
     const menuBackdrop = document.getElementById('menuBackdrop');
@@ -1010,7 +985,6 @@
     menuBackdrop.addEventListener('click', closeMenu);
     mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
 
-    // Custom Cursor
     const cursor = document.getElementById('cursor');
     const cursorRing = document.getElementById('cursorRing');
     let mx = 0, my = 0, rx = 0, ry = 0;
@@ -1045,7 +1019,6 @@
       });
     });
 
-    // Scroll reveal
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('active');
@@ -1053,7 +1026,6 @@
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Nav scroll shrink
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);

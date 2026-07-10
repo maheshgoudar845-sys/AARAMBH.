@@ -613,6 +613,95 @@
       margin-top: 8px;
     }
 
+    /* FEEDBACK */
+    .feedback-section {
+      padding: 100px 40px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .feedback-inner {
+      max-width: 640px;
+      margin: auto;
+    }
+    .feedback-form {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 44px;
+    }
+    .fb-row { margin-bottom: 22px; }
+    .fb-row label {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .fb-row input[type="text"],
+    .fb-row input[type="email"],
+    .fb-row textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .fb-row input:focus,
+    .fb-row textarea:focus { border-color: var(--accent); }
+    .fb-row textarea { resize: vertical; min-height: 110px; }
+
+    .fb-stars {
+      display: flex;
+      gap: 8px;
+      font-size: 30px;
+    }
+    .fb-star {
+      cursor: pointer;
+      color: rgba(255,255,255,0.15);
+      transition: color 0.2s, transform 0.2s;
+      user-select: none;
+    }
+    .fb-star:hover { transform: scale(1.15); }
+    .fb-star.active { color: var(--accent2); }
+
+    .fb-submit {
+      width: 100%;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: white;
+      background: var(--accent);
+      border: none;
+      padding: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 20px rgba(255,60,56,0.3);
+    }
+    .fb-submit:hover { background: #ff1f1a; transform: scale(1.01); }
+    .fb-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .fb-status {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      display: none;
+    }
+    .fb-status.show { display: block; }
+    .fb-status.ok { color: #4caf50; }
+    .fb-status.err { color: var(--accent); }
+
     /* FOOTER */
     footer {
       background: #04040a;
@@ -722,6 +811,7 @@
       .footer-top { grid-template-columns: 1fr; gap: 40px; }
       .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
       .collections-section { padding: 80px 20px; }
+      .feedback-form { padding: 30px 22px; }
     }
 
     @media (max-width: 540px) {
@@ -935,6 +1025,45 @@
     </div>
   </section>
 
+  <!-- FEEDBACK -->
+  <section class="feedback-section">
+    <div class="feedback-inner">
+      <div class="section-header reveal">
+        <span class="section-label">Tell Us Something</span>
+        <h2 class="section-title">RATE YOUR VIBE</h2>
+        <p class="section-desc">Got a fit from Arambh? Let us know how it went.</p>
+      </div>
+
+      <form class="feedback-form reveal" id="feedbackForm">
+        <div class="fb-row">
+          <label for="fbName">Name</label>
+          <input type="text" id="fbName" name="name" placeholder="Your name" required>
+        </div>
+        <div class="fb-row">
+          <label for="fbEmail">Email (optional)</label>
+          <input type="email" id="fbEmail" name="email" placeholder="you@example.com">
+        </div>
+        <div class="fb-row">
+          <label>Rating</label>
+          <div class="fb-stars" id="fbStars">
+            <span class="fb-star" data-value="1">★</span>
+            <span class="fb-star" data-value="2">★</span>
+            <span class="fb-star" data-value="3">★</span>
+            <span class="fb-star" data-value="4">★</span>
+            <span class="fb-star" data-value="5">★</span>
+          </div>
+          <input type="hidden" id="fbRating" name="rating" value="0" required>
+        </div>
+        <div class="fb-row">
+          <label for="fbComments">Comments</label>
+          <textarea id="fbComments" name="comments" placeholder="Tell us about your fit, sizing, delivery, anything..." required></textarea>
+        </div>
+        <button type="submit" class="fb-submit" id="fbSubmit">Submit Feedback</button>
+        <div class="fb-status" id="fbStatus"></div>
+      </form>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
@@ -1029,6 +1158,60 @@
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // FEEDBACK FORM
+    const fbStars = document.querySelectorAll('#fbStars .fb-star');
+    const fbRatingInput = document.getElementById('fbRating');
+    fbStars.forEach(star => {
+      star.addEventListener('click', () => {
+        const val = parseInt(star.dataset.value, 10);
+        fbRatingInput.value = val;
+        fbStars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value, 10) <= val));
+      });
+    });
+
+    const feedbackForm = document.getElementById('feedbackForm');
+    const fbSubmit = document.getElementById('fbSubmit');
+    const fbStatus = document.getElementById('fbStatus');
+
+    feedbackForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (fbRatingInput.value === '0') {
+        fbStatus.textContent = 'Please select a star rating.';
+        fbStatus.className = 'fb-status show err';
+        return;
+      }
+
+      fbSubmit.disabled = true;
+      fbSubmit.textContent = 'Sending...';
+
+      const formData = new FormData(feedbackForm);
+
+      try {
+        const res = await fetch('https://formspree.io/f/xqejgjzw', {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          fbStatus.textContent = 'Thanks for the feedback! 🙌';
+          fbStatus.className = 'fb-status show ok';
+          feedbackForm.reset();
+          fbStars.forEach(s => s.classList.remove('active'));
+          fbRatingInput.value = '0';
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (err) {
+        fbStatus.textContent = 'Something went wrong. Try again or DM us on WhatsApp.';
+        fbStatus.className = 'fb-status show err';
+      } finally {
+        fbSubmit.disabled = false;
+        fbSubmit.textContent = 'Submit Feedback';
+      }
     });
   </script>
 </body>

@@ -276,7 +276,18 @@
       .justdropped-section { padding: 40px 20px 10px; }
       .drops-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
       .justdropped-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
-      .card-media.double-view { height: 180px; }
+      .card-media.double-view { height: 260px; position: relative; }
+      .card-media.double-view img {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: contain; opacity: 0; transition: opacity 0.5s ease;
+      }
+      .card-media.double-view img.slide-active { opacity: 1; }
+      .double-view-dots {
+        position: absolute; bottom: 10px; left: 0; right: 0; z-index: 3;
+        display: flex; justify-content: center; gap: 6px;
+      }
+      .double-view-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); transition: background 0.3s, transform 0.3s; }
+      .double-view-dots span.active { background: var(--accent); transform: scale(1.3); }
       .jd-card .card-media.single-view { height: 220px; }
       .size-section { margin: 0 20px 40px; }
       .size-header { padding: 24px 24px 0; }
@@ -297,7 +308,7 @@
       .swatch { width: 20px; height: 20px; }
       .color-label { width: 100%; margin-bottom: 4px; }
       .selected-color { margin-left: 0; }
-      .card-media.double-view { height: 140px; }
+      .card-media.double-view { height: 220px; }
       .jd-card .card-media.single-view { height: 180px; }
     }
 
@@ -340,7 +351,7 @@
       <span class="meta-chip hot">Limited Runs</span>
       <span class="meta-chip">16 Designs</span>
     </div>
-  <div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;pointer-events:none;z-index:0;"><img src="dornat-demonslayer-tee.png" style="width:min(900px,85vw);opacity:.18;filter:drop-shadow(0 40px 80px rgba(0,0,0,.6));transform:translateY(20px);"></div></header>
+  <div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;pointer-events:none;z-index:0;"><img src="dornat-demonslayer-tee.png" style="width:min(900px,85vw);opacity:.18;filter:drop-shadow(0 40px 80px rgba(0,0,0,.6));transform:translateY(20px);" loading="lazy"></div></header>
 
   <div class="ticker-wrap">
     <div class="ticker">
@@ -351,6 +362,31 @@
       <span>More Anime Designs</span><span>Coming soon</span><span>Street Art</span>
     </div>
   </div>
+
+  <!-- LATEST LAUNCH — newest product, highest priority slot -->
+  <section class="justdropped-section">
+    <div class="justdropped-header">
+      <div>
+        <span class="justdropped-badge">Latest Launch</span>
+        <h2 class="section-title" style="margin-top:14px;margin-bottom:0;">EXPLORE SPACE</h2>
+      </div>
+    </div>
+
+    <div class="justdropped-grid">
+      <div class="jd-card reveal">
+        <div class="card-media double-view">
+          <img src="explore_space_front.jpg" alt="Explore Space Acid Wash Front" loading="lazy">
+          <img src="explore_space_back.jpg" alt="Explore Space Acid Wash Back" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Explore Space — Acid Wash</h3>
+          <p>Pure cotton, acid-washed oversized tee. Front & back designs included.</p>
+          <div class="price" style="margin-top:14px;">₹699</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Explore Space Acid Wash','Printed Oversized Tee','699')">🛍️ Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- JUST DROPPED — highest priority, new Anime collection -->
   <section class="justdropped-section">
@@ -365,8 +401,8 @@
 
       <div class="jd-card reveal">
         <div class="card-media double-view">
-          <img src="anime_b_f.png" alt="Anime Black Front">
-          <img src="anime_b_b.png" alt="Anime Black Back">
+          <img src="anime_b_f.png" alt="Anime Black Front" loading="lazy">
+          <img src="anime_b_b.png" alt="Anime Black Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Anime Black</h3>
@@ -385,8 +421,8 @@
 
       <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="anime_w_f.png" alt="Anime White Front">
-          <img src="anime_w_b.png" alt="Anime White Back">
+          <img src="anime_w_f.png" alt="Anime White Front" loading="lazy">
+          <img src="anime_w_b.png" alt="Anime White Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Anime White</h3>
@@ -406,8 +442,8 @@
       <div class="jd-card reveal reveal-delay-2">
         <div class="card-media single-view">
           <span class="card-badge">Back Print</span>
-          <img src="anime_r_f.png" alt="Anime Red Front">
-          <img src="anime_r_b.png" alt="Anime Red Back">
+          <img src="anime_r_f.png" alt="Anime Red Front" loading="lazy">
+          <img src="anime_r_b.png" alt="Anime Red Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Anime Red</h3>
@@ -425,8 +461,8 @@
       </div>
       <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="naruto_w_f.png" alt="Naruto White Front">
-          <img src="naruto_w_b.png" alt="Naruto White Back">
+          <img src="naruto_w_f.png" alt="Naruto White Front" loading="lazy">
+          <img src="naruto_w_b.png" alt="Naruto White Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Naruto white</h3>
@@ -444,8 +480,8 @@
       </div>
        <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="naruto_b_f.png" alt="Naruto Black Front">
-          <img src="naruto_b_b.png" alt="Naruto Black Back">
+          <img src="naruto_b_f.png" alt="Naruto Black Front" loading="lazy">
+          <img src="naruto_b_b.png" alt="Naruto Black Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Naruto Black</h3>
@@ -463,8 +499,8 @@
       </div>
        <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="naruto_r_f.png" alt="Naruto Red Front">
-          <img src="naruto_r_b.png" alt="Naruto Red Back">
+          <img src="naruto_r_f.png" alt="Naruto Red Front" loading="lazy">
+          <img src="naruto_r_b.png" alt="Naruto Red Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Naruto Red</h3>
@@ -482,8 +518,8 @@
       </div>
        <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="one_w_f.png" alt="One Piece White Front">
-          <img src="one_w_b.png" alt="One Piece White Back">
+          <img src="one_w_f.png" alt="One Piece White Front" loading="lazy">
+          <img src="one_w_b.png" alt="One Piece White Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>One Piece white</h3>
@@ -501,8 +537,8 @@
       </div>
        <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="one_b_f.png" alt="One Piece Black Front">
-          <img src="one_b_b.png" alt="One Piece Black Back">
+          <img src="one_b_f.png" alt="One Piece Black Front" loading="lazy">
+          <img src="one_b_b.png" alt="One Piece Black Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>One Piece Black</h3>
@@ -520,8 +556,8 @@
       </div>
        <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="one_r_f.png" alt="One Piece Red Front">
-          <img src="one_r_b.png" alt="One Piece Red Back">
+          <img src="one_r_f.png" alt="One Piece Red Front" loading="lazy">
+          <img src="one_r_b.png" alt="One Piece Red Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>One Piece Red</h3>
@@ -539,8 +575,8 @@
       </div>
 <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="tanjiro_w_f.png" alt="Tanjiro White Front">
-          <img src="tanjiro_w_b.png" alt="Tanjiro White Back">
+          <img src="tanjiro_w_f.png" alt="Tanjiro White Front" loading="lazy">
+          <img src="tanjiro_w_b.png" alt="Tanjiro White Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Tanjiro White</h3>
@@ -558,8 +594,8 @@
       </div>
       <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="tanjiro_b_f.png" alt="Tanjiro Black Front">
-          <img src="tanjiro_b_b.png" alt="Tanjiro Black Back">
+          <img src="tanjiro_b_f.png" alt="Tanjiro Black Front" loading="lazy">
+          <img src="tanjiro_b_b.png" alt="Tanjiro Black Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Tanjiro Black </h3>
@@ -577,8 +613,8 @@
       </div>
       <div class="jd-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="tanjiro_r_f.png" alt="Tanjiro Red Front">
-          <img src="tanjiro_r_b.png" alt="Tanjiro Red Back">
+          <img src="tanjiro_r_f.png" alt="Tanjiro Red Front" loading="lazy">
+          <img src="tanjiro_r_b.png" alt="Tanjiro Red Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Tanjiro Red</h3>
@@ -596,8 +632,8 @@
       </div>
        <div class="drop-card reveal">
         <div class="card-media double-view">
-          <img src="luffy_b_f.png" alt="Luffy Black Front">
-          <img src="luffy_b_b.png" alt="Luffy Black Back">
+          <img src="luffy_b_f.png" alt="Luffy Black Front" loading="lazy">
+          <img src="luffy_b_b.png" alt="Luffy Black Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Luffy Black</h3>
@@ -609,8 +645,8 @@
 
       <div class="drop-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="luffy_r_f.png" alt="Luffy Red Front">
-          <img src="luffy_r_b.png" alt="Luffy Red Back">
+          <img src="luffy_r_f.png" alt="Luffy Red Front" loading="lazy">
+          <img src="luffy_r_b.png" alt="Luffy Red Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Luffy Red</h3>
@@ -622,8 +658,8 @@
 
       <div class="drop-card reveal reveal-delay-2">
         <div class="card-media double-view">
-          <img src="luffy_w_f.png" alt="Luffy White Front">
-          <img src="luffy_w_b.png" alt="Luffy White Back">
+          <img src="luffy_w_f.png" alt="Luffy White Front" loading="lazy">
+          <img src="luffy_w_b.png" alt="Luffy White Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Luffy White</h3>
@@ -648,8 +684,8 @@
 
       <div class="drop-card reveal">
         <div class="card-media double-view">
-          <img src="Justice_r_f.png" alt="Justice Red Front">
-          <img src="Justice_r_b.png" alt="Justice Red Back">
+          <img src="Justice_r_f.png" alt="Justice Red Front" loading="lazy">
+          <img src="Justice_r_b.png" alt="Justice Red Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Justice Red</h3>
@@ -661,8 +697,8 @@
 
       <div class="drop-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="Justice_w_f.png" alt="Justice White Front">
-          <img src="Justice_w_b.png" alt="Justice White Back">
+          <img src="Justice_w_f.png" alt="Justice White Front" loading="lazy">
+          <img src="Justice_w_b.png" alt="Justice White Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Justice White</h3>
@@ -674,8 +710,8 @@
 
       <div class="drop-card reveal reveal-delay-2">
         <div class="card-media double-view">
-          <img src="Porsche_black_front.png" alt="Porsche Black Front">
-          <img src="Porsche_black_back.png" alt="Porsche Black Back">
+          <img src="Porsche_black_front.png" alt="Porsche Black Front" loading="lazy">
+          <img src="Porsche_black_back.png" alt="Porsche Black Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Porsche Black</h3>
@@ -687,8 +723,8 @@
 
       <div class="drop-card reveal">
         <div class="card-media double-view">
-          <img src="Porsche_red_front.png" alt="Porsche Red Front">
-          <img src="Porsche_red_back.png" alt="Porsche Red Back">
+          <img src="Porsche_red_front.png" alt="Porsche Red Front" loading="lazy">
+          <img src="Porsche_red_back.png" alt="Porsche Red Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Porsche Red</h3>
@@ -700,7 +736,7 @@
 
       <div class="drop-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="Kufu_white.jpeg" alt="Kung Panda White Front & Back">
+          <img src="Kufu_white.jpeg" alt="Kung Panda White Front & Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Kungfu Panda White</h3>
@@ -711,7 +747,7 @@
       </div>
       <div class="drop-card reveal reveal-delay-1">
         <div class="card-media double-view">
-          <img src="Kufu_black.jpeg" alt="Kungfu Panda Black Front & Back">
+          <img src="Kufu_black.jpeg" alt="Kungfu Panda Black Front & Back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Kungfu Panda Black</h3>
@@ -727,7 +763,7 @@
   <div class="size-section reveal">
     <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>
     <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit before placing your order.</p>
-    <img src="regular_size_chart.png" alt="Size Chart"><img src="oversized_chart.png" alt="Size Chart">
+    <img src="regular_size_chart.png" alt="Size Chart" loading="lazy"><img src="oversized_chart.png" alt="Size Chart" loading="lazy">
     <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering</div>
   </div>
 
@@ -763,6 +799,66 @@
     });
     menuBackdrop.addEventListener('click', closeMenu);
     mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    // MOBILE DOUBLE-VIEW SLIDER — shows front image first, auto-slides to back, tap to switch manually
+    function initDoubleViewSliders() {
+      const isMobileWidth = window.innerWidth <= 768;
+      document.querySelectorAll('.card-media.double-view').forEach(container => {
+        const imgs = container.querySelectorAll('img');
+        if (imgs.length < 2) return;
+
+        if (!isMobileWidth) {
+          // Desktop/tablet: reset to normal side-by-side view, stop any slider
+          if (container._sliderTimer) { clearInterval(container._sliderTimer); container._sliderTimer = null; }
+          imgs.forEach(img => img.classList.remove('slide-active'));
+          const existingDots = container.querySelector('.double-view-dots');
+          if (existingDots) existingDots.remove();
+          container.dataset.sliderInit = '';
+          return;
+        }
+
+        if (container.dataset.sliderInit === 'true') return; // already set up for mobile
+
+        imgs[0].classList.add('slide-active'); // front shown first
+        let idx = 0;
+
+        const dots = document.createElement('div');
+        dots.className = 'double-view-dots';
+        imgs.forEach((_, i) => {
+          const dot = document.createElement('span');
+          if (i === 0) dot.classList.add('active');
+          dots.appendChild(dot);
+        });
+        container.appendChild(dots);
+
+        function show(i) {
+          imgs.forEach((img, j) => img.classList.toggle('slide-active', j === i));
+          dots.querySelectorAll('span').forEach((d, j) => d.classList.toggle('active', j === i));
+        }
+
+        function startAutoSlide() {
+          if (container._sliderTimer) clearInterval(container._sliderTimer);
+          container._sliderTimer = setInterval(() => {
+            idx = (idx + 1) % imgs.length;
+            show(idx);
+          }, 2600);
+        }
+        startAutoSlide();
+
+        // Tap/click to manually advance
+        container.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          idx = (idx + 1) % imgs.length;
+          show(idx);
+          startAutoSlide(); // reset timer after manual tap
+        });
+
+        container.dataset.sliderInit = 'true';
+      });
+    }
+    initDoubleViewSliders();
+    window.addEventListener('resize', initDoubleViewSliders);
 
     function selectColor(el) {
       const row = el.closest('.color-row');

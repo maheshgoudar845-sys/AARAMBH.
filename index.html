@@ -613,6 +613,101 @@
       margin-top: 8px;
     }
 
+
+
+    /* CUSTOMER REVIEWS */
+    .reviews-section {
+      padding: 110px 0 100px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--bg), #0b0b14 55%, var(--bg));
+      border-top: 1px solid var(--border);
+    }
+    .reviews-section::before {
+      content: '';
+      position: absolute;
+      width: 680px; height: 680px;
+      right: -260px; top: -260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,60,56,.10), transparent 68%);
+      pointer-events: none;
+    }
+    .reviews-inner { max-width: 1240px; margin: auto; padding: 0 40px; position: relative; z-index: 1; }
+    .reviews-topline {
+      display: flex; align-items: end; justify-content: space-between; gap: 24px;
+      margin-bottom: 38px;
+    }
+    .reviews-copy .section-label { margin-bottom: 10px; }
+    .reviews-copy .section-title { text-align: left; }
+    .reviews-copy p { color: var(--muted); margin-top: 12px; max-width: 560px; line-height: 1.7; }
+    .reviews-nav { display: flex; gap: 10px; flex-shrink: 0; }
+    .review-arrow {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.04);
+      color: var(--text); font-size: 20px; cursor: pointer;
+      transition: transform .2s, background .25s, border-color .25s;
+    }
+    .review-arrow:hover { transform: translateY(-2px); background: var(--accent); border-color: var(--accent); }
+    .reviews-viewport {
+      overflow-x: auto;
+      scrollbar-width: none;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-inline: contain;
+      touch-action: pan-y pinch-zoom;
+      cursor: grab;
+    }
+    .reviews-viewport::-webkit-scrollbar { display: none; }
+    .reviews-viewport.dragging { cursor: grabbing; scroll-snap-type: none; }
+    .reviews-track { display: flex; gap: 18px; width: max-content; padding: 6px 2px 18px; }
+    .review-card {
+      width: min(410px, calc(100vw - 54px));
+      min-height: 325px;
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      padding: 28px;
+      display: flex; flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+      transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    }
+    .review-card:hover { transform: translateY(-7px); border-color: rgba(255,60,56,.36); box-shadow: 0 34px 90px rgba(0,0,0,.45); }
+    .review-card-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .review-stars { color: #f4b41a; letter-spacing: 3px; font-size: 18px; line-height: 1; }
+    .verified-badge {
+      font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 800;
+      letter-spacing: 1.5px; text-transform: uppercase; color: #9be6b4;
+      border: 1px solid rgba(91,208,132,.28); background: rgba(91,208,132,.08);
+      padding: 6px 9px; border-radius: 999px;
+    }
+    .review-quote {
+      font-family: 'Syne', sans-serif;
+      font-size: 19px; font-weight: 600; line-height: 1.55;
+      color: #f6f6f7; margin: 26px 0 22px;
+      flex-grow: 1;
+    }
+    .review-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .review-tag {
+      font-size: 10px; color: #bbb; letter-spacing: .7px; text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035);
+      padding: 6px 9px; border-radius: 999px;
+    }
+    .review-author { display: flex; align-items: center; gap: 12px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .review-avatar {
+      width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 21px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white;
+    }
+    .review-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .7px; }
+    .review-product { color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .reviews-bottom { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 20px; }
+    .review-dots { display: flex; gap: 7px; flex-wrap: wrap; }
+    .review-dot { width: 7px; height: 7px; border: 0; border-radius: 50%; background: #3c3c46; padding: 0; cursor: pointer; transition: width .25s, background .25s; }
+    .review-dot.active { width: 24px; border-radius: 10px; background: var(--accent); }
+    .swipe-hint { color: var(--muted); font-family: 'Syne', sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; }
+    .reviews-note { color: #666; font-size: 11px; margin-top: 12px; line-height: 1.5; }
+
     /* FEEDBACK CTA */
     .feedback-cta-section {
       padding: 110px 40px;
@@ -993,6 +1088,34 @@
     </div>
   </section>
 
+
+  <!-- CUSTOMER FEEDBACK SHOWCASE -->
+  <section class="reviews-section" id="customerReviews" aria-labelledby="reviewsTitle">
+    <div class="reviews-inner">
+      <div class="reviews-topline reveal">
+        <div class="reviews-copy">
+          <span class="section-label">Worn. Rated. Repeated.</span>
+          <h2 class="section-title" id="reviewsTitle">VOICES OF ARAMBH</h2>
+          <p>Real feedback on the fit, fabric, print and overall experience. Swipe through what the community has to say.</p>
+        </div>
+        <div class="reviews-nav" aria-label="Review controls">
+          <button class="review-arrow" id="reviewPrev" type="button" aria-label="Previous review">←</button>
+          <button class="review-arrow" id="reviewNext" type="button" aria-label="Next review">→</button>
+        </div>
+      </div>
+
+      <div class="reviews-viewport reveal" id="reviewsViewport" tabindex="0" aria-label="Customer reviews. Swipe or use arrow keys to browse.">
+        <div class="reviews-track" id="reviewsTrack"></div>
+      </div>
+
+      <div class="reviews-bottom reveal">
+        <div class="review-dots" id="reviewDots" aria-label="Choose a review"></div>
+        <span class="swipe-hint">Swipe / drag to explore ↔</span>
+      </div>
+      <p class="reviews-note">Only feedback approved for public display should be added. Email addresses and order numbers are never shown.</p>
+    </div>
+  </section>
+
   <!-- FEEDBACK CTA -->
   <section class="feedback-cta-section">
     <div class="feedback-cta-inner reveal">
@@ -1096,6 +1219,154 @@
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     });
+
+
+    /* CUSTOMER REVIEWS
+       Add a new object below whenever you receive approved feedback.
+       Keep private fields such as email and order number out of this list. */
+    const customerReviews = [
+      {
+        name: 'Customer Name',
+        rating: 5,
+        product: 'Printed T-Shirt',
+        quote: 'Replace this sample with the customer’s approved written feedback.',
+        tags: ['Quality 5/5', 'True to size', 'On-time delivery'],
+        verified: true
+      },
+      {
+        name: 'Customer Name',
+        rating: 5,
+        product: 'Oversized T-Shirt',
+        quote: 'Add another genuine review here. The slider will automatically include every new entry.',
+        tags: ['Premium fabric', 'Great print', 'Would buy again'],
+        verified: true
+      },
+      {
+        name: 'Customer Name',
+        rating: 4,
+        product: 'Polo Collection',
+        quote: 'You can showcase product notes, overall experience and fit feedback in one clean card.',
+        tags: ['Quality 4/5', 'Comfortable fit', 'Good experience'],
+        verified: true
+      }
+    ];
+
+    const reviewsViewport = document.getElementById('reviewsViewport');
+    const reviewsTrack = document.getElementById('reviewsTrack');
+    const reviewDots = document.getElementById('reviewDots');
+    const reviewPrev = document.getElementById('reviewPrev');
+    const reviewNext = document.getElementById('reviewNext');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let activeReview = 0;
+    let reviewTimer;
+
+    const escapeReviewText = (value = '') => String(value).replace(/[&<>'"]/g, char => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    })[char]);
+
+    function renderReviews() {
+      reviewsTrack.innerHTML = customerReviews.map((review, index) => {
+        const safeName = escapeReviewText(review.name);
+        const initials = safeName.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'A';
+        const rating = Math.max(1, Math.min(5, Number(review.rating) || 5));
+        const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        const tags = (review.tags || []).map(tag => `<span class="review-tag">${escapeReviewText(tag)}</span>`).join('');
+        return `
+          <article class="review-card" aria-label="Review ${index + 1} of ${customerReviews.length}">
+            <div class="review-card-head">
+              <div class="review-stars" aria-label="${rating} out of 5 stars">${stars}</div>
+              ${review.verified ? '<span class="verified-badge">✓ Verified Buyer</span>' : ''}
+            </div>
+            <blockquote class="review-quote">“${escapeReviewText(review.quote)}”</blockquote>
+            <div class="review-tags">${tags}</div>
+            <div class="review-author">
+              <div class="review-avatar" aria-hidden="true">${initials}</div>
+              <div>
+                <div class="review-name">${safeName}</div>
+                <div class="review-product">${escapeReviewText(review.product)}</div>
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+
+      reviewDots.innerHTML = customerReviews.map((_, index) =>
+        `<button class="review-dot${index === 0 ? ' active' : ''}" type="button" aria-label="Go to review ${index + 1}" data-index="${index}"></button>`
+      ).join('');
+    }
+
+    function cardStep() {
+      const card = reviewsTrack.querySelector('.review-card');
+      if (!card) return 0;
+      return card.getBoundingClientRect().width + 18;
+    }
+
+    function goToReview(index, userInitiated = false) {
+      if (!customerReviews.length) return;
+      activeReview = (index + customerReviews.length) % customerReviews.length;
+      reviewsViewport.scrollTo({ left: activeReview * cardStep(), behavior: reduceMotion ? 'auto' : 'smooth' });
+      reviewDots.querySelectorAll('.review-dot').forEach((dot, i) => dot.classList.toggle('active', i === activeReview));
+      if (userInitiated) restartReviewAutoplay();
+    }
+
+    function nearestReview() {
+      const step = cardStep();
+      if (!step) return;
+      const index = Math.max(0, Math.min(customerReviews.length - 1, Math.round(reviewsViewport.scrollLeft / step)));
+      if (index !== activeReview) {
+        activeReview = index;
+        reviewDots.querySelectorAll('.review-dot').forEach((dot, i) => dot.classList.toggle('active', i === activeReview));
+      }
+    }
+
+    function startReviewAutoplay() {
+      if (reduceMotion || customerReviews.length < 2) return;
+      clearInterval(reviewTimer);
+      reviewTimer = setInterval(() => goToReview(activeReview + 1), 4500);
+    }
+    function restartReviewAutoplay() { clearInterval(reviewTimer); startReviewAutoplay(); }
+
+    renderReviews();
+    reviewPrev.addEventListener('click', () => goToReview(activeReview - 1, true));
+    reviewNext.addEventListener('click', () => goToReview(activeReview + 1, true));
+    reviewDots.addEventListener('click', event => {
+      const dot = event.target.closest('.review-dot');
+      if (dot) goToReview(Number(dot.dataset.index), true);
+    });
+    reviewsViewport.addEventListener('scroll', () => requestAnimationFrame(nearestReview), { passive: true });
+    reviewsViewport.addEventListener('mouseenter', () => clearInterval(reviewTimer));
+    reviewsViewport.addEventListener('mouseleave', startReviewAutoplay);
+    reviewsViewport.addEventListener('focusin', () => clearInterval(reviewTimer));
+    reviewsViewport.addEventListener('focusout', startReviewAutoplay);
+    reviewsViewport.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight') { event.preventDefault(); goToReview(activeReview + 1, true); }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); goToReview(activeReview - 1, true); }
+    });
+
+    let reviewDragging = false, reviewStartX = 0, reviewStartScroll = 0;
+    reviewsViewport.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'touch') return;
+      reviewDragging = true;
+      reviewStartX = event.clientX;
+      reviewStartScroll = reviewsViewport.scrollLeft;
+      reviewsViewport.classList.add('dragging');
+      reviewsViewport.setPointerCapture(event.pointerId);
+      clearInterval(reviewTimer);
+    });
+    reviewsViewport.addEventListener('pointermove', event => {
+      if (reviewDragging) reviewsViewport.scrollLeft = reviewStartScroll - (event.clientX - reviewStartX);
+    });
+    function endReviewDrag() {
+      if (!reviewDragging) return;
+      reviewDragging = false;
+      reviewsViewport.classList.remove('dragging');
+      goToReview(Math.round(reviewsViewport.scrollLeft / cardStep()), true);
+    }
+    reviewsViewport.addEventListener('pointerup', endReviewDrag);
+    reviewsViewport.addEventListener('pointercancel', endReviewDrag);
+    window.addEventListener('resize', () => goToReview(activeReview));
+    document.addEventListener('visibilitychange', () => document.hidden ? clearInterval(reviewTimer) : startReviewAutoplay());
+    startReviewAutoplay();
+
   </script>
 </body>
 </html>

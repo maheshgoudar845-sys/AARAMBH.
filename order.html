@@ -26,6 +26,26 @@
   .nav-links a:hover{color:var(--text);}
   @media(max-width:900px){.nav-links{display:none;}}
 
+  .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:200;}
+  .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s;}
+  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .mobile-menu{position:fixed;top:0;right:0;height:100vh;width:min(78vw,320px);background:#0c0c16;border-left:1px solid var(--border);z-index:150;padding:100px 32px 40px;transform:translateX(100%);transition:transform .4s ease;display:flex;flex-direction:column;gap:26px;}
+  .mobile-menu.open{transform:translateX(0);}
+  .mobile-menu a{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;}
+  .mobile-menu a.active{color:var(--accent);}
+  .menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:140;opacity:0;pointer-events:none;transition:opacity .3s;}
+  .menu-backdrop.open{opacity:1;pointer-events:auto;}
+  @media(max-width:900px){.hamburger{display:flex;}}
+
+  /* QR fallback for UPI payment */
+  .upi-qr-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:6px 0 22px;}
+  .upi-qr-wrap img{width:190px;height:190px;border-radius:16px;background:#fff;padding:10px;}
+  .upi-qr-wrap span{font-size:12px;color:var(--muted);letter-spacing:.5px;}
+  .upi-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;}
+  .upi-divider::before,.upi-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
   .page-header{padding:130px 20px 40px;text-align:center;}
   .breadcrumb{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
   .breadcrumb a{color:var(--accent);text-decoration:none;}
@@ -114,9 +134,26 @@
     <li><a href="polo.html">Polos</a></li>
     <li><a href="oversized.html">Oversized</a></li>
     <li><a href="printed.html">Printed</a></li>
+    <li><a href="hoodie.html">Hoodies</a></li>
+    <li><a href="feedback.html">Feedback</a></li>
     <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="menu-backdrop" id="menuBackdrop"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="polo.html">Polos</a>
+  <a href="oversized.html">Oversized</a>
+  <a href="printed.html">Printed</a>
+  <a href="hoodie.html">Hoodies</a>
+  <a href="feedback.html">Feedback</a>
+  <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
+  <a href="tel:9637748622">📞 Order Now</a>
+</div>
 
 <header class="page-header">
   <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Place Order</div>
@@ -233,7 +270,14 @@
       <span id="upiIdText">maheshgoudar076@pingpay</span>
       <button class="copy-btn" onclick="copyUPI()">Copy</button>
     </div>
+
+    <div class="upi-qr-wrap">
+      <img id="upiQrImg" alt="Scan to pay via UPI">
+      <span>Scan with any UPI app (GPay, PhonePe, Paytm, BHIM...)</span>
+    </div>
+
     <div class="upi-apps" id="upiApps"></div>
+
     <p style="margin-bottom:6px;">Once paid, confirm your payment with us on WhatsApp:</p>
     <a href="#" id="whatsappConfirmBtn" class="whatsapp-confirm-btn">💬 Confirm Payment on WhatsApp</a>
   </div>
@@ -318,6 +362,35 @@
     };
   }
 
+  const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+
+  function renderUpiPayment(amount, note){
+    const links = buildUpiDeepLinks(amount, note);
+
+    // QR always works — desktop (scan with phone) and mobile (open camera/app)
+    document.getElementById('upiQrImg').src =
+      `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(links.generic)}`;
+
+    const upiApps = document.getElementById('upiApps');
+    if(isMobile){
+      // Deep links only work when tapped from an actual phone browser
+      upiApps.innerHTML = `
+        <div class="upi-divider">or tap to pay directly</div>
+        <a href="${links.gpay}" class="upi-app-btn">Pay with GPay</a>
+        <a href="${links.phonepe}" class="upi-app-btn">Pay with PhonePe</a>
+        <a href="${links.paytm}" class="upi-app-btn">Pay with Paytm</a>
+        <a href="${links.generic}" class="upi-app-btn">Other UPI App</a>
+      `;
+    } else {
+      // On desktop these app links do nothing when clicked — don't show them
+      upiApps.innerHTML = `
+        <p style="font-size:12px;color:var(--muted);text-align:center;">
+          On a computer? Scan the QR code above with your phone's UPI app to pay.
+        </p>
+      `;
+    }
+  }
+
   // ---- FORM SUBMIT ----
   const form = document.getElementById('orderForm');
   const submitBtn = document.getElementById('submitBtn');
@@ -358,14 +431,7 @@
 
     if(data.paymentMethod === 'UPI'){
       document.getElementById('upiAmount').textContent = '₹' + totalAmount;
-      const links = buildUpiDeepLinks(totalAmount, `Arambh Order - ${data.product || 'Item'}`);
-      const upiApps = document.getElementById('upiApps');
-      upiApps.innerHTML = `
-        <a href="${links.gpay}" class="upi-app-btn">Pay with GPay</a>
-        <a href="${links.phonepe}" class="upi-app-btn">Pay with PhonePe</a>
-        <a href="${links.paytm}" class="upi-app-btn">Pay with Paytm</a>
-        <a href="${links.generic}" class="upi-app-btn">Other UPI App</a>
-      `;
+      renderUpiPayment(totalAmount, `Arambh Order - ${data.product || 'Item'}`);
       document.getElementById('whatsappConfirmBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
       document.getElementById('upiPanel').classList.add('show');
     } else {
@@ -375,6 +441,19 @@
 
     window.scrollTo({ top: document.getElementById('productSummary').offsetTop - 100, behavior: 'smooth' });
   });
+
+  // ---- MOBILE MENU ----
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuBackdrop = document.getElementById('menuBackdrop');
+  function closeMenu(){ hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    menuBackdrop.classList.toggle('open', isOpen);
+  });
+  menuBackdrop.addEventListener('click', closeMenu);
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
 </script>
 </body>
 </html>

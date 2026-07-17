@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoodie Collection — Arambh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #080810;
+      --surface: #0f0f1a;
+      --surface2: #13131f;
+      --accent: #28469E;
+      --accent2: #CAE8E8;
+      --accent-rgb: 40,70,158;
+      --accent2-rgb: 202,232,232;
+      --text: #f0f0f0;
+      --muted: #888;
+      --border: rgba(255,255,255,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* CURSOR */
+    .cursor {
+      position: fixed; width: 12px; height: 12px;
+      background: var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed; width: 40px; height: 40px;
+      border: 1px solid rgba(var(--accent-rgb),0.5); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.3s, height 0.3s;
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9997; opacity: 0.5;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(8,8,16,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.3s;
+    }
+    nav.scrolled { padding: 12px 40px; }
+    .nav-logo img { height: 44px; }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      position: relative; transition: color 0.3s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px; background: var(--accent2); transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--accent2); }
+    .nav-links a.active::after { width: 100%; }
+    .nav-cta {
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: white; background: var(--accent);
+      padding: 10px 24px; border-radius: 100px; text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 20px rgba(var(--accent-rgb),0.3);
+    }
+    .nav-cta:hover { background: #1c3577; transform: scale(1.04); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
+    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed; top: 0; right: 0; height: 100vh; width: min(78vw, 320px);
+      background: #0c0c16; border-left: 1px solid var(--border);
+      z-index: 150; padding: 100px 32px 40px;
+      transform: translateX(100%); transition: transform 0.4s ease;
+      display: flex; flex-direction: column; gap: 26px;
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .mobile-menu a.active { color: var(--accent2); }
+    .menu-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .menu-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    /* PAGE HEADER */
+    .page-header {
+      min-height: 55vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 140px 40px 80px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(var(--accent-rgb),0.16) 0%, transparent 70%);
+      top: 0; left: 50%; transform: translateX(-50%);
+      animation: pulse 6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+    }
+    .breadcrumb {
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .breadcrumb a { color: var(--accent2); text-decoration: none; }
+    .breadcrumb span { opacity: 0.4; }
+    .page-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 10vw, 130px);
+      line-height: 0.9; letter-spacing: 2px;
+      animation: fade-up 0.8s ease both;
+    }
+    .page-header h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .page-header p {
+      color: var(--muted); font-size: 17px; font-weight: 300;
+      margin-top: 16px; letter-spacing: 1px;
+      animation: fade-up 0.8s 0.1s ease both;
+    }
+    .header-meta {
+      display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center;
+      animation: fade-up 0.8s 0.2s ease both;
+    }
+    .meta-chip {
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px;
+      color: var(--muted);
+    }
+    .meta-chip.hot { border-color: rgba(var(--accent2-rgb),0.4); color: var(--accent2); background: rgba(var(--accent-rgb),0.1); }
+
+    /* TICKER */
+    .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
+    .ticker { display: inline-flex; animation: ticker 20s linear infinite; }
+    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: var(--accent2); }
+    .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* PRODUCTS SECTION */
+    .products-section {
+      padding: 100px 40px;
+      max-width: 1280px; margin: auto;
+    }
+
+    .section-label {
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase; color: var(--accent2);
+      display: block; margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 5vw, 64px); letter-spacing: 2px;
+      margin-bottom: 50px;
+    }
+
+    /* PRODUCT GRID */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    /* PRODUCT CARD */
+    .product-card {
+      background: var(--surface);
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid var(--border);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      position: relative;
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 40px 70px rgba(0,0,0,0.7);
+    }
+
+    .card-media {
+      position: relative; overflow: hidden;
+      background: #0a0a14;
+    }
+    .card-media img {
+      width: 100%; height: 300px;
+      object-fit: contain; padding: 20px;
+      display: block; transition: transform 0.6s ease;
+    }
+    .product-card:hover .card-media img { transform: scale(1.06); }
+
+    .card-badge {
+      position: absolute; top: 14px; right: 14px;
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      background: var(--accent); color: var(--accent2);
+      padding: 5px 12px; border-radius: 100px;
+    }
+
+    .card-body { padding: 22px 24px 26px; }
+    .card-body h3 {
+      font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+    .price {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+      color: white; letter-spacing: 1px;
+    }
+    .gsm-tag {
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border: 1px solid rgba(var(--accent-rgb),0.4); color: var(--accent2);
+      padding: 5px 12px; border-radius: 100px;
+    }
+
+    /* Optional swatches, matching printed.html pattern */
+    .color-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .color-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-right: 2px; white-space: nowrap; }
+
+    /* BUY NOW BUTTON */
+    .buy-now-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; margin-top: 16px; padding: 13px 20px;
+      background: var(--accent); color: white; border: none; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 100px; cursor: pointer; transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 8px 24px rgba(var(--accent-rgb),0.3);
+    }
+    .buy-now-btn:hover { background: #1c3577; transform: scale(1.02); box-shadow: 0 12px 32px rgba(var(--accent-rgb),0.4); }
+
+    /* SIZE CHART */
+    .size-section {
+      max-width: 720px; margin: 0 auto 80px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+    }
+    .size-header {
+      padding: 30px 36px 0;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .size-header h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px;
+    }
+    .size-note {
+      padding: 14px 36px 20px;
+      font-size: 13px; color: var(--muted); line-height: 1.6;
+    }
+    .size-section img {
+      width: 100%; display: block;
+    }
+    .size-warning {
+      padding: 20px 36px;
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(var(--accent-rgb),0.08);
+      border-top: 1px solid var(--border);
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--accent2);
+    }
+
+    /* CARE CARD */
+    .care-section { max-width: 720px; margin: 0 auto 60px; }
+    .care-card {
+      background: rgba(var(--accent-rgb),0.08); border: 1px solid rgba(var(--accent-rgb),0.25);
+      border-radius: 18px; padding: 26px 30px; display: flex; gap: 18px; align-items: flex-start;
+    }
+    .care-icon {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(var(--accent-rgb),0.18); display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .care-text h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+    .care-text p { font-size: 14px; color: var(--text); line-height: 1.7; opacity: 0.9; }
+    .care-text p strong { color: var(--accent2); }
+
+    /* ORDER CTA */
+    .order-section {
+      text-align: center; padding: 0 20px 120px;
+    }
+    .order-section p {
+      color: var(--muted); font-size: 15px; margin-bottom: 30px;
+    }
+    .order-btn {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 18px 50px;
+      background: var(--accent);
+      color: white; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      border-radius: 100px;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 10px 40px rgba(var(--accent-rgb),0.4);
+    }
+    .order-btn:hover { background: #1c3577; transform: scale(1.04); }
+    .order-btn .btn-icon { font-size: 18px; }
+    .whatsapp-btn {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 18px 50px;
+      background: transparent;
+      color: white; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: border-color 0.3s, background 0.3s, transform 0.2s;
+      margin-left: 16px;
+    }
+    .whatsapp-btn:hover { border-color: #25d366; background: rgba(37,211,102,0.08); transform: scale(1.04); }
+
+    /* FOOTER */
+    footer {
+      background: #04040a; border-top: 1px solid var(--border);
+      padding: 40px; text-align: center;
+    }
+    footer p { color: var(--muted); font-size: 13px; }
+    footer a { color: var(--accent2); text-decoration: none; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+    .reveal-delay-4 { transition-delay: 0.32s; }
+
+    @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-logo img { height: 36px; }
+      .nav-cta { padding: 9px 16px; font-size: 11px; }
+      .page-header { padding: 100px 20px 50px; min-height: auto; }
+      .header-meta { flex-wrap: wrap; justify-content: center; gap: 10px; }
+      .products-section { padding: 60px 20px; }
+      .products-grid { grid-template-columns: 1fr; gap: 18px; }
+      .card-media img { height: 260px; }
+      .size-section { margin: 0 20px 60px !important; }
+      .care-section { margin: 0 20px 40px; }
+      .care-card { flex-direction: column; padding: 20px; }
+      .order-section { padding: 0 20px 80px; }
+      .order-btn, .whatsapp-btn { width: 100%; justify-content: center; padding: 16px 20px; }
+      .whatsapp-btn { margin-left: 0; margin-top: 12px; }
+      footer { padding: 30px 20px; }
+    }
+
+    @media (max-width: 420px) {
+      .page-header h1 { font-size: clamp(48px, 14vw, 72px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
+    <ul class="nav-links">
+      <li><a href="polo.html">Polos</a></li>
+      <li><a href="oversized.html">Oversized</a></li>
+      <li><a href="printed.html">Printed</a></li>
+      <li><a href="hoodie.html" class="active">Hoodies</a></li>
+      <li><a href="feedback.html">Feedback</a></li>
+      <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
+    </ul>
+    <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="polo.html">Polos</a>
+    <a href="oversized.html">Oversized</a>
+    <a href="printed.html">Printed</a>
+    <a href="hoodie.html" class="active">Hoodies</a>
+    <a href="feedback.html">Feedback</a>
+    <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
+    <a href="tel:9637748622">📞 Order Now</a>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
+    <h1>HOODIE<br><span>COLLECTION</span></h1>
+    <p>Heavy-weight. Warm. Street-ready.</p>
+    <div class="header-meta">
+      <span class="meta-chip hot">400 GSM Fleece</span>
+      <span class="meta-chip">Premium Fit</span>
+      <span class="meta-chip">From ₹699</span>
+    </div>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>400 GSM Fleece</span><span>Premium Hoodies</span><span>Arambh</span>
+      <span>Heavy Weight</span><span>Street Ready</span><span>Built Different</span>
+      <span>400 GSM Fleece</span><span>Premium Hoodies</span><span>Arambh</span>
+      <span>Heavy Weight</span><span>Street Ready</span><span>Built Different</span>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <section class="products-section">
+    <span class="section-label reveal">The Range</span>
+    <h2 class="section-title reveal">PICK YOUR COLOR</h2>
+
+    <div class="products-grid">
+
+      <div class="product-card reveal">
+        <div class="card-media">
+          <span class="card-badge">Popular</span>
+          <img src="hoodie1.jpg" alt="Beige Hoodie" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Beige</h3>
+          <div class="card-meta">
+            <span class="price">₹699</span>
+            <span class="gsm-tag">400 GSM</span>
+          </div>
+          <a href="order.html?product=Beige+Hoodie&type=Hoodie&color=Beige&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-1">
+        <div class="card-media">
+          <img src="hoodie2.jpg" alt="Black Hoodie" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Black</h3>
+          <div class="card-meta">
+            <span class="price">₹699</span>
+            <span class="gsm-tag">400 GSM</span>
+          </div>
+          <a href="order.html?product=Black+Hoodie&type=Hoodie&color=Black&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-2">
+        <div class="card-media">
+          <img src="hoodie3.jpg" alt="Grey Hoodie" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Grey</h3>
+          <div class="card-meta">
+            <span class="price">₹699</span>
+            <span class="gsm-tag">400 GSM</span>
+          </div>
+          <a href="order.html?product=Grey+Hoodie&type=Hoodie&color=Grey&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-3">
+        <div class="card-media">
+          <img src="hoodie4.jpg" alt="Navy Hoodie" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Navy</h3>
+          <div class="card-meta">
+            <span class="price">₹699</span>
+            <span class="gsm-tag">400 GSM</span>
+          </div>
+          <a href="order.html?product=Navy+Hoodie&type=Hoodie&color=Navy&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SIZE CHART -->
+  <div class="size-section reveal">
+    <div class="size-header">
+      <span class="size-icon">📐</span>
+      <h3>Size Chart</h3>
+    </div>
+    <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit before placing your order.</p>
+    <img src="oversized_chart.png" alt="Size Chart" loading="lazy">
+    <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering — we don't offer size exchanges</div>
+  </div>
+
+  <!-- CARE -->
+  <div class="care-section reveal">
+    <div class="care-card">
+      <div class="care-icon">🧺</div>
+      <div class="care-text">
+        <h4>Care Instructions</h4>
+        <p>Turn the hoodie <strong>inside out before washing</strong> to protect the fleece finish and any printed graphics. Wash cold, skip the dryer when possible, and avoid direct ironing on prints.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER CTA -->
+  <div class="order-section reveal">
+    <p>Ready to cop? Place your order directly or reach out on WhatsApp.</p>
+    <a href="order.html" class="order-btn"><span class="btn-icon">🛒</span> Place Order</a>
+    <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+  </footer>
+
+  <script>
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    function closeMenu() { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      menuBackdrop.classList.toggle('open', isOpen);
+    });
+    menuBackdrop.addEventListener('click', closeMenu);
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    });
+    function animateRing() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursorRing.style.width = '60px'; cursorRing.style.height = '60px'; });
+      el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursorRing.style.width = '40px'; cursorRing.style.height = '40px'; });
+    });
+
+    // Reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Nav shrink
+    window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
+  </script>
+</body>
+</html>

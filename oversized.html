@@ -12,8 +12,8 @@
     :root {
       --bg: #080810;
       --surface: #0f0f1a;
-      --accent: #ff3c38;
-      --accent2: #ff7b22;
+      --accent: #A90E02;
+      --accent2: #FFFACD;
       --text: #f0f0f0;
       --muted: #888;
       --border: rgba(255,255,255,0.06);
@@ -23,7 +23,7 @@
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; cursor: none; }
 
     .cursor { position: fixed; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
-    .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(255,60,56,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
+    .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(169,14,2,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
 
     /* Disable custom cursor on touch / no-hover devices */
     @media (hover: none), (pointer: coarse) {
@@ -42,8 +42,8 @@
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
     .nav-links a.active { color: var(--accent); }
-    .nav-cta { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: white; background: var(--accent); padding: 10px 24px; border-radius: 100px; text-decoration: none; transition: background 0.3s, transform 0.2s; box-shadow: 0 4px 20px rgba(255,60,56,0.3); }
-    .nav-cta:hover { background: #ff1f1a; transform: scale(1.04); }
+    .nav-cta { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: white; background: var(--accent); padding: 10px 24px; border-radius: 100px; text-decoration: none; transition: background 0.3s, transform 0.2s; box-shadow: 0 4px 20px rgba(169,14,2,0.3); }
+    .nav-cta:hover { background: #8a0b02; transform: scale(1.04); }
 
     /* HAMBURGER */
     .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
@@ -86,7 +86,7 @@
       position: absolute; 
       width: 700px; 
       height: 700px; 
-      background: radial-gradient(circle, rgba(255,123,34,0.08) 0%, transparent 70%); 
+      background: radial-gradient(circle, rgba(255,250,205,0.08) 0%, transparent 70%); 
       top: -100px; 
       left: 50%; 
       transform: translateX(-50%); 
@@ -143,7 +143,7 @@
     .page-header p { color: var(--muted); font-size: 17px; font-weight: 300; margin-top: 16px; letter-spacing: 1px; animation: fade-up 0.8s 0.1s ease both; }
     .header-meta { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.2s ease both; }
     .meta-chip { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px; color: var(--muted); }
-    .meta-chip.hot { border-color: rgba(255,60,56,0.3); color: var(--accent); background: rgba(255,60,56,0.07); }
+    .meta-chip.hot { border-color: rgba(169,14,2,0.3); color: var(--accent); background: rgba(169,14,2,0.07); }
 
     .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
     .ticker { display: inline-flex; animation: ticker 22s linear infinite; }
@@ -180,9 +180,9 @@
       background: var(--accent); color: white; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       border-radius: 100px; transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 8px 24px rgba(255,60,56,0.25);
+      box-shadow: 0 8px 24px rgba(169,14,2,0.25);
     }
-    .buy-now-btn:hover { background: #ff1f1a; transform: scale(1.02); box-shadow: 0 12px 32px rgba(255,60,56,0.35); }
+    .buy-now-btn:hover { background: #8a0b02; transform: scale(1.02); box-shadow: 0 12px 32px rgba(169,14,2,0.35); }
 
     /* SIZE CHART */
     .size-section { max-width: 720px; margin: 0 auto 80px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
@@ -190,12 +190,12 @@
     .size-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
     .size-note { padding: 14px 36px 20px; font-size: 13px; color: var(--muted); line-height: 1.6; }
     .size-section img { width: 100%; display: block; }
-    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(255,60,56,0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(169,14,2,0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
 
     .order-section { text-align: center; padding: 0 20px 120px; }
     .order-section p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
-    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--accent); color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: background 0.3s, transform 0.2s; box-shadow: 0 10px 40px rgba(255,60,56,0.35); }
-    .order-btn:hover { background: #ff1f1a; transform: scale(1.04); }
+    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--accent); color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: background 0.3s, transform 0.2s; box-shadow: 0 10px 40px rgba(169,14,2,0.35); }
+    .order-btn:hover { background: #8a0b02; transform: scale(1.04); }
     .whatsapp-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: transparent; color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; border: 1px solid rgba(255,255,255,0.15); transition: border-color 0.3s, background 0.3s, transform 0.2s; margin-left: 16px; }
     .whatsapp-btn:hover { border-color: #25d366; background: rgba(37,211,102,0.08); transform: scale(1.04); }
 
@@ -407,6 +407,38 @@
       
 
     </div>
+
+    <!-- HOODIES -->
+    <div id="hoodies"></div>
+    <div class="products-label reveal">Hoodies — ₹599 each</div>
+    <div class="products-grid">
+
+      <div class="product-card reveal">
+        <div class="card-media">
+          <span class="card-badge gold">Premium</span>
+          <img src="hoodie1.jpg" alt="Beige Hoodie" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Beige Hoodie</h3>
+          <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
+          <a href="order.html?product=Beige+Hoodie&type=Hoodie&color=Beige&price=599" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-1">
+        <div class="card-media">
+          <span class="card-badge gold">Premium</span>
+          <img src="hoodie2.jpg" alt="Black Hoodie" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Black Hoodie</h3>
+          <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
+          <a href="order.html?product=Black+Hoodie&type=Hoodie&color=Black&price=599" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <div class="size-section reveal">
     <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>

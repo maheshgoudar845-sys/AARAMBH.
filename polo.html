@@ -13,8 +13,8 @@
       --bg: #080810;
       --surface: #0f0f1a;
       --surface2: #13131f;
-      --accent: #ff3c38;
-      --accent2: #ff7b22;
+      --accent: #04344C;
+      --accent2: #B0EDF9;
       --text: #f0f0f0;
       --muted: #888;
       --border: rgba(255,255,255,0.06);
@@ -40,7 +40,7 @@
     }
     .cursor-ring {
       position: fixed; width: 40px; height: 40px;
-      border: 1px solid rgba(255,60,56,0.5); border-radius: 50%;
+      border: 1px solid rgba(4,52,76,0.5); border-radius: 50%;
       pointer-events: none; z-index: 9998;
       transform: translate(-50%, -50%);
       transition: transform 0.15s ease, width 0.3s, height 0.3s;
@@ -93,9 +93,9 @@
       color: white; background: var(--accent);
       padding: 10px 24px; border-radius: 100px; text-decoration: none;
       transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 4px 20px rgba(255,60,56,0.3);
+      box-shadow: 0 4px 20px rgba(4,52,76,0.3);
     }
-    .nav-cta:hover { background: #ff1f1a; transform: scale(1.04); }
+    .nav-cta:hover { background: #022232; transform: scale(1.04); }
 
     /* HAMBURGER */
     .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
@@ -133,7 +133,7 @@
       content: '';
       position: absolute;
       width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(255,60,56,0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(4,52,76,0.1) 0%, transparent 70%);
       top: 0; left: 50%; transform: translateX(-50%);
       animation: pulse 6s ease-in-out infinite;
     }
@@ -174,7 +174,7 @@
       border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px;
       color: var(--muted);
     }
-    .meta-chip.hot { border-color: rgba(255,60,56,0.3); color: var(--accent); background: rgba(255,60,56,0.07); }
+    .meta-chip.hot { border-color: rgba(4,52,76,0.3); color: var(--accent); background: rgba(4,52,76,0.07); }
 
     /* TICKER */
     .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
@@ -252,7 +252,7 @@
     .gsm-tag {
       font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase;
-      border: 1px solid rgba(255,60,56,0.3); color: var(--accent);
+      border: 1px solid rgba(4,52,76,0.3); color: var(--accent);
       padding: 5px 12px; border-radius: 100px;
     }
 
@@ -263,9 +263,9 @@
       background: var(--accent); color: white; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       border-radius: 100px; transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 8px 24px rgba(255,60,56,0.25);
+      box-shadow: 0 8px 24px rgba(4,52,76,0.25);
     }
-    .buy-now-btn:hover { background: #ff1f1a; transform: scale(1.02); box-shadow: 0 12px 32px rgba(255,60,56,0.35); }
+    .buy-now-btn:hover { background: #022232; transform: scale(1.02); box-shadow: 0 12px 32px rgba(4,52,76,0.35); }
     .card-colors { display: flex; gap: 6px; margin-top: 14px; }
     .color-dot {
       width: 14px; height: 14px; border-radius: 50%;
@@ -297,7 +297,7 @@
     .size-warning {
       padding: 20px 36px;
       display: flex; align-items: center; gap: 12px;
-      background: rgba(255,60,56,0.06);
+      background: rgba(4,52,76,0.06);
       border-top: 1px solid var(--border);
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600;
       letter-spacing: 1px; text-transform: uppercase; color: var(--accent);
@@ -319,9 +319,9 @@
       letter-spacing: 3px; text-transform: uppercase;
       border-radius: 100px;
       transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 10px 40px rgba(255,60,56,0.35);
+      box-shadow: 0 10px 40px rgba(4,52,76,0.35);
     }
-    .order-btn:hover { background: #ff1f1a; transform: scale(1.04); }
+    .order-btn:hover { background: #022232; transform: scale(1.04); }
     .order-btn .btn-icon { font-size: 18px; }
     .whatsapp-btn {
       display: inline-flex; align-items: center; gap: 14px;

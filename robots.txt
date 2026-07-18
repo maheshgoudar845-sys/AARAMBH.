@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maheshgoudar845-sys.github.io/ARAMBH/sitemap.xml

@@ -349,7 +349,7 @@
     <p>Express. Bold. Street.</p>
     <div class="header-meta">
       <span class="meta-chip hot">Limited Runs</span>
-      <span class="meta-chip">16 Designs</span>
+      <span class="meta-chip">10 Designs</span>
     </div>
   <div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;pointer-events:none;z-index:0;"><img src="dornat-demonslayer-tee.png" style="width:min(900px,85vw);opacity:.18;filter:drop-shadow(0 40px 80px rgba(0,0,0,.6));transform:translateY(20px);" loading="lazy"></div></header>
 
@@ -388,7 +388,39 @@
     </div>
   </section>
 
-  <!-- JUST DROPPED — highest priority, new Anime collection -->
+  <!-- NEW GRACE DROP -->
+  <section class="justdropped-section">
+    <div class="justdropped-header">
+      <div>
+        <span class="justdropped-badge">New Drop</span>
+        <h2 class="section-title" style="margin-top:14px;margin-bottom:0;">GRACE COLLECTION</h2>
+      </div>
+    </div>
+    <div class="justdropped-grid">
+      <div class="jd-card reveal" data-design="Grace">
+        <div class="card-media double-view">
+          <img src="grace_b_f.png" alt="Grace Black Front" loading="lazy">
+          <img src="grace_b_b.png" alt="Grace Black Back" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3>Grace</h3>
+          <p>New Grace design — front & back artwork included</p>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Available colours:</span>
+            <div class="swatches">
+                <button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="grace_b_f.png" data-back="grace_b_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="grace_w_f.png" data-back="grace_w_b.png" onclick="selectColor(this)"></button>
+            </div>
+            <span class="selected-color">Black</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹599</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Grace','Printed T-Shirt','599')">🛍️ Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSOLIDATED ANIME COLLECTION — one card per design, colours selectable -->
   <section class="justdropped-section">
     <div class="justdropped-header">
       <div>
@@ -396,276 +428,110 @@
         <h2 class="section-title" style="margin-top:14px;margin-bottom:0;">ANIME COLLECTION</h2>
       </div>
     </div>
-
     <div class="justdropped-grid">
-
-      <div class="jd-card reveal">
+      <div class="jd-card reveal" data-design="Anime">
         <div class="card-media double-view">
           <img src="anime_b_f.png" alt="Anime Black Front" loading="lazy">
           <img src="anime_b_b.png" alt="Anime Black Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>Anime Black</h3>
+          <h3>Anime</h3>
           <p>Front & Back Designs Included</p>
           <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
+            <span class="color-label">Available colours:</span>
             <div class="swatches">
-             
+                <button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="anime_b_f.png" data-back="anime_b_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="anime_w_f.png" data-back="anime_w_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="anime_r_f.png" data-back="anime_r_b.png" onclick="selectColor(this)"></button>
             </div>
             <span class="selected-color">Black</span>
           </div>
           <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime Black','Printed T-Shirt','599')">🛍️ Buy Now</button>
+          <button class="buy-now-btn" onclick="buyNow(this,'Anime','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
       </div>
-
-      <div class="jd-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="anime_w_f.png" alt="Anime White Front" loading="lazy">
-          <img src="anime_w_b.png" alt="Anime White Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Anime White</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-              
-            </div>
-            <span class="selected-color">White</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-
-      <div class="jd-card reveal reveal-delay-2">
-        <div class="card-media single-view">
-          <span class="card-badge">Back Print</span>
-          <img src="anime_r_f.png" alt="Anime Red Front" loading="lazy">
-          <img src="anime_r_b.png" alt="Anime Red Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Anime Red</h3>
-          <p>Front & Back Design Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-              
-            </div>
-            <span class="selected-color">Red</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime Red','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-      <div class="jd-card reveal reveal-delay-1">
+      <div class="jd-card reveal reveal-delay-1" data-design="Naruto">
         <div class="card-media double-view">
           <img src="naruto_w_f.png" alt="Naruto White Front" loading="lazy">
           <img src="naruto_w_b.png" alt="Naruto White Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>Naruto white</h3>
+          <h3>Naruto</h3>
           <p>Front & Back Designs Included</p>
           <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
+            <span class="color-label">Available colours:</span>
             <div class="swatches">
-              
+                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="naruto_w_f.png" data-back="naruto_w_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="naruto_b_f.png" data-back="naruto_b_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="naruto_r_f.png" data-back="naruto_r_b.png" onclick="selectColor(this)"></button>
             </div>
             <span class="selected-color">White</span>
           </div>
           <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+          <button class="buy-now-btn" onclick="buyNow(this,'Naruto','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
       </div>
-       <div class="jd-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="naruto_b_f.png" alt="Naruto Black Front" loading="lazy">
-          <img src="naruto_b_b.png" alt="Naruto Black Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Naruto Black</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-             
-            </div>
-            <span class="selected-color">White</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-       <div class="jd-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="naruto_r_f.png" alt="Naruto Red Front" loading="lazy">
-          <img src="naruto_r_b.png" alt="Naruto Red Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Naruto Red</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-              
-            </div>
-            <span class="selected-color">White</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-       <div class="jd-card reveal reveal-delay-1">
+      <div class="jd-card reveal reveal-delay-2" data-design="One Piece">
         <div class="card-media double-view">
           <img src="one_w_f.png" alt="One Piece White Front" loading="lazy">
           <img src="one_w_b.png" alt="One Piece White Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>One Piece white</h3>
+          <h3>One Piece</h3>
           <p>Front & Back Designs Included</p>
           <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
+            <span class="color-label">Available colours:</span>
             <div class="swatches">
-              
+                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="one_w_f.png" data-back="one_w_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="one_b_f.png" data-back="one_b_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="one_r_f.png" data-back="one_r_b.png" onclick="selectColor(this)"></button>
             </div>
             <span class="selected-color">White</span>
           </div>
           <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+          <button class="buy-now-btn" onclick="buyNow(this,'One Piece','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
       </div>
-       <div class="jd-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="one_b_f.png" alt="One Piece Black Front" loading="lazy">
-          <img src="one_b_b.png" alt="One Piece Black Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>One Piece Black</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-              
-            </div>
-            <span class="selected-color">White</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-       <div class="jd-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="one_r_f.png" alt="One Piece Red Front" loading="lazy">
-          <img src="one_r_b.png" alt="One Piece Red Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>One Piece Red</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-             
-            </div>
-            <span class="selected-color">White</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime White','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-<div class="jd-card reveal reveal-delay-1">
+      <div class="jd-card reveal reveal-delay-3" data-design="Tanjiro">
         <div class="card-media double-view">
           <img src="tanjiro_w_f.png" alt="Tanjiro White Front" loading="lazy">
           <img src="tanjiro_w_b.png" alt="Tanjiro White Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>Tanjiro White</h3>
+          <h3>Tanjiro</h3>
           <p>Front & Back Designs Included</p>
           <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
+            <span class="color-label">Available colours:</span>
             <div class="swatches">
-             
+                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="tanjiro_w_f.png" data-back="tanjiro_w_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="tanjiro_b_f.png" data-back="tanjiro_b_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="tanjiro_r_f.png" data-back="tanjiro_r_b.png" onclick="selectColor(this)"></button>
             </div>
             <span class="selected-color">White</span>
           </div>
           <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Tanjiro White','Printed T-Shirt','599')">🛍️ Buy Now</button>
+          <button class="buy-now-btn" onclick="buyNow(this,'Tanjiro','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
       </div>
-      <div class="jd-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="tanjiro_b_f.png" alt="Tanjiro Black Front" loading="lazy">
-          <img src="tanjiro_b_b.png" alt="Tanjiro Black Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Tanjiro Black </h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-              
-            </div>
-            <span class="selected-color">White</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Tanjiro Black ','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-      <div class="jd-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="tanjiro_r_f.png" alt="Tanjiro Red Front" loading="lazy">
-          <img src="tanjiro_r_b.png" alt="Tanjiro Red Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Tanjiro Red</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Color:</span>
-            <div class="swatches">
-            
-            </div>
-            <span class="selected-color">White</span>
-          </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'anjiro Red','Printed T-Shirt','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-       <div class="drop-card reveal">
+      <div class="drop-card reveal reveal-delay-1" data-design="Luffy">
         <div class="card-media double-view">
           <img src="luffy_b_f.png" alt="Luffy Black Front" loading="lazy">
           <img src="luffy_b_b.png" alt="Luffy Black Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>Luffy Black</h3>
+          <h3>Luffy</h3>
           <p>Front & Back Designs Included</p>
-          <div class="price">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Luffy Black','Printed T-Shirt','549')">🛍️ Buy Now</button>
-        </div>
-      </div>
-
-      <div class="drop-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="luffy_r_f.png" alt="Luffy Red Front" loading="lazy">
-          <img src="luffy_r_b.png" alt="Luffy Red Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Luffy Red</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="price">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Luffy Red','Printed T-Shirt','549')">🛍️ Buy Now</button>
-        </div>
-      </div>
-
-      <div class="drop-card reveal reveal-delay-2">
-        <div class="card-media double-view">
-          <img src="luffy_w_f.png" alt="Luffy White Front" loading="lazy">
-          <img src="luffy_w_b.png" alt="Luffy White Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Luffy White</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="price">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Luffy White','Printed T-Shirt','549')">🛍️ Buy Now</button>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Available colours:</span>
+            <div class="swatches">
+                <button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="luffy_b_f.png" data-back="luffy_b_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="luffy_r_f.png" data-back="luffy_r_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="luffy_w_f.png" data-back="luffy_w_b.png" onclick="selectColor(this)"></button>
+            </div>
+            <span class="selected-color">Black</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹549</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Luffy','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
       </div>
     </div>
@@ -681,82 +547,66 @@
     </div>
 
     <div class="drops-grid">
-
-      <div class="drop-card reveal">
+      <div class="drop-card reveal" data-design="Justice">
         <div class="card-media double-view">
           <img src="Justice_r_f.png" alt="Justice Red Front" loading="lazy">
           <img src="Justice_r_b.png" alt="Justice Red Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>Justice Red</h3>
+          <h3>Justice</h3>
           <p>Front & Back Designs Included</p>
-          <div class="price">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Justice Red','Printed T-Shirt','549')">🛍️ Buy Now</button>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Available colours:</span>
+            <div class="swatches">
+                <button class="swatch active" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Justice_r_f.png" data-back="Justice_r_b.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Justice_w_f.png" data-back="Justice_w_b.png" onclick="selectColor(this)"></button>
+            </div>
+            <span class="selected-color">Red</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹549</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Justice','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
       </div>
-
-      <div class="drop-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="Justice_w_f.png" alt="Justice White Front" loading="lazy">
-          <img src="Justice_w_b.png" alt="Justice White Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Justice White</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="price">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Justice White','Printed T-Shirt','549')">🛍️ Buy Now</button>
-        </div>
-      </div>
-
-      <div class="drop-card reveal reveal-delay-2">
+      <div class="drop-card reveal reveal-delay-1" data-design="Porsche">
         <div class="card-media double-view">
           <img src="Porsche_black_front.png" alt="Porsche Black Front" loading="lazy">
           <img src="Porsche_black_back.png" alt="Porsche Black Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>Porsche Black</h3>
+          <h3>Porsche</h3>
           <p>Front & Back Designs Included</p>
-          <div class="price">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Porsche Black','Printed T-Shirt','549')">🛍️ Buy Now</button>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Available colours:</span>
+            <div class="swatches">
+                <button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Porsche_black_front.png" data-back="Porsche_black_back.png" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Porsche_red_front.png" data-back="Porsche_red_back.png" onclick="selectColor(this)"></button>
+            </div>
+            <span class="selected-color">Black</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹549</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Porsche','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
       </div>
-
-      <div class="drop-card reveal">
+      <div class="drop-card reveal reveal-delay-2" data-design="Kungfu Panda">
         <div class="card-media double-view">
-          <img src="Porsche_red_front.png" alt="Porsche Red Front" loading="lazy">
-          <img src="Porsche_red_back.png" alt="Porsche Red Back" loading="lazy">
+          <img src="Kufu_white.jpeg" alt="Kungfu Panda White Front" loading="lazy">
+          <img src="Kufu_white.jpeg" alt="Kungfu Panda White Back" loading="lazy">
         </div>
         <div class="card-body">
-          <h3>Porsche Red</h3>
+          <h3>Kungfu Panda</h3>
           <p>Front & Back Designs Included</p>
-          <div class="price">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Porsche Red','Printed T-Shirt','549')">🛍️ Buy Now</button>
+          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
+            <span class="color-label">Available colours:</span>
+            <div class="swatches">
+                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Kufu_white.jpeg" data-back="Kufu_white.jpeg" onclick="selectColor(this)"></button>
+                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Kufu_black.jpeg" data-back="Kufu_black.jpeg" onclick="selectColor(this)"></button>
+            </div>
+            <span class="selected-color">White</span>
+          </div>
+          <div class="price" style="margin-top:14px;">₹649</div>
+          <button class="buy-now-btn" onclick="buyNow(this,'Kungfu Panda','Printed T-Shirt','649')">🛍️ Buy Now</button>
         </div>
       </div>
-
-      <div class="drop-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="Kufu_white.jpeg" alt="Kung Panda White Front & Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Kungfu Panda White</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="price">₹649</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Kungfu Panda White','Printed T-Shirt','649')">🛍️ Buy Now</button>
-        </div>
-      </div>
-      <div class="drop-card reveal reveal-delay-1">
-        <div class="card-media double-view">
-          <img src="Kufu_black.jpeg" alt="Kungfu Panda Black Front & Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Kungfu Panda Black</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="price">₹649</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Kungfu Panda Black','Printed T-Shirt','649')">🛍️ Buy Now</button>
-        </div>
-      </div>
-
     </div>
   </section>
 
@@ -862,10 +712,34 @@
 
     function selectColor(el) {
       const row = el.closest('.color-row');
+      const card = el.closest('.product-card, .drop-card, .jd-card');
+      if (!row || !card) return;
+
       row.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
       el.classList.add('active');
+
+      const color = el.getAttribute('title') || '';
       const label = row.querySelector('.selected-color');
-      if (label) label.textContent = el.getAttribute('title');
+      if (label) label.textContent = color;
+
+      const images = card.querySelectorAll('.card-media img');
+      const front = el.dataset.front;
+      const back = el.dataset.back;
+      if (images[0] && front) {
+        images[0].src = front;
+        images[0].alt = `${card.dataset.design || 'Product'} ${color} Front`;
+      }
+      if (images[1] && back) {
+        images[1].src = back;
+        images[1].alt = `${card.dataset.design || 'Product'} ${color} Back`;
+      }
+
+      // Return mobile front/back slider to the front image after changing colour.
+      const media = card.querySelector('.card-media.double-view');
+      if (media && window.innerWidth <= 768) {
+        images.forEach((img, i) => img.classList.toggle('slide-active', i === 0));
+        media.querySelectorAll('.double-view-dots span').forEach((dot, i) => dot.classList.toggle('active', i === 0));
+      }
     }
 
     // BUY NOW — reads selected color if present, redirects to order.html with product details

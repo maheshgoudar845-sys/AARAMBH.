@@ -122,6 +122,23 @@
   table{width:100%;border-collapse:collapse;font-size:.85rem;}
   th,td{padding:8px;text-align:center;border-bottom:1px solid var(--line);}
   th{color:var(--accent2);font-weight:600;}
+
+  .size-note{margin:-14px 0 22px;color:var(--accent2);font-size:.82rem;line-height:1.5;}
+  .details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 22px;}
+  .detail-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;}
+  .detail-card small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;}
+  .detail-card strong{font-size:.92rem;}
+  .policy-note{background:rgba(232,69,44,.08);border:1px solid rgba(232,69,44,.28);border-radius:10px;padding:13px 14px;margin:0 0 22px;color:var(--muted);font-size:.84rem;line-height:1.55;}
+  .policy-note strong{color:var(--text);}
+  .related-section{max-width:1200px;margin:60px auto 10px;padding:0 20px;}
+  .related-section h2{font-size:2rem;margin-bottom:18px;}
+  .related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
+  .related-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--text);transition:.2s;}
+  .related-card:hover{transform:translateY(-4px);border-color:var(--accent);}
+  .related-card img{width:100%;height:230px;object-fit:contain;background:#0b0b13;display:block;padding:10px;}
+  .related-card-info{padding:14px;} .related-card-info h3{font-family:'Syne';font-size:.95rem;margin-bottom:5px;}
+  .related-card-info span{color:var(--accent2);font-weight:700;}
+  @media(max-width:860px){.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.related-card img{height:190px;}}
 </style>
 </head>
 <body>
@@ -151,6 +168,13 @@
     </div>
     <p class="desc" id="productDescription">Premium ARAMBH apparel. Select your size and continue to order.</p>
 
+    <div class="details-grid">
+      <div class="detail-card"><small>Material</small><strong id="materialDetail">—</strong></div>
+      <div class="detail-card"><small>Fabric weight</small><strong id="gsmDetail">—</strong></div>
+      <div class="detail-card"><small>Fit</small><strong id="fitDetail">—</strong></div>
+      <div class="detail-card"><small>Available sizes</small><strong>S to 2XL</strong></div>
+    </div>
+
     <div class="option-label">Colour</div>
     <div class="swatches" id="swatches"></div>
 
@@ -163,8 +187,10 @@
       <div class="size-btn active" data-size="M">M</div>
       <div class="size-btn" data-size="L">L</div>
       <div class="size-btn" data-size="XL">XL</div>
-      <div class="size-btn oos" data-size="2XL">2XL</div>
+      <div class="size-btn" data-size="2XL">2XL</div>
     </div>
+    <p class="size-note">Please review the size chart carefully before placing your order.</p>
+    <div class="policy-note"><strong>Return policy:</strong> Returns are accepted only for print-related issues, and the issue must be reported within 3 days of receiving the delivery.</div>
 
     <div class="buy-row">
       <div class="qty">
@@ -176,6 +202,13 @@
     </div>
   </div>
 </div>
+
+
+<section class="related-section">
+  <div class="option-label">You may also like</div>
+  <h2>MORE T-SHIRT OPTIONS</h2>
+  <div class="related-grid" id="relatedGrid"></div>
+</section>
 
 <!-- STICKY MOBILE BAR -->
 <div class="sticky-bar">
@@ -214,12 +247,12 @@
   };
 
   const typeKey = productData.type.toLowerCase();
-  const descriptions = {
-    polo: 'Premium structured polo with a clean everyday fit and durable fabric.',
-    oversized: 'Relaxed drop-shoulder oversized fit made for everyday streetwear comfort.',
-    hoodie: 'Comfortable premium hoodie with a relaxed fit for layering.',
-    'printed t-shirt': 'Printed ARAMBH T-shirt with durable artwork and a comfortable everyday fit.',
-    'printed oversized tee': 'Printed oversized tee with front and back artwork and a relaxed streetwear fit.'
+  const productSpecs = {
+    polo: { material: 'Poly-Cotton — 90% Cotton, 10% Polyester', gsm: '220 GSM', fit: 'Regular Polo Fit', description: 'Breathable poly-cotton polo designed for a clean everyday fit.' },
+    oversized: { material: '100% Pure Cotton — French Terry', gsm: '240 GSM', fit: 'Oversized / Drop Shoulder', description: 'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.' },
+    'printed oversized tee': { material: '100% Pure Cotton — French Terry', gsm: '240 GSM', fit: 'Oversized / Drop Shoulder', description: 'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.' },
+    'printed t-shirt': { material: '100% Pure Cotton', gsm: '180 GSM', fit: 'Regular Fit', description: 'Pure-cotton printed T-shirt in a comfortable regular fit.' },
+    hoodie: { material: 'Premium Fabric', gsm: 'See product description', fit: 'Relaxed Fit', description: 'Comfortable premium hoodie with a relaxed fit for layering.' }
   };
 
   document.getElementById('pageTitle').textContent = `${productData.product} — ARAMBH`;
@@ -227,7 +260,11 @@
   document.getElementById('productCategory').textContent = `${productData.type} Collection`;
   document.getElementById('productPrice').textContent = `₹${productData.price}`;
   document.getElementById('mobileProductPrice').textContent = `₹${productData.price}`;
-  document.getElementById('productDescription').textContent = productData.description || descriptions[typeKey] || 'Premium ARAMBH apparel. Select your size and continue to order.';
+  const specs = productSpecs[typeKey] || { material: 'Premium Fabric', gsm: '—', fit: 'Regular Fit', description: 'Premium ARAMBH apparel.' };
+  document.getElementById('productDescription').textContent = productData.description || specs.description;
+  document.getElementById('materialDetail').textContent = specs.material;
+  document.getElementById('gsmDetail').textContent = specs.gsm;
+  document.getElementById('fitDetail').textContent = specs.fit;
 
   const mainImg = document.getElementById('mainImg');
   const thumbs = document.getElementById('thumbs');
@@ -276,6 +313,21 @@
   document.getElementById('openChart').onclick = () => overlay.classList.add('open');
   document.getElementById('closeChart').onclick = () => overlay.classList.remove('open');
   overlay.addEventListener('click', event => { if (event.target === overlay) overlay.classList.remove('open'); });
+
+
+  const productCatalog = [{"product": "Grayish Green Polo", "type": "Polo", "color": "Grayish Green", "price": "349", "image": "polo1.jpg", "categoryPage": "polo.html"}, {"product": "Cream Polo", "type": "Polo", "color": "Cream", "price": "349", "image": "polo2.jpg", "categoryPage": "polo.html"}, {"product": "Beige Polo", "type": "Polo", "color": "Beige", "price": "349", "image": "polo3.jpg", "categoryPage": "polo.html"}, {"product": "Black Polo", "type": "Polo", "color": "Black", "price": "349", "image": "polo4.jpg", "categoryPage": "polo.html"}, {"product": "Blue Polo", "type": "Polo", "color": "Blue", "price": "349", "image": "Polo5.jpg", "categoryPage": "polo.html"}, {"product": "Light Blue Oversized Tee", "type": "Oversized", "color": "Royal Blue", "price": "349", "image": "Royal_blue.jpg", "categoryPage": "oversized.html"}, {"product": "Dark Blue Oversized Tee", "type": "Oversized", "color": "Aqua/Sky Blue", "price": "349", "image": "Aqua_sky_blue.png", "categoryPage": "oversized.html"}, {"product": "Beige Oversized Tee", "type": "Oversized", "color": "Beige", "price": "349", "image": "Beige.png", "categoryPage": "oversized.html"}, {"product": "White Oversized Tee", "type": "Oversized", "color": "White", "price": "349", "image": "White.jpg", "categoryPage": "oversized.html"}, {"product": "Black Oversized Tee", "type": "Oversized", "color": "Black", "price": "349", "image": "Black.jpg", "categoryPage": "oversized.html"}, {"product": "Light Blue Oversized Tee", "type": "Oversized", "color": "Army Green", "price": "349", "image": "Army_green.png", "categoryPage": "oversized.html"}, {"product": "Light Blue Oversized Tee", "type": "Oversized", "color": "Lavender", "price": "349", "image": "Lavender .png", "categoryPage": "oversized.html"}, {"product": "Light Blue Oversized Tee", "type": "Oversized", "color": "Red", "price": "349", "image": "Red.jpg", "categoryPage": "oversized.html"}, {"product": "Light Blue Oversized Tee", "type": "Oversized", "color": "Pink", "price": "349", "image": "Pink.png", "categoryPage": "oversized.html"}, {"product": "Beige Hoodie", "type": "Hoodie", "color": "Beige", "price": "599", "image": "hoodie1.jpg", "categoryPage": "oversized.html"}, {"product": "Black Hoodie", "type": "Hoodie", "color": "Black", "price": "599", "image": "hoodie2.jpg", "categoryPage": "oversized.html"}, {"product": "Explore Space Acid Wash", "type": "Printed Oversized Tee", "price": "699", "color": "Default", "image": "explore_space_front.jpg", "image2": "explore_space_back.jpg", "categoryPage": "printed.html"}, {"product": "Grace", "type": "Printed T-Shirt", "price": "599", "color": "Red", "image": "Grace_red_f.png", "image2": "Grace_red_b.png", "categoryPage": "printed.html"}, {"product": "Anime", "type": "Printed T-Shirt", "price": "599", "color": "Black", "image": "anime_b_f.png", "image2": "anime_b_b.png", "categoryPage": "printed.html"}, {"product": "Naruto", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "naruto_w_f.png", "image2": "naruto_w_b.png", "categoryPage": "printed.html"}, {"product": "One Piece", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "one_w_f.png", "image2": "one_w_b.png", "categoryPage": "printed.html"}, {"product": "Tanjiro", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "tanjiro_w_f.png", "image2": "tanjiro_w_b.png", "categoryPage": "printed.html"}, {"product": "Luffy", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "luffy_b_f.png", "image2": "luffy_b_b.png", "categoryPage": "printed.html"}, {"product": "Justice", "type": "Printed T-Shirt", "price": "549", "color": "Red", "image": "Justice_r_f.png", "image2": "Justice_r_b.png", "categoryPage": "printed.html"}, {"product": "Porsche", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "Porsche_black_front.png", "image2": "Porsche_black_back.png", "categoryPage": "printed.html"}, {"product": "Kungfu Panda", "type": "Printed T-Shirt", "price": "649", "color": "White", "image": "Kufu_white.jpeg", "image2": "Kufu_white.jpeg", "categoryPage": "printed.html"}];
+  const relatedGrid = document.getElementById('relatedGrid');
+  const currentName = productData.product.toLowerCase();
+  const sameCategory = productCatalog.filter(item => item.product.toLowerCase() !== currentName && item.type.toLowerCase() === typeKey);
+  const otherTshirts = productCatalog.filter(item => item.product.toLowerCase() !== currentName && !item.type.toLowerCase().includes('hoodie'));
+  const relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))].slice(0, 4);
+  relatedGrid.innerHTML = relatedItems.map(item => {
+    const params = new URLSearchParams(item);
+    return `<a class="related-card" href="product.html?${params.toString()}">
+      <img src="${item.image}" alt="${item.product}">
+      <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span></div>
+    </a>`;
+  }).join('');
 
   function goToOrder() {
     const activeSize = document.querySelector('.size-btn.active');

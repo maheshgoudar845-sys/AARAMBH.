@@ -222,7 +222,7 @@
           <option value="M">M</option>
           <option value="L">L</option>
           <option value="XL">XL</option>
-          <option value="XXL">XXL</option>
+          <option value="2XL">2XL</option>
         </select>
       </div>
       <div class="field-group">
@@ -314,11 +314,21 @@
     const type = params.get('type') || '';
     const color = params.get('color') || '';
     const price = params.get('price') || '';
+    const size = params.get('size') || '';
+    const qtyParam = params.get('qty') || params.get('quantity') || '1';
+    const quantity = Math.min(10, Math.max(1, parseInt(qtyParam, 10) || 1));
 
     document.getElementById('product').value = product;
     document.getElementById('type').value = type;
     document.getElementById('color').value = color;
     document.getElementById('price').value = price;
+
+    const sizeSelect = document.getElementById('size');
+    const quantityInput = document.getElementById('quantity');
+    if(size && [...sizeSelect.options].some(option => option.value === size)){
+      sizeSelect.value = size;
+    }
+    quantityInput.value = quantity;
 
     const summaryEl = document.getElementById('productSummary');
     const nameEl = document.getElementById('summaryName');
@@ -328,13 +338,29 @@
     if(product){
       summaryEl.classList.remove('empty');
       nameEl.textContent = product;
-      metaEl.textContent = [type, color].filter(Boolean).join(' · ');
-      priceEl.textContent = price ? '₹' + price : '';
+      const productMeta = [type, color, size ? `Size ${size}` : '', `Qty ${quantity}`].filter(Boolean);
+      metaEl.textContent = productMeta.join(' · ');
+      const total = (parseFloat(price) || 0) * quantity;
+      priceEl.textContent = price ? `₹${total}` : '';
     } else {
       summaryEl.classList.add('empty');
     }
   }
   prefillFromQuery();
+
+  // Keep the order summary and displayed total synced if size/quantity are edited here.
+  function refreshOrderSummary(){
+    const type = document.getElementById('type').value;
+    const color = document.getElementById('color').value;
+    const size = document.getElementById('size').value;
+    const quantity = Math.min(10, Math.max(1, parseInt(document.getElementById('quantity').value, 10) || 1));
+    document.getElementById('quantity').value = quantity;
+    document.getElementById('summaryMeta').textContent = [type, color, size ? `Size ${size}` : '', `Qty ${quantity}`].filter(Boolean).join(' · ');
+    const unitPrice = parseFloat(document.getElementById('price').value) || 0;
+    document.getElementById('summaryPrice').textContent = unitPrice ? `₹${unitPrice * quantity}` : '';
+  }
+  document.getElementById('size').addEventListener('change', refreshOrderSummary);
+  document.getElementById('quantity').addEventListener('input', refreshOrderSummary);
 
   // ---- PAYMENT METHOD TOGGLE ----
   document.querySelectorAll('input[name="payChoice"]').forEach(r=>{

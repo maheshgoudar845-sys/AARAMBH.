@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Product — ARAMBH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#080810;
+    --card:#101018;
+    --accent:#E8452C;   /* red/orange accent - swap per category if needed */
+    --accent2:#FF7A45;
+    --text:#F5F3EE;
+    --muted:#9A96A8;
+    --line:#232130;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    padding-bottom:90px; /* room for sticky bar on mobile */
+  }
+  h1,h2,.display{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
+  .brand{font-family:'Syne',sans-serif;font-weight:800;}
+
+  .wrap{
+    max-width:1200px;margin:0 auto;padding:24px 20px;
+    display:grid;grid-template-columns:1.1fr 1fr;gap:48px;
+  }
+  @media(max-width:860px){ .wrap{grid-template-columns:1fr;gap:24px;padding:16px;} }
+
+  /* ---- Gallery ---- */
+  .gallery{position:sticky;top:20px;align-self:start;}
+  @media(max-width:860px){ .gallery{position:static;} }
+  .main-image{
+    width:100%;aspect-ratio:4/5;border-radius:14px;overflow:hidden;
+    background:var(--card);border:1px solid var(--line);
+    position:relative;
+  }
+  .main-image img{width:100%;height:100%;object-fit:cover;display:block;
+    animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:4px;}
+  .thumb{
+    width:76px;height:92px;flex:0 0 auto;border-radius:8px;overflow:hidden;
+    border:2px solid var(--line);cursor:pointer;opacity:.6;transition:.2s;background:var(--card);
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb.active{border-color:var(--accent);opacity:1;}
+  .thumb:hover{opacity:1;}
+
+  /* ---- Info ---- */
+  .info .cat{color:var(--accent2);text-transform:uppercase;font-size:.75rem;letter-spacing:2px;font-weight:600;}
+  .info h1{font-size:2.4rem;line-height:1;margin:8px 0 12px;}
+  .price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;}
+  .price-now{font-size:1.6rem;font-weight:700;font-family:'Syne',sans-serif;}
+  .price-was{color:var(--muted);text-decoration:line-through;font-size:1rem;}
+  .price-off{color:var(--accent);font-size:.85rem;font-weight:600;}
+  .desc{color:var(--muted);font-size:.95rem;line-height:1.6;margin:16px 0 24px;}
+
+  /* ---- Color swatches (for multi-color variant consolidation) ---- */
+  .option-label{font-size:.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+  .swatches{display:flex;gap:10px;margin-bottom:24px;}
+  .swatch{
+    width:34px;height:34px;border-radius:50%;cursor:pointer;
+    border:2px solid var(--line);position:relative;transition:.2s;
+  }
+  .swatch.active{border-color:var(--text);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent);}
+
+  /* ---- Size selector ---- */
+  .size-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .size-chart-link{font-size:.8rem;color:var(--accent2);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;}
+  .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+  .size-btn{
+    padding:10px 16px;border-radius:8px;border:1px solid var(--line);
+    background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:500;
+    min-width:48px;text-align:center;transition:.15s;
+  }
+  .size-btn:hover{border-color:var(--accent2);}
+  .size-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .size-btn.oos{opacity:.35;text-decoration:line-through;cursor:not-allowed;}
+
+  /* ---- Quantity + CTA (desktop inline) ---- */
+  .buy-row{display:flex;gap:12px;margin-top:8px;}
+  .qty{
+    display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  }
+  .qty button{background:var(--card);color:var(--text);border:none;width:40px;height:48px;font-size:1.1rem;cursor:pointer;}
+  .qty span{width:40px;text-align:center;font-weight:600;}
+  .buy-now{
+    flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;
+    font-family:'Syne';font-weight:700;font-size:1rem;letter-spacing:.5px;
+    cursor:pointer;transition:.2s;
+  }
+  .buy-now:hover{background:var(--accent2);}
+
+  /* ---- Sticky mobile bar ---- */
+  .sticky-bar{
+    position:fixed;bottom:0;left:0;right:0;background:var(--card);
+    border-top:1px solid var(--line);padding:12px 16px;display:none;
+    align-items:center;gap:12px;z-index:50;
+  }
+  @media(max-width:860px){ .sticky-bar{display:flex;} .buy-row{display:none;} }
+  .sticky-bar .buy-now{height:48px;}
+  .sticky-bar .price-now{font-size:1.1rem;white-space:nowrap;}
+
+  /* ---- Size chart modal ---- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;
+    align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    max-width:480px;width:100%;padding:24px;max-height:85vh;overflow-y:auto;
+  }
+  .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  th,td{padding:8px;text-align:center;border-bottom:1px solid var(--line);}
+  th{color:var(--accent2);font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- GALLERY -->
+  <div class="gallery">
+    <div class="main-image">
+      <img id="mainImg" src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front" alt="Product image">
+    </div>
+    <div class="thumbs" id="thumbs">
+      <div class="thumb active" data-src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front"><img src="https://via.placeholder.com/160x200/101018/E8452C?text=Front"></div>
+      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/FF7A45?text=Back"><img src="https://via.placeholder.com/160x200/101018/FF7A45?text=Back"></div>
+      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/E8452C?text=Detail"><img src="https://via.placeholder.com/160x200/101018/E8452C?text=Detail"></div>
+      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/FF7A45?text=Model"><img src="https://via.placeholder.com/160x200/101018/FF7A45?text=Model"></div>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="info">
+    <div class="cat" id="productCategory">Collection</div>
+    <h1 id="productName">PRODUCT</h1>
+    <div class="price-row">
+      <span class="price-now" id="productPrice">₹0</span>
+      <span class="price-was" id="productWasPrice" style="display:none"></span>
+      <span class="price-off" id="productDiscount" style="display:none"></span>
+    </div>
+    <p class="desc" id="productDescription">Premium ARAMBH apparel. Select your size and continue to order.</p>
+
+    <div class="option-label">Colour</div>
+    <div class="swatches" id="swatches"></div>
+
+    <div class="size-head">
+      <div class="option-label" style="margin:0;">Size</div>
+      <button class="size-chart-link" id="openChart">Size Chart</button>
+    </div>
+    <div class="sizes">
+      <div class="size-btn" data-size="S">S</div>
+      <div class="size-btn active" data-size="M">M</div>
+      <div class="size-btn" data-size="L">L</div>
+      <div class="size-btn" data-size="XL">XL</div>
+      <div class="size-btn oos" data-size="2XL">2XL</div>
+    </div>
+
+    <div class="buy-row">
+      <div class="qty">
+        <button id="qtyMinus">−</button>
+        <span id="qtyVal">1</span>
+        <button id="qtyPlus">+</button>
+      </div>
+      <button class="buy-now" id="buyNowDesktop">BUY NOW</button>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY MOBILE BAR -->
+<div class="sticky-bar">
+  <span class="price-now" id="mobileProductPrice">₹0</span>
+  <button class="buy-now" id="buyNowMobile" style="flex:1;">BUY NOW</button>
+</div>
+
+<!-- SIZE CHART MODAL -->
+<div class="modal-overlay" id="chartOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 class="display" style="font-size:1.5rem;">SIZE CHART</h2>
+      <button class="modal-close" id="closeChart">&times;</button>
+    </div>
+    <table>
+      <tr><th>Size</th><th>Chest (in)</th><th>Length (in)</th></tr>
+      <tr><td>S</td><td>38</td><td>27</td></tr>
+      <tr><td>M</td><td>40</td><td>28</td></tr>
+      <tr><td>L</td><td>42</td><td>29</td></tr>
+      <tr><td>XL</td><td>44</td><td>30</td></tr>
+      <tr><td>2XL</td><td>46</td><td>31</td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+  const qs = new URLSearchParams(window.location.search);
+  const productData = {
+    product: qs.get('product') || 'ARAMBH Product',
+    type: qs.get('type') || 'Apparel',
+    color: qs.get('color') || 'Default',
+    price: Number(qs.get('price')) || 0,
+    image: qs.get('image') || '',
+    image2: qs.get('image2') || '',
+    description: qs.get('description') || ''
+  };
+
+  const typeKey = productData.type.toLowerCase();
+  const descriptions = {
+    polo: 'Premium structured polo with a clean everyday fit and durable fabric.',
+    oversized: 'Relaxed drop-shoulder oversized fit made for everyday streetwear comfort.',
+    hoodie: 'Comfortable premium hoodie with a relaxed fit for layering.',
+    'printed t-shirt': 'Printed ARAMBH T-shirt with durable artwork and a comfortable everyday fit.',
+    'printed oversized tee': 'Printed oversized tee with front and back artwork and a relaxed streetwear fit.'
+  };
+
+  document.getElementById('pageTitle').textContent = `${productData.product} — ARAMBH`;
+  document.getElementById('productName').textContent = productData.product;
+  document.getElementById('productCategory').textContent = `${productData.type} Collection`;
+  document.getElementById('productPrice').textContent = `₹${productData.price}`;
+  document.getElementById('mobileProductPrice').textContent = `₹${productData.price}`;
+  document.getElementById('productDescription').textContent = productData.description || descriptions[typeKey] || 'Premium ARAMBH apparel. Select your size and continue to order.';
+
+  const mainImg = document.getElementById('mainImg');
+  const thumbs = document.getElementById('thumbs');
+  const images = [productData.image, productData.image2].filter(Boolean);
+  if (images.length) {
+    mainImg.src = images[0];
+    mainImg.alt = productData.product;
+    thumbs.innerHTML = images.map((src, index) => `
+      <div class="thumb ${index === 0 ? 'active' : ''}" data-src="${src}">
+        <img src="${src}" alt="${productData.product} view ${index + 1}">
+      </div>`).join('');
+  }
+
+  thumbs.addEventListener('click', (event) => {
+    const thumb = event.target.closest('.thumb');
+    if (!thumb) return;
+    thumbs.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+    thumb.classList.add('active');
+    mainImg.src = thumb.dataset.src;
+  });
+
+  const swatches = document.getElementById('swatches');
+  const swatch = document.createElement('button');
+  swatch.type = 'button';
+  swatch.className = 'swatch active';
+  swatch.dataset.color = productData.color;
+  swatch.title = productData.color;
+  swatch.setAttribute('aria-label', productData.color);
+  swatch.style.background = productData.color.toLowerCase().replace(/\s+/g, '');
+  swatches.appendChild(swatch);
+
+  document.querySelectorAll('.size-btn').forEach(button => {
+    if (button.classList.contains('oos')) return;
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(x => x.classList.remove('active'));
+      button.classList.add('active');
+    });
+  });
+
+  let qty = 1;
+  const qtyVal = document.getElementById('qtyVal');
+  document.getElementById('qtyPlus').onclick = () => { qty += 1; qtyVal.textContent = qty; };
+  document.getElementById('qtyMinus').onclick = () => { if (qty > 1) { qty -= 1; qtyVal.textContent = qty; } };
+
+  const overlay = document.getElementById('chartOverlay');
+  document.getElementById('openChart').onclick = () => overlay.classList.add('open');
+  document.getElementById('closeChart').onclick = () => overlay.classList.remove('open');
+  overlay.addEventListener('click', event => { if (event.target === overlay) overlay.classList.remove('open'); });
+
+  function goToOrder() {
+    const activeSize = document.querySelector('.size-btn.active');
+    const params = new URLSearchParams({
+      product: productData.product,
+      type: productData.type,
+      color: productData.color,
+      size: activeSize ? activeSize.dataset.size : 'M',
+      qty: String(qty),
+      price: String(productData.price)
+    });
+    window.location.href = 'order.html?' + params.toString();
+  }
+  document.getElementById('buyNowDesktop').onclick = goToOrder;
+  document.getElementById('buyNowMobile').onclick = goToOrder;
+</script>
+
+</body>
+</html>

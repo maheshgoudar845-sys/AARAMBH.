@@ -244,7 +244,10 @@
     @media (max-width: 420px) {
       .page-header h1 { font-size: clamp(48px, 14vw, 72px); }
     }
-  </style>
+  
+    /* Product media opens the shared product-details page */
+    .product-card .card-media, .drop-card .card-media, .jd-card .card-media { cursor: pointer; }
+</style>
 </head>
 <body>
 
@@ -484,6 +487,46 @@
     const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
-  </script>
+  
+
+    // Open the shared product detail page before checkout.
+    document.querySelectorAll('a.buy-now-btn').forEach(button => {
+      button.addEventListener('click', event => {
+        event.preventDefault();
+        const card = button.closest('.product-card');
+        const oldUrl = new URL(button.href, window.location.href);
+        const params = new URLSearchParams(oldUrl.search);
+        const cardImage = card ? card.querySelector('.card-media img') : null;
+        if (cardImage) params.set('image', cardImage.getAttribute('src'));
+        window.location.href = 'product.html?' + params.toString();
+      });
+    });
+
+
+    // Product image/media click -> same product-details page as Buy Now.
+    document.querySelectorAll('.product-card .card-media, .drop-card .card-media, .jd-card .card-media').forEach(media => {
+      media.setAttribute('role', 'link');
+      media.setAttribute('tabindex', '0');
+      media.setAttribute('aria-label', 'View product details');
+
+      const openDetails = () => {
+        const card = media.closest('.product-card, .drop-card, .jd-card');
+        const button = card && card.querySelector('.buy-now-btn');
+        if (button) button.click();
+      };
+
+      media.addEventListener('click', event => {
+        if (event.target.closest('.swatch, button, a')) return;
+        openDetails();
+      });
+      media.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openDetails();
+        }
+      });
+    });
+
+</script>
 </body>
 </html>

@@ -746,13 +746,17 @@
       }
     }
 
-    // BUY NOW — reads selected color if present, redirects to order.html with product details
+    // BUY NOW — opens shared product details page with current colour and images
     function buyNow(btn, productName, typeName, price) {
       const card = btn.closest('.product-card, .drop-card, .jd-card');
       const colorEl = card ? card.querySelector('.selected-color') : null;
-      const color = colorEl ? colorEl.textContent.trim() : '';
+      const activeSwatch = card ? card.querySelector('.swatch.active') : null;
+      const color = colorEl ? colorEl.textContent.trim() : (activeSwatch ? activeSwatch.title : 'Default');
+      const images = card ? [...card.querySelectorAll('.card-media img')].filter(img => img.offsetParent !== null || img.src) : [];
       const params = new URLSearchParams({ product: productName, type: typeName, color: color, price: price });
-      window.location.href = 'order.html?' + params.toString();
+      if (images[0]) params.set('image', images[0].getAttribute('src'));
+      if (images[1]) params.set('image2', images[1].getAttribute('src'));
+      window.location.href = 'product.html?' + params.toString();
     }
 
     const cursor = document.getElementById('cursor');

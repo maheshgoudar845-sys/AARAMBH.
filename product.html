@@ -96,6 +96,12 @@
     cursor:pointer;transition:.2s;
   }
   .buy-now:hover{background:var(--accent2);}
+  .add-cart{flex:1;background:transparent;color:var(--text);border:1px solid var(--accent);border-radius:8px;font-family:'Syne';font-weight:700;font-size:.95rem;letter-spacing:.5px;cursor:pointer;transition:.2s;}
+  .add-cart:hover{background:rgba(232,69,44,.12);}
+  .cart-link{position:fixed;top:16px;right:18px;z-index:60;background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:999px;padding:10px 14px;font-family:'Syne';font-size:.78rem;font-weight:700;}
+  .cart-count{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;background:var(--accent);border-radius:50%;margin-left:6px;}
+  .cart-toast{position:fixed;top:70px;right:18px;z-index:80;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px 16px;opacity:0;transform:translateY(-8px);pointer-events:none;transition:.25s;}
+  .cart-toast.show{opacity:1;transform:translateY(0);}
 
   /* ---- Sticky mobile bar ---- */
   .sticky-bar{
@@ -142,6 +148,8 @@
 </style>
 </head>
 <body>
+<a class="cart-link" href="order.html?cart=1">CART <span class="cart-count" id="cartCount">0</span></a>
+<div class="cart-toast" id="cartToast">Added to cart</div>
 
 <div class="wrap">
   <!-- GALLERY -->
@@ -198,6 +206,7 @@
         <span id="qtyVal">1</span>
         <button id="qtyPlus">+</button>
       </div>
+      <button class="add-cart" id="addCartDesktop">ADD TO CART</button>
       <button class="buy-now" id="buyNowDesktop">BUY NOW</button>
     </div>
   </div>
@@ -213,6 +222,7 @@
 <!-- STICKY MOBILE BAR -->
 <div class="sticky-bar">
   <span class="price-now" id="mobileProductPrice">₹0</span>
+  <button class="add-cart" id="addCartMobile" style="height:48px;">ADD</button>
   <button class="buy-now" id="buyNowMobile" style="flex:1;">BUY NOW</button>
 </div>
 
@@ -328,6 +338,50 @@
       <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span></div>
     </a>`;
   }).join('');
+
+  const CART_KEY = 'arambhCart';
+
+  function getCart(){
+    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+    catch (error) { return []; }
+  }
+
+  function updateCartCount(){
+    const count = getCart().reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
+    document.getElementById('cartCount').textContent = count;
+  }
+
+  function currentSelection(){
+    const activeSize = document.querySelector('.size-btn.active');
+    return {
+      id: `${productData.product}|${productData.color}|${activeSize ? activeSize.dataset.size : 'M'}`,
+      product: productData.product,
+      type: productData.type,
+      color: productData.color,
+      price: productData.price,
+      image: productData.image,
+      size: activeSize ? activeSize.dataset.size : 'M',
+      qty: qty
+    };
+  }
+
+  function addToCart(){
+    const selected = currentSelection();
+    const cart = getCart();
+    const existing = cart.find(item => item.id === selected.id);
+    if(existing){ existing.qty = Math.min(10, (Number(existing.qty) || 0) + selected.qty); }
+    else { cart.push(selected); }
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    updateCartCount();
+    const toast = document.getElementById('cartToast');
+    toast.textContent = `${selected.product} added to cart`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  updateCartCount();
+  document.getElementById('addCartDesktop').onclick = addToCart;
+  document.getElementById('addCartMobile').onclick = addToCart;
 
   function goToOrder() {
     const activeSize = document.querySelector('.size-btn.active');

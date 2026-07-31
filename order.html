@@ -64,6 +64,23 @@
   .product-summary .info .meta{font-size:12px;color:var(--muted);letter-spacing:.5px;}
   .product-summary .price{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);white-space:nowrap;}
   .product-summary.empty .info .name{color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;font-size:14px;}
+  .cart-summary{display:none;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:28px;}
+  .cart-summary.show{display:block;}
+  .cart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .cart-head h2{font-family:'Bebas Neue';font-size:28px;letter-spacing:1px;}
+  .cart-item{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);}
+  .cart-item:last-child{border-bottom:none;}
+  .cart-item img{width:64px;height:76px;object-fit:contain;background:var(--surface2);border-radius:10px;}
+  .cart-item h3{font-family:'Syne';font-size:14px;margin-bottom:5px;}
+  .cart-item p{font-size:12px;color:var(--muted);line-height:1.5;}
+  .cart-item-price{font-family:'Bebas Neue';font-size:24px;color:var(--gold);text-align:right;}
+  .cart-controls{display:flex;align-items:center;gap:7px;margin-top:8px;}
+  .cart-controls button{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;}
+  .remove-item{width:auto!important;padding:0 8px;color:#ff7676!important;}
+  .cart-total{display:flex;justify-content:space-between;align-items:center;padding-top:16px;margin-top:8px;border-top:1px solid var(--border);font-family:'Syne';font-weight:700;}
+  .cart-total strong{font-family:'Bebas Neue';font-size:32px;color:var(--gold);}
+  .continue-shopping{color:var(--accent2);font-size:12px;text-decoration:none;}
+  @media(max-width:520px){.cart-item{grid-template-columns:54px 1fr}.cart-item img{width:54px;height:66px}.cart-item-price{grid-column:2;text-align:left}.cart-head{align-items:flex-start;gap:10px}}
 
   form{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px;}
   .field-group{margin-bottom:20px;}
@@ -163,6 +180,12 @@
 
 <div class="order-wrap">
 
+  <section class="cart-summary" id="cartSummary">
+    <div class="cart-head"><h2>YOUR CART</h2><a class="continue-shopping" href="printed.html">+ Continue shopping</a></div>
+    <div id="cartItems"></div>
+    <div class="cart-total"><span>Order total</span><strong id="cartTotal">₹0</strong></div>
+  </section>
+
   <!-- SELECTED PRODUCT (auto-filled summary, read only) -->
   <div class="product-summary" id="productSummary">
     <div class="icon">🛍️</div>
@@ -180,6 +203,7 @@
     <input type="hidden" id="color" name="color">
     <input type="hidden" id="price" name="price">
     <input type="hidden" id="paymentMethod" name="paymentMethod" value="COD">
+    <input type="hidden" id="cart_items" name="cart_items">
 
     <div class="field-group">
       <label for="name">Full Name</label>
@@ -213,7 +237,7 @@
       </div>
     </div>
 
-    <div class="field-row">
+    <div class="field-row" id="singleVariantFields">
       <div class="field-group">
         <label for="size">Size</label>
         <select id="size" name="size" required>
@@ -307,9 +331,74 @@
 
   emailjs.init(EMAILJS_PUBLIC_KEY);
 
-  // ---- PREFILL FROM URL QUERY PARAMS ----
+  // ---- CART + SINGLE PRODUCT PREFILL ----
+  const CART_KEY = 'arambhCart';
+  let cartMode = false;
+  let activeCart = [];
+
+  function getCart(){
+    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+    catch (error) { return []; }
+  }
+
+  function saveCart(){
+    localStorage.setItem(CART_KEY, JSON.stringify(activeCart));
+  }
+
+  function cartOrderSummary(){
+    return activeCart.map((item, index) =>
+      `${index + 1}. ${item.product} (${item.type}${item.color ? ', ' + item.color : ''}) — Size ${item.size}, Qty ${item.qty}, ₹${Number(item.price) * Number(item.qty)}`
+    ).join('\n');
+  }
+
+  function cartTotalAmount(){
+    return activeCart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 1), 0);
+  }
+
+  function renderCart(){
+    const cartBox = document.getElementById('cartSummary');
+    const itemsBox = document.getElementById('cartItems');
+    cartBox.classList.add('show');
+    document.getElementById('productSummary').style.display = 'none';
+    document.getElementById('singleVariantFields').style.display = 'none';
+    if(!activeCart.length){
+      itemsBox.innerHTML = '<p style="color:var(--muted);padding:12px 0">Your cart is empty. Add a product before placing an order.</p>';
+      document.getElementById('cartTotal').textContent = '₹0';
+      document.getElementById('submitBtn').disabled = true;
+      return;
+    }
+    document.getElementById('submitBtn').disabled = false;
+    itemsBox.innerHTML = activeCart.map((item, index) => `
+      <div class="cart-item">
+        <img src="${item.image || 'logo.webp'}" alt="${item.product}">
+        <div><h3>${item.product}</h3><p>${item.type} · ${item.color || 'Default'} · Size ${item.size}</p>
+          <div class="cart-controls"><button type="button" onclick="changeCartQty(${index},-1)">−</button><span>${item.qty}</span><button type="button" onclick="changeCartQty(${index},1)">+</button><button type="button" class="remove-item" onclick="removeCartItem(${index})">Remove</button></div>
+        </div>
+        <div class="cart-item-price">₹${Number(item.price) * Number(item.qty)}</div>
+      </div>`).join('');
+    document.getElementById('cartTotal').textContent = `₹${cartTotalAmount()}`;
+    document.getElementById('cart_items').value = cartOrderSummary();
+    document.getElementById('product').value = `${activeCart.length} cart item(s)`;
+    document.getElementById('type').value = 'Cart Order';
+    document.getElementById('color').value = '';
+    document.getElementById('price').value = cartTotalAmount();
+  }
+
+  window.changeCartQty = function(index, change){
+    const item = activeCart[index];
+    if(!item) return;
+    item.qty = Math.min(10, Math.max(1, Number(item.qty) + change));
+    saveCart(); renderCart();
+  };
+  window.removeCartItem = function(index){
+    activeCart.splice(index, 1); saveCart(); renderCart();
+  };
+
   function prefillFromQuery(){
     const params = new URLSearchParams(window.location.search);
+    cartMode = params.get('cart') === '1';
+    if(cartMode){ activeCart = getCart(); renderCart(); return; }
+
     const product = params.get('product') || '';
     const type = params.get('type') || '';
     const color = params.get('color') || '';
@@ -317,50 +406,33 @@
     const size = params.get('size') || '';
     const qtyParam = params.get('qty') || params.get('quantity') || '1';
     const quantity = Math.min(10, Math.max(1, parseInt(qtyParam, 10) || 1));
-
     document.getElementById('product').value = product;
     document.getElementById('type').value = type;
     document.getElementById('color').value = color;
     document.getElementById('price').value = price;
-
     const sizeSelect = document.getElementById('size');
-    const quantityInput = document.getElementById('quantity');
-    if(size && [...sizeSelect.options].some(option => option.value === size)){
-      sizeSelect.value = size;
-    }
-    quantityInput.value = quantity;
-
-    const summaryEl = document.getElementById('productSummary');
-    const nameEl = document.getElementById('summaryName');
-    const metaEl = document.getElementById('summaryMeta');
-    const priceEl = document.getElementById('summaryPrice');
-
+    if(size && [...sizeSelect.options].some(option => option.value === size)) sizeSelect.value = size;
+    document.getElementById('quantity').value = quantity;
     if(product){
-      summaryEl.classList.remove('empty');
-      nameEl.textContent = product;
-      const productMeta = [type, color, size ? `Size ${size}` : '', `Qty ${quantity}`].filter(Boolean);
-      metaEl.textContent = productMeta.join(' · ');
-      const total = (parseFloat(price) || 0) * quantity;
-      priceEl.textContent = price ? `₹${total}` : '';
-    } else {
-      summaryEl.classList.add('empty');
-    }
+      document.getElementById('productSummary').classList.remove('empty');
+      document.getElementById('summaryName').textContent = product;
+      document.getElementById('summaryMeta').textContent = [type,color,size ? `Size ${size}`:'',`Qty ${quantity}`].filter(Boolean).join(' · ');
+      document.getElementById('summaryPrice').textContent = price ? `₹${(parseFloat(price)||0)*quantity}` : '';
+    } else document.getElementById('productSummary').classList.add('empty');
   }
   prefillFromQuery();
 
-  // Keep the order summary and displayed total synced if size/quantity are edited here.
   function refreshOrderSummary(){
-    const type = document.getElementById('type').value;
-    const color = document.getElementById('color').value;
-    const size = document.getElementById('size').value;
-    const quantity = Math.min(10, Math.max(1, parseInt(document.getElementById('quantity').value, 10) || 1));
-    document.getElementById('quantity').value = quantity;
-    document.getElementById('summaryMeta').textContent = [type, color, size ? `Size ${size}` : '', `Qty ${quantity}`].filter(Boolean).join(' · ');
-    const unitPrice = parseFloat(document.getElementById('price').value) || 0;
-    document.getElementById('summaryPrice').textContent = unitPrice ? `₹${unitPrice * quantity}` : '';
+    if(cartMode) return;
+    const type=document.getElementById('type').value, color=document.getElementById('color').value, size=document.getElementById('size').value;
+    const quantity=Math.min(10,Math.max(1,parseInt(document.getElementById('quantity').value,10)||1));
+    document.getElementById('quantity').value=quantity;
+    document.getElementById('summaryMeta').textContent=[type,color,size?`Size ${size}`:'',`Qty ${quantity}`].filter(Boolean).join(' · ');
+    const unitPrice=parseFloat(document.getElementById('price').value)||0;
+    document.getElementById('summaryPrice').textContent=unitPrice?`₹${unitPrice*quantity}`:'';
   }
-  document.getElementById('size').addEventListener('change', refreshOrderSummary);
-  document.getElementById('quantity').addEventListener('input', refreshOrderSummary);
+  document.getElementById('size').addEventListener('change',refreshOrderSummary);
+  document.getElementById('quantity').addEventListener('input',refreshOrderSummary);
 
   // ---- PAYMENT METHOD TOGGLE ----
   document.querySelectorAll('input[name="payChoice"]').forEach(r=>{
@@ -427,8 +499,9 @@
     submitBtn.textContent = 'Placing Order...';
 
     const data = Object.fromEntries(new FormData(form).entries());
-    const orderSummary = `${data.product || 'Item'} (${data.type || ''}${data.color ? ', ' + data.color : ''}) — Size ${data.size}, Qty ${data.quantity}`;
-    const totalAmount = (parseFloat(data.price) || 0) * (parseInt(data.quantity) || 1);
+    const orderSummary = cartMode ? cartOrderSummary() : `${data.product || 'Item'} (${data.type || ''}${data.color ? ', ' + data.color : ''}) — Size ${data.size}, Qty ${data.quantity}`;
+    const totalAmount = cartMode ? cartTotalAmount() : (parseFloat(data.price) || 0) * (parseInt(data.quantity) || 1);
+    document.getElementById('cart_items').value = orderSummary;
 
     // 1. Send to Formspree
     fetch(FORMSPREE_ENDPOINT, {
@@ -457,7 +530,7 @@
 
     if(data.paymentMethod === 'UPI'){
       document.getElementById('upiAmount').textContent = '₹' + totalAmount;
-      renderUpiPayment(totalAmount, `Arambh Order - ${data.product || 'Item'}`);
+      renderUpiPayment(totalAmount, cartMode ? 'Arambh Cart Order' : `Arambh Order - ${data.product || 'Item'}`);
       document.getElementById('whatsappConfirmBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
       document.getElementById('upiPanel').classList.add('show');
     } else {
@@ -465,7 +538,9 @@
       document.getElementById('successPanel').classList.add('show');
     }
 
-    window.scrollTo({ top: document.getElementById('productSummary').offsetTop - 100, behavior: 'smooth' });
+    if(cartMode) localStorage.removeItem(CART_KEY);
+    const scrollTarget = cartMode ? document.getElementById('cartSummary') : document.getElementById('productSummary');
+    window.scrollTo({ top: scrollTarget.offsetTop - 100, behavior: 'smooth' });
   });
 
   // ---- MOBILE MENU ----

@@ -316,7 +316,7 @@
         <div class="card-body">
           <h3>Royal Blue</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Light+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Royal+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -327,7 +327,7 @@
         <div class="card-body">
           <h3>Aqua/Sky Blue</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Dark+Blue+Oversized+Tee&type=Oversized&color=Aqua/Sky+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Aqua%2FSky+Blue+Oversized+Tee&type=Oversized&color=Aqua%2FSky+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -371,7 +371,7 @@
         <div class="card-body">
           <h3>Army Green</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Light+Blue+Oversized+Tee&type=Oversized&color=Army+Green&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -382,7 +382,7 @@
         <div class="card-body">
           <h3>Lavender</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Light+Blue+Oversized+Tee&type=Oversized&color=Lavender&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -393,7 +393,7 @@
         <div class="card-body">
           <h3>Red</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Light+Blue+Oversized+Tee&type=Oversized&color=Red&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -404,7 +404,7 @@
         <div class="card-body">
           <h3>Pink</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Light+Blue+Oversized+Tee&type=Oversized&color=Pink&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
       
@@ -494,9 +494,20 @@
       button.addEventListener('click', event => {
         event.preventDefault();
         const card = button.closest('.product-card');
-        const oldUrl = new URL(button.href, window.location.href);
-        const params = new URLSearchParams(oldUrl.search);
-        const cardImage = card ? card.querySelector('.card-media img') : null;
+        if (!card) return;
+        const title = (card.querySelector('.card-body h3')?.textContent || '').trim();
+        const type = (card.querySelector('.type-tag')?.textContent || 'Oversized').trim();
+        const priceText = (card.querySelector('.price')?.textContent || '0').replace(/[^0-9.]/g, '');
+        const cardImage = card.querySelector('.card-media img');
+        const isHoodie = type.toLowerCase().includes('hoodie');
+        const productName = isHoodie ? title : `${title} Oversized Tee`;
+        const color = isHoodie ? title.replace(/\s+Hoodie$/i, '').trim() : title;
+        const params = new URLSearchParams({
+          product: productName,
+          type: type,
+          color: color,
+          price: priceText || '0'
+        });
         if (cardImage) params.set('image', cardImage.getAttribute('src'));
         window.location.href = 'product.html?' + params.toString();
       });

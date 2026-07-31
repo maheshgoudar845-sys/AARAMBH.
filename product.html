@@ -63,7 +63,12 @@
 
   /* ---- Color swatches (for multi-color variant consolidation) ---- */
   .option-label{font-size:.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;font-weight:600;}
-  .swatches{display:flex;gap:10px;margin-bottom:24px;}
+  .swatches{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .selected-option{color:var(--accent2);font-size:.82rem;margin-bottom:20px;}
+  .fit-options{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .fit-btn{padding:11px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:600;}
+  .fit-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .fit-help{color:var(--muted);font-size:.82rem;line-height:1.45;margin-bottom:22px;}
   .swatch{
     width:34px;height:34px;border-radius:50%;cursor:pointer;
     border:2px solid var(--line);position:relative;transition:.2s;
@@ -145,10 +150,15 @@
   .related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
   .related-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--text);transition:.2s;}
   .related-card:hover{transform:translateY(-4px);border-color:var(--accent);}
-  .related-card img{width:100%;height:230px;object-fit:contain;background:#0b0b13;display:block;padding:10px;}
+  .related-images{display:grid;grid-template-columns:1fr 1fr;background:#0b0b13;}
+  .related-images img{width:100%;height:230px;object-fit:contain;display:block;padding:8px;}
+  .related-images img+img{border-left:1px solid var(--line);}
   .related-card-info{padding:14px;} .related-card-info h3{font-family:'Syne';font-size:.95rem;margin-bottom:5px;}
+  .related-colors{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+  .related-color{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35);}
+  .related-color-label{font-size:.72rem;color:var(--muted);margin-top:7px;}
   .related-card-info span{color:var(--accent2);font-weight:700;}
-  @media(max-width:860px){.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.related-card img{height:190px;}}
+  @media(max-width:860px){.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.related-images img{height:170px;}}
 </style>
 </head>
 <body>
@@ -189,6 +199,16 @@
 
     <div class="option-label">Colour</div>
     <div class="swatches" id="swatches"></div>
+    <div class="selected-option" id="selectedColorLabel"></div>
+
+    <div id="fitSelectorWrap" style="display:none;">
+      <div class="option-label">T-shirt type</div>
+      <div class="fit-options">
+        <button type="button" class="fit-btn active" data-fit="Oversized">Oversized — 240 GSM</button>
+        <button type="button" class="fit-btn" data-fit="Regular">Regular — 180 GSM</button>
+      </div>
+      <p class="fit-help">Printed T-shirts are supplied in oversized fit by default. Select Regular when you prefer a standard fit.</p>
+    </div>
 
     <div class="size-head">
       <div class="option-label" style="margin:0;">Size</div>
@@ -242,14 +262,8 @@
       <h2 class="display" style="font-size:1.5rem;">SIZE CHART</h2>
       <button class="modal-close" id="closeChart">&times;</button>
     </div>
-    <table>
-      <tr><th>Size</th><th>Chest (in)</th><th>Length (in)</th></tr>
-      <tr><td>S</td><td>38</td><td>27</td></tr>
-      <tr><td>M</td><td>40</td><td>28</td></tr>
-      <tr><td>L</td><td>42</td><td>29</td></tr>
-      <tr><td>XL</td><td>44</td><td>30</td></tr>
-      <tr><td>2XL</td><td>46</td><td>31</td></tr>
-    </table>
+    <p id="chartCaption" style="color:var(--muted);font-size:.85rem;margin-bottom:12px;"></p>
+    <img id="sizeChartImage" src="oversized_chart.png" alt="Size chart" style="width:100%;height:auto;border-radius:10px;display:block;">
   </div>
 </div>
 
@@ -266,36 +280,113 @@
   };
 
   const typeKey = productData.type.toLowerCase();
-  const productSpecs = {
-    polo: { material: 'Poly-Cotton — 90% Cotton, 10% Polyester', gsm: '220 GSM', fit: 'Regular Polo Fit', description: 'Breathable poly-cotton polo designed for a clean everyday fit.' },
-    oversized: { material: '100% Pure Cotton — French Terry', gsm: '240 GSM', fit: 'Oversized / Drop Shoulder', description: 'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.' },
-    'printed oversized tee': { material: '100% Pure Cotton — French Terry', gsm: '240 GSM', fit: 'Oversized / Drop Shoulder', description: 'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.' },
-    'printed t-shirt': { material: '100% Pure Cotton', gsm: '180 GSM', fit: 'Regular Fit', description: 'Pure-cotton printed T-shirt in a comfortable regular fit.' },
-    hoodie: { material: 'Premium Fabric', gsm: 'See product description', fit: 'Relaxed Fit', description: 'Comfortable premium hoodie with a relaxed fit for layering.' }
+  const isPrinted = typeKey.includes('printed');
+  let selectedFit = isPrinted ? 'Oversized' : (typeKey === 'oversized' ? 'Oversized' : 'Regular');
+  let selectedColor = productData.color;
+  let selectedImages = [productData.image, productData.image2].filter(Boolean);
+
+  const colorHex = {
+    'Black':'#111111','White':'#f5f3ee','Red':'#b51f2e','Blue':'#74b9ff','Royal Blue':'#2748a8',
+    'Aqua/Sky Blue':'#74d6e8','Army Green':'#596b3d','Lavender':'#b9a3db','Pink':'#ef9db5','Beige':'#d9c3a5',
+    'Cream':'#fff1cf','Grayish Green':'#7d8c7a','Default':'#777777'
   };
+
+  const printedVariants = {
+    'Grace': [
+      {color:'Red',image:'Grace_red_f.png',image2:'Grace_red_b.png'},
+      {color:'Blue',image:'Grace_blue_f.png',image2:'Grace_blue_b.png'},
+      {color:'White',image:'Grace_white_f.png',image2:'Grace_white_b.png'},
+      {color:'Black',image:'Grace_black_f.jpeg',image2:'Grace_black_b.jpeg'}
+    ],
+    'Anime': [
+      {color:'Black',image:'anime_b_f.png',image2:'anime_b_b.png'},
+      {color:'White',image:'anime_w_f.png',image2:'anime_w_b.png'},
+      {color:'Red',image:'anime_r_f.png',image2:'anime_r_b.png'}
+    ],
+    'Naruto': [
+      {color:'White',image:'naruto_w_f.png',image2:'naruto_w_b.png'},
+      {color:'Black',image:'naruto_b_f.png',image2:'naruto_b_b.png'},
+      {color:'Red',image:'naruto_r_f.png',image2:'naruto_r_b.png'}
+    ],
+    'One Piece': [
+      {color:'White',image:'one_w_f.png',image2:'one_w_b.png'},
+      {color:'Black',image:'one_b_f.png',image2:'one_b_b.png'},
+      {color:'Red',image:'one_r_f.png',image2:'one_r_b.png'}
+    ],
+    'Tanjiro': [
+      {color:'White',image:'tanjiro_w_f.png',image2:'tanjiro_w_b.png'},
+      {color:'Black',image:'tanjiro_b_f.png',image2:'tanjiro_b_b.png'},
+      {color:'Red',image:'tanjiro_r_f.png',image2:'tanjiro_r_b.png'}
+    ],
+    'Luffy': [
+      {color:'Black',image:'luffy_b_f.png',image2:'luffy_b_b.png'},
+      {color:'Red',image:'luffy_r_f.png',image2:'luffy_r_b.png'},
+      {color:'White',image:'luffy_w_f.png',image2:'luffy_w_b.png'}
+    ],
+    'Justice': [
+      {color:'Red',image:'Justice_r_f.png',image2:'Justice_r_b.png'},
+      {color:'White',image:'Justice_w_f.png',image2:'Justice_w_b.png'}
+    ],
+    'Porsche': [
+      {color:'Black',image:'Porsche_black_front.png',image2:'Porsche_black_back.png'},
+      {color:'Red',image:'Porsche_red_front.png',image2:'Porsche_red_back.png'}
+    ],
+    'Kungfu Panda': [
+      {color:'White',image:'Kufu_white.jpeg',image2:'Kufu_white.jpeg'},
+      {color:'Black',image:'Kufu_black.jpeg',image2:'Kufu_black.jpeg'}
+    ],
+    'Explore Space Acid Wash': [
+      {color:'Acid Wash',image:'explore_space_front.jpg',image2:'explore_space_back.jpg'}
+    ]
+  };
+
+  const variants = printedVariants[productData.product] || [{color:productData.color,image:productData.image,image2:productData.image2}];
+  const matchingVariant = variants.find(v => v.color.toLowerCase() === productData.color.toLowerCase()) || variants[0];
+  selectedColor = matchingVariant.color;
+  selectedImages = [matchingVariant.image, matchingVariant.image2].filter(Boolean);
+
+  function currentSpecs(){
+    if(isPrinted && selectedFit === 'Regular') return {material:'100% Pure Cotton',gsm:'180 GSM',fit:'Regular Fit',description:'Pure-cotton printed T-shirt in a comfortable regular fit.'};
+    if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
+    if(typeKey === 'polo') return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
+    if(typeKey === 'oversized') return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
+    if(typeKey === 'hoodie') return {material:'Premium Fabric',gsm:'See product description',fit:'Relaxed Fit',description:'Comfortable premium hoodie with a relaxed fit for layering.'};
+    return {material:'Premium Fabric',gsm:'—',fit:'Regular Fit',description:'Premium ARAMBH apparel.'};
+  }
+
+  function updateSpecs(){
+    const specs=currentSpecs();
+    document.getElementById('productDescription').textContent = productData.description || specs.description;
+    document.getElementById('materialDetail').textContent = specs.material;
+    document.getElementById('gsmDetail').textContent = specs.gsm;
+    document.getElementById('fitDetail').textContent = specs.fit;
+    document.getElementById('productCategory').textContent = isPrinted ? `Printed ${selectedFit} T-Shirt` : `${productData.type} Collection`;
+    updateSizeChart();
+  }
+
+  function renderGallery(images){
+    if(!images.length) return;
+    mainImg.src=images[0];
+    mainImg.alt=productData.product;
+    thumbs.innerHTML=images.map((src,index)=>`<div class="thumb ${index===0?'active':''}" data-src="${src}"><img src="${src}" alt="${productData.product} ${index===0?'front':'back'} view"></div>`).join('');
+  }
+
+  function updateSizeChart(){
+    const img=document.getElementById('sizeChartImage');
+    const caption=document.getElementById('chartCaption');
+    if(typeKey === 'polo') { img.src='polo_size_chart.png'; caption.textContent='Polo T-shirt size chart'; }
+    else if(isPrinted && selectedFit === 'Regular') { img.src='regular_size_chart.png'; caption.textContent='Regular-fit 180 GSM printed T-shirt size chart'; }
+    else { img.src='oversized_chart.png'; caption.textContent=isPrinted?'Oversized 240 GSM printed T-shirt size chart':'Oversized T-shirt size chart'; }
+  }
 
   document.getElementById('pageTitle').textContent = `${productData.product} — ARAMBH`;
   document.getElementById('productName').textContent = productData.product;
-  document.getElementById('productCategory').textContent = `${productData.type} Collection`;
   document.getElementById('productPrice').textContent = `₹${productData.price}`;
   document.getElementById('mobileProductPrice').textContent = `₹${productData.price}`;
-  const specs = productSpecs[typeKey] || { material: 'Premium Fabric', gsm: '—', fit: 'Regular Fit', description: 'Premium ARAMBH apparel.' };
-  document.getElementById('productDescription').textContent = productData.description || specs.description;
-  document.getElementById('materialDetail').textContent = specs.material;
-  document.getElementById('gsmDetail').textContent = specs.gsm;
-  document.getElementById('fitDetail').textContent = specs.fit;
 
   const mainImg = document.getElementById('mainImg');
   const thumbs = document.getElementById('thumbs');
-  const images = [productData.image, productData.image2].filter(Boolean);
-  if (images.length) {
-    mainImg.src = images[0];
-    mainImg.alt = productData.product;
-    thumbs.innerHTML = images.map((src, index) => `
-      <div class="thumb ${index === 0 ? 'active' : ''}" data-src="${src}">
-        <img src="${src}" alt="${productData.product} view ${index + 1}">
-      </div>`).join('');
-  }
+  renderGallery(selectedImages);
 
   thumbs.addEventListener('click', (event) => {
     const thumb = event.target.closest('.thumb');
@@ -306,14 +397,28 @@
   });
 
   const swatches = document.getElementById('swatches');
-  const swatch = document.createElement('button');
-  swatch.type = 'button';
-  swatch.className = 'swatch active';
-  swatch.dataset.color = productData.color;
-  swatch.title = productData.color;
-  swatch.setAttribute('aria-label', productData.color);
-  swatch.style.background = productData.color.toLowerCase().replace(/\s+/g, '');
-  swatches.appendChild(swatch);
+  const selectedColorLabel=document.getElementById('selectedColorLabel');
+  function renderSwatches(){
+    swatches.innerHTML=variants.map((v,index)=>`<button type="button" class="swatch ${v.color===selectedColor?'active':''}" data-index="${index}" title="${v.color}" aria-label="Select ${v.color}" style="background:${colorHex[v.color]||'#777'}"></button>`).join('');
+    selectedColorLabel.textContent=`Selected colour: ${selectedColor}`;
+  }
+  swatches.addEventListener('click',event=>{
+    const button=event.target.closest('.swatch'); if(!button) return;
+    const variant=variants[Number(button.dataset.index)];
+    selectedColor=variant.color;
+    selectedImages=[variant.image,variant.image2].filter(Boolean);
+    renderSwatches(); renderGallery(selectedImages);
+  });
+  renderSwatches();
+
+  if(isPrinted){
+    document.getElementById('fitSelectorWrap').style.display='block';
+    document.querySelectorAll('.fit-btn').forEach(btn=>btn.addEventListener('click',()=>{
+      document.querySelectorAll('.fit-btn').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active'); selectedFit=btn.dataset.fit; updateSpecs();
+    }));
+  }
+  updateSpecs();
 
   document.querySelectorAll('.size-btn').forEach(button => {
     if (button.classList.contains('oos')) return;
@@ -351,10 +456,14 @@
   const otherTshirts = productCatalog.filter(item => item.product.toLowerCase() !== currentName && !item.type.toLowerCase().includes('hoodie'));
   const relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))].slice(0, 4);
   relatedGrid.innerHTML = relatedItems.map(item => {
-    const params = new URLSearchParams(item);
+    const itemVariants=printedVariants[item.product] || [{color:item.color,image:item.image,image2:item.image2}];
+    const first=itemVariants[0];
+    const enriched={...item,color:first.color,image:first.image,image2:first.image2||first.image};
+    const params = new URLSearchParams(enriched);
+    const dots=itemVariants.map(v=>`<span class="related-color" title="${v.color}" style="background:${colorHex[v.color]||'#777'}"></span>`).join('');
     return `<a class="related-card" href="product.html?${params.toString()}">
-      <img src="${item.image}" alt="${item.product}">
-      <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span></div>
+      <div class="related-images"><img src="${first.image}" alt="${item.product} front"><img src="${first.image2||first.image}" alt="${item.product} back"></div>
+      <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span><div class="related-colors">${dots}</div><div class="related-color-label">${itemVariants.map(v=>v.color).join(' · ')}</div></div>
     </a>`;
   }).join('');
 
@@ -373,12 +482,14 @@
   function currentSelection(){
     const activeSize = document.querySelector('.size-btn.active');
     return {
-      id: `${productData.product}|${productData.color}|${activeSize ? activeSize.dataset.size : 'M'}`,
+      id: `${productData.product}|${selectedColor}|${selectedFit}|${activeSize ? activeSize.dataset.size : 'M'}`,
       product: productData.product,
-      type: productData.type,
-      color: productData.color,
+      type: isPrinted ? `Printed ${selectedFit} T-Shirt` : productData.type,
+      color: selectedColor,
+      fit: selectedFit,
       price: productData.price,
-      image: productData.image,
+      image: selectedImages[0] || productData.image,
+      image2: selectedImages[1] || productData.image2,
       size: activeSize ? activeSize.dataset.size : 'M',
       qty: qty
     };
@@ -406,8 +517,9 @@
     const activeSize = document.querySelector('.size-btn.active');
     const params = new URLSearchParams({
       product: productData.product,
-      type: productData.type,
-      color: productData.color,
+      type: isPrinted ? `Printed ${selectedFit} T-Shirt` : productData.type,
+      color: selectedColor,
+      fit: selectedFit,
       size: activeSize ? activeSize.dataset.size : 'M',
       qty: String(qty),
       price: String(productData.price)

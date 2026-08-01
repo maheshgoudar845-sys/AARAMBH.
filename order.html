@@ -375,6 +375,8 @@
     cartBox.classList.add('show');
     document.getElementById('productSummary').style.display = 'none';
     document.getElementById('singleVariantFields').style.display = 'none';
+    document.getElementById('size').removeAttribute('required');
+    document.getElementById('quantity').removeAttribute('required');
     if(!activeCart.length){
       itemsBox.innerHTML = '<p style="color:var(--muted);padding:12px 0">Your cart is empty. Add a product before placing an order.</p>';
       document.getElementById('cartTotal').textContent = '₹0';

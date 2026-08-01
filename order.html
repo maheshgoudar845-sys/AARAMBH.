@@ -329,7 +329,21 @@
   const EMAILJS_TEMPLATE_ID = "template_j3gxuwf";
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqejgjzw";
 
-  emailjs.init(EMAILJS_PUBLIC_KEY);
+  // Guarded: if the EmailJS CDN script fails to load or is blocked (ad blocker,
+  // network filter, offline), emailjs.init() used to throw and HALT the entire
+  // script below it — which meant the submit button's event listener never got
+  // attached, making the button appear completely unresponsive.
+  let emailjsReady = false;
+  try {
+    if (typeof emailjs !== 'undefined') {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      emailjsReady = true;
+    } else {
+      console.warn('EmailJS script did not load — order will still be placed, but the confirmation email will be skipped.');
+    }
+  } catch (err) {
+    console.error('EmailJS init failed:', err);
+  }
 
   // ---- CART + SINGLE PRODUCT PREFILL ----
   const CART_KEY = 'arambhCart';
@@ -510,16 +524,18 @@
       body: new FormData(form)
     }).catch(err => console.error('Formspree error:', err));
 
-    // 2. Send confirmation email via EmailJS
-    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      to_name: data.name,
-      to_email: data.email,
-      order_summary: orderSummary,
-      total_amount: totalAmount,
-      payment_method: data.paymentMethod,
-      address: `${data.address}, ${data.city} - ${data.pincode}`,
-      phone: data.phone
-    }).catch(err => console.error('EmailJS error:', err));
+    // 2. Send confirmation email via EmailJS (only if it initialized successfully)
+    if(emailjsReady){
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_name: data.name,
+        to_email: data.email,
+        order_summary: orderSummary,
+        total_amount: totalAmount,
+        payment_method: data.paymentMethod,
+        address: `${data.address}, ${data.city} - ${data.pincode}`,
+        phone: data.phone
+      }).catch(err => console.error('EmailJS error:', err));
+    }
 
     // 3. Show correct panel based on payment method
     form.style.display = 'none';

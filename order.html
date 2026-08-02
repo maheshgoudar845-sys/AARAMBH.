@@ -118,6 +118,35 @@
 
   .form-note{font-size:12px;color:var(--muted);margin-top:14px;text-align:center;line-height:1.6;}
 
+  /* PINCODE LOCATION STATUS */
+  .pincode-status{font-size:12px;margin-top:6px;min-height:16px;}
+  .pincode-status.ok{color:var(--green);}
+  .pincode-status.error{color:var(--accent);}
+  .pincode-status.loading{color:var(--muted);}
+
+  /* COUPON */
+  .coupon-row{display:flex;gap:10px;}
+  .coupon-row input{flex:1;text-transform:uppercase;}
+  .coupon-apply-btn{padding:0 22px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:border-color .2s,background .2s;}
+  .coupon-apply-btn:hover{border-color:var(--accent);}
+  .coupon-msg{font-size:12px;margin-top:8px;min-height:16px;}
+  .coupon-msg.ok{color:var(--green);}
+  .coupon-msg.error{color:var(--accent);}
+  .coupon-applied-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:var(--green);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;padding:8px 14px;border-radius:100px;}
+  .coupon-applied-tag button{background:none;border:none;color:var(--green);cursor:pointer;font-size:14px;line-height:1;}
+
+  /* PRICE BREAKUP */
+  .price-breakup{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 24px;margin-bottom:28px;}
+  .price-breakup .pb-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+  .pb-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text);padding:7px 0;}
+  .pb-row span:first-child{color:var(--muted);}
+  .pb-row.discount span:last-child{color:var(--green);}
+  .pb-row.delivery span:last-child{color:var(--text);}
+  .pb-divider{height:1px;background:var(--border);margin:8px 0;}
+  .pb-row.total{padding-top:10px;}
+  .pb-row.total span:first-child{font-family:'Syne',sans-serif;font-weight:700;color:var(--text);}
+  .pb-row.total span:last-child{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);}
+
   /* UPI PAYMENT PANEL (shown after submit, if prepaid chosen) */
   .upi-panel{display:none;background:var(--surface);border:1px solid rgba(255,183,3,.3);border-radius:24px;padding:30px;margin-top:24px;text-align:center;}
   .upi-panel.show{display:block;}
@@ -204,6 +233,10 @@
     <input type="hidden" id="price" name="price">
     <input type="hidden" id="paymentMethod" name="paymentMethod" value="COD">
     <input type="hidden" id="cart_items" name="cart_items">
+    <input type="hidden" id="deliveryCharge" name="deliveryCharge" value="50">
+    <input type="hidden" id="discountAmount" name="discountAmount" value="0">
+    <input type="hidden" id="couponCode" name="couponCode" value="">
+    <input type="hidden" id="grandTotal" name="grandTotal" value="0">
 
     <div class="field-group">
       <label for="name">Full Name</label>
@@ -234,6 +267,7 @@
       <div class="field-group">
         <label for="pincode">Pincode</label>
         <input type="text" id="pincode" name="pincode" placeholder="6-digit pincode" pattern="[0-9]{6}" required>
+        <div class="pincode-status" id="pincodeStatus"></div>
       </div>
     </div>
 
@@ -258,6 +292,26 @@
     <div class="field-group">
       <label for="notes">Order Notes (optional)</label>
       <textarea id="notes" name="notes" placeholder="Anything else we should know?"></textarea>
+    </div>
+
+    <!-- COUPON CODE -->
+    <div class="field-group" id="couponFieldGroup">
+      <label for="coupon">Coupon Code</label>
+      <div class="coupon-row">
+        <input type="text" id="coupon" placeholder="Enter coupon code">
+        <button type="button" class="coupon-apply-btn" id="couponApplyBtn">Apply</button>
+      </div>
+      <div class="coupon-msg" id="couponMsg"></div>
+    </div>
+
+    <!-- PRICE BREAKUP -->
+    <div class="price-breakup">
+      <div class="pb-title">Order Total</div>
+      <div class="pb-row"><span>Subtotal</span><span id="pbSubtotal">₹0</span></div>
+      <div class="pb-row discount" id="pbDiscountRow" style="display:none;"><span id="pbDiscountLabel">Discount</span><span id="pbDiscount">−₹0</span></div>
+      <div class="pb-row delivery"><span>Delivery Charge</span><span id="pbDelivery">₹50</span></div>
+      <div class="pb-divider"></div>
+      <div class="pb-row total"><span>Total Payable</span><span id="pbTotal">₹0</span></div>
     </div>
 
     <!-- PAYMENT METHOD -->
@@ -328,6 +382,13 @@
   const EMAILJS_SERVICE_ID = "service_2xfx4td";
   const EMAILJS_TEMPLATE_ID = "template_j3gxuwf";
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqejgjzw";
+
+  // Delivery zone base — used to work out the ₹20/₹35/₹50 slab from the pincode lookup
+  const BASE_CITY = "Pune";
+  const BASE_STATE = "Maharashtra";
+
+  // Coupon codes: { CODE: percentOff }
+  const COUPON_CODES = { "FRD5": 5 };
 
   // Guarded: if the EmailJS CDN script fails to load or is blocked (ad blocker,
   // network filter, offline), emailjs.init() used to throw and HALT the entire
@@ -405,9 +466,11 @@
     if(!item) return;
     item.qty = Math.min(10, Math.max(1, Number(item.qty) + change));
     saveCart(); renderCart();
+    if(typeof updatePriceBreakup === 'function') updatePriceBreakup();
   };
   window.removeCartItem = function(index){
     activeCart.splice(index, 1); saveCart(); renderCart();
+    if(typeof updatePriceBreakup === 'function') updatePriceBreakup();
   };
 
   function prefillFromQuery(){
@@ -446,9 +509,145 @@
     document.getElementById('summaryMeta').textContent=[type,color,size?`Size ${size}`:'',`Qty ${quantity}`].filter(Boolean).join(' · ');
     const unitPrice=parseFloat(document.getElementById('price').value)||0;
     document.getElementById('summaryPrice').textContent=unitPrice?`₹${unitPrice*quantity}`:'';
+    if(typeof updatePriceBreakup === 'function') updatePriceBreakup();
   }
   document.getElementById('size').addEventListener('change',refreshOrderSummary);
   document.getElementById('quantity').addEventListener('input',refreshOrderSummary);
+
+  // ---- PINCODE LOOKUP → CITY AUTOFILL + DELIVERY ZONE ----
+  let currentDeliveryCharge = 50; // default until a pincode resolves
+  let resolvedState = '';
+
+  function getDeliveryCharge(city, state){
+    if(!state) return 50;
+    if(city && city.trim().toLowerCase() === BASE_CITY.toLowerCase()) return 20;
+    if(state.trim().toLowerCase() === BASE_STATE.toLowerCase()) return 35;
+    return 50;
+  }
+
+  async function lookupPincode(pin){
+    const statusEl = document.getElementById('pincodeStatus');
+    statusEl.className = 'pincode-status loading';
+    statusEl.textContent = 'Checking pincode…';
+    try{
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+      const json = await res.json();
+      const result = Array.isArray(json) ? json[0] : null;
+      if(result && result.Status === 'Success' && result.PostOffice && result.PostOffice.length){
+        const office = result.PostOffice[0];
+        const district = office.District || office.Name || '';
+        const state = office.State || '';
+        resolvedState = state;
+        const cityInput = document.getElementById('city');
+        if(district) cityInput.value = district;
+        currentDeliveryCharge = getDeliveryCharge(district, state);
+        statusEl.className = 'pincode-status ok';
+        statusEl.textContent = `Delivering to ${district}, ${state} — ₹${currentDeliveryCharge} delivery`;
+      } else {
+        currentDeliveryCharge = 50;
+        resolvedState = '';
+        statusEl.className = 'pincode-status error';
+        statusEl.textContent = "Couldn't verify this pincode — using standard ₹50 delivery.";
+      }
+    } catch(err){
+      console.error('Pincode lookup failed:', err);
+      currentDeliveryCharge = 50;
+      resolvedState = '';
+      statusEl.className = 'pincode-status error';
+      statusEl.textContent = "Couldn't verify this pincode — using standard ₹50 delivery.";
+    }
+    updatePriceBreakup();
+  }
+
+  document.getElementById('pincode').addEventListener('input', function(){
+    const val = this.value.trim();
+    if(val.length === 6 && /^[0-9]{6}$/.test(val)){
+      lookupPincode(val);
+    } else {
+      currentDeliveryCharge = 50;
+      resolvedState = '';
+      document.getElementById('pincodeStatus').textContent = '';
+      document.getElementById('pincodeStatus').className = 'pincode-status';
+      updatePriceBreakup();
+    }
+  });
+
+  // ---- COUPON CODE ----
+  let appliedCoupon = null; // { code, percent }
+
+  function renderCouponUI(){
+    const fieldGroup = document.getElementById('couponFieldGroup');
+    const msgEl = document.getElementById('couponMsg');
+    if(appliedCoupon){
+      fieldGroup.querySelector('.coupon-row').style.display = 'none';
+      msgEl.className = 'coupon-msg';
+      msgEl.innerHTML = `<span class="coupon-applied-tag">✓ ${appliedCoupon.code} applied — ${appliedCoupon.percent}% off <button type="button" id="couponRemoveBtn">✕</button></span>`;
+      document.getElementById('couponRemoveBtn').addEventListener('click', () => {
+        appliedCoupon = null;
+        document.getElementById('coupon').value = '';
+        fieldGroup.querySelector('.coupon-row').style.display = 'flex';
+        msgEl.textContent = '';
+        msgEl.className = 'coupon-msg';
+        updatePriceBreakup();
+      });
+    }
+  }
+
+  document.getElementById('couponApplyBtn').addEventListener('click', function(){
+    const codeInput = document.getElementById('coupon');
+    const code = codeInput.value.trim().toUpperCase();
+    const msgEl = document.getElementById('couponMsg');
+    if(!code){
+      msgEl.className = 'coupon-msg error';
+      msgEl.textContent = 'Enter a coupon code first.';
+      return;
+    }
+    if(COUPON_CODES[code]){
+      appliedCoupon = { code, percent: COUPON_CODES[code] };
+      renderCouponUI();
+      updatePriceBreakup();
+    } else {
+      msgEl.className = 'coupon-msg error';
+      msgEl.textContent = 'Invalid coupon code.';
+    }
+  });
+
+  // ---- UNIFIED PRICE BREAKUP (used for both display and final submit amount) ----
+  let currentGrandTotal = 0;
+
+  function getSubtotal(){
+    if(cartMode) return cartTotalAmount();
+    const unitPrice = parseFloat(document.getElementById('price').value) || 0;
+    const quantity = Math.min(10, Math.max(1, parseInt(document.getElementById('quantity').value, 10) || 1));
+    return unitPrice * quantity;
+  }
+
+  function updatePriceBreakup(){
+    const subtotal = getSubtotal();
+    const discountPercent = appliedCoupon ? appliedCoupon.percent : 0;
+    const discountAmount = Math.round(subtotal * discountPercent / 100);
+    const delivery = subtotal > 0 ? currentDeliveryCharge : 0;
+    const total = Math.max(0, subtotal - discountAmount + delivery);
+    currentGrandTotal = total;
+
+    document.getElementById('pbSubtotal').textContent = `₹${subtotal}`;
+    document.getElementById('pbDelivery').textContent = `₹${delivery}`;
+    const discountRow = document.getElementById('pbDiscountRow');
+    if(discountAmount > 0){
+      discountRow.style.display = 'flex';
+      document.getElementById('pbDiscountLabel').textContent = `Discount (${appliedCoupon.code} — ${discountPercent}%)`;
+      document.getElementById('pbDiscount').textContent = `−₹${discountAmount}`;
+    } else {
+      discountRow.style.display = 'none';
+    }
+    document.getElementById('pbTotal').textContent = `₹${total}`;
+
+    document.getElementById('deliveryCharge').value = delivery;
+    document.getElementById('discountAmount').value = discountAmount;
+    document.getElementById('couponCode').value = appliedCoupon ? appliedCoupon.code : '';
+    document.getElementById('grandTotal').value = total;
+  }
+  updatePriceBreakup();
 
   // ---- PAYMENT METHOD TOGGLE ----
   document.querySelectorAll('input[name="payChoice"]').forEach(r=>{
@@ -514,9 +713,11 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Placing Order...';
 
+    updatePriceBreakup(); // make sure hidden fields + currentGrandTotal reflect the latest state
     const data = Object.fromEntries(new FormData(form).entries());
     const orderSummary = cartMode ? cartOrderSummary() : `${data.product || 'Item'} (${data.type || ''}${data.color ? ', ' + data.color : ''}) — Size ${data.size}, Qty ${data.quantity}`;
-    const totalAmount = cartMode ? cartTotalAmount() : (parseFloat(data.price) || 0) * (parseInt(data.quantity) || 1);
+    const subtotalAmount = getSubtotal();
+    const totalAmount = currentGrandTotal;
     document.getElementById('cart_items').value = orderSummary;
 
     // 1. Send to Formspree
@@ -532,6 +733,10 @@
         to_name: data.name,
         to_email: data.email,
         order_summary: orderSummary,
+        subtotal_amount: subtotalAmount,
+        delivery_charge: data.deliveryCharge,
+        discount_amount: data.discountAmount,
+        coupon_code: data.couponCode || 'None',
         total_amount: totalAmount,
         payment_method: data.paymentMethod,
         address: `${data.address}, ${data.city} - ${data.pincode}`,
@@ -542,8 +747,9 @@
     // 3. Show correct panel based on payment method
     form.style.display = 'none';
 
+    const couponLine = data.couponCode ? `\nCoupon: ${data.couponCode} (−₹${data.discountAmount})` : '';
     const waMessage = encodeURIComponent(
-      `Hi Arambh! I just placed an order:\n\n${orderSummary}\nTotal: ₹${totalAmount}\nPayment: ${data.paymentMethod}\nName: ${data.name}\nAddress: ${data.address}, ${data.city} - ${data.pincode}\nPhone: ${data.phone}`
+      `Hi Arambh! I just placed an order:\n\n${orderSummary}\nSubtotal: ₹${subtotalAmount}\nDelivery: ₹${data.deliveryCharge}${couponLine}\nTotal: ₹${totalAmount}\nPayment: ${data.paymentMethod}\nName: ${data.name}\nAddress: ${data.address}, ${data.city} - ${data.pincode}\nPhone: ${data.phone}`
     );
 
     if(data.paymentMethod === 'UPI'){

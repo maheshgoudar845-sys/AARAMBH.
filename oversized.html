@@ -163,9 +163,22 @@
     .product-card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative; }
     .product-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); }
     .card-media { position: relative; overflow: hidden; background: #0a0a14; }
-    .card-media img { width: 100%; height: 300px; object-fit: contain; padding: 20px; display: block; transition: transform 0.6s ease; }
-    .product-card:hover .card-media img { transform: scale(1.06); }
-    .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; }
+    .card-media img { width: 100%; height: 300px; object-fit: contain; padding: 20px; display: block; transition: transform 0.6s ease, opacity 0.45s ease; }
+    .product-card:hover .card-media img.front-img { transform: scale(1.06); }
+
+    /* Front/back crossfade */
+    .card-media img.back-img {
+      position: absolute;
+      top: 0; left: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .card-media:hover img.back-img,
+    .card-media.flipped img.back-img { opacity: 1; }
+    .card-media:hover img.front-img,
+    .card-media.flipped img.front-img { opacity: 0; }
+
+    .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; z-index: 2; }
     .card-badge.gold { background: #c9a84c; }
     .card-body { padding: 22px 24px 26px; }
     .card-body h3 { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
@@ -312,7 +325,8 @@
       <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
-          <img src="Royal_blue.jpg" alt="Royal Blue Oversized" loading="lazy">
+          <img class="front-img" src="Royal_blue.jpg" alt="Royal Blue Oversized — front" loading="lazy">
+          <img class="back-img" src="Royal_blue_back.jpg" alt="Royal Blue Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Royal Blue</h3>
@@ -323,7 +337,8 @@
 
       <div class="product-card reveal reveal-delay-1">
         <div class="card-media">
-          <img src="Aqua_sky_blue.png" alt="Aqua/SkyBlue Oversized" loading="lazy">
+          <img class="front-img" src="Aqua_sky_blue.png" alt="Aqua/SkyBlue Oversized — front" loading="lazy">
+          <img class="back-img" src="Aqua_sky_blue_back.png" alt="Aqua/SkyBlue Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Aqua/Sky Blue</h3>
@@ -334,7 +349,8 @@
 
       <div class="product-card reveal reveal-delay-2">
         <div class="card-media">
-          <img src="Beige.png" alt="Beige Oversized" loading="lazy">
+          <img class="front-img" src="Beige.png" alt="Beige Oversized — front" loading="lazy">
+          <img class="back-img" src="Beige_back.png" alt="Beige Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Beige</h3>
@@ -345,7 +361,8 @@
 
       <div class="product-card reveal reveal-delay-3">
         <div class="card-media">
-          <img src="White.jpg" alt="White Oversized" loading="lazy">
+          <img class="front-img" src="White.jpg" alt="White Oversized — front" loading="lazy">
+          <img class="back-img" src="White_back.jpg" alt="White Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>White</h3>
@@ -356,7 +373,8 @@
 
       <div class="product-card reveal reveal-delay-4">
         <div class="card-media">
-          <img src="Black.jpg" alt="Black Oversized" loading="lazy">
+          <img class="front-img" src="Black.jpg" alt="Black Oversized — front" loading="lazy">
+          <img class="back-img" src="Black_back.jpg" alt="Black Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Black</h3>
@@ -367,7 +385,8 @@
        <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
-          <img src="Army_green.png" alt="Army Green Oversized" loading="lazy">
+          <img class="front-img" src="Army_green.png" alt="Army Green Oversized — front" loading="lazy">
+          <img class="back-img" src="Army_green_back.png" alt="Army Green Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Army Green</h3>
@@ -378,7 +397,8 @@
              <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
-          <img src="Lavender .png" alt="Lavender Oversized" loading="lazy">
+          <img class="front-img" src="Lavender .png" alt="Lavender Oversized — front" loading="lazy">
+          <img class="back-img" src="Lavender_back.png" alt="Lavender Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Lavender</h3>
@@ -389,7 +409,8 @@
              <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
-          <img src="Red.jpg" alt="Red Oversized" loading="lazy">
+          <img class="front-img" src="Red.jpg" alt="Red Oversized — front" loading="lazy">
+          <img class="back-img" src="Red_back.jpg" alt="Red Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Red</h3>
@@ -400,7 +421,8 @@
              <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
-          <img src="Pink.png" alt="Pink Oversized" loading="lazy">
+          <img class="front-img" src="Pink.png" alt="Pink Oversized — front" loading="lazy">
+          <img class="back-img" src="Pink_back.png" alt="Pink Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Pink</h3>
@@ -469,7 +491,7 @@
         const title = (card.querySelector('.card-body h3')?.textContent || '').trim();
         const type = (card.querySelector('.type-tag')?.textContent || 'Oversized').trim();
         const priceText = (card.querySelector('.price')?.textContent || '0').replace(/[^0-9.]/g, '');
-        const cardImage = card.querySelector('.card-media img');
+        const cardImage = card.querySelector('.card-media img.front-img') || card.querySelector('.card-media img');
         const isHoodie = type.toLowerCase().includes('hoodie');
         const productName = isHoodie ? title : `${title} Oversized Tee`;
         const color = isHoodie ? title.replace(/\s+Hoodie$/i, '').trim() : title;
@@ -486,6 +508,10 @@
 
 
     // Product image/media click -> same product-details page as Buy Now.
+    // On touch devices, the FIRST tap flips to the back-view image instead of
+    // navigating away; a SECOND tap (or tapping elsewhere on the card) opens details.
+    const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
     document.querySelectorAll('.product-card .card-media, .drop-card .card-media, .jd-card .card-media').forEach(media => {
       media.setAttribute('role', 'link');
       media.setAttribute('tabindex', '0');
@@ -499,8 +525,19 @@
 
       media.addEventListener('click', event => {
         if (event.target.closest('.swatch, button, a')) return;
+
+        const hasBackImg = !!media.querySelector('img.back-img');
+        if (isTouchDevice && hasBackImg && !media.classList.contains('flipped')) {
+          // first tap: reveal back view instead of navigating
+          event.preventDefault();
+          document.querySelectorAll('.card-media.flipped').forEach(el => { if (el !== media) el.classList.remove('flipped'); });
+          media.classList.add('flipped');
+          return;
+        }
+
         openDetails();
       });
+
       media.addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();

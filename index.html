@@ -539,6 +539,58 @@
       transform: translateX(3px);
     }
 
+
+    /* CONVERSION SECTIONS */
+    .hero-actions { display:flex; gap:14px; margin-top:30px; flex-wrap:wrap; justify-content:center; animation:fade-up .9s .25s ease both; }
+    .hero-primary-btn, .hero-secondary-btn { font-family:'Syne',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.7px; text-transform:uppercase; text-decoration:none; border-radius:999px; padding:15px 26px; transition:transform .25s, background .25s, border-color .25s; }
+    .hero-primary-btn { color:var(--accent2); background:var(--accent); box-shadow:0 12px 38px rgba(var(--accent-rgb),.38); }
+    .hero-secondary-btn { color:#fff; border:1px solid rgba(255,255,255,.3); background:rgba(8,8,16,.38); backdrop-filter:blur(10px); }
+    .hero-primary-btn:hover, .hero-secondary-btn:hover { transform:translateY(-3px); }
+    .hero-secondary-btn:hover { border-color:var(--accent2); background:rgba(255,255,255,.08); }
+
+    .drop-section, .pick-section, .conversion-section { padding:110px 40px; max-width:1400px; margin:auto; }
+    .product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .product-card { background:var(--surface); border:1px solid var(--border); border-radius:22px; overflow:hidden; position:relative; transition:transform .35s, border-color .35s, box-shadow .35s; }
+    .product-card:hover { transform:translateY(-8px); border-color:rgba(var(--accent-rgb),.35); box-shadow:0 30px 80px rgba(0,0,0,.45); }
+    .product-image-wrap { height:430px; overflow:hidden; position:relative; background:#111; }
+    .product-image-wrap img { width:100%; height:100%; object-fit:cover; transition:transform .6s; }
+    .product-card:hover img { transform:scale(1.055); }
+    .product-badge { position:absolute; top:15px; left:15px; z-index:2; background:var(--accent); color:var(--accent2); padding:6px 12px; border-radius:999px; font:800 9px 'Syne',sans-serif; letter-spacing:1.8px; text-transform:uppercase; }
+    .product-content { padding:22px; }
+    .product-type { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:1.7px; }
+    .product-name { font:700 20px 'Syne',sans-serif; margin:8px 0 10px; }
+    .product-row { display:flex; justify-content:space-between; align-items:center; gap:14px; }
+    .product-price { font:700 21px 'Syne',sans-serif; }
+    .product-link { color:#fff; text-decoration:none; background:var(--accent); padding:10px 15px; border-radius:999px; font:800 10px 'Syne',sans-serif; letter-spacing:1.2px; text-transform:uppercase; }
+
+    .pick-shell { display:grid; grid-template-columns:1.05fr .95fr; min-height:540px; border:1px solid var(--border); border-radius:28px; overflow:hidden; background:linear-gradient(145deg,var(--surface),var(--surface2)); box-shadow:0 35px 100px rgba(0,0,0,.35); }
+    .pick-image { position:relative; min-height:520px; overflow:hidden; }
+    .pick-image img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; transition:opacity .25s, transform .6s; }
+    .pick-image:hover img { transform:scale(1.035); }
+    .pick-panel { padding:58px; display:flex; flex-direction:column; justify-content:center; }
+    .pick-kicker { color:var(--accent); font:800 11px 'Syne',sans-serif; letter-spacing:3px; text-transform:uppercase; }
+    .pick-title { font:400 clamp(44px,5vw,72px) 'Bebas Neue',sans-serif; line-height:.98; margin:14px 0; }
+    .pick-copy { color:var(--muted); line-height:1.75; max-width:500px; }
+    .pick-product { border-top:1px solid var(--border); margin-top:30px; padding-top:26px; }
+    .pick-product h3 { font:700 24px 'Syne',sans-serif; }
+    .pick-meta { display:flex; gap:16px; flex-wrap:wrap; margin:10px 0 24px; color:#bbb; font-size:13px; }
+    .pick-actions { display:flex; gap:12px; flex-wrap:wrap; }
+    .pick-shop, .pick-again { border-radius:999px; padding:13px 20px; font:800 11px 'Syne',sans-serif; text-transform:uppercase; letter-spacing:1.4px; cursor:pointer; }
+    .pick-shop { text-decoration:none; color:var(--accent2); background:var(--accent); border:1px solid var(--accent); }
+    .pick-again { color:#fff; background:transparent; border:1px solid rgba(255,255,255,.2); }
+    .pick-again:hover { border-color:var(--accent2); }
+
+    .conversion-banner { background:linear-gradient(135deg,rgba(var(--accent-rgb),.18),rgba(var(--accent2-rgb),.04)); border:1px solid rgba(var(--accent-rgb),.22); border-radius:28px; padding:48px; display:flex; justify-content:space-between; align-items:center; gap:30px; }
+    .conversion-banner h2 { font:400 clamp(38px,5vw,64px) 'Bebas Neue',sans-serif; line-height:1; }
+    .conversion-banner p { color:var(--muted); margin-top:10px; max-width:650px; line-height:1.7; }
+    .conversion-actions { display:flex; gap:12px; flex-wrap:wrap; flex-shrink:0; }
+    .conversion-actions a { text-decoration:none; border-radius:999px; padding:14px 22px; font:800 11px 'Syne',sans-serif; text-transform:uppercase; letter-spacing:1.4px; }
+    .conversion-actions a:first-child { background:var(--accent); color:var(--accent2); }
+    .conversion-actions a:last-child { border:1px solid rgba(255,255,255,.2); color:#fff; }
+
+    .floating-whatsapp { position:fixed; right:20px; bottom:20px; z-index:120; display:flex; align-items:center; gap:9px; background:#25D366; color:#07120b; text-decoration:none; font:800 11px 'Syne',sans-serif; letter-spacing:1px; text-transform:uppercase; padding:13px 18px; border-radius:999px; box-shadow:0 15px 45px rgba(0,0,0,.45); transition:transform .25s; }
+    .floating-whatsapp:hover { transform:translateY(-4px); }
+
     /* WHY US */
     .why-section {
       padding: 100px 40px;
@@ -616,6 +668,43 @@
     }
 
 
+
+
+    /* RANDOM PRODUCT RECOMMENDATION */
+    const recommendedProducts = [
+      { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
+      { name:'Explore Space Tee', type:'Printed Oversized', price:'₹699', image:'explore_space_back.jpg', link:'printed.html' },
+      { name:'Classic Polo', type:'Polo Collection', price:'₹399', image:'polo1.jpg', link:'polo.html' },
+      { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' }
+    ];
+    const suggestedImage = document.getElementById('suggestedImage');
+    const suggestedName = document.getElementById('suggestedName');
+    const suggestedType = document.getElementById('suggestedType');
+    const suggestedPrice = document.getElementById('suggestedPrice');
+    const suggestedLink = document.getElementById('suggestedLink');
+    const showAnother = document.getElementById('showAnother');
+    let lastSuggestedIndex = -1;
+
+    function showRandomProduct() {
+      if (!recommendedProducts.length) return;
+      let index;
+      do { index = Math.floor(Math.random() * recommendedProducts.length); }
+      while (recommendedProducts.length > 1 && index === lastSuggestedIndex);
+      lastSuggestedIndex = index;
+      const product = recommendedProducts[index];
+      suggestedImage.style.opacity = '0';
+      setTimeout(() => {
+        suggestedImage.src = product.image;
+        suggestedImage.alt = product.name;
+        suggestedName.textContent = product.name;
+        suggestedType.textContent = product.type;
+        suggestedPrice.textContent = product.price;
+        suggestedLink.href = product.link;
+        suggestedImage.style.opacity = '1';
+      }, 180);
+    }
+    showAnother.addEventListener('click', showRandomProduct);
+    showRandomProduct();
 
     /* CUSTOMER REVIEWS */
     .reviews-section {
@@ -868,6 +957,12 @@
       .hero-strip { grid-template-columns: 1fr; }
       .hero-strip img { height: 340px; }
       .collections-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .product-grid { grid-template-columns:repeat(2,1fr); }
+      .pick-shell { grid-template-columns:1fr; }
+      .pick-image { min-height:420px; }
+      .pick-panel { padding:40px; }
+      .conversion-banner { align-items:flex-start; flex-direction:column; }
+
       .collection-card img, .collection-card video { height: 340px; }
       .why-grid { grid-template-columns: 1fr 1fr; gap: 0; }
       .why-item { border-bottom: 1px solid var(--border); }
@@ -881,6 +976,17 @@
 
     @media (max-width: 540px) {
       .collections-grid { grid-template-columns: 1fr; }
+      .hero-actions { width:100%; }
+      .hero-primary-btn, .hero-secondary-btn { width:100%; text-align:center; }
+      .drop-section, .pick-section, .conversion-section { padding:78px 20px; }
+      .product-grid { grid-template-columns:1fr; }
+      .product-image-wrap { height:360px; }
+      .pick-image { min-height:350px; }
+      .pick-panel { padding:30px 24px; }
+      .conversion-banner { padding:30px 24px; }
+      .conversion-actions, .conversion-actions a { width:100%; text-align:center; }
+      .floating-whatsapp { right:12px; bottom:12px; padding:12px 15px; }
+
       .collection-card img, .collection-card video { height: 300px; }
       .nav-logo img { height: 40px; }
       .nav-cta { padding: 8px 16px; font-size: 11px; }
@@ -937,6 +1043,10 @@
     <div class="hero-badge">Just Dropped — New Collection</div>
     <h1 class="hero-heading">WEAR YOUR<br><span>VIBE</span></h1>
     <p class="hero-sub">Premium streetwear. Built different. Designed for the bold.</p>
+    <div class="hero-actions">
+      <a href="#newDrops" class="hero-primary-btn">Shop New Drops →</a>
+      <a href="#yourPick" class="hero-secondary-btn">Find My Pick</a>
+    </div>
 
     <div class="hero-strip">
       <div class="strip-item">
@@ -1040,6 +1150,55 @@
     </div>
   </section>
 
+
+  <!-- NEW DROPS -->
+  <section class="drop-section" id="newDrops">
+    <div class="section-header reveal">
+      <span class="section-label">Fresh from ARAMBH</span>
+      <h2 class="section-title">NEW DROPS</h2>
+      <p class="section-desc">The latest pieces, placed upfront so you never miss what just landed.</p>
+    </div>
+    <div class="product-grid">
+      <article class="product-card reveal">
+        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="explore_space_back.jpg" alt="Explore Space printed oversized T-shirt" loading="lazy"></div>
+        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Explore Space Tee</h3><div class="product-row"><span class="product-price">₹549</span><a class="product-link" href="printed.html">Shop Now →</a></div></div>
+      </article>
+      <article class="product-card reveal reveal-delay-1">
+        <div class="product-image-wrap"><span class="product-badge">Popular Pick</span><img src="Royal_blue.jpg" alt="Royal blue oversized T-shirt" loading="lazy"></div>
+        <div class="product-content"><span class="product-type">Plain Oversized</span><h3 class="product-name">Royal Blue Oversized</h3><div class="product-row"><span class="product-price">₹349</span><a class="product-link" href="oversized.html">Shop Now →</a></div></div>
+      </article>
+      <article class="product-card reveal reveal-delay-2">
+        <div class="product-image-wrap"><span class="product-badge">Bestseller</span><img src="polo1.jpg" alt="ARAMBH polo T-shirt" loading="lazy"></div>
+        <div class="product-content"><span class="product-type">Polo Collection</span><h3 class="product-name">Classic Polo</h3><div class="product-row"><span class="product-price">₹399</span><a class="product-link" href="polo.html">Shop Now →</a></div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- RANDOM RECOMMENDATION -->
+  <section class="pick-section" id="yourPick">
+    <div class="pick-shell reveal">
+      <div class="pick-image"><img id="suggestedImage" src="Royal_blue.jpg" alt="Recommended ARAMBH product"></div>
+      <div class="pick-panel">
+        <span class="pick-kicker">Picked for you</span>
+        <h2 class="pick-title">YOUR ARAMBH PICK</h2>
+        <p class="pick-copy">Not sure where to begin? We selected a random piece from the collection. Tap again until one matches your vibe.</p>
+        <div class="pick-product">
+          <h3 id="suggestedName">Royal Blue Oversized</h3>
+          <div class="pick-meta"><span id="suggestedType">Plain Oversized</span><strong id="suggestedPrice">₹349</strong></div>
+          <div class="pick-actions"><a id="suggestedLink" class="pick-shop" href="oversized.html">Shop This Pick →</a><button class="pick-again" id="showAnother" type="button">Show Another</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL BUYING PROMPT -->
+  <section class="conversion-section">
+    <div class="conversion-banner reveal">
+      <div><span class="section-label">Need help choosing?</span><h2>YOUR NEXT FIT STARTS HERE.</h2><p>Browse the bestsellers or message ARAMBH directly for size, colour and customisation help.</p></div>
+      <div class="conversion-actions"><a href="printed.html">Shop Bestsellers</a><a href="https://wa.me/919637748622?text=Hi%20ARAMBH%2C%20help%20me%20choose%20a%20T-shirt">Get Style Help</a></div>
+    </div>
+  </section>
+
   <!-- WHY ARAMBH -->
   <section class="why-section">
     <div class="why-inner">
@@ -1126,6 +1285,8 @@
       <a href="feedback.html" class="feedback-cta-btn">Leave Feedback →</a>
     </div>
   </section>
+
+  <a class="floating-whatsapp" href="https://wa.me/919637748622?text=Hi%20ARAMBH%2C%20I%20want%20to%20place%20an%20order" aria-label="Chat with ARAMBH on WhatsApp">💬 WhatsApp</a>
 
   <!-- FOOTER -->
   <footer>
@@ -1222,6 +1383,43 @@
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     });
 
+
+
+    /* RANDOM PRODUCT RECOMMENDATION */
+    const recommendedProducts = [
+      { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
+      { name:'Explore Space Tee', type:'Printed Oversized', price:'₹549', image:'explore_space_back.jpg', link:'printed.html' },
+      { name:'Classic Polo', type:'Polo Collection', price:'₹399', image:'polo1.jpg', link:'polo.html' },
+      { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' }
+    ];
+    const suggestedImage = document.getElementById('suggestedImage');
+    const suggestedName = document.getElementById('suggestedName');
+    const suggestedType = document.getElementById('suggestedType');
+    const suggestedPrice = document.getElementById('suggestedPrice');
+    const suggestedLink = document.getElementById('suggestedLink');
+    const showAnother = document.getElementById('showAnother');
+    let lastSuggestedIndex = -1;
+
+    function showRandomProduct() {
+      if (!recommendedProducts.length) return;
+      let index;
+      do { index = Math.floor(Math.random() * recommendedProducts.length); }
+      while (recommendedProducts.length > 1 && index === lastSuggestedIndex);
+      lastSuggestedIndex = index;
+      const product = recommendedProducts[index];
+      suggestedImage.style.opacity = '0';
+      setTimeout(() => {
+        suggestedImage.src = product.image;
+        suggestedImage.alt = product.name;
+        suggestedName.textContent = product.name;
+        suggestedType.textContent = product.type;
+        suggestedPrice.textContent = product.price;
+        suggestedLink.href = product.link;
+        suggestedImage.style.opacity = '1';
+      }, 180);
+    }
+    showAnother.addEventListener('click', showRandomProduct);
+    showRandomProduct();
 
     /* CUSTOMER REVIEWS
        Add a new object below whenever you receive approved feedback.
@@ -1388,3 +1586,4 @@
   </script>
 </body>
 </html>
+8

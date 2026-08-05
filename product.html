@@ -145,20 +145,47 @@
   .detail-card strong{font-size:.92rem;}
   .policy-note{background:rgba(232,69,44,.08);border:1px solid rgba(232,69,44,.28);border-radius:10px;padding:13px 14px;margin:0 0 22px;color:var(--muted);font-size:.84rem;line-height:1.55;}
   .policy-note strong{color:var(--text);}
+
+  /* One full product view at a time: front first, then back automatically. */
+  .main-image img{transition:opacity .35s ease;}
+  .main-image img.gallery-fade{opacity:.08;}
+  .main-image.combined-mockup img{
+    position:absolute;
+    top:0;
+    width:200%;
+    max-width:none;
+    height:100%;
+    object-fit:contain;
+    padding:12px 0;
+    transition:left .5s ease, opacity .35s ease;
+  }
+  .main-image.combined-mockup img.show-front{left:0;}
+  .main-image.combined-mockup img.show-back{left:-100%;}
+  .view-status{
+    position:absolute;left:14px;bottom:14px;z-index:4;padding:5px 10px;border-radius:999px;
+    background:rgba(0,0,0,.64);border:1px solid rgba(255,255,255,.14);color:#fff;
+    font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
+  }
+  .gallery-dots{position:absolute;left:50%;bottom:17px;transform:translateX(-50%);z-index:4;display:flex;gap:7px;padding:6px 9px;border-radius:999px;background:rgba(0,0,0,.42);}
+  .gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.38);}
+  .gallery-dots span.active{background:var(--accent);transform:scale(1.25);}
+
+  .related-images{position:relative;display:block;height:230px;overflow:hidden;background:#0b0b13;}
+  .related-images img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;padding:8px;opacity:0;transition:opacity .45s ease;}
+  .related-images img.active{opacity:1;}
+  .related-images img+img{border-left:none;}
+
   .related-section{max-width:1200px;margin:60px auto 10px;padding:0 20px;}
   .related-section h2{font-size:2rem;margin-bottom:18px;}
   .related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
   .related-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--text);transition:.2s;}
   .related-card:hover{transform:translateY(-4px);border-color:var(--accent);}
-  .related-images{display:grid;grid-template-columns:1fr 1fr;background:#0b0b13;}
-  .related-images img{width:100%;height:230px;object-fit:contain;display:block;padding:8px;}
-  .related-images img+img{border-left:1px solid var(--line);}
   .related-card-info{padding:14px;} .related-card-info h3{font-family:'Syne';font-size:.95rem;margin-bottom:5px;}
   .related-colors{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
   .related-color{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35);}
   .related-color-label{font-size:.72rem;color:var(--muted);margin-top:7px;}
   .related-card-info span{color:var(--accent2);font-weight:700;}
-  @media(max-width:860px){.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.related-images img{height:170px;}}
+  @media(max-width:860px){.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.related-images{height:190px;}}
 </style>
 </head>
 <body>
@@ -168,8 +195,10 @@
 <div class="wrap">
   <!-- GALLERY -->
   <div class="gallery">
-    <div class="main-image">
+    <div class="main-image" id="mainImageFrame">
       <img id="mainImg" src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front" alt="Product image">
+      <span class="view-status" id="viewStatus">Front</span>
+      <span class="gallery-dots" id="galleryDots" aria-hidden="true"><span class="active"></span><span></span></span>
     </div>
     <div class="thumbs" id="thumbs">
       <div class="thumb active" data-src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front"><img src="https://via.placeholder.com/160x200/101018/E8452C?text=Front"></div>
@@ -364,11 +393,65 @@
     updateSizeChart();
   }
 
+  let galleryTimer = null;
+  let galleryIndex = 0;
+  const mainImageFrame = document.getElementById('mainImageFrame');
+  const viewStatus = document.getElementById('viewStatus');
+  const galleryDots = document.getElementById('galleryDots');
+
+  function setGalleryView(index){
+    galleryIndex = index;
+    const isBack = index === 1;
+    viewStatus.textContent = isBack ? 'Back' : 'Front';
+    galleryDots.querySelectorAll('span').forEach((dot,i)=>dot.classList.toggle('active',i===index));
+
+    if(mainImageFrame.classList.contains('combined-mockup')){
+      mainImg.classList.toggle('show-front', !isBack);
+      mainImg.classList.toggle('show-back', isBack);
+    } else {
+      const nextSrc = selectedImages[index] || selectedImages[0];
+      if(mainImg.getAttribute('src') !== nextSrc){
+        mainImg.classList.add('gallery-fade');
+        setTimeout(()=>{
+          mainImg.src = nextSrc;
+          mainImg.classList.remove('gallery-fade');
+        },180);
+      }
+    }
+    thumbs.querySelectorAll('.thumb').forEach((thumb,i)=>thumb.classList.toggle('active',i===index));
+  }
+
+  function startGalleryRotation(){
+    if(galleryTimer) clearInterval(galleryTimer);
+    if(selectedImages.length < 2) return;
+    galleryTimer=setInterval(()=>setGalleryView((galleryIndex+1)%2),3200);
+  }
+
   function renderGallery(images){
     if(!images.length) return;
-    mainImg.src=images[0];
+    selectedImages = images;
+    galleryIndex = 0;
+    const combinedOversized = typeKey === 'oversized' && (!productData.image2 || productData.image2 === productData.image);
+    mainImageFrame.classList.toggle('combined-mockup', combinedOversized);
+
+    if(combinedOversized){
+      mainImg.src=images[0];
+      mainImg.classList.add('show-front');
+      mainImg.classList.remove('show-back');
+      selectedImages=[images[0],images[0]];
+      thumbs.innerHTML=`
+        <div class="thumb active" data-index="0"><img src="${images[0]}" alt="${productData.product} front view" style="width:200%;max-width:none;object-fit:contain;object-position:left center;"></div>
+        <div class="thumb" data-index="1"><img src="${images[0]}" alt="${productData.product} back view" style="width:200%;max-width:none;object-fit:contain;object-position:right center;transform:translateX(-50%);"></div>`;
+    }else{
+      mainImg.classList.remove('show-front','show-back');
+      mainImg.src=images[0];
+      thumbs.innerHTML=images.slice(0,2).map((src,index)=>`<div class="thumb ${index===0?'active':''}" data-index="${index}"><img src="${src}" alt="${productData.product} ${index===0?'front':'back'} view"></div>`).join('');
+    }
     mainImg.alt=productData.product;
-    thumbs.innerHTML=images.map((src,index)=>`<div class="thumb ${index===0?'active':''}" data-src="${src}"><img src="${src}" alt="${productData.product} ${index===0?'front':'back'} view"></div>`).join('');
+    galleryDots.style.display = selectedImages.length > 1 ? 'flex' : 'none';
+    viewStatus.style.display = selectedImages.length > 1 ? 'inline-flex' : 'none';
+    setGalleryView(0);
+    startGalleryRotation();
   }
 
   function updateSizeChart(){
@@ -391,9 +474,8 @@
   thumbs.addEventListener('click', (event) => {
     const thumb = event.target.closest('.thumb');
     if (!thumb) return;
-    thumbs.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
-    thumb.classList.add('active');
-    mainImg.src = thumb.dataset.src;
+    setGalleryView(Number(thumb.dataset.index || 0));
+    startGalleryRotation();
   });
 
   const swatches = document.getElementById('swatches');
@@ -462,7 +544,7 @@
     const params = new URLSearchParams(enriched);
     const dots=itemVariants.map(v=>`<span class="related-color" title="${v.color}" style="background:${colorHex[v.color]||'#777'}"></span>`).join('');
     return `<a class="related-card" href="product.html?${params.toString()}">
-      <div class="related-images"><img src="${first.image}" alt="${item.product} front"><img src="${first.image2||first.image}" alt="${item.product} back"></div>
+      <div class="related-images"><img class="active" src="${first.image}" alt="${item.product} front"><img src="${first.image2||first.image}" alt="${item.product} back"><span class="view-status">Front</span><span class="gallery-dots" aria-hidden="true"><span class="active"></span><span></span></span></div>
       <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span><div class="related-colors">${dots}</div><div class="related-color-label">${itemVariants.map(v=>v.color).join(' · ')}</div></div>
     </a>`;
   }).join('');
@@ -528,6 +610,23 @@
   }
   document.getElementById('buyNowDesktop').onclick = goToOrder;
   document.getElementById('buyNowMobile').onclick = goToOrder;
+
+
+  // Rotate related product cards between complete front and back views.
+  document.querySelectorAll('.related-images').forEach((frame,index)=>{
+    const pictures=frame.querySelectorAll('img');
+    const label=frame.querySelector('.view-status');
+    const dots=frame.querySelectorAll('.gallery-dots span');
+    if(pictures.length<2) return;
+    let current=0;
+    setInterval(()=>{
+      current=(current+1)%2;
+      pictures.forEach((img,i)=>img.classList.toggle('active',i===current));
+      dots.forEach((dot,i)=>dot.classList.toggle('active',i===current));
+      if(label) label.textContent=current===0?'Front':'Back';
+    },3400+(index%3)*180);
+  });
+
 </script>
 
 </body>

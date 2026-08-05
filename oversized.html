@@ -166,28 +166,77 @@
     .card-media img { width: 100%; height: 300px; object-fit: contain; padding: 20px; display: block; transition: transform 0.6s ease; }
     .product-card:hover .card-media img { transform: scale(1.06); }
 
-    /* Front + back presentation for oversized tees.
-       Each existing colour mockup contains both views, so the same source is cropped
-       into a left (front) and right (back) panel. */
+    /* Full-frame front/back slideshow for oversized tees.
+       Existing oversized mockups contain front and back side-by-side, so each
+       slide crops one complete half and expands it to fill the same card space. */
     .card-media.double-view {
-      display:flex; height:320px; gap:2px; background:#0a0a14; position:relative;
+      display:block;
+      height:320px;
+      background:#0a0a14;
+      position:relative;
+      overflow:hidden;
     }
     .card-media.double-view .view-panel {
-      position:relative; width:calc(50% - 1px); height:100%; overflow:hidden; background:#0a0a14;
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:#0a0a14;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .5s ease;
     }
+    .card-media.double-view .view-panel.slide-active { opacity:1; }
     .card-media.double-view .view-panel img {
-      position:absolute; inset:0; width:200%; height:100%; max-width:none; padding:12px 0;
-      object-fit:contain; transition:transform .6s ease, opacity .35s ease;
+      position:absolute;
+      top:0;
+      width:200%;
+      height:100%;
+      max-width:none;
+      padding:14px 0;
+      object-fit:contain;
+      transform:none !important;
     }
     .card-media.double-view .view-panel.front img { left:0; }
     .card-media.double-view .view-panel.back img { left:-100%; }
     .card-media.double-view .view-label {
-      position:absolute; left:10px; bottom:10px; z-index:3; padding:4px 9px; border-radius:999px;
-      background:rgba(0,0,0,.62); border:1px solid rgba(255,255,255,.12); color:#fff;
-      font-family:'Syne',sans-serif; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+      position:absolute;
+      left:12px;
+      bottom:12px;
+      z-index:3;
+      padding:5px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.65);
+      border:1px solid rgba(255,255,255,.14);
+      color:#fff;
+      font-family:'Syne',sans-serif;
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
     }
-    .card-media.double-view .back .view-label { left:auto; right:10px; }
-    .double-view-dots { display:none; }
+    .card-media.double-view .back .view-label { left:12px; right:auto; }
+    .double-view-dots {
+      position:absolute;
+      bottom:14px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:4;
+      display:flex;
+      gap:7px;
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(0,0,0,.42);
+    }
+    .double-view-dots span {
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:rgba(255,255,255,.38);
+      transition:.25s;
+    }
+    .double-view-dots span.active { background:var(--accent); transform:scale(1.25); }
     .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; }
     .card-badge.gold { background: #c9a84c; }
     .card-body { padding: 22px 24px 26px; }
@@ -254,19 +303,7 @@
       .products-section { padding: 60px 20px; }
       .products-grid { grid-template-columns: 1fr; gap: 18px; margin-bottom: 40px; }
       .card-media img { height: 260px; }
-      .card-media.double-view { height:260px; display:block; }
-      .card-media.double-view .view-panel {
-        position:absolute; inset:0; width:100%; height:100%; opacity:0; pointer-events:none;
-        transition:opacity .45s ease;
-      }
-      .card-media.double-view .view-panel.slide-active { opacity:1; }
-      .card-media.double-view .view-panel img { width:200%; height:100%; padding:10px 0; }
-      .double-view-dots {
-        position:absolute; bottom:12px; left:50%; transform:translateX(-50%); z-index:4;
-        display:flex; gap:7px; padding:6px 9px; border-radius:999px; background:rgba(0,0,0,.42);
-      }
-      .double-view-dots span { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.38); }
-      .double-view-dots span.active { background:var(--accent); transform:scale(1.25); }
+      .card-media.double-view { height:300px; }
       .size-section { margin: 0 20px 60px; }
       .size-header { padding: 24px 24px 0; }
       .size-note { padding: 12px 24px 16px; }
@@ -352,7 +389,7 @@
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Royal_blue_back.png" alt="Royal Blue Oversized Back" loading="lazy">
+            <img src="Royal_blue.jpg" alt="Royal Blue Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -371,7 +408,7 @@
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Aqua_sky_blue_back.png" alt="Aqua/SkyBlue Oversized Back" loading="lazy">
+            <img src="Aqua_sky_blue.png" alt="Aqua/SkyBlue Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -386,11 +423,11 @@
       <div class="product-card reveal reveal-delay-2">
         <div class="card-media double-view" data-source-image="Beige.png">
           <div class="view-panel front slide-active">
-            <img src="Beige_back.png" alt="Beige Oversized Front" loading="lazy">
+            <img src="Beige.png" alt="Beige Oversized Front" loading="lazy">
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Beige_back.png" alt="Beige Oversized Back" loading="lazy">
+            <img src="Beige.png" alt="Beige Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -409,7 +446,7 @@
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="White_back.png" alt="White Oversized Back" loading="lazy">
+            <img src="White.jpg" alt="White Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -428,7 +465,7 @@
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Black_back.jpg" alt="Black Oversized Back" loading="lazy">
+            <img src="Black.jpg" alt="Black Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -447,7 +484,7 @@
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Army_green_back.png" alt="Army Green Oversized Back" loading="lazy">
+            <img src="Army_green.png" alt="Army Green Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -462,11 +499,11 @@
         <div class="card-media double-view" data-source-image="Lavender .png">
           <span class="card-badge">Popular</span>
           <div class="view-panel front slide-active">
-            <img src="Lavender.png" alt="Lavender Oversized Front" loading="lazy">
+            <img src="Lavender .png" alt="Lavender Oversized Front" loading="lazy">
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Lavender_back.png" alt="Lavender Oversized Back" loading="lazy">
+            <img src="Lavender .png" alt="Lavender Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -485,7 +522,7 @@
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Red_back.png" alt="Red Oversized Back" loading="lazy">
+            <img src="Red.jpg" alt="Red Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -504,7 +541,7 @@
             <span class="view-label">Front</span>
           </div>
           <div class="view-panel back">
-            <img src="Pink_back.png" alt="Pink Oversized Back" loading="lazy">
+            <img src="Pink.png" alt="Pink Oversized Back" loading="lazy">
             <span class="view-label">Back</span>
           </div>
           <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
@@ -627,26 +664,24 @@
     });
 
 
-    // Mobile front/back slider for oversized T-shirt cards.
+    // Full-frame automatic front/back slideshow for every oversized T-shirt card.
     function initOversizedDoubleViews(){
-      document.querySelectorAll('.card-media.double-view').forEach(media => {
+      document.querySelectorAll('.card-media.double-view').forEach((media, cardIndex) => {
         const panels = media.querySelectorAll('.view-panel');
         const dots = media.querySelectorAll('.double-view-dots span');
         if (panels.length < 2) return;
         if (media._viewTimer) clearInterval(media._viewTimer);
-        panels.forEach((panel, i) => panel.classList.toggle('slide-active', i === 0));
-        dots.forEach((dot, i) => dot.classList.toggle('active', i === 0));
-        if (window.innerWidth > 768) return;
         let index = 0;
-        media._viewTimer = setInterval(() => {
-          index = (index + 1) % panels.length;
+        const show = next => {
+          index = next;
           panels.forEach((panel, i) => panel.classList.toggle('slide-active', i === index));
           dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-        }, 2600);
+        };
+        show(0);
+        media._viewTimer = setInterval(() => show((index + 1) % panels.length), 3200 + (cardIndex % 3) * 180);
       });
     }
     initOversizedDoubleViews();
-    window.addEventListener('resize', initOversizedDoubleViews);
 
     // Product image/media click -> same product-details page as Buy Now.
     document.querySelectorAll('.product-card .card-media, .drop-card .card-media, .jd-card .card-media').forEach(media => {

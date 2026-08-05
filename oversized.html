@@ -245,7 +245,12 @@
     .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 1px; }
     .type-tag { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 100px; }
 
-    /* BUY NOW BUTTON */
+
+    .product-facts { display:flex; flex-wrap:wrap; gap:7px; margin-top:13px; }
+    .product-facts span { font-family:'Syne',sans-serif; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); border:1px solid var(--border); padding:5px 9px; border-radius:999px; }
+    .product-card:focus-within { outline:2px solid rgba(169,14,2,.55); outline-offset:3px; }
+
+    /* PRODUCT DETAILS BUTTON */
     .buy-now-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; margin-top: 16px; padding: 13px 20px;
@@ -360,7 +365,9 @@
     <p>Comfort. Street. Power.</p>
     <div class="header-meta">
       <span class="meta-chip hot">Drop Shoulder</span>
-      <span class="meta-chip">7 Styles</span>
+      <span class="meta-chip">9 Colours</span>
+      <span class="meta-chip">240 GSM</span>
+      <span class="meta-chip">S–2XL</span>
       <span class="meta-chip">From ₹349</span>
     </div>
   </header>
@@ -397,7 +404,8 @@
         <div class="card-body">
           <h3>Royal Blue</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Royal+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Royal+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=349&image=Royal_blue.jpg&image2=Royal_blue.jpg" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
 
@@ -416,7 +424,8 @@
         <div class="card-body">
           <h3>Aqua/Sky Blue</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Aqua%2FSky+Blue+Oversized+Tee&type=Oversized&color=Aqua%2FSky+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Aqua%2FSky+Blue+Oversized+Tee&type=Oversized&color=Aqua%2FSky+Blue&price=349&image=Aqua_sky_blue.png&image2=Aqua_sky_blue.png" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
 
@@ -435,7 +444,8 @@
         <div class="card-body">
           <h3>Beige</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Beige+Oversized+Tee&type=Oversized&color=Beige&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Beige+Oversized+Tee&type=Oversized&color=Beige&price=349&image=Beige.png&image2=Beige.png" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
 
@@ -454,7 +464,8 @@
         <div class="card-body">
           <h3>White</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=White+Oversized+Tee&type=Oversized&color=White&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=White+Oversized+Tee&type=Oversized&color=White&price=349&image=White.jpg&image2=White.jpg" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
 
@@ -473,7 +484,8 @@
         <div class="card-body">
           <h3>Black</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=349&image=Black.jpg&image2=Black.jpg" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
        <div class="product-card reveal">
@@ -492,7 +504,8 @@
         <div class="card-body">
           <h3>Army Green</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=349&image=Army_green.png&image2=Army_green.png" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -511,7 +524,8 @@
         <div class="card-body">
           <h3>Lavender</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=349&image=Lavender%20.png&image2=Lavender%20.png" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -530,7 +544,8 @@
         <div class="card-body">
           <h3>Red</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=349&image=Red.jpg&image2=Red.jpg" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -549,7 +564,8 @@
         <div class="card-body">
           <h3>Pink</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
+          <a href="product.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=349&image=Pink.png&image2=Pink.png" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
       
@@ -569,7 +585,7 @@
         <div class="card-body">
           <h3>Beige Hoodie</h3>
           <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
-          <a href="order.html?product=Beige+Hoodie&type=Hoodie&color=Beige&price=599" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="product.html?product=Beige+Hoodie&type=Hoodie&color=Beige&price=599&image=hoodie1.jpg" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
 
@@ -581,7 +597,7 @@
         <div class="card-body">
           <h3>Black Hoodie</h3>
           <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
-          <a href="order.html?product=Black+Hoodie&type=Hoodie&color=Black&price=599" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="product.html?product=Black+Hoodie&type=Hoodie&color=Black&price=599&image=hoodie2.jpg" class="buy-now-btn">View & Buy →</a>
         </div>
       </div>
 
@@ -659,10 +675,20 @@
           params.set('image', sourceImage);
           if (media?.classList.contains('double-view')) params.set('image2', sourceImage);
         }
-        window.location.href = 'product.html?' + params.toString();
+        const existingHref = button.getAttribute('href');
+        window.location.href = existingHref && existingHref.startsWith('product.html?')
+          ? existingHref
+          : 'product.html?' + params.toString();
       });
     });
 
+
+
+    document.querySelectorAll('.product-card').forEach(card => {
+      const title = card.querySelector('.card-body h3')?.textContent?.trim();
+      const link = card.querySelector('.buy-now-btn');
+      if (title && link) link.setAttribute('aria-label', `View ${title} product details`);
+    });
 
     // Full-frame automatic front/back slideshow for every oversized T-shirt card.
     function initOversizedDoubleViews(){

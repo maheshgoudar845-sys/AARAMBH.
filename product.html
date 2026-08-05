@@ -320,6 +320,20 @@
     'Cream':'#fff1cf','Grayish Green':'#7d8c7a','Default':'#777777'
   };
 
+  // Real front/back photography for oversized colours (used when a page links
+  // here without explicit image/image2 params, e.g. related-product cards).
+  const oversizedVariants = {
+    'Royal Blue': {image:'Royal_blue.jpg', image2:'Royal_blue_back.jpg'},
+    'Aqua/Sky Blue': {image:'Aqua_sky_blue.png', image2:'Aqua_sky_blue_back.png'},
+    'Beige': {image:'Beige.png', image2:'Beige_back.png'},
+    'White': {image:'White.jpg', image2:'White_back.jpg'},
+    'Black': {image:'Black.jpg', image2:'Black_back.jpg'},
+    'Army Green': {image:'Army_green.png', image2:'Army_green_back.png'},
+    'Lavender': {image:'Lavender .png', image2:'Lavender _back.png'},
+    'Red': {image:'Red.jpg', image2:'Red_back.jpg'},
+    'Pink': {image:'Pink.png', image2:'Pink_back.png'}
+  };
+
   const printedVariants = {
     'Grace': [
       {color:'Red',image:'Grace_red_f.png',image2:'Grace_red_b.png'},
@@ -369,10 +383,31 @@
     ]
   };
 
-  const variants = printedVariants[productData.product] || [{color:productData.color,image:productData.image,image2:productData.image2}];
+  // For plain oversized T-shirts (single-colour catalog entries, not the
+  // printed multi-colour drops), build a variants list from oversizedVariants
+  // so the colour swatches on the product page can switch between colours
+  // with correct front/back photography, same as printed items do.
+  const isOversized = typeKey === 'oversized';
+  let variants;
+  if (isOversized) {
+    variants = Object.keys(oversizedVariants).map(colorName => ({
+      color: colorName,
+      image: oversizedVariants[colorName].image,
+      image2: oversizedVariants[colorName].image2
+    }));
+  } else {
+    variants = printedVariants[productData.product] || [{color:productData.color,image:productData.image,image2:productData.image2}];
+  }
+
   const matchingVariant = variants.find(v => v.color.toLowerCase() === productData.color.toLowerCase()) || variants[0];
   selectedColor = matchingVariant.color;
-  selectedImages = [matchingVariant.image, matchingVariant.image2].filter(Boolean);
+  // Prefer explicit URL params (so a click from the collection page always
+  // shows exactly the photo the shopper clicked on); fall back to the
+  // matched variant's photography otherwise.
+  selectedImages = [
+    productData.image || matchingVariant.image,
+    productData.image2 || matchingVariant.image2
+  ].filter(Boolean);
 
   function currentSpecs(){
     if(isPrinted && selectedFit === 'Regular') return {material:'100% Pure Cotton',gsm:'180 GSM',fit:'Regular Fit',description:'Pure-cotton printed T-shirt in a comfortable regular fit.'};
@@ -431,7 +466,10 @@
     if(!images.length) return;
     selectedImages = images;
     galleryIndex = 0;
-    const combinedOversized = typeKey === 'oversized' && (!productData.image2 || productData.image2 === productData.image);
+    // Only fall back to the fake split-image mockup when we truly have no
+    // real second photo. Oversized items now ship with genuine front/back
+    // photography (image2), so this path is effectively legacy/unused for them.
+    const combinedOversized = typeKey === 'oversized' && (!images[1] || images[1] === images[0]);
     mainImageFrame.classList.toggle('combined-mockup', combinedOversized);
 
     if(combinedOversized){
@@ -531,14 +569,14 @@
   overlay.addEventListener('click', event => { if (event.target === overlay) overlay.classList.remove('open'); });
 
 
-  const productCatalog = [{"product": "Grayish Green Polo", "type": "Polo", "color": "Grayish Green", "price": "349", "image": "polo1.jpg", "categoryPage": "polo.html"}, {"product": "Cream Polo", "type": "Polo", "color": "Cream", "price": "349", "image": "polo2.jpg", "categoryPage": "polo.html"}, {"product": "Beige Polo", "type": "Polo", "color": "Beige", "price": "349", "image": "polo3.jpg", "categoryPage": "polo.html"}, {"product": "Black Polo", "type": "Polo", "color": "Black", "price": "349", "image": "polo4.jpg", "categoryPage": "polo.html"}, {"product": "Blue Polo", "type": "Polo", "color": "Blue", "price": "349", "image": "Polo5.jpg", "categoryPage": "polo.html"}, {"product": "Royal Blue Oversized Tee", "type": "Oversized", "color": "Royal Blue", "price": "349", "image": "Royal_blue.jpg", "categoryPage": "oversized.html"}, {"product": "Aqua/Sky Blue Oversized Tee", "type": "Oversized", "color": "Aqua/Sky Blue", "price": "349", "image": "Aqua_sky_blue.png", "categoryPage": "oversized.html"}, {"product": "Beige Oversized Tee", "type": "Oversized", "color": "Beige", "price": "349", "image": "Beige.png", "categoryPage": "oversized.html"}, {"product": "White Oversized Tee", "type": "Oversized", "color": "White", "price": "349", "image": "White.jpg", "categoryPage": "oversized.html"}, {"product": "Black Oversized Tee", "type": "Oversized", "color": "Black", "price": "349", "image": "Black.jpg", "categoryPage": "oversized.html"}, {"product": "Army Green Oversized Tee", "type": "Oversized", "color": "Army Green", "price": "349", "image": "Army_green.png", "categoryPage": "oversized.html"}, {"product": "Lavender Oversized Tee", "type": "Oversized", "color": "Lavender", "price": "349", "image": "Lavender .png", "categoryPage": "oversized.html"}, {"product": "Red Oversized Tee", "type": "Oversized", "color": "Red", "price": "349", "image": "Red.jpg", "categoryPage": "oversized.html"}, {"product": "Pink Oversized Tee", "type": "Oversized", "color": "Pink", "price": "349", "image": "Pink.png", "categoryPage": "oversized.html"}, {"product": "Beige Hoodie", "type": "Hoodie", "color": "Beige", "price": "599", "image": "hoodie1.jpg", "categoryPage": "oversized.html"}, {"product": "Black Hoodie", "type": "Hoodie", "color": "Black", "price": "599", "image": "hoodie2.jpg", "categoryPage": "oversized.html"}, {"product": "Explore Space Acid Wash", "type": "Printed Oversized Tee", "price": "699", "color": "Default", "image": "explore_space_front.jpg", "image2": "explore_space_back.jpg", "categoryPage": "printed.html"}, {"product": "Grace", "type": "Printed T-Shirt", "price": "599", "color": "Red", "image": "Grace_red_f.png", "image2": "Grace_red_b.png", "categoryPage": "printed.html"}, {"product": "Anime", "type": "Printed T-Shirt", "price": "599", "color": "Black", "image": "anime_b_f.png", "image2": "anime_b_b.png", "categoryPage": "printed.html"}, {"product": "Naruto", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "naruto_w_f.png", "image2": "naruto_w_b.png", "categoryPage": "printed.html"}, {"product": "One Piece", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "one_w_f.png", "image2": "one_w_b.png", "categoryPage": "printed.html"}, {"product": "Tanjiro", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "tanjiro_w_f.png", "image2": "tanjiro_w_b.png", "categoryPage": "printed.html"}, {"product": "Luffy", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "luffy_b_f.png", "image2": "luffy_b_b.png", "categoryPage": "printed.html"}, {"product": "Justice", "type": "Printed T-Shirt", "price": "549", "color": "Red", "image": "Justice_r_f.png", "image2": "Justice_r_b.png", "categoryPage": "printed.html"}, {"product": "Porsche", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "Porsche_black_front.png", "image2": "Porsche_black_back.png", "categoryPage": "printed.html"}, {"product": "Kungfu Panda", "type": "Printed T-Shirt", "price": "649", "color": "White", "image": "Kufu_white.jpeg", "image2": "Kufu_white.jpeg", "categoryPage": "printed.html"}];
+  const productCatalog = [{"product": "Grayish Green Polo", "type": "Polo", "color": "Grayish Green", "price": "349", "image": "polo1.jpg", "categoryPage": "polo.html"}, {"product": "Cream Polo", "type": "Polo", "color": "Cream", "price": "349", "image": "polo2.jpg", "categoryPage": "polo.html"}, {"product": "Beige Polo", "type": "Polo", "color": "Beige", "price": "349", "image": "polo3.jpg", "categoryPage": "polo.html"}, {"product": "Black Polo", "type": "Polo", "color": "Black", "price": "349", "image": "polo4.jpg", "categoryPage": "polo.html"}, {"product": "Blue Polo", "type": "Polo", "color": "Blue", "price": "349", "image": "Polo5.jpg", "categoryPage": "polo.html"}, {"product": "Royal Blue Oversized Tee", "type": "Oversized", "color": "Royal Blue", "price": "349", "image": "Royal_blue.jpg", "image2": "Royal_blue_back.jpg", "categoryPage": "oversized.html"}, {"product": "Aqua/Sky Blue Oversized Tee", "type": "Oversized", "color": "Aqua/Sky Blue", "price": "349", "image": "Aqua_sky_blue.png", "image2": "Aqua_sky_blue_back.png", "categoryPage": "oversized.html"}, {"product": "Beige Oversized Tee", "type": "Oversized", "color": "Beige", "price": "349", "image": "Beige.png", "image2": "Beige_back.png", "categoryPage": "oversized.html"}, {"product": "White Oversized Tee", "type": "Oversized", "color": "White", "price": "349", "image": "White.jpg", "image2": "White_back.jpg", "categoryPage": "oversized.html"}, {"product": "Black Oversized Tee", "type": "Oversized", "color": "Black", "price": "349", "image": "Black.jpg", "image2": "Black_back.jpg", "categoryPage": "oversized.html"}, {"product": "Army Green Oversized Tee", "type": "Oversized", "color": "Army Green", "price": "349", "image": "Army_green.png", "image2": "Army_green_back.png", "categoryPage": "oversized.html"}, {"product": "Lavender Oversized Tee", "type": "Oversized", "color": "Lavender", "price": "349", "image": "Lavender .png", "image2": "Lavender _back.png", "categoryPage": "oversized.html"}, {"product": "Red Oversized Tee", "type": "Oversized", "color": "Red", "price": "349", "image": "Red.jpg", "image2": "Red_back.jpg", "categoryPage": "oversized.html"}, {"product": "Pink Oversized Tee", "type": "Oversized", "color": "Pink", "price": "349", "image": "Pink.png", "image2": "Pink_back.png", "categoryPage": "oversized.html"}, {"product": "Beige Hoodie", "type": "Hoodie", "color": "Beige", "price": "599", "image": "hoodie1.jpg", "categoryPage": "oversized.html"}, {"product": "Black Hoodie", "type": "Hoodie", "color": "Black", "price": "599", "image": "hoodie2.jpg", "categoryPage": "oversized.html"}, {"product": "Explore Space Acid Wash", "type": "Printed Oversized Tee", "price": "699", "color": "Default", "image": "explore_space_front.jpg", "image2": "explore_space_back.jpg", "categoryPage": "printed.html"}, {"product": "Grace", "type": "Printed T-Shirt", "price": "599", "color": "Red", "image": "Grace_red_f.png", "image2": "Grace_red_b.png", "categoryPage": "printed.html"}, {"product": "Anime", "type": "Printed T-Shirt", "price": "599", "color": "Black", "image": "anime_b_f.png", "image2": "anime_b_b.png", "categoryPage": "printed.html"}, {"product": "Naruto", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "naruto_w_f.png", "image2": "naruto_w_b.png", "categoryPage": "printed.html"}, {"product": "One Piece", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "one_w_f.png", "image2": "one_w_b.png", "categoryPage": "printed.html"}, {"product": "Tanjiro", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "tanjiro_w_f.png", "image2": "tanjiro_w_b.png", "categoryPage": "printed.html"}, {"product": "Luffy", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "luffy_b_f.png", "image2": "luffy_b_b.png", "categoryPage": "printed.html"}, {"product": "Justice", "type": "Printed T-Shirt", "price": "549", "color": "Red", "image": "Justice_r_f.png", "image2": "Justice_r_b.png", "categoryPage": "printed.html"}, {"product": "Porsche", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "Porsche_black_front.png", "image2": "Porsche_black_back.png", "categoryPage": "printed.html"}, {"product": "Kungfu Panda", "type": "Printed T-Shirt", "price": "649", "color": "White", "image": "Kufu_white.jpeg", "image2": "Kufu_white.jpeg", "categoryPage": "printed.html"}];
   const relatedGrid = document.getElementById('relatedGrid');
   const currentName = productData.product.toLowerCase();
   const sameCategory = productCatalog.filter(item => item.product.toLowerCase() !== currentName && item.type.toLowerCase() === typeKey);
   const otherTshirts = productCatalog.filter(item => item.product.toLowerCase() !== currentName && !item.type.toLowerCase().includes('hoodie'));
   const relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))].slice(0, 4);
   relatedGrid.innerHTML = relatedItems.map(item => {
-    const itemVariants=printedVariants[item.product] || [{color:item.color,image:item.image,image2:item.image2}];
+    const itemVariants = (printedVariants[item.product]) || (item.type.toLowerCase() === 'oversized' ? [oversizedVariants[item.color] ? {color:item.color, ...oversizedVariants[item.color]} : {color:item.color,image:item.image,image2:item.image2}] : [{color:item.color,image:item.image,image2:item.image2}]);
     const first=itemVariants[0];
     const enriched={...item,color:first.color,image:first.image,image2:first.image2||first.image};
     const params = new URLSearchParams(enriched);

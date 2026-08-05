@@ -163,81 +163,22 @@
     .product-card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative; }
     .product-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); }
     .card-media { position: relative; overflow: hidden; background: #0a0a14; }
-    .card-media img { width: 100%; height: 300px; object-fit: contain; padding: 20px; display: block; transition: transform 0.6s ease; }
-    .product-card:hover .card-media img { transform: scale(1.06); }
+    .card-media img { width: 100%; height: 300px; object-fit: contain; padding: 20px; display: block; transition: transform 0.6s ease, opacity 0.45s ease; }
+    .product-card:hover .card-media img.front-img { transform: scale(1.06); }
 
-    /* Full-frame front/back slideshow for oversized tees.
-       Existing oversized mockups contain front and back side-by-side, so each
-       slide crops one complete half and expands it to fill the same card space. */
-    .card-media.double-view {
-      display:block;
-      height:320px;
-      background:#0a0a14;
-      position:relative;
-      overflow:hidden;
+    /* Front/back crossfade */
+    .card-media img.back-img {
+      position: absolute;
+      top: 0; left: 0;
+      opacity: 0;
+      pointer-events: none;
     }
-    .card-media.double-view .view-panel {
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      background:#0a0a14;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .5s ease;
-    }
-    .card-media.double-view .view-panel.slide-active { opacity:1; }
-    .card-media.double-view .view-panel img {
-      position:absolute;
-      top:0;
-      width:200%;
-      height:100%;
-      max-width:none;
-      padding:14px 0;
-      object-fit:contain;
-      transform:none !important;
-    }
-    .card-media.double-view .view-panel.front img { left:0; }
-    .card-media.double-view .view-panel.back img { left:-100%; }
-    .card-media.double-view .view-label {
-      position:absolute;
-      left:12px;
-      bottom:12px;
-      z-index:3;
-      padding:5px 10px;
-      border-radius:999px;
-      background:rgba(0,0,0,.65);
-      border:1px solid rgba(255,255,255,.14);
-      color:#fff;
-      font-family:'Syne',sans-serif;
-      font-size:9px;
-      font-weight:700;
-      letter-spacing:1.5px;
-      text-transform:uppercase;
-    }
-    .card-media.double-view .back .view-label { left:12px; right:auto; }
-    .double-view-dots {
-      position:absolute;
-      bottom:14px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:4;
-      display:flex;
-      gap:7px;
-      padding:6px 9px;
-      border-radius:999px;
-      background:rgba(0,0,0,.42);
-    }
-    .double-view-dots span {
-      width:7px;
-      height:7px;
-      border-radius:50%;
-      background:rgba(255,255,255,.38);
-      transition:.25s;
-    }
-    .double-view-dots span.active { background:var(--accent); transform:scale(1.25); }
-    .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; }
+    .card-media:hover img.back-img,
+    .card-media.flipped img.back-img { opacity: 1; }
+    .card-media:hover img.front-img,
+    .card-media.flipped img.front-img { opacity: 0; }
+
+    .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; z-index: 2; }
     .card-badge.gold { background: #c9a84c; }
     .card-body { padding: 22px 24px 26px; }
     .card-body h3 { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
@@ -245,12 +186,7 @@
     .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 1px; }
     .type-tag { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 100px; }
 
-
-    .product-facts { display:flex; flex-wrap:wrap; gap:7px; margin-top:13px; }
-    .product-facts span { font-family:'Syne',sans-serif; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); border:1px solid var(--border); padding:5px 9px; border-radius:999px; }
-    .product-card:focus-within { outline:2px solid rgba(169,14,2,.55); outline-offset:3px; }
-
-    /* PRODUCT DETAILS BUTTON */
+    /* BUY NOW BUTTON */
     .buy-now-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; margin-top: 16px; padding: 13px 20px;
@@ -308,7 +244,6 @@
       .products-section { padding: 60px 20px; }
       .products-grid { grid-template-columns: 1fr; gap: 18px; margin-bottom: 40px; }
       .card-media img { height: 260px; }
-      .card-media.double-view { height:300px; }
       .size-section { margin: 0 20px 60px; }
       .size-header { padding: 24px 24px 0; }
       .size-note { padding: 12px 24px 16px; }
@@ -352,6 +287,7 @@
     <a href="polo.html">Polos</a>
     <a href="oversized.html" class="active">Oversized</a>
     <a href="printed.html">Printed</a>
+    <a href="hoodie.html">Hoodies</a>
     <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
     <a href="tel:9637748622">📞 Order Now</a>
   </div>
@@ -365,9 +301,7 @@
     <p>Comfort. Street. Power.</p>
     <div class="header-meta">
       <span class="meta-chip hot">Drop Shoulder</span>
-      <span class="meta-chip">9 Colours</span>
-      <span class="meta-chip">240 GSM</span>
-      <span class="meta-chip">S–2XL</span>
+      <span class="meta-chip">9 Styles</span>
       <span class="meta-chip">From ₹349</span>
     </div>
   </header>
@@ -389,219 +323,117 @@
     <div class="products-grid">
 
       <div class="product-card reveal">
-        <div class="card-media double-view" data-source-image="Royal_blue.jpg">
+        <div class="card-media">
           <span class="card-badge">Popular</span>
-          <div class="view-panel front slide-active">
-            <img src="Royal_blue.jpg" alt="Royal Blue Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Royal_blue.jpg" alt="Royal Blue Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+          <img class="front-img" src="Royal_blue.jpg" alt="Royal Blue Oversized — front" loading="lazy">
+          <img class="back-img" src="Royal_blue_back.jpg" alt="Royal Blue Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Royal Blue</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Royal+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=349&image=Royal_blue.jpg&image2=Royal_blue.jpg" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Royal+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
       <div class="product-card reveal reveal-delay-1">
-        <div class="card-media double-view" data-source-image="Aqua_sky_blue.png">
-          <div class="view-panel front slide-active">
-            <img src="Aqua_sky_blue.png" alt="Aqua/SkyBlue Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Aqua_sky_blue.png" alt="Aqua/SkyBlue Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+        <div class="card-media">
+          <img class="front-img" src="Aqua_sky_blue.png" alt="Aqua/SkyBlue Oversized — front" loading="lazy">
+          <img class="back-img" src="Aqua_sky_blue_back.png" alt="Aqua/SkyBlue Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Aqua/Sky Blue</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Aqua%2FSky+Blue+Oversized+Tee&type=Oversized&color=Aqua%2FSky+Blue&price=349&image=Aqua_sky_blue.png&image2=Aqua_sky_blue.png" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Aqua%2FSky+Blue+Oversized+Tee&type=Oversized&color=Aqua%2FSky+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
       <div class="product-card reveal reveal-delay-2">
-        <div class="card-media double-view" data-source-image="Beige.png">
-          <div class="view-panel front slide-active">
-            <img src="Beige.png" alt="Beige Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Beige.png" alt="Beige Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+        <div class="card-media">
+          <img class="front-img" src="Beige.png" alt="Beige Oversized — front" loading="lazy">
+          <img class="back-img" src="Beige_back.png" alt="Beige Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Beige</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Beige+Oversized+Tee&type=Oversized&color=Beige&price=349&image=Beige.png&image2=Beige.png" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Beige+Oversized+Tee&type=Oversized&color=Beige&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
       <div class="product-card reveal reveal-delay-3">
-        <div class="card-media double-view" data-source-image="White.jpg">
-          <div class="view-panel front slide-active">
-            <img src="White.jpg" alt="White Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="White.jpg" alt="White Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+        <div class="card-media">
+          <img class="front-img" src="White.jpg" alt="White Oversized — front" loading="lazy">
+          <img class="back-img" src="White_back.jpg" alt="White Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>White</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=White+Oversized+Tee&type=Oversized&color=White&price=349&image=White.jpg&image2=White.jpg" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=White+Oversized+Tee&type=Oversized&color=White&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
       <div class="product-card reveal reveal-delay-4">
-        <div class="card-media double-view" data-source-image="Black.jpg">
-          <div class="view-panel front slide-active">
-            <img src="Black.jpg" alt="Black Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Black.jpg" alt="Black Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+        <div class="card-media">
+          <img class="front-img" src="Black.jpg" alt="Black Oversized — front" loading="lazy">
+          <img class="back-img" src="Black_back.jpg" alt="Black Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Black</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=349&image=Black.jpg&image2=Black.jpg" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
        <div class="product-card reveal">
-        <div class="card-media double-view" data-source-image="Army_green.png">
+        <div class="card-media">
           <span class="card-badge">Popular</span>
-          <div class="view-panel front slide-active">
-            <img src="Army_green.png" alt="Army Green Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Army_green.png" alt="Army Green Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+          <img class="front-img" src="Army_green.png" alt="Army Green Oversized — front" loading="lazy">
+          <img class="back-img" src="Army_green_back.png" alt="Army Green Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Army Green</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=349&image=Army_green.png&image2=Army_green.png" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
-        <div class="card-media double-view" data-source-image="Lavender .png">
+        <div class="card-media">
           <span class="card-badge">Popular</span>
-          <div class="view-panel front slide-active">
-            <img src="Lavender .png" alt="Lavender Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Lavender .png" alt="Lavender Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+          <img class="front-img" src="Lavender .png" alt="Lavender Oversized — front" loading="lazy">
+          <img class="back-img" src="Lavender _back.png" alt="Lavender Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Lavender</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=349&image=Lavender%20.png&image2=Lavender%20.png" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
-        <div class="card-media double-view" data-source-image="Red.jpg">
+        <div class="card-media">
           <span class="card-badge">Popular</span>
-          <div class="view-panel front slide-active">
-            <img src="Red.jpg" alt="Red Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Red.jpg" alt="Red Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+          <img class="front-img" src="Red.jpg" alt="Red Oversized — front" loading="lazy">
+          <img class="back-img" src="Red_back.jpg" alt="Red Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Red</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=349&image=Red.jpg&image2=Red.jpg" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
-        <div class="card-media double-view" data-source-image="Pink.png">
+        <div class="card-media">
           <span class="card-badge">Popular</span>
-          <div class="view-panel front slide-active">
-            <img src="Pink.png" alt="Pink Oversized Front" loading="lazy">
-            <span class="view-label">Front</span>
-          </div>
-          <div class="view-panel back">
-            <img src="Pink.png" alt="Pink Oversized Back" loading="lazy">
-            <span class="view-label">Back</span>
-          </div>
-          <div class="double-view-dots" aria-hidden="true"><span class="active"></span><span></span></div>
+          <img class="front-img" src="Pink.png" alt="Pink Oversized — front" loading="lazy">
+          <img class="back-img" src="Pink_back.png" alt="Pink Oversized — back" loading="lazy">
         </div>
         <div class="card-body">
           <h3>Pink</h3>
           <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <div class="product-facts"><span>240 GSM</span><span>Drop Shoulder</span><span>S–2XL</span></div>
-          <a href="product.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=349&image=Pink.png&image2=Pink.png" class="buy-now-btn">View & Buy →</a>
+          <a href="order.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=349" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
       
 
     </div>
 
-    <!-- HOODIES -->
-    <div id="hoodies"></div>
-    <div class="products-label reveal">Hoodies — ₹599 each</div>
-    <div class="products-grid">
-
-      <div class="product-card reveal">
-        <div class="card-media">
-          <span class="card-badge gold">Premium</span>
-          <img src="hoodie1.jpg" alt="Beige Hoodie" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Beige Hoodie</h3>
-          <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
-          <a href="product.html?product=Beige+Hoodie&type=Hoodie&color=Beige&price=599&image=hoodie1.jpg" class="buy-now-btn">View & Buy →</a>
-        </div>
-      </div>
-
-      <div class="product-card reveal reveal-delay-1">
-        <div class="card-media">
-          <span class="card-badge gold">Premium</span>
-          <img src="hoodie2.jpg" alt="Black Hoodie" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Black Hoodie</h3>
-          <div class="card-meta"><span class="price">₹599</span><span class="type-tag">Hoodie</span></div>
-          <a href="product.html?product=Black+Hoodie&type=Hoodie&color=Black&price=599&image=hoodie2.jpg" class="buy-now-btn">View & Buy →</a>
-        </div>
-      </div>
-
-    </div>
   </section>
 
   <div class="size-section reveal">
@@ -659,9 +491,8 @@
         const title = (card.querySelector('.card-body h3')?.textContent || '').trim();
         const type = (card.querySelector('.type-tag')?.textContent || 'Oversized').trim();
         const priceText = (card.querySelector('.price')?.textContent || '0').replace(/[^0-9.]/g, '');
-        const media = card.querySelector('.card-media');
-        const cardImage = media && media.querySelector('img');
-        const sourceImage = media && (media.dataset.sourceImage || cardImage?.getAttribute('src'));
+        const cardImage = card.querySelector('.card-media img.front-img') || card.querySelector('.card-media img');
+        const backImage = card.querySelector('.card-media img.back-img');
         const isHoodie = type.toLowerCase().includes('hoodie');
         const productName = isHoodie ? title : `${title} Oversized Tee`;
         const color = isHoodie ? title.replace(/\s+Hoodie$/i, '').trim() : title;
@@ -671,45 +502,18 @@
           color: color,
           price: priceText || '0'
         });
-        if (sourceImage) {
-          params.set('image', sourceImage);
-          if (media?.classList.contains('double-view')) params.set('image2', sourceImage);
-        }
-        const existingHref = button.getAttribute('href');
-        window.location.href = existingHref && existingHref.startsWith('product.html?')
-          ? existingHref
-          : 'product.html?' + params.toString();
+        if (cardImage) params.set('image', cardImage.getAttribute('src'));
+        if (backImage) params.set('image2', backImage.getAttribute('src'));
+        window.location.href = 'product.html?' + params.toString();
       });
     });
 
-
-
-    document.querySelectorAll('.product-card').forEach(card => {
-      const title = card.querySelector('.card-body h3')?.textContent?.trim();
-      const link = card.querySelector('.buy-now-btn');
-      if (title && link) link.setAttribute('aria-label', `View ${title} product details`);
-    });
-
-    // Full-frame automatic front/back slideshow for every oversized T-shirt card.
-    function initOversizedDoubleViews(){
-      document.querySelectorAll('.card-media.double-view').forEach((media, cardIndex) => {
-        const panels = media.querySelectorAll('.view-panel');
-        const dots = media.querySelectorAll('.double-view-dots span');
-        if (panels.length < 2) return;
-        if (media._viewTimer) clearInterval(media._viewTimer);
-        let index = 0;
-        const show = next => {
-          index = next;
-          panels.forEach((panel, i) => panel.classList.toggle('slide-active', i === index));
-          dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
-        };
-        show(0);
-        media._viewTimer = setInterval(() => show((index + 1) % panels.length), 3200 + (cardIndex % 3) * 180);
-      });
-    }
-    initOversizedDoubleViews();
 
     // Product image/media click -> same product-details page as Buy Now.
+    // On touch devices, the FIRST tap flips to the back-view image instead of
+    // navigating away; a SECOND tap (or tapping elsewhere on the card) opens details.
+    const isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
     document.querySelectorAll('.product-card .card-media, .drop-card .card-media, .jd-card .card-media').forEach(media => {
       media.setAttribute('role', 'link');
       media.setAttribute('tabindex', '0');
@@ -723,8 +527,19 @@
 
       media.addEventListener('click', event => {
         if (event.target.closest('.swatch, button, a')) return;
+
+        const hasBackImg = !!media.querySelector('img.back-img');
+        if (isTouchDevice && hasBackImg && !media.classList.contains('flipped')) {
+          // first tap: reveal back view instead of navigating
+          event.preventDefault();
+          document.querySelectorAll('.card-media.flipped').forEach(el => { if (el !== media) el.classList.remove('flipped'); });
+          media.classList.add('flipped');
+          return;
+        }
+
         openDetails();
       });
+
       media.addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();

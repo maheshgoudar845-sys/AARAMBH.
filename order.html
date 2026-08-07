@@ -1,784 +1,576 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Place Your Order — Arambh</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<style>
-  :root{
-    --bg:#080810; --surface:#0f0f1a; --surface2:#151521; --accent:#ff3c38; --accent2:#ff7b22;
-    --text:#f0f0f0; --muted:#888; --border:rgba(255,255,255,0.08); --gold:#ffb703; --green:#25d366;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Place Your Order — Arambh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;opacity:.5;}
+  <style>
+    :root {
+      --bg: #080810;
+      --surface: #0f0f1a;
+      --surface2: #15151f;
+      --accent: #A90E02;
+      --accent2: #FFFACD;
+      --text: #f0f0f0;
+      --muted: #888;
+      --border: rgba(255,255,255,0.08);
+      --accent-rgb: 169,14,2;
+      --accent2-rgb: 255,250,205;
+      --good: #25D366;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(8,8,16,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
-  .nav-logo img{height:52px;}
-  .nav-links{display:flex;gap:32px;list-style:none;}
-  .nav-links a{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;}
-  .nav-links a:hover{color:var(--text);}
-  @media(max-width:900px){.nav-links{display:none;}}
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 40px;
+      background: rgba(8,8,16,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo img { height: 42px; }
+    .nav-back {
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      display: flex; align-items: center; gap: 8px;
+      transition: color 0.25s;
+    }
+    .nav-back:hover { color: var(--accent2); }
 
-  .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:200;}
-  .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s;}
-  .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-  .hamburger.open span:nth-child(2){opacity:0;}
-  .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-  .mobile-menu{position:fixed;top:0;right:0;height:100vh;width:min(78vw,320px);background:#0c0c16;border-left:1px solid var(--border);z-index:150;padding:100px 32px 40px;transform:translateX(100%);transition:transform .4s ease;display:flex;flex-direction:column;gap:26px;}
-  .mobile-menu.open{transform:translateX(0);}
-  .mobile-menu a{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;}
-  .mobile-menu a.active{color:var(--accent);}
-  .menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:140;opacity:0;pointer-events:none;transition:opacity .3s;}
-  .menu-backdrop.open{opacity:1;pointer-events:auto;}
-  @media(max-width:900px){.hamburger{display:flex;}}
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto;
+      padding: 50px 24px 100px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 34px;
+      align-items: start;
+    }
 
-  /* QR fallback for UPI payment */
-  .upi-qr-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:6px 0 22px;}
-  .upi-qr-wrap img{width:190px;height:190px;border-radius:16px;background:#fff;padding:10px;}
-  .upi-qr-wrap span{font-size:12px;color:var(--muted);letter-spacing:.5px;}
-  .upi-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase;}
-  .upi-divider::before,.upi-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(38px, 5vw, 58px);
+      letter-spacing: 1px; line-height: 1;
+      margin-bottom: 8px;
+    }
+    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 30px; }
 
-  .page-header{padding:130px 20px 40px;text-align:center;}
-  .breadcrumb{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
-  .breadcrumb a{color:var(--accent);text-decoration:none;}
-  .breadcrumb span{opacity:.4;margin:0 8px;}
-  .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,9vw,90px);letter-spacing:2px;line-height:.95;}
-  .page-header h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-  .page-header p{color:var(--muted);margin-top:12px;font-size:15px;}
+    /* CARD */
+    .card {
+      background: linear-gradient(160deg, var(--surface), var(--surface2));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+    }
 
-  .order-wrap{max-width:640px;margin:0 auto;padding:20px 20px 100px;}
+    /* PRODUCT SUMMARY */
+    .product-summary {
+      display: flex; gap: 16px;
+      padding-bottom: 24px; margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .product-summary img {
+      width: 92px; height: 92px; object-fit: contain;
+      background: #0a0a14; border-radius: 14px; border: 1px solid var(--border);
+      padding: 8px;
+    }
+    .product-summary-info h2 {
+      font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px;
+    }
+    .summary-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .summary-tag {
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      border: 1px solid var(--border); color: var(--muted);
+      padding: 4px 10px; border-radius: 100px;
+    }
+    .summary-price { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent2); }
 
-  /* SELECTED PRODUCT SUMMARY */
-  .product-summary{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 24px;margin-bottom:28px;display:flex;align-items:center;gap:16px;}
-  .product-summary .icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
-  .product-summary .info{flex:1;min-width:0;}
-  .product-summary .info .name{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:4px;word-break:break-word;}
-  .product-summary .info .meta{font-size:12px;color:var(--muted);letter-spacing:.5px;}
-  .product-summary .price{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--gold);white-space:nowrap;}
-  .product-summary.empty .info .name{color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;font-size:14px;}
-  .cart-summary{display:none;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:28px;}
-  .cart-summary.show{display:block;}
-  .cart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-  .cart-head h2{font-family:'Bebas Neue';font-size:28px;letter-spacing:1px;}
-  .cart-item{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);}
-  .cart-item:last-child{border-bottom:none;}
-  .cart-item img{width:64px;height:76px;object-fit:contain;background:var(--surface2);border-radius:10px;}
-  .cart-item h3{font-family:'Syne';font-size:14px;margin-bottom:5px;}
-  .cart-item p{font-size:12px;color:var(--muted);line-height:1.5;}
-  .cart-item-price{font-family:'Bebas Neue';font-size:24px;color:var(--gold);text-align:right;}
-  .cart-controls{display:flex;align-items:center;gap:7px;margin-top:8px;}
-  .cart-controls button{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;}
-  .remove-item{width:auto!important;padding:0 8px;color:#ff7676!important;}
-  .cart-total{display:flex;justify-content:space-between;align-items:center;padding-top:16px;margin-top:8px;border-top:1px solid var(--border);font-family:'Syne';font-weight:700;}
-  .cart-total strong{font-family:'Bebas Neue';font-size:32px;color:var(--gold);}
-  .continue-shopping{color:var(--accent2);font-size:12px;text-decoration:none;}
-  @media(max-width:520px){.cart-item{grid-template-columns:54px 1fr}.cart-item img{width:54px;height:66px}.cart-item-price{grid-column:2;text-align:left}.cart-head{align-items:flex-start;gap:10px}}
+    /* FORM */
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    input, select, textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 15px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: rgba(var(--accent-rgb),0.5);
+      background: rgba(255,255,255,0.05);
+    }
+    textarea { resize: vertical; min-height: 70px; }
+    select { cursor: pointer; }
+    .field-error { color: #ff6b6b; font-size: 12px; margin-top: 6px; display: none; }
+    .form-group.invalid input, .form-group.invalid select, .form-group.invalid textarea {
+      border-color: #ff6b6b;
+    }
+    .form-group.invalid .field-error { display: block; }
 
-  form{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px;}
-  .field-group{margin-bottom:20px;}
-  .field-group label{display:block;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-  .field-group input, .field-group select, .field-group textarea{
-    width:100%;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;
-    color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .2s;
-  }
-  .field-group input:focus, .field-group select:focus, .field-group textarea:focus{outline:none;border-color:var(--accent);}
-  .field-group textarea{resize:vertical;min-height:80px;}
-  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  @media(max-width:520px){.field-row{grid-template-columns:1fr;}}
+    /* PAYMENT PANEL */
+    .payment-options {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-bottom: 18px;
+    }
+    .pay-option {
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px; cursor: pointer; text-align: center;
+      transition: border-color 0.25s, background 0.25s;
+      font-family: 'Syne', sans-serif;
+    }
+    .pay-option.active {
+      border-color: var(--accent); background: rgba(var(--accent-rgb),0.1);
+    }
+    .pay-option .pay-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+    .pay-option .pay-name { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .pay-option .pay-desc { font-size: 10.5px; color: var(--muted); margin-top: 4px; }
 
-  /* PAYMENT CHOICE */
-  .pay-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px;}
-  @media(max-width:520px){.pay-options{grid-template-columns:1fr;}}
-  .pay-option{position:relative;}
-  .pay-option input{position:absolute;opacity:0;width:0;height:0;}
-  .pay-option label{
-    display:flex;flex-direction:column;gap:4px;padding:18px 18px;border:1px solid var(--border);border-radius:14px;
-    background:var(--surface2);cursor:pointer;transition:border-color .2s,background .2s;width:auto;
-  }
-  .pay-option label .pt{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;}
-  .pay-option label .ps{font-size:12px;color:var(--muted);}
-  .pay-option input:checked + label{border-color:var(--accent);background:rgba(255,60,56,0.08);}
-  .pay-option input:checked + label .pt{color:var(--accent);}
+    .upi-panel {
+      display: none;
+      background: rgba(var(--accent2-rgb),0.05);
+      border: 1px solid rgba(var(--accent2-rgb),0.2);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .upi-panel.show { display: block; }
+    .upi-id-row {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+      color: var(--accent2);
+      background: rgba(0,0,0,0.3);
+      border-radius: 100px; padding: 10px 18px;
+      margin: 10px auto; max-width: 320px;
+    }
+    .copy-btn {
+      background: var(--accent2); color: #2e2400; border: none;
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 100px; cursor: pointer;
+    }
+    .upi-deeplinks { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+    .upi-deeplinks a {
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+      text-decoration: none; color: white;
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+      padding: 9px 16px; border-radius: 100px;
+      transition: background 0.25s;
+    }
+    .upi-deeplinks a:hover { background: rgba(255,255,255,0.14); }
+    .upi-note { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
 
-  .submit-btn{
-    width:100%;margin-top:10px;padding:17px 20px;background:var(--accent);color:white;border:none;border-radius:100px;
-    font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;
-    transition:background .3s,transform .2s;box-shadow:0 10px 30px rgba(255,60,56,.3);
-  }
-  .submit-btn:hover{background:#ff1f1a;transform:scale(1.01);}
-  .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+    /* SUBMIT */
+    .submit-btn {
+      width: 100%; padding: 16px 20px;
+      background: var(--accent); color: white; border: none;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 100px; cursor: pointer;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 10px 30px rgba(var(--accent-rgb),0.3);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .submit-btn:hover { background: #8a0b02; transform: translateY(-2px); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .spinner {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.35); border-top-color: white;
+      animation: spin 0.7s linear infinite; display: none;
+    }
+    .submit-btn.loading .spinner { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-  .form-note{font-size:12px;color:var(--muted);margin-top:14px;text-align:center;line-height:1.6;}
+    .trust-row {
+      display: flex; justify-content: center; gap: 22px; flex-wrap: wrap;
+      margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);
+    }
+    .trust-row span {
+      font-family: 'Syne', sans-serif; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
 
-  /* PINCODE LOCATION STATUS */
-  .pincode-status{font-size:12px;margin-top:6px;min-height:16px;}
-  .pincode-status.ok{color:var(--green);}
-  .pincode-status.error{color:var(--accent);}
-  .pincode-status.loading{color:var(--muted);}
+    /* SIDE PANEL — WhatsApp fallback + help */
+    .side-card { position: sticky; top: 90px; }
+    .side-card h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 10px;
+    }
+    .side-card p { color: var(--muted); font-size: 13.5px; line-height: 1.7; margin-bottom: 20px; }
+    .wa-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 15px 20px;
+      background: var(--good); color: #07120b; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      border-radius: 100px;
+      transition: transform 0.2s;
+      margin-bottom: 12px;
+    }
+    .wa-btn:hover { transform: translateY(-2px); }
+    .call-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 15px 20px;
+      background: transparent; color: white; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      border-radius: 100px; border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .call-btn:hover { border-color: var(--accent2); }
+    .side-divider { margin: 24px 0; border-top: 1px dashed var(--border); }
+    .side-list { list-style: none; }
+    .side-list li {
+      font-size: 13px; color: var(--muted); margin-bottom: 10px;
+      display: flex; gap: 10px; line-height: 1.5;
+    }
+    .side-list li b { color: var(--text); }
 
-  /* COUPON */
-  .coupon-row{display:flex;gap:10px;}
-  .coupon-row input{flex:1;text-transform:uppercase;}
-  .coupon-apply-btn{padding:0 22px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:border-color .2s,background .2s;}
-  .coupon-apply-btn:hover{border-color:var(--accent);}
-  .coupon-msg{font-size:12px;margin-top:8px;min-height:16px;}
-  .coupon-msg.ok{color:var(--green);}
-  .coupon-msg.error{color:var(--accent);}
-  .coupon-applied-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.3);color:var(--green);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;padding:8px 14px;border-radius:100px;}
-  .coupon-applied-tag button{background:none;border:none;color:var(--green);cursor:pointer;font-size:14px;line-height:1;}
+    /* SUCCESS STATE */
+    .success-overlay {
+      display: none;
+      text-align: center;
+      padding: 30px 10px 10px;
+    }
+    .success-overlay.show { display: block; }
+    .success-icon { font-size: 46px; margin-bottom: 14px; }
+    .success-overlay h3 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; margin-bottom: 10px; }
+    .success-overlay p { color: var(--muted); font-size: 14px; margin-bottom: 24px; line-height: 1.7; }
 
-  /* PRICE BREAKUP */
-  .price-breakup{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 24px;margin-bottom:28px;}
-  .price-breakup .pb-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
-  .pb-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text);padding:7px 0;}
-  .pb-row span:first-child{color:var(--muted);}
-  .pb-row.discount span:last-child{color:var(--green);}
-  .pb-row.delivery span:last-child{color:var(--text);}
-  .pb-divider{height:1px;background:var(--border);margin:8px 0;}
-  .pb-row.total{padding-top:10px;}
-  .pb-row.total span:first-child{font-family:'Syne',sans-serif;font-weight:700;color:var(--text);}
-  .pb-row.total span:last-child{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);}
+    footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--border); }
+    footer p { color: var(--muted); font-size: 12.5px; }
+    footer a { color: var(--accent2); text-decoration: none; }
 
-  /* UPI PAYMENT PANEL (shown after submit, if prepaid chosen) */
-  .upi-panel{display:none;background:var(--surface);border:1px solid rgba(255,183,3,.3);border-radius:24px;padding:30px;margin-top:24px;text-align:center;}
-  .upi-panel.show{display:block;}
-  .upi-panel h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:8px;color:var(--gold);}
-  .upi-panel p{color:var(--muted);font-size:13px;margin-bottom:6px;}
-  .upi-amount{font-family:'Bebas Neue',sans-serif;font-size:44px;color:white;margin:14px 0;}
-  .upi-id-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
-  .copy-btn{background:var(--accent);border:none;color:white;padding:6px 14px;border-radius:100px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
-  .upi-apps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
-  .upi-app-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:100px;text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:1px solid var(--border);color:var(--text);transition:transform .2s,border-color .2s;}
-  .upi-app-btn:hover{transform:scale(1.02);border-color:var(--accent);}
-  .whatsapp-confirm-btn{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;background:var(--green);color:white;text-decoration:none;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:8px;}
-
-  /* SUCCESS / COD panel */
-  .success-panel{display:none;text-align:center;padding:30px;background:var(--surface);border:1px solid rgba(37,211,102,.3);border-radius:24px;margin-top:24px;}
-  .success-panel.show{display:block;}
-  .success-panel .check{font-size:44px;margin-bottom:10px;}
-  .success-panel h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:10px;color:var(--green);}
-  .success-panel p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:18px;}
-
-  footer{background:#04040a;border-top:1px solid var(--border);padding:40px 20px;text-align:center;margin-top:40px;}
-  footer p{color:var(--muted);font-size:13px;}
-  footer a{color:var(--accent);text-decoration:none;}
-</style>
+    @media (max-width: 860px) {
+      .page-wrap { grid-template-columns: 1fr; }
+      .side-card { position: static; }
+    }
+    @media (max-width: 480px) {
+      nav { padding: 14px 20px; }
+      .page-wrap { padding: 30px 16px 70px; }
+      .card { padding: 22px; }
+      .form-row { grid-template-columns: 1fr; }
+      .payment-options { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
-  <ul class="nav-links">
-    <li><a href="polo.html">Polos</a></li>
-    <li><a href="oversized.html">Oversized</a></li>
-    <li><a href="printed.html">Printed</a></li>
-    <li><a href="hoodie.html">Hoodies</a></li>
-    <li><a href="feedback.html">Feedback</a></li>
-    <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
-  </ul>
-  <button class="hamburger" id="hamburger" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
+  <nav>
+    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
+    <a href="javascript:history.back()" class="nav-back">← Back to Shop</a>
+  </nav>
 
-<div class="menu-backdrop" id="menuBackdrop"></div>
-<div class="mobile-menu" id="mobileMenu">
-  <a href="index.html">Home</a>
-  <a href="polo.html">Polos</a>
-  <a href="oversized.html">Oversized</a>
-  <a href="printed.html">Printed</a>
-  <a href="hoodie.html">Hoodies</a>
-  <a href="feedback.html">Feedback</a>
-  <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
-  <a href="tel:9637748622">📞 Order Now</a>
-</div>
+  <div class="page-wrap">
 
-<header class="page-header">
-  <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Place Order</div>
-  <h1>COMPLETE YOUR<br><span>ORDER</span></h1>
-  <p>Fill in your details — we'll confirm on WhatsApp shortly after.</p>
-</header>
+    <!-- LEFT: ORDER FORM -->
+    <div>
+      <h1 class="page-title">Place Your Order</h1>
+      <p class="page-sub">Fill in your details below — we'll confirm your order on WhatsApp.</p>
 
-<div class="order-wrap">
+      <div class="card">
 
-  <section class="cart-summary" id="cartSummary">
-    <div class="cart-head"><h2>YOUR CART</h2><a class="continue-shopping" href="printed.html">+ Continue shopping</a></div>
-    <div id="cartItems"></div>
-    <div class="cart-total"><span>Order total</span><strong id="cartTotal">₹0</strong></div>
-  </section>
+        <!-- PRODUCT SUMMARY (auto-filled from URL) -->
+        <div class="product-summary" id="productSummary">
+          <img id="productImage" src="logo.webp" alt="Product">
+          <div class="product-summary-info">
+            <h2 id="productName">Select a product</h2>
+            <div class="summary-tags">
+              <span class="summary-tag" id="productType">—</span>
+              <span class="summary-tag" id="productColor">—</span>
+            </div>
+            <div class="summary-price" id="productPrice">₹0</div>
+          </div>
+        </div>
 
-  <!-- SELECTED PRODUCT (auto-filled summary, read only) -->
-  <div class="product-summary" id="productSummary">
-    <div class="icon">🛍️</div>
-    <div class="info">
-      <div class="name" id="summaryName">No product selected</div>
-      <div class="meta" id="summaryMeta">Browse a collection and hit Buy Now</div>
+        <!-- FORM -->
+        <form id="orderForm" novalidate>
+          <div class="form-group" id="group-name">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Your full name" required>
+            <div class="field-error">Please enter your name</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" id="group-phone">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="9876543210" required>
+              <div class="field-error">Enter a valid 10-digit number</div>
+            </div>
+            <div class="form-group" id="group-size">
+              <label for="size">Size</label>
+              <select id="size" name="size" required>
+                <option value="">Select size</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
+              <div class="field-error">Please select a size</div>
+            </div>
+          </div>
+
+          <div class="form-group" id="group-address">
+            <label for="address">Delivery Address</label>
+            <textarea id="address" name="address" placeholder="House no, street, area, city, state" required></textarea>
+            <div class="field-error">Please enter your delivery address</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" id="group-pincode">
+              <label for="pincode">Pincode</label>
+              <input type="text" id="pincode" name="pincode" placeholder="560001" required>
+              <div class="field-error">Enter a valid 6-digit pincode</div>
+            </div>
+            <div class="form-group" id="group-qty">
+              <label for="quantity">Quantity</label>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" max="10">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="notes">Order Notes (optional)</label>
+            <textarea id="notes" name="notes" placeholder="Any special instructions"></textarea>
+          </div>
+
+          <!-- PAYMENT -->
+          <div class="form-group">
+            <label>Payment Method</label>
+            <div class="payment-options">
+              <div class="pay-option active" data-method="COD" id="payCOD">
+                <span class="pay-icon">💵</span>
+                <div class="pay-name">Cash on Delivery</div>
+                <div class="pay-desc">Pay when it arrives</div>
+              </div>
+              <div class="pay-option" data-method="UPI" id="payUPI">
+                <span class="pay-icon">📲</span>
+                <div class="pay-name">UPI</div>
+                <div class="pay-desc">Pay now, ship faster</div>
+              </div>
+            </div>
+
+            <div class="upi-panel" id="upiPanel">
+              <p style="font-family:'Syne',sans-serif; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted);">Pay to our UPI ID</p>
+              <div class="upi-id-row">
+                <span id="upiIdText">maheshgoudar076@pingpay</span>
+                <button type="button" class="copy-btn" id="copyUpiBtn">Copy</button>
+              </div>
+              <div class="upi-deeplinks">
+                <a id="gpayLink" href="#" target="_blank" rel="noopener">Pay with GPay</a>
+                <a id="phonepeLink" href="#" target="_blank" rel="noopener">Pay with PhonePe</a>
+                <a id="paytmLink" href="#" target="_blank" rel="noopener">Pay with Paytm</a>
+              </div>
+              <p class="upi-note">After paying, take a screenshot and send it on WhatsApp along with your name — we'll confirm and dispatch your order.</p>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <span class="spinner"></span>
+            <span id="submitBtnText">🛒 Confirm Order</span>
+          </button>
+
+          <div class="trust-row">
+            <span>🔒 Secure Checkout</span>
+            <span>📦 Fast Dispatch</span>
+            <span>💬 Direct Owner Support</span>
+          </div>
+        </form>
+
+        <!-- SUCCESS STATE -->
+        <div class="success-overlay" id="successOverlay">
+          <div class="success-icon">✅</div>
+          <h3>Order Received!</h3>
+          <p>Thanks for your order — we've got your details. Tap below to confirm instantly on WhatsApp so we can start processing it right away.</p>
+          <a href="#" id="successWhatsapp" class="wa-btn">💬 Confirm on WhatsApp</a>
+        </div>
+
+      </div>
     </div>
-    <div class="price" id="summaryPrice"></div>
+
+    <!-- RIGHT: HELP PANEL -->
+    <div class="side-card">
+      <div class="card">
+        <h3>Need Help Ordering?</h3>
+        <p>Prefer to order directly, or have a sizing question before you buy? Message us — a real person replies, not a bot.</p>
+        <a href="https://wa.me/919637748622?text=Hi%20ARAMBH%2C%20I%20want%20to%20place%20an%20order" class="wa-btn">💬 Order on WhatsApp</a>
+        <a href="tel:9637748622" class="call-btn">📞 Call 9637748622</a>
+
+        <div class="side-divider"></div>
+
+        <h3 style="font-size:20px;">How It Works</h3>
+        <ul class="side-list">
+          <li>1️⃣ <span><b>Fill the form</b> with your size, address and payment choice.</span></li>
+          <li>2️⃣ <span><b>We confirm</b> your order on WhatsApp within a few hours.</span></li>
+          <li>3️⃣ <span><b>Your order ships</b> — pay on delivery, or upfront via UPI.</span></li>
+        </ul>
+      </div>
+    </div>
+
   </div>
 
-  <form id="orderForm">
-    <!-- hidden auto-filled product fields -->
-    <input type="hidden" id="product" name="product">
-    <input type="hidden" id="type" name="type">
-    <input type="hidden" id="color" name="color">
-    <input type="hidden" id="price" name="price">
-    <input type="hidden" id="paymentMethod" name="paymentMethod" value="COD">
-    <input type="hidden" id="cart_items" name="cart_items">
-    <input type="hidden" id="deliveryCharge" name="deliveryCharge" value="50">
-    <input type="hidden" id="discountAmount" name="discountAmount" value="0">
-    <input type="hidden" id="couponCode" name="couponCode" value="">
-    <input type="hidden" id="grandTotal" name="grandTotal" value="0">
+  <footer>
+    <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+  </footer>
 
-    <div class="field-group">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" name="name" placeholder="Your full name" required>
-    </div>
+  <script>
+    // ---------- Init EmailJS ----------
+    (function () {
+      if (window.emailjs) emailjs.init({ publicKey: 'ZXVO8aPvZTkk1NLI6' });
+    })();
 
-    <div class="field-row">
-      <div class="field-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
-      </div>
-      <div class="field-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="you@email.com" required>
-      </div>
-    </div>
-
-    <div class="field-group">
-      <label for="address">Delivery Address</label>
-      <textarea id="address" name="address" placeholder="House no, street, area, landmark" required></textarea>
-    </div>
-
-    <div class="field-row">
-      <div class="field-group">
-        <label for="city">City</label>
-        <input type="text" id="city" name="city" placeholder="City" required>
-      </div>
-      <div class="field-group">
-        <label for="pincode">Pincode</label>
-        <input type="text" id="pincode" name="pincode" placeholder="6-digit pincode" pattern="[0-9]{6}" required>
-        <div class="pincode-status" id="pincodeStatus"></div>
-      </div>
-    </div>
-
-    <div class="field-row" id="singleVariantFields">
-      <div class="field-group">
-        <label for="size">Size</label>
-        <select id="size" name="size" required>
-          <option value="">Select size</option>
-          <option value="S">S</option>
-          <option value="M">M</option>
-          <option value="L">L</option>
-          <option value="XL">XL</option>
-          <option value="2XL">2XL</option>
-        </select>
-      </div>
-      <div class="field-group">
-        <label for="quantity">Quantity</label>
-        <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" required>
-      </div>
-    </div>
-
-    <div class="field-group">
-      <label for="notes">Order Notes (optional)</label>
-      <textarea id="notes" name="notes" placeholder="Anything else we should know?"></textarea>
-    </div>
-
-    <!-- COUPON CODE -->
-    <div class="field-group" id="couponFieldGroup">
-      <label for="coupon">Coupon Code</label>
-      <div class="coupon-row">
-        <input type="text" id="coupon" placeholder="Enter coupon code">
-        <button type="button" class="coupon-apply-btn" id="couponApplyBtn">Apply</button>
-      </div>
-      <div class="coupon-msg" id="couponMsg"></div>
-    </div>
-
-    <!-- PRICE BREAKUP -->
-    <div class="price-breakup">
-      <div class="pb-title">Order Total</div>
-      <div class="pb-row"><span>Subtotal</span><span id="pbSubtotal">₹0</span></div>
-      <div class="pb-row discount" id="pbDiscountRow" style="display:none;"><span id="pbDiscountLabel">Discount</span><span id="pbDiscount">−₹0</span></div>
-      <div class="pb-row delivery"><span>Delivery Charge</span><span id="pbDelivery">₹50</span></div>
-      <div class="pb-divider"></div>
-      <div class="pb-row total"><span>Total Payable</span><span id="pbTotal">₹0</span></div>
-    </div>
-
-    <!-- PAYMENT METHOD -->
-    <div class="field-group">
-      <label>Payment Method</label>
-      <div class="pay-options">
-        <div class="pay-option">
-          <input type="radio" id="payCOD" name="payChoice" value="COD" checked>
-          <label for="payCOD">
-            <span class="pt">💵 Cash on Delivery</span>
-            <span class="ps">Pay when your order arrives</span>
-          </label>
-        </div>
-        <div class="pay-option">
-          <input type="radio" id="payUPI" name="payChoice" value="UPI">
-          <label for="payUPI">
-            <span class="pt">📲 Pay via UPI</span>
-            <span class="ps">GPay / PhonePe / Paytm</span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <button type="submit" class="submit-btn" id="submitBtn">🛒 Confirm Order</button>
-    <p class="form-note">By placing this order you agree to be contacted on WhatsApp/phone/email for order confirmation and delivery updates.</p>
-  </form>
-
-  <!-- UPI PANEL — shown after submit if UPI selected -->
-  <div class="upi-panel" id="upiPanel">
-    <h3>Complete Your Payment</h3>
-    <p>Pay the exact amount below via any UPI app</p>
-    <div class="upi-amount" id="upiAmount">₹0</div>
-    <div class="upi-id-box">
-      <span id="upiIdText">maheshgoudar076@pingpay</span>
-      <button class="copy-btn" onclick="copyUPI()">Copy</button>
-    </div>
-
-    <div class="upi-qr-wrap">
-      <img id="upiQrImg" alt="Scan to pay via UPI">
-      <span>Scan with any UPI app (GPay, PhonePe, Paytm, BHIM...)</span>
-    </div>
-
-    <div class="upi-apps" id="upiApps"></div>
-
-    <p style="margin-bottom:6px;">Once paid, confirm your payment with us on WhatsApp:</p>
-    <a href="#" id="whatsappConfirmBtn" class="whatsapp-confirm-btn">💬 Confirm Payment on WhatsApp</a>
-  </div>
-
-  <!-- COD SUCCESS PANEL -->
-  <div class="success-panel" id="successPanel">
-    <div class="check">✅</div>
-    <h3>Order Placed!</h3>
-    <p>Thanks for your order. We've received your details and will confirm via WhatsApp shortly. Pay in cash when it arrives at your door.</p>
-    <a href="#" id="whatsappCodBtn" class="whatsapp-confirm-btn">💬 Message Us on WhatsApp</a>
-  </div>
-
-</div>
-
-<footer>
-  <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
-</footer>
-
-<script>
-  // ---- CONFIG ----
-  const UPI_ID = "maheshgoudar076@pingpay";
-  const WHATSAPP_NUMBER = "919637748622";
-  const EMAILJS_PUBLIC_KEY = "ZXVO8aPvZTkk1NLI6";
-  const EMAILJS_SERVICE_ID = "service_2xfx4td";
-  const EMAILJS_TEMPLATE_ID = "template_j3gxuwf";
-  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqejgjzw";
-
-  // Delivery zone base — used to work out the ₹20/₹35/₹50 slab from the pincode lookup
-  const BASE_CITY = "Pune";
-  const BASE_STATE = "Maharashtra";
-
-  // Coupon codes: { CODE: percentOff }
-  const COUPON_CODES = { "FRD5": 5 };
-
-  // Guarded: if the EmailJS CDN script fails to load or is blocked (ad blocker,
-  // network filter, offline), emailjs.init() used to throw and HALT the entire
-  // script below it — which meant the submit button's event listener never got
-  // attached, making the button appear completely unresponsive.
-  let emailjsReady = false;
-  try {
-    if (typeof emailjs !== 'undefined') {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      emailjsReady = true;
-    } else {
-      console.warn('EmailJS script did not load — order will still be placed, but the confirmation email will be skipped.');
-    }
-  } catch (err) {
-    console.error('EmailJS init failed:', err);
-  }
-
-  // ---- CART + SINGLE PRODUCT PREFILL ----
-  const CART_KEY = 'arambhCart';
-  let cartMode = false;
-  let activeCart = [];
-
-  function getCart(){
-    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
-    catch (error) { return []; }
-  }
-
-  function saveCart(){
-    localStorage.setItem(CART_KEY, JSON.stringify(activeCart));
-  }
-
-  function cartOrderSummary(){
-    return activeCart.map((item, index) =>
-      `${index + 1}. ${item.product} (${item.type}${item.color ? ', ' + item.color : ''}) — Size ${item.size}, Qty ${item.qty}, ₹${Number(item.price) * Number(item.qty)}`
-    ).join('\n');
-  }
-
-  function cartTotalAmount(){
-    return activeCart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 1), 0);
-  }
-
-  function renderCart(){
-    const cartBox = document.getElementById('cartSummary');
-    const itemsBox = document.getElementById('cartItems');
-    cartBox.classList.add('show');
-    document.getElementById('productSummary').style.display = 'none';
-    document.getElementById('singleVariantFields').style.display = 'none';
-    document.getElementById('size').removeAttribute('required');
-    document.getElementById('quantity').removeAttribute('required');
-    if(!activeCart.length){
-      itemsBox.innerHTML = '<p style="color:var(--muted);padding:12px 0">Your cart is empty. Add a product before placing an order.</p>';
-      document.getElementById('cartTotal').textContent = '₹0';
-      document.getElementById('submitBtn').disabled = true;
-      return;
-    }
-    document.getElementById('submitBtn').disabled = false;
-    itemsBox.innerHTML = activeCart.map((item, index) => `
-      <div class="cart-item">
-        <img src="${item.image || 'logo.webp'}" alt="${item.product}">
-        <div><h3>${item.product}</h3><p>${item.type} · ${item.color || 'Default'} · Size ${item.size}</p>
-          <div class="cart-controls"><button type="button" onclick="changeCartQty(${index},-1)">−</button><span>${item.qty}</span><button type="button" onclick="changeCartQty(${index},1)">+</button><button type="button" class="remove-item" onclick="removeCartItem(${index})">Remove</button></div>
-        </div>
-        <div class="cart-item-price">₹${Number(item.price) * Number(item.qty)}</div>
-      </div>`).join('');
-    document.getElementById('cartTotal').textContent = `₹${cartTotalAmount()}`;
-    document.getElementById('cart_items').value = cartOrderSummary();
-    document.getElementById('product').value = `${activeCart.length} cart item(s)`;
-    document.getElementById('type').value = 'Cart Order';
-    document.getElementById('color').value = '';
-    document.getElementById('price').value = cartTotalAmount();
-  }
-
-  window.changeCartQty = function(index, change){
-    const item = activeCart[index];
-    if(!item) return;
-    item.qty = Math.min(10, Math.max(1, Number(item.qty) + change));
-    saveCart(); renderCart();
-    if(typeof updatePriceBreakup === 'function') updatePriceBreakup();
-  };
-  window.removeCartItem = function(index){
-    activeCart.splice(index, 1); saveCart(); renderCart();
-    if(typeof updatePriceBreakup === 'function') updatePriceBreakup();
-  };
-
-  function prefillFromQuery(){
+    // ---------- Auto-fill product summary from URL params ----------
     const params = new URLSearchParams(window.location.search);
-    cartMode = params.get('cart') === '1';
-    if(cartMode){ activeCart = getCart(); renderCart(); return; }
-
     const product = params.get('product') || '';
     const type = params.get('type') || '';
     const color = params.get('color') || '';
-    const price = params.get('price') || '';
-    const size = params.get('size') || '';
-    const qtyParam = params.get('qty') || params.get('quantity') || '1';
-    const quantity = Math.min(10, Math.max(1, parseInt(qtyParam, 10) || 1));
-    document.getElementById('product').value = product;
-    document.getElementById('type').value = type;
-    document.getElementById('color').value = color;
-    document.getElementById('price').value = price;
-    const sizeSelect = document.getElementById('size');
-    if(size && [...sizeSelect.options].some(option => option.value === size)) sizeSelect.value = size;
-    document.getElementById('quantity').value = quantity;
-    if(product){
-      document.getElementById('productSummary').classList.remove('empty');
-      document.getElementById('summaryName').textContent = product;
-      document.getElementById('summaryMeta').textContent = [type,color,size ? `Size ${size}`:'',`Qty ${quantity}`].filter(Boolean).join(' · ');
-      document.getElementById('summaryPrice').textContent = price ? `₹${(parseFloat(price)||0)*quantity}` : '';
-    } else document.getElementById('productSummary').classList.add('empty');
-  }
-  prefillFromQuery();
+    const price = params.get('price') || '0';
+    const image = params.get('image') || 'logo.webp';
 
-  function refreshOrderSummary(){
-    if(cartMode) return;
-    const type=document.getElementById('type').value, color=document.getElementById('color').value, size=document.getElementById('size').value;
-    const quantity=Math.min(10,Math.max(1,parseInt(document.getElementById('quantity').value,10)||1));
-    document.getElementById('quantity').value=quantity;
-    document.getElementById('summaryMeta').textContent=[type,color,size?`Size ${size}`:'',`Qty ${quantity}`].filter(Boolean).join(' · ');
-    const unitPrice=parseFloat(document.getElementById('price').value)||0;
-    document.getElementById('summaryPrice').textContent=unitPrice?`₹${unitPrice*quantity}`:'';
-    if(typeof updatePriceBreakup === 'function') updatePriceBreakup();
-  }
-  document.getElementById('size').addEventListener('change',refreshOrderSummary);
-  document.getElementById('quantity').addEventListener('input',refreshOrderSummary);
+    if (product) document.getElementById('productName').textContent = product;
+    document.getElementById('productType').textContent = type || '—';
+    document.getElementById('productColor').textContent = color || '—';
+    document.getElementById('productPrice').textContent = '₹' + price;
+    document.getElementById('productImage').src = image;
+    document.getElementById('productImage').alt = product || 'Product';
+    document.title = (product ? product + ' — ' : '') + 'Place Your Order — Arambh';
 
-  // ---- PINCODE LOOKUP → CITY AUTOFILL + DELIVERY ZONE ----
-  let currentDeliveryCharge = 50; // default until a pincode resolves
-  let resolvedState = '';
+    // ---------- Payment method toggle ----------
+    const payCOD = document.getElementById('payCOD');
+    const payUPI = document.getElementById('payUPI');
+    const upiPanel = document.getElementById('upiPanel');
+    let selectedMethod = 'COD';
 
-  function getDeliveryCharge(city, state){
-    if(!state) return 50;
-    if(city && city.trim().toLowerCase() === BASE_CITY.toLowerCase()) return 20;
-    if(state.trim().toLowerCase() === BASE_STATE.toLowerCase()) return 35;
-    return 50;
-  }
-
-  async function lookupPincode(pin){
-    const statusEl = document.getElementById('pincodeStatus');
-    statusEl.className = 'pincode-status loading';
-    statusEl.textContent = 'Checking pincode…';
-    try{
-      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-      const json = await res.json();
-      const result = Array.isArray(json) ? json[0] : null;
-      if(result && result.Status === 'Success' && result.PostOffice && result.PostOffice.length){
-        const office = result.PostOffice[0];
-        const district = office.District || office.Name || '';
-        const state = office.State || '';
-        resolvedState = state;
-        const cityInput = document.getElementById('city');
-        if(district) cityInput.value = district;
-        currentDeliveryCharge = getDeliveryCharge(district, state);
-        statusEl.className = 'pincode-status ok';
-        statusEl.textContent = `Delivering to ${district}, ${state} — ₹${currentDeliveryCharge} delivery`;
-      } else {
-        currentDeliveryCharge = 50;
-        resolvedState = '';
-        statusEl.className = 'pincode-status error';
-        statusEl.textContent = "Couldn't verify this pincode — using standard ₹50 delivery.";
-      }
-    } catch(err){
-      console.error('Pincode lookup failed:', err);
-      currentDeliveryCharge = 50;
-      resolvedState = '';
-      statusEl.className = 'pincode-status error';
-      statusEl.textContent = "Couldn't verify this pincode — using standard ₹50 delivery.";
+    function selectMethod(method) {
+      selectedMethod = method;
+      payCOD.classList.toggle('active', method === 'COD');
+      payUPI.classList.toggle('active', method === 'UPI');
+      upiPanel.classList.toggle('show', method === 'UPI');
     }
-    updatePriceBreakup();
-  }
+    payCOD.addEventListener('click', () => selectMethod('COD'));
+    payUPI.addEventListener('click', () => selectMethod('UPI'));
 
-  document.getElementById('pincode').addEventListener('input', function(){
-    const val = this.value.trim();
-    if(val.length === 6 && /^[0-9]{6}$/.test(val)){
-      lookupPincode(val);
-    } else {
-      currentDeliveryCharge = 50;
-      resolvedState = '';
-      document.getElementById('pincodeStatus').textContent = '';
-      document.getElementById('pincodeStatus').className = 'pincode-status';
-      updatePriceBreakup();
-    }
-  });
+    // ---------- UPI deep links (amount pre-filled) ----------
+    const UPI_ID = 'maheshgoudar076@pingpay';
+    const upiAmount = parseFloat(price) || 0;
+    const upiNote = encodeURIComponent('Arambh Order - ' + (product || 'T-Shirt'));
+    document.getElementById('gpayLink').href = `tez://upi/pay?pa=${UPI_ID}&pn=Arambh&am=${upiAmount}&cu=INR&tn=${upiNote}`;
+    document.getElementById('phonepeLink').href = `phonepe://pay?pa=${UPI_ID}&pn=Arambh&am=${upiAmount}&cu=INR&tn=${upiNote}`;
+    document.getElementById('paytmLink').href = `paytmmp://pay?pa=${UPI_ID}&pn=Arambh&am=${upiAmount}&cu=INR&tn=${upiNote}`;
 
-  // ---- COUPON CODE ----
-  let appliedCoupon = null; // { code, percent }
-
-  function renderCouponUI(){
-    const fieldGroup = document.getElementById('couponFieldGroup');
-    const msgEl = document.getElementById('couponMsg');
-    if(appliedCoupon){
-      fieldGroup.querySelector('.coupon-row').style.display = 'none';
-      msgEl.className = 'coupon-msg';
-      msgEl.innerHTML = `<span class="coupon-applied-tag">✓ ${appliedCoupon.code} applied — ${appliedCoupon.percent}% off <button type="button" id="couponRemoveBtn">✕</button></span>`;
-      document.getElementById('couponRemoveBtn').addEventListener('click', () => {
-        appliedCoupon = null;
-        document.getElementById('coupon').value = '';
-        fieldGroup.querySelector('.coupon-row').style.display = 'flex';
-        msgEl.textContent = '';
-        msgEl.className = 'coupon-msg';
-        updatePriceBreakup();
+    document.getElementById('copyUpiBtn').addEventListener('click', () => {
+      navigator.clipboard.writeText(UPI_ID).then(() => {
+        const btn = document.getElementById('copyUpiBtn');
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = original; }, 1800);
       });
-    }
-  }
-
-  document.getElementById('couponApplyBtn').addEventListener('click', function(){
-    const codeInput = document.getElementById('coupon');
-    const code = codeInput.value.trim().toUpperCase();
-    const msgEl = document.getElementById('couponMsg');
-    if(!code){
-      msgEl.className = 'coupon-msg error';
-      msgEl.textContent = 'Enter a coupon code first.';
-      return;
-    }
-    if(COUPON_CODES[code]){
-      appliedCoupon = { code, percent: COUPON_CODES[code] };
-      renderCouponUI();
-      updatePriceBreakup();
-    } else {
-      msgEl.className = 'coupon-msg error';
-      msgEl.textContent = 'Invalid coupon code.';
-    }
-  });
-
-  // ---- UNIFIED PRICE BREAKUP (used for both display and final submit amount) ----
-  let currentGrandTotal = 0;
-
-  function getSubtotal(){
-    if(cartMode) return cartTotalAmount();
-    const unitPrice = parseFloat(document.getElementById('price').value) || 0;
-    const quantity = Math.min(10, Math.max(1, parseInt(document.getElementById('quantity').value, 10) || 1));
-    return unitPrice * quantity;
-  }
-
-  function updatePriceBreakup(){
-    const subtotal = getSubtotal();
-    const discountPercent = appliedCoupon ? appliedCoupon.percent : 0;
-    const discountAmount = Math.round(subtotal * discountPercent / 100);
-    const delivery = subtotal > 0 ? currentDeliveryCharge : 0;
-    const total = Math.max(0, subtotal - discountAmount + delivery);
-    currentGrandTotal = total;
-
-    document.getElementById('pbSubtotal').textContent = `₹${subtotal}`;
-    document.getElementById('pbDelivery').textContent = `₹${delivery}`;
-    const discountRow = document.getElementById('pbDiscountRow');
-    if(discountAmount > 0){
-      discountRow.style.display = 'flex';
-      document.getElementById('pbDiscountLabel').textContent = `Discount (${appliedCoupon.code} — ${discountPercent}%)`;
-      document.getElementById('pbDiscount').textContent = `−₹${discountAmount}`;
-    } else {
-      discountRow.style.display = 'none';
-    }
-    document.getElementById('pbTotal').textContent = `₹${total}`;
-
-    document.getElementById('deliveryCharge').value = delivery;
-    document.getElementById('discountAmount').value = discountAmount;
-    document.getElementById('couponCode').value = appliedCoupon ? appliedCoupon.code : '';
-    document.getElementById('grandTotal').value = total;
-  }
-  updatePriceBreakup();
-
-  // ---- PAYMENT METHOD TOGGLE ----
-  document.querySelectorAll('input[name="payChoice"]').forEach(r=>{
-    r.addEventListener('change', ()=>{
-      document.getElementById('paymentMethod').value = r.value;
     });
-  });
 
-  function copyUPI(){
-    navigator.clipboard.writeText(UPI_ID).then(()=>{
-      const btn = document.querySelector('.copy-btn');
-      const old = btn.textContent;
-      btn.textContent = 'Copied!';
-      setTimeout(()=>btn.textContent = old, 1500);
+    // ---------- Form validation + submit ----------
+    const form = document.getElementById('orderForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
+
+    function validateField(id, isValid) {
+      const group = document.getElementById('group-' + id);
+      if (group) group.classList.toggle('invalid', !isValid);
+      return isValid;
+    }
+
+    function validateForm() {
+      const name = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const size = document.getElementById('size').value;
+      const address = document.getElementById('address').value.trim();
+      const pincode = document.getElementById('pincode').value.trim();
+
+      let ok = true;
+      ok = validateField('name', name.length >= 2) && ok;
+      ok = validateField('phone', /^[6-9]\d{9}$/.test(phone)) && ok;
+      ok = validateField('size', size !== '') && ok;
+      ok = validateField('address', address.length >= 8) && ok;
+      ok = validateField('pincode', /^\d{6}$/.test(pincode)) && ok;
+      return ok;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      const data = {
+        product: product || 'Not specified',
+        type: type || '—',
+        color: color || '—',
+        price: price,
+        fullName: document.getElementById('fullName').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        size: document.getElementById('size').value,
+        address: document.getElementById('address').value.trim(),
+        pincode: document.getElementById('pincode').value.trim(),
+        quantity: document.getElementById('quantity').value || '1',
+        notes: document.getElementById('notes').value.trim(),
+        paymentMethod: selectedMethod
+      };
+
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+      submitBtnText.textContent = 'Placing Order...';
+
+      // Try EmailJS first (owner notification), then Formspree, but never block
+      // the user's success flow on either — WhatsApp confirmation is the source of truth.
+      const emailPromise = (window.emailjs)
+        ? emailjs.send('service_2xfx4td', 'template_j3gxuwf', {
+            product: data.product, type: data.type, color: data.color, price: data.price,
+            name: data.fullName, phone: data.phone, size: data.size, address: data.address,
+            pincode: data.pincode, quantity: data.quantity, notes: data.notes, payment: data.paymentMethod
+          }).catch(err => console.error('EmailJS error:', err))
+        : Promise.resolve();
+
+      const formspreePromise = fetch('https://formspree.io/f/xqejgjzw', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).catch(err => console.error('Formspree error:', err));
+
+      Promise.allSettled([emailPromise, formspreePromise]).finally(() => {
+        // Build WhatsApp confirmation message
+        const waMessage = encodeURIComponent(
+          `Hi ARAMBH, I just placed an order:\n\n` +
+          `Product: ${data.product}\n` +
+          `Type/Color: ${data.type} / ${data.color}\n` +
+          `Size: ${data.size} | Qty: ${data.quantity}\n` +
+          `Price: ₹${data.price}\n` +
+          `Payment: ${data.paymentMethod}\n\n` +
+          `Name: ${data.fullName}\n` +
+          `Phone: ${data.phone}\n` +
+          `Address: ${data.address}, ${data.pincode}` +
+          (data.notes ? `\nNotes: ${data.notes}` : '')
+        );
+        document.getElementById('successWhatsapp').href = `https://wa.me/919637748622?text=${waMessage}`;
+
+        form.style.display = 'none';
+        document.getElementById('successOverlay').classList.add('show');
+        submitBtn.classList.remove('loading');
+      });
     });
-  }
-
-  function buildUpiDeepLinks(amount, note){
-    const encNote = encodeURIComponent(note);
-    return {
-      gpay: `tez://upi/pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`,
-      phonepe: `phonepe://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`,
-      paytm: `paytmmp://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`,
-      generic: `upi://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${encNote}`
-    };
-  }
-
-  const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
-
-  function renderUpiPayment(amount, note){
-    const links = buildUpiDeepLinks(amount, note);
-
-    // QR always works — desktop (scan with phone) and mobile (open camera/app)
-    document.getElementById('upiQrImg').src =
-      `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(links.generic)}`;
-
-    const upiApps = document.getElementById('upiApps');
-    if(isMobile){
-      // Deep links only work when tapped from an actual phone browser
-      upiApps.innerHTML = `
-        <div class="upi-divider">or tap to pay directly</div>
-        <a href="${links.gpay}" class="upi-app-btn">Pay with GPay</a>
-        <a href="${links.phonepe}" class="upi-app-btn">Pay with PhonePe</a>
-        <a href="${links.paytm}" class="upi-app-btn">Pay with Paytm</a>
-        <a href="${links.generic}" class="upi-app-btn">Other UPI App</a>
-      `;
-    } else {
-      // On desktop these app links do nothing when clicked — don't show them
-      upiApps.innerHTML = `
-        <p style="font-size:12px;color:var(--muted);text-align:center;">
-          On a computer? Scan the QR code above with your phone's UPI app to pay.
-        </p>
-      `;
-    }
-  }
-
-  // ---- FORM SUBMIT ----
-  const form = document.getElementById('orderForm');
-  const submitBtn = document.getElementById('submitBtn');
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Placing Order...';
-
-    updatePriceBreakup(); // make sure hidden fields + currentGrandTotal reflect the latest state
-    const data = Object.fromEntries(new FormData(form).entries());
-    const orderSummary = cartMode ? cartOrderSummary() : `${data.product || 'Item'} (${data.type || ''}${data.color ? ', ' + data.color : ''}) — Size ${data.size}, Qty ${data.quantity}`;
-    const subtotalAmount = getSubtotal();
-    const totalAmount = currentGrandTotal;
-    document.getElementById('cart_items').value = orderSummary;
-
-    // 1. Send to Formspree
-    fetch(FORMSPREE_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Accept': 'application/json' },
-      body: new FormData(form)
-    }).catch(err => console.error('Formspree error:', err));
-
-    // 2. Send confirmation email via EmailJS (only if it initialized successfully)
-    if(emailjsReady){
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_name: data.name,
-        to_email: data.email,
-        order_summary: orderSummary,
-        subtotal_amount: subtotalAmount,
-        delivery_charge: data.deliveryCharge,
-        discount_amount: data.discountAmount,
-        coupon_code: data.couponCode || 'None',
-        total_amount: totalAmount,
-        payment_method: data.paymentMethod,
-        address: `${data.address}, ${data.city} - ${data.pincode}`,
-        phone: data.phone
-      }).catch(err => console.error('EmailJS error:', err));
-    }
-
-    // 3. Show correct panel based on payment method
-    form.style.display = 'none';
-
-    const couponLine = data.couponCode ? `\nCoupon: ${data.couponCode} (−₹${data.discountAmount})` : '';
-    const waMessage = encodeURIComponent(
-      `Hi Arambh! I just placed an order:\n\n${orderSummary}\nSubtotal: ₹${subtotalAmount}\nDelivery: ₹${data.deliveryCharge}${couponLine}\nTotal: ₹${totalAmount}\nPayment: ${data.paymentMethod}\nName: ${data.name}\nAddress: ${data.address}, ${data.city} - ${data.pincode}\nPhone: ${data.phone}`
-    );
-
-    if(data.paymentMethod === 'UPI'){
-      document.getElementById('upiAmount').textContent = '₹' + totalAmount;
-      renderUpiPayment(totalAmount, cartMode ? 'Arambh Cart Order' : `Arambh Order - ${data.product || 'Item'}`);
-      document.getElementById('whatsappConfirmBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
-      document.getElementById('upiPanel').classList.add('show');
-    } else {
-      document.getElementById('whatsappCodBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
-      document.getElementById('successPanel').classList.add('show');
-    }
-
-    if(cartMode) localStorage.removeItem(CART_KEY);
-    const scrollTarget = cartMode ? document.getElementById('cartSummary') : document.getElementById('productSummary');
-    window.scrollTo({ top: scrollTarget.offsetTop - 100, behavior: 'smooth' });
-  });
-
-  // ---- MOBILE MENU ----
-  const hamburger = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const menuBackdrop = document.getElementById('menuBackdrop');
-  function closeMenu(){ hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
-  hamburger.addEventListener('click', () => {
-    const isOpen = mobileMenu.classList.toggle('open');
-    hamburger.classList.toggle('open', isOpen);
-    menuBackdrop.classList.toggle('open', isOpen);
-  });
-  menuBackdrop.addEventListener('click', closeMenu);
-  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-</script>
+  </script>
 </body>
 </html>

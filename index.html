@@ -667,44 +667,120 @@
       margin-top: 8px;
     }
 
-
-
-
-    /* RANDOM PRODUCT RECOMMENDATION */
-    const recommendedProducts = [
-      { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
-      { name:'Explore Space Tee', type:'Printed Oversized', price:'₹699', image:'explore_space_back.jpg', link:'printed.html' },
-      { name:'Classic Polo', type:'Polo Collection', price:'₹399', image:'polo1.jpg', link:'polo.html' },
-      { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' }
-    ];
-    const suggestedImage = document.getElementById('suggestedImage');
-    const suggestedName = document.getElementById('suggestedName');
-    const suggestedType = document.getElementById('suggestedType');
-    const suggestedPrice = document.getElementById('suggestedPrice');
-    const suggestedLink = document.getElementById('suggestedLink');
-    const showAnother = document.getElementById('showAnother');
-    let lastSuggestedIndex = -1;
-
-    function showRandomProduct() {
-      if (!recommendedProducts.length) return;
-      let index;
-      do { index = Math.floor(Math.random() * recommendedProducts.length); }
-      while (recommendedProducts.length > 1 && index === lastSuggestedIndex);
-      lastSuggestedIndex = index;
-      const product = recommendedProducts[index];
-      suggestedImage.style.opacity = '0';
-      setTimeout(() => {
-        suggestedImage.src = product.image;
-        suggestedImage.alt = product.name;
-        suggestedName.textContent = product.name;
-        suggestedType.textContent = product.type;
-        suggestedPrice.textContent = product.price;
-        suggestedLink.href = product.link;
-        suggestedImage.style.opacity = '1';
-      }, 180);
+    /* COMING SOON TEASER */
+    .teaser-section {
+      padding: 90px 40px;
+      max-width: 1400px;
+      margin: auto;
     }
-    showAnother.addEventListener('click', showRandomProduct);
-    showRandomProduct();
+    .teaser-box {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid rgba(var(--accent-rgb),.35);
+      background: linear-gradient(135deg, rgba(var(--accent-rgb),.22), rgba(15,15,26,.9) 55%, rgba(var(--accent2-rgb),.06));
+      padding: 60px 50px;
+      text-align: center;
+      isolation: isolate;
+    }
+    .teaser-box::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: conic-gradient(from 0deg, var(--accent), transparent 30%, var(--accent2), transparent 70%, var(--accent));
+      z-index: -2;
+      animation: teaser-spin 8s linear infinite;
+      opacity: .5;
+    }
+    .teaser-box::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, rgba(8,8,16,.96), rgba(15,15,26,.92));
+      z-index: -1;
+    }
+    @keyframes teaser-spin { to { transform: rotate(360deg); } }
+    .teaser-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      background: rgba(var(--accent-rgb),.14);
+      border: 1px solid rgba(var(--accent-rgb),.4);
+      padding: 8px 18px;
+      border-radius: 100px;
+      margin-bottom: 22px;
+    }
+    .teaser-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent2);
+      animation: teaser-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes teaser-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .35; transform: scale(1.4); }
+    }
+    .teaser-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.02;
+      letter-spacing: 1px;
+    }
+    .teaser-title span {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .teaser-copy {
+      color: var(--muted);
+      max-width: 560px;
+      margin: 18px auto 32px;
+      line-height: 1.75;
+      font-size: 15px;
+    }
+    .teaser-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .teaser-btn {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.7px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 15px 28px;
+      transition: transform .25s, background .25s, border-color .25s;
+    }
+    .teaser-btn-primary {
+      color: #080810;
+      background: var(--accent2);
+      box-shadow: 0 12px 38px rgba(var(--accent2-rgb),.28);
+    }
+    .teaser-btn-secondary {
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.3);
+      background: rgba(8,8,16,.38);
+    }
+    .teaser-btn-primary:hover, .teaser-btn-secondary:hover { transform: translateY(-3px); }
+    @media (max-width: 540px) {
+      .teaser-section { padding: 60px 20px; }
+      .teaser-box { padding: 44px 24px; }
+      .teaser-btn, .teaser-actions a { width: 100%; text-align: center; }
+    }
+
+    /* RANDOM PRODUCT RECOMMENDATION (script lives in <script> below, not here) */
+    #suggestedImage { transition: opacity 0.18s ease; }
 
     /* CUSTOMER REVIEWS */
     .reviews-section {
@@ -1074,14 +1150,14 @@
       <span>Wear Your Vibe</span>
       <span>Bold Prints</span>
       <span>Oversized Fits</span>
-      <span>New Arrivals</span>
+      <span>🔥 New Shirt Drop Coming Soon</span>
       <span>Premium GSM Fabric</span>
       <span>Streetwear</span>
       <span>Arambh</span>
       <span>Wear Your Vibe</span>
       <span>Bold Prints</span>
       <span>Oversized Fits</span>
-      <span>New Arrivals</span>
+      <span>🔥 New Shirt Drop Coming Soon</span>
     </div>
   </div>
 
@@ -1147,6 +1223,19 @@
         </div>
       </a>
 
+    </div>
+  </section>
+
+  <!-- NEW DROP TEASER -->
+  <section class="teaser-section">
+    <div class="teaser-box reveal">
+      <span class="teaser-pill"><span class="teaser-dot"></span> Coming Soon</span>
+      <h2 class="teaser-title">A NEW SHIRT<br><span>IS LANDING SOON.</span></h2>
+      <p class="teaser-copy">We're cooking up a brand new shirt drop — limited pieces, original artwork, made to sell out fast. Get on WhatsApp so you're the first to know when it launches.</p>
+      <div class="teaser-actions">
+        <a href="https://wa.me/919637748622?text=Hi%20ARAMBH%2C%20notify%20me%20when%20the%20new%20shirt%20drops" class="teaser-btn teaser-btn-primary">Notify Me on WhatsApp →</a>
+        <a href="https://instagram.com/aarambh.official__" class="teaser-btn teaser-btn-secondary" target="_blank" rel="noopener">Follow for Sneak Peeks</a>
+      </div>
     </div>
   </section>
 
@@ -1383,8 +1472,6 @@
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     });
 
-
-
     /* RANDOM PRODUCT RECOMMENDATION */
     const recommendedProducts = [
       { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
@@ -1586,4 +1673,3 @@
   </script>
 </body>
 </html>
-8

@@ -12,11 +12,14 @@
     :root {
       --bg: #080810;
       --surface: #0f0f1a;
+      --surface2: #15100c;
       --accent: #A90E02;
       --accent2: #FFFACD;
       --text: #f0f0f0;
       --muted: #888;
       --border: rgba(255,255,255,0.06);
+      --accent-rgb: 169,14,2;
+      --accent2-rgb: 255,250,205;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -25,7 +28,6 @@
     .cursor { position: fixed; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
     .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(169,14,2,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
 
-    /* Disable custom cursor on touch / no-hover devices */
     @media (hover: none), (pointer: coarse) {
       body { cursor: auto; }
       .cursor, .cursor-ring { display: none; }
@@ -68,20 +70,32 @@
     }
     .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
-    /* --- UPDATED HEADER WITH INTEGRATED STREET IMAGES --- */
+    /* ANNOUNCE BAR */
+    .announce-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 101;
+      background: linear-gradient(90deg, var(--accent), #6e0a01, var(--accent));
+      color: var(--accent2);
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 9px 16px;
+    }
+    nav { top: 36px; }
+    .mobile-menu, .menu-backdrop { top: 36px; height: calc(100vh - 36px); }
+
+    /* --- HEADER WITH INTEGRATED STREET IMAGES --- */
     .page-header { 
-      min-height: 70vh; 
+      min-height: 74vh; 
       display: flex; 
       flex-direction: column; 
       align-items: center; 
       justify-content: center; 
-      padding: 160px 40px 80px; 
+      padding: 196px 40px 80px; 
       text-align: center; 
       position: relative; 
       overflow: hidden; 
     }
     
-    /* Radial lighting flash container */
     .page-header .pulse-glow { 
       position: absolute; 
       width: 700px; 
@@ -96,7 +110,6 @@
     }
     @keyframes pulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.12); } }
 
-    /* Left Image Layer (Front Profile) */
     .page-header::before {
       content: '';
       position: absolute;
@@ -114,7 +127,6 @@
       z-index: 0;
     }
 
-    /* Right Image Layer (Back Profile) */
     .page-header::after {
       content: '';
       position: absolute;
@@ -132,41 +144,52 @@
       z-index: 0;
     }
 
-    /* Enforce stacking order so header texts sit proudly on top */
     .page-header * { position: relative; z-index: 5; }
 
     .breadcrumb { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a { color: var(--accent2); text-decoration: none; }
     .breadcrumb span { opacity: 0.4; }
-    .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 10vw, 130px); line-height: 0.9; letter-spacing: 2px; animation: fade-up 0.8s ease both; }
+    .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 10vw, 140px); line-height: 0.9; letter-spacing: 2px; animation: fade-up 0.8s ease both; text-shadow: 0 10px 50px rgba(0,0,0,0.6); }
     .page-header h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .page-header p { color: var(--muted); font-size: 17px; font-weight: 300; margin-top: 16px; letter-spacing: 1px; animation: fade-up 0.8s 0.1s ease both; }
-    .header-meta { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.2s ease both; }
-    .meta-chip { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px; color: var(--muted); }
-    .meta-chip.hot { border-color: rgba(169,14,2,0.3); color: var(--accent); background: rgba(169,14,2,0.07); }
+    .header-meta { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.2s ease both; }
+    .meta-chip { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); padding: 9px 20px; border-radius: 100px; color: var(--muted); background: rgba(255,255,255,0.02); }
+    .meta-chip.hot { border-color: rgba(169,14,2,0.3); color: var(--accent2); background: rgba(169,14,2,0.1); }
 
     .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
     .ticker { display: inline-flex; animation: ticker 22s linear infinite; }
-    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: white; }
+    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: var(--accent2); }
     .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
     @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-    /* PRODUCTS */
-    .products-section { padding: 100px 40px; max-width: 1280px; margin: auto; }
-    .section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 14px; }
-    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 5vw, 64px); letter-spacing: 2px; margin-bottom: 50px; }
+    /* TRUST STRIP */
+    .trust-strip {
+      display: flex; justify-content: center; gap: 46px; flex-wrap: wrap;
+      padding: 26px 20px; max-width: 1000px; margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Syne', sans-serif; font-size: 11.5px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+    }
+    .trust-item span.ico { font-size: 16px; }
 
-    /* Two-tier grid: tees + hoodies separated */
+    /* PRODUCTS */
+    .products-section { padding: 90px 40px 100px; max-width: 1280px; margin: auto; }
+    .section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 14px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 5vw, 64px); letter-spacing: 2px; margin-bottom: 14px; }
+    .section-sub { color: var(--muted); font-size: 15px; margin-bottom: 44px; max-width: 540px; }
+
     .products-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
     .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; margin-bottom: 60px; }
 
-    .product-card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative; }
-    .product-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); }
-    .card-media { position: relative; overflow: hidden; background: #0a0a14; }
+    .product-card { background: linear-gradient(160deg, var(--surface), var(--surface2)); border-radius: 22px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; position: relative; }
+    .product-card:hover { transform: translateY(-10px); box-shadow: 0 44px 80px rgba(0,0,0,0.7); border-color: rgba(169,14,2,0.3); }
+    .card-media { position: relative; overflow: hidden; background: radial-gradient(circle at 50% 30%, #10101c, #0a0a14); }
     .card-media img { width: 100%; height: 300px; object-fit: contain; padding: 20px; display: block; transition: transform 0.6s ease, opacity 0.45s ease; }
     .product-card:hover .card-media img.front-img { transform: scale(1.06); }
 
-    /* Front/back crossfade */
     .card-media img.back-img {
       position: absolute;
       top: 0; left: 0;
@@ -178,18 +201,18 @@
     .card-media:hover img.front-img,
     .card-media.flipped img.front-img { opacity: 0; }
 
-    .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; z-index: 2; }
-    .card-badge.gold { background: #c9a84c; }
+    .card-badge { position: absolute; top: 14px; right: 14px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent2); color: #2e2400; padding: 6px 13px; border-radius: 100px; z-index: 2; box-shadow: 0 6px 18px rgba(255,250,205,0.25); }
+    .card-badge.gold { background: #c9a84c; color: #2b2100; }
     .card-body { padding: 22px 24px 26px; }
     .card-body h3 { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
     .card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
-    .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 1px; }
+    .price { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: white; letter-spacing: 1px; }
     .type-tag { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 100px; }
 
     /* BUY NOW BUTTON */
     .buy-now-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; margin-top: 16px; padding: 13px 20px;
+      width: 100%; margin-top: 16px; padding: 14px 20px;
       background: var(--accent); color: white; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       border-radius: 100px; transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
@@ -198,23 +221,31 @@
     .buy-now-btn:hover { background: #8a0b02; transform: scale(1.02); box-shadow: 0 12px 32px rgba(169,14,2,0.35); }
 
     /* SIZE CHART */
-    .size-section { max-width: 720px; margin: 0 auto 80px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+    .size-section { max-width: 720px; margin: 0 auto 80px; background: linear-gradient(160deg, var(--surface), var(--surface2)); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
     .size-header { padding: 30px 36px 0; display: flex; align-items: center; gap: 14px; }
     .size-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
     .size-note { padding: 14px 36px 20px; font-size: 13px; color: var(--muted); line-height: 1.6; }
     .size-section img { width: 100%; display: block; }
-    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(169,14,2,0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(169,14,2,0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent2); }
 
-    .order-section { text-align: center; padding: 0 20px 120px; }
+    .order-section { text-align: center; padding: 0 20px 60px; }
+    .order-banner {
+      max-width: 900px; margin: 0 auto;
+      background: linear-gradient(135deg, rgba(169,14,2,.32), rgba(255,250,205,.05));
+      border: 1px solid rgba(255,250,205,.2);
+      border-radius: 28px;
+      padding: 50px 40px;
+    }
+    .order-banner h3 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 4.5vw, 48px); letter-spacing: 1px; margin-bottom: 10px; }
     .order-section p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
-    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--accent); color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: background 0.3s, transform 0.2s; box-shadow: 0 10px 40px rgba(169,14,2,0.35); }
-    .order-btn:hover { background: #8a0b02; transform: scale(1.04); }
+    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--accent2); color: #2e2400; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: background 0.3s, transform 0.2s; box-shadow: 0 10px 40px rgba(255,250,205,0.28); }
+    .order-btn:hover { transform: scale(1.04); }
     .whatsapp-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: transparent; color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; border: 1px solid rgba(255,255,255,0.15); transition: border-color 0.3s, background 0.3s, transform 0.2s; margin-left: 16px; }
     .whatsapp-btn:hover { border-color: #25d366; background: rgba(37,211,102,0.08); transform: scale(1.04); }
 
     footer { background: #04040a; border-top: 1px solid var(--border); padding: 40px; text-align: center; }
     footer p { color: var(--muted); font-size: 13px; }
-    footer a { color: var(--accent); text-decoration: none; }
+    footer a { color: var(--accent2); text-decoration: none; }
 
     .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.active { opacity: 1; transform: translateY(0); }
@@ -228,17 +259,19 @@
     @media (max-width: 900px) {
       .nav-links { display: none; }
       .hamburger { display: flex; }
-      /* Responsive stacking settings for header elements */
-      .page-header { min-height: auto; padding-top: 130px; padding-bottom: 40px; }
+      .page-header { min-height: auto; padding-top: 150px; padding-bottom: 40px; }
       .page-header::before { width: 44%; height: 100%; top: 0; left: 0; opacity: 0.18; border-radius: 0; mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); }
       .page-header::after { width: 44%; height: 100%; top: 0; right: 0; opacity: 0.18; border-radius: 0; mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); }
     }
 
     @media (max-width: 768px) {
+      .announce-bar { font-size: 10px; padding: 8px 12px; }
       nav { padding: 14px 20px; }
       .nav-logo img { height: 36px; }
       .nav-cta { padding: 9px 16px; font-size: 11px; }
-      .header-meta { gap: 12px; }
+      .header-meta { gap: 10px; }
+      .trust-strip { gap: 22px; padding: 18px 16px; }
+      .trust-item { font-size: 10px; }
       .ticker span { font-size: 16px; padding: 0 22px; }
       .ticker span::after { margin-left: 22px; }
       .products-section { padding: 60px 20px; }
@@ -248,6 +281,7 @@
       .size-header { padding: 24px 24px 0; }
       .size-note { padding: 12px 24px 16px; }
       .size-warning { padding: 16px 24px; font-size: 11px; }
+      .order-banner { padding: 34px 22px; }
       .order-section { padding: 0 20px 80px; }
       .order-btn, .whatsapp-btn { width: 100%; justify-content: center; padding: 16px 20px; }
       .whatsapp-btn { margin-left: 0; margin-top: 12px; }
@@ -267,12 +301,15 @@
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
+  <div class="announce-bar">🔥 Oversized Fits — Drop Shoulder, Heavy Fabric, Street Ready</div>
+
   <nav id="navbar">
     <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
     <ul class="nav-links">
       <li><a href="polo.html">Polos</a></li>
       <li><a href="oversized.html" class="active">Oversized</a></li>
       <li><a href="printed.html">Printed</a></li>
+      <li><a href="hoodie.html">Hoodies</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
     <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
@@ -293,7 +330,6 @@
   </div>
 
   <header class="page-header">
-    <!-- Pulsing lighting element inside structure -->
     <div class="pulse-glow"></div>
     
     <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
@@ -302,9 +338,17 @@
     <div class="header-meta">
       <span class="meta-chip hot">Drop Shoulder</span>
       <span class="meta-chip">9 Styles</span>
-      <span class="meta-chip">From ₹349</span>
+      <span class="meta-chip">From ₹399</span>
     </div>
   </header>
+
+  <!-- TRUST STRIP -->
+  <div class="trust-strip reveal">
+    <div class="trust-item"><span class="ico">🧵</span> Heavy-Weight Fabric</div>
+    <div class="trust-item"><span class="ico">📦</span> Fast Dispatch</div>
+    <div class="trust-item"><span class="ico">💬</span> Direct Owner Support</div>
+    <div class="trust-item"><span class="ico">🔒</span> COD & UPI Available</div>
+  </div>
 
   <div class="ticker-wrap">
     <div class="ticker">
@@ -318,8 +362,9 @@
   <section class="products-section">
     <span class="section-label reveal">The Range</span>
     <h2 class="section-title reveal">OVERSIZED TEES</h2>
+    <p class="section-sub reveal">Drop-shoulder silhouettes cut from heavy fabric — relaxed, bold, and built to hold its shape.</p>
 
-    <div class="products-label reveal">T-Shirts — ₹349 each</div>
+    <div class="products-label reveal">T-Shirts — ₹399 each</div>
     <div class="products-grid">
 
       <div class="product-card reveal">
@@ -330,8 +375,8 @@
         </div>
         <div class="card-body">
           <h3>Royal Blue</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Royal+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Royal+Blue+Oversized+Tee&type=Oversized&color=Royal+Blue&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -342,8 +387,8 @@
         </div>
         <div class="card-body">
           <h3>Aqua/Sky Blue</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Aqua%2FSky+Blue+Oversized+Tee&type=Oversized&color=Aqua%2FSky+Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Aqua%2FSky+Blue+Oversized+Tee&type=Oversized&color=Aqua%2FSky+Blue&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -354,8 +399,8 @@
         </div>
         <div class="card-body">
           <h3>Beige</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Beige+Oversized+Tee&type=Oversized&color=Beige&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Beige+Oversized+Tee&type=Oversized&color=Beige&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -366,8 +411,8 @@
         </div>
         <div class="card-body">
           <h3>White</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=White+Oversized+Tee&type=Oversized&color=White&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=White+Oversized+Tee&type=Oversized&color=White&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -378,8 +423,8 @@
         </div>
         <div class="card-body">
           <h3>Black</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
        <div class="product-card reveal">
@@ -390,8 +435,8 @@
         </div>
         <div class="card-body">
           <h3>Army Green</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -402,8 +447,8 @@
         </div>
         <div class="card-body">
           <h3>Lavender</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -414,8 +459,8 @@
         </div>
         <div class="card-body">
           <h3>Red</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
              <div class="product-card reveal">
@@ -426,8 +471,8 @@
         </div>
         <div class="card-body">
           <h3>Pink</h3>
-          <div class="card-meta"><span class="price">₹349</span><span class="type-tag">Oversized</span></div>
-          <a href="order.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <div class="card-meta"><span class="price">₹399</span><span class="type-tag">Oversized</span></div>
+          <a href="order.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
       
@@ -444,9 +489,12 @@
   </div>
 
   <div class="order-section reveal">
-    <p>Ready to rock the oversized vibe? Grab yours now.</p>
-    <a href="order.html" class="order-btn">🛒 Place Order</a>
-    <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+    <div class="order-banner">
+      <h3>ROCK THE OVERSIZED VIBE</h3>
+      <p>Grab yours now — direct order or a quick chat on WhatsApp.</p>
+      <a href="order.html" class="order-btn">🛒 Place Order</a>
+      <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+    </div>
   </div>
 
   <footer>

@@ -15,9 +15,12 @@
       --surface2: #13131f;
       --accent: #04344C;
       --accent2: #B0EDF9;
+      --gold: #c9a84c;
       --text: #f0f0f0;
       --muted: #888;
       --border: rgba(255,255,255,0.06);
+      --accent-rgb: 4,52,76;
+      --accent2-rgb: 176,237,249;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -40,19 +43,17 @@
     }
     .cursor-ring {
       position: fixed; width: 40px; height: 40px;
-      border: 1px solid rgba(4,52,76,0.5); border-radius: 50%;
+      border: 1px solid rgba(var(--accent-rgb),0.5); border-radius: 50%;
       pointer-events: none; z-index: 9998;
       transform: translate(-50%, -50%);
       transition: transform 0.15s ease, width 0.3s, height 0.3s;
     }
 
-    /* Disable custom cursor on touch / no-hover devices */
     @media (hover: none), (pointer: coarse) {
       body { cursor: auto; }
       .cursor, .cursor-ring { display: none; }
     }
 
-    /* GRAIN */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -85,15 +86,15 @@
     }
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after { width: 100%; }
-    .nav-links a.active { color: var(--accent); }
-    .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--accent2); }
+    .nav-links a.active::after { width: 100%; background: var(--accent2); }
     .nav-cta {
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase;
       color: white; background: var(--accent);
       padding: 10px 24px; border-radius: 100px; text-decoration: none;
       transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 4px 20px rgba(4,52,76,0.3);
+      box-shadow: 0 4px 20px rgba(var(--accent-rgb),0.3);
     }
     .nav-cta:hover { background: #022232; transform: scale(1.04); }
 
@@ -113,28 +114,41 @@
     }
     .mobile-menu.open { transform: translateX(0); }
     .mobile-menu a { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text); text-decoration: none; }
-    .mobile-menu a.active { color: var(--accent); }
+    .mobile-menu a.active { color: var(--accent2); }
     .menu-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
       z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s;
     }
     .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
+    /* ANNOUNCE BAR */
+    .announce-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 101;
+      background: linear-gradient(90deg, var(--accent), #062f45, var(--accent));
+      color: var(--accent2);
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 9px 16px;
+    }
+    nav { top: 36px; }
+    .mobile-menu, .menu-backdrop { top: 36px; height: calc(100vh - 36px); }
+
     /* PAGE HEADER */
     .page-header {
-      min-height: 55vh;
+      min-height: 60vh;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      padding: 140px 40px 80px;
+      padding: 176px 40px 80px;
       text-align: center;
       position: relative; overflow: hidden;
     }
     .page-header::before {
       content: '';
       position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(4,52,76,0.1) 0%, transparent 70%);
-      top: 0; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(var(--accent2-rgb),0.14) 0%, transparent 70%);
+      top: -60px; left: 50%; transform: translateX(-50%);
       animation: pulse 6s ease-in-out infinite;
     }
     @keyframes pulse {
@@ -146,59 +160,79 @@
       letter-spacing: 3px; text-transform: uppercase;
       color: var(--muted); margin-bottom: 20px;
       display: flex; align-items: center; gap: 10px;
+      position: relative; z-index: 2;
     }
-    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a { color: var(--accent2); text-decoration: none; }
     .breadcrumb span { opacity: 0.4; }
     .page-header h1 {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(64px, 10vw, 130px);
+      font-size: clamp(64px, 10vw, 140px);
       line-height: 0.9; letter-spacing: 2px;
       animation: fade-up 0.8s ease both;
+      position: relative; z-index: 2;
+      text-shadow: 0 10px 50px rgba(0,0,0,0.6);
     }
     .page-header h1 span {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .page-header p {
       color: var(--muted); font-size: 17px; font-weight: 300;
       margin-top: 16px; letter-spacing: 1px;
       animation: fade-up 0.8s 0.1s ease both;
+      position: relative; z-index: 2;
     }
     .header-meta {
-      display: flex; gap: 30px; margin-top: 30px;
+      display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; justify-content: center;
       animation: fade-up 0.8s 0.2s ease both;
+      position: relative; z-index: 2;
     }
     .meta-chip {
       font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase;
-      border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px;
+      border: 1px solid var(--border); padding: 9px 20px; border-radius: 100px;
       color: var(--muted);
+      background: rgba(255,255,255,0.02);
     }
-    .meta-chip.hot { border-color: rgba(4,52,76,0.3); color: var(--accent); background: rgba(4,52,76,0.07); }
+    .meta-chip.hot { border-color: rgba(var(--accent2-rgb),0.4); color: var(--accent2); background: rgba(var(--accent2-rgb),0.08); }
 
     /* TICKER */
     .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
     .ticker { display: inline-flex; animation: ticker 20s linear infinite; }
-    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: white; }
+    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: var(--accent2); }
     .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
     @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
+    /* TRUST STRIP */
+    .trust-strip {
+      display: flex; justify-content: center; gap: 46px; flex-wrap: wrap;
+      padding: 26px 20px; max-width: 1000px; margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Syne', sans-serif; font-size: 11.5px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+    }
+    .trust-item span.ico { font-size: 16px; }
+
     /* PRODUCTS SECTION */
     .products-section {
-      padding: 100px 40px;
+      padding: 90px 40px 100px;
       max-width: 1280px; margin: auto;
     }
 
     .section-label {
       font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 4px; text-transform: uppercase; color: var(--accent);
+      letter-spacing: 4px; text-transform: uppercase; color: var(--accent2);
       display: block; margin-bottom: 14px;
     }
     .section-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(40px, 5vw, 64px); letter-spacing: 2px;
-      margin-bottom: 50px;
+      margin-bottom: 14px;
     }
+    .section-sub { color: var(--muted); font-size: 15px; margin-bottom: 50px; max-width: 520px; }
 
     /* PRODUCT GRID */
     .products-grid {
@@ -209,20 +243,21 @@
 
     /* PRODUCT CARD */
     .product-card {
-      background: var(--surface);
-      border-radius: 20px; overflow: hidden;
+      background: linear-gradient(160deg, var(--surface), var(--surface2));
+      border-radius: 22px; overflow: hidden;
       border: 1px solid var(--border);
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
       position: relative;
     }
     .product-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 40px 70px rgba(0,0,0,0.7);
+      transform: translateY(-10px);
+      box-shadow: 0 44px 80px rgba(0,0,0,0.7);
+      border-color: rgba(var(--accent2-rgb),0.28);
     }
 
     .card-media {
       position: relative; overflow: hidden;
-      background: #0a0a14;
+      background: radial-gradient(circle at 50% 30%, #10101c, #0a0a14);
     }
     .card-media img {
       width: 100%; height: 300px;
@@ -235,8 +270,9 @@
       position: absolute; top: 14px; right: 14px;
       font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase;
-      background: var(--accent); color: white;
-      padding: 5px 12px; border-radius: 100px;
+      background: var(--accent2); color: #04222f;
+      padding: 6px 13px; border-radius: 100px;
+      box-shadow: 0 6px 18px rgba(var(--accent2-rgb),0.35);
     }
 
     .card-body { padding: 22px 24px 26px; }
@@ -245,37 +281,37 @@
       margin-bottom: 6px;
     }
     .card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+    .price-row { display: flex; align-items: baseline; gap: 8px; }
     .price {
-      font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 30px;
       color: white; letter-spacing: 1px;
+    }
+    .price-old {
+      font-family: 'Syne', sans-serif; font-size: 13px; color: var(--muted);
+      text-decoration: line-through;
     }
     .gsm-tag {
       font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase;
-      border: 1px solid rgba(4,52,76,0.3); color: var(--accent);
+      border: 1px solid rgba(var(--accent2-rgb),0.3); color: var(--accent2);
       padding: 5px 12px; border-radius: 100px;
     }
 
     /* BUY NOW BUTTON */
     .buy-now-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; margin-top: 16px; padding: 13px 20px;
+      width: 100%; margin-top: 16px; padding: 14px 20px;
       background: var(--accent); color: white; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
       border-radius: 100px; transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 8px 24px rgba(4,52,76,0.25);
+      box-shadow: 0 8px 24px rgba(var(--accent-rgb),0.25);
     }
-    .buy-now-btn:hover { background: #022232; transform: scale(1.02); box-shadow: 0 12px 32px rgba(4,52,76,0.35); }
-    .card-colors { display: flex; gap: 6px; margin-top: 14px; }
-    .color-dot {
-      width: 14px; height: 14px; border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.15);
-    }
+    .buy-now-btn:hover { background: #022232; transform: scale(1.02); box-shadow: 0 12px 32px rgba(var(--accent-rgb),0.35); }
 
     /* SIZE CHART */
     .size-section {
       max-width: 720px; margin: 0 auto 80px;
-      background: var(--surface);
+      background: linear-gradient(160deg, var(--surface), var(--surface2));
       border: 1px solid var(--border);
       border-radius: 24px; overflow: hidden;
     }
@@ -297,31 +333,41 @@
     .size-warning {
       padding: 20px 36px;
       display: flex; align-items: center; gap: 12px;
-      background: rgba(4,52,76,0.06);
+      background: rgba(var(--accent2-rgb),0.06);
       border-top: 1px solid var(--border);
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600;
-      letter-spacing: 1px; text-transform: uppercase; color: var(--accent);
+      letter-spacing: 1px; text-transform: uppercase; color: var(--accent2);
     }
 
     /* ORDER CTA */
     .order-section {
-      text-align: center; padding: 0 20px 120px;
+      text-align: center; padding: 0 20px 60px;
     }
-    .order-section p {
-      color: var(--muted); font-size: 15px; margin-bottom: 30px;
+    .order-banner {
+      max-width: 900px; margin: 0 auto;
+      background: linear-gradient(135deg, rgba(var(--accent-rgb),.35), rgba(var(--accent2-rgb),.05));
+      border: 1px solid rgba(var(--accent2-rgb),.2);
+      border-radius: 28px;
+      padding: 50px 40px;
     }
+    .order-banner h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 4.5vw, 48px);
+      letter-spacing: 1px; margin-bottom: 10px;
+    }
+    .order-section p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
     .order-btn {
       display: inline-flex; align-items: center; gap: 14px;
       padding: 18px 50px;
-      background: var(--accent);
-      color: white; text-decoration: none;
+      background: var(--accent2);
+      color: #04222f; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
       letter-spacing: 3px; text-transform: uppercase;
       border-radius: 100px;
       transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 10px 40px rgba(4,52,76,0.35);
+      box-shadow: 0 10px 40px rgba(var(--accent2-rgb),0.3);
     }
-    .order-btn:hover { background: #022232; transform: scale(1.04); }
+    .order-btn:hover { transform: scale(1.04); }
     .order-btn .btn-icon { font-size: 18px; }
     .whatsapp-btn {
       display: inline-flex; align-items: center; gap: 14px;
@@ -343,7 +389,7 @@
       padding: 40px; text-align: center;
     }
     footer p { color: var(--muted); font-size: 13px; }
-    footer a { color: var(--accent); text-decoration: none; }
+    footer a { color: var(--accent2); text-decoration: none; }
 
     /* REVEAL */
     .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
@@ -361,15 +407,19 @@
     }
 
     @media (max-width: 768px) {
+      .announce-bar { font-size: 10px; padding: 8px 12px; }
       nav { padding: 14px 20px; }
       .nav-logo img { height: 36px; }
       .nav-cta { padding: 9px 16px; font-size: 11px; }
-      .page-header { padding: 100px 20px 50px; min-height: auto; }
+      .page-header { padding: 150px 20px 50px; min-height: auto; }
       .header-meta { flex-wrap: wrap; justify-content: center; gap: 10px; }
+      .trust-strip { gap: 22px; padding: 18px 16px; }
+      .trust-item { font-size: 10px; }
       .products-section { padding: 60px 20px; }
       .products-grid { grid-template-columns: 1fr; gap: 18px; }
       .card-media img { height: 260px; }
       .size-section { margin: 0 20px 60px !important; }
+      .order-banner { padding: 34px 22px; }
       .order-section { padding: 0 20px 80px; }
       .order-btn, .whatsapp-btn { width: 100%; justify-content: center; padding: 16px 20px; }
       .whatsapp-btn { margin-left: 0; margin-top: 12px; }
@@ -389,12 +439,15 @@
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
+  <div class="announce-bar">🧵 Premium 220 GSM Polos — New Colorways Just Landed</div>
+
   <nav id="navbar">
     <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
     <ul class="nav-links">
       <li><a href="polo.html" class="active">Polos</a></li>
       <li><a href="oversized.html">Oversized</a></li>
       <li><a href="printed.html">Printed</a></li>
+      <li><a href="hoodie.html">Hoodies</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
     <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
@@ -422,9 +475,17 @@
     <div class="header-meta">
       <span class="meta-chip hot">220 GSM</span>
       <span class="meta-chip">5 Colorways</span>
-      <span class="meta-chip">₹349</span>
+      <span class="meta-chip">₹399</span>
     </div>
   </header>
+
+  <!-- TRUST STRIP -->
+  <div class="trust-strip reveal">
+    <div class="trust-item"><span class="ico">🧵</span> Premium Poly-Cotton</div>
+    <div class="trust-item"><span class="ico">📦</span> Fast Dispatch</div>
+    <div class="trust-item"><span class="ico">💬</span> Direct Owner Support</div>
+    <div class="trust-item"><span class="ico">🔒</span> COD & UPI Available</div>
+  </div>
 
   <!-- TICKER -->
   <div class="ticker-wrap">
@@ -440,6 +501,7 @@
   <section class="products-section">
     <span class="section-label reveal">The Range</span>
     <h2 class="section-title reveal">PICK YOUR COLOR</h2>
+    <p class="section-sub reveal">Structured collars, premium 220 GSM poly-cotton, and a fit that holds its shape all day.</p>
 
     <div class="products-grid">
 
@@ -451,10 +513,10 @@
         <div class="card-body">
           <h3>Grayish Green</h3>
           <div class="card-meta">
-            <span class="price">₹349</span>
+            <span class="price">₹399</span>
             <span class="gsm-tag">220 GSM</span>
           </div>
-          <a href="order.html?product=Grayish+Green+Polo&type=Polo&color=Grayish+Green&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Grayish+Green+Polo&type=Polo&color=Grayish+Green&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -465,10 +527,10 @@
         <div class="card-body">
           <h3>Cream</h3>
           <div class="card-meta">
-            <span class="price">₹349</span>
+            <span class="price">₹399</span>
             <span class="gsm-tag">220 GSM</span>
           </div>
-          <a href="order.html?product=Cream+Polo&type=Polo&color=Cream&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Cream+Polo&type=Polo&color=Cream&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -479,10 +541,10 @@
         <div class="card-body">
           <h3>Beige</h3>
           <div class="card-meta">
-            <span class="price">₹349</span>
+            <span class="price">₹399</span>
             <span class="gsm-tag">220 GSM</span>
           </div>
-          <a href="order.html?product=Beige+Polo&type=Polo&color=Beige&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Beige+Polo&type=Polo&color=Beige&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -493,10 +555,10 @@
         <div class="card-body">
           <h3>Black</h3>
           <div class="card-meta">
-            <span class="price">₹349</span>
+            <span class="price">₹399</span>
             <span class="gsm-tag">220 GSM</span>
           </div>
-          <a href="order.html?product=Black+Polo&type=Polo&color=Black&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Black+Polo&type=Polo&color=Black&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -507,10 +569,10 @@
         <div class="card-body">
           <h3>Blue</h3>
           <div class="card-meta">
-            <span class="price">₹349</span>
+            <span class="price">₹399</span>
             <span class="gsm-tag">220 GSM</span>
           </div>
-          <a href="order.html?product=Blue+Polo&type=Polo&color=Blue&price=349" class="buy-now-btn">🛍️ Buy Now</a>
+          <a href="order.html?product=Blue+Polo&type=Polo&color=Blue&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -530,9 +592,12 @@
 
   <!-- ORDER CTA -->
   <div class="order-section reveal">
-    <p>Ready to cop? Place your order directly or reach out on WhatsApp.</p>
-    <a href="order.html" class="order-btn"><span class="btn-icon">🛒</span> Place Order</a>
-    <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+    <div class="order-banner">
+      <h3>YOUR NEXT POLO IS ONE TAP AWAY</h3>
+      <p>Place your order directly or reach out on WhatsApp for sizing help.</p>
+      <a href="order.html" class="order-btn"><span class="btn-icon">🛒</span> Place Order</a>
+      <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+    </div>
   </div>
 
   <!-- FOOTER -->

@@ -400,17 +400,21 @@
             </div>
           </div>
 
-          <div class="delivery-box" id="deliveryBox">
+          <div class="delivery-box show" id="deliveryBox">
+            <div class="delivery-row">
+              <span class="label" id="productLineLabel">Product</span>
+              <span class="value" id="productLineValue">—</span>
+            </div>
             <div class="delivery-row">
               <span class="label">Delivery Zone</span>
-              <span class="value" id="deliveryZoneValue">—<span class="delivery-zone-tag" id="deliveryZoneTag" style="display:none;"></span></span>
+              <span class="value" id="deliveryZoneValue">Enter pincode to calculate<span class="delivery-zone-tag" id="deliveryZoneTag" style="display:none;"></span></span>
             </div>
             <div class="delivery-row">
               <span class="label">Delivery Charge</span>
               <span class="value" id="deliveryChargeValue">₹0</span>
             </div>
             <div class="delivery-row total">
-              <span class="label">Order Total</span>
+              <span class="label">Final Payable Amount</span>
               <span class="value" id="orderTotalValue">₹0</span>
             </div>
           </div>
@@ -443,11 +447,11 @@
                 <button type="button" class="copy-btn" id="copyUpiBtn">Copy</button>
               </div>
               <div class="upi-deeplinks">
-                <a id="gpayLink" href="#" target="_blank" rel="noopener">Pay with GPay</a>
-                <a id="phonepeLink" href="#" target="_blank" rel="noopener">Pay with PhonePe</a>
-                <a id="paytmLink" href="#" target="_blank" rel="noopener">Pay with Paytm</a>
+                <a id="gpayLink" href="#" rel="noopener">Pay with GPay</a>
+                <a id="phonepeLink" href="#" rel="noopener">Pay with PhonePe</a>
+                <a id="paytmLink" href="#" rel="noopener">Pay with Paytm</a>
               </div>
-              <p class="upi-note">After paying, take a screenshot and send it on WhatsApp along with your name — we'll confirm and dispatch your order.</p>
+              <p class="upi-note">The buttons above only open a UPI app on mobile phones with GPay/PhonePe/Paytm installed. On a computer, please pay manually using the UPI ID shown above. After paying, take a screenshot and send it on WhatsApp along with your name — we'll confirm and dispatch your order.</p>
             </div>
           </div>
 
@@ -547,13 +551,20 @@
     // ---------- UPI deep links (amount pre-filled, updates once delivery is known) ----------
     const UPI_ID = 'maheshgoudar076@pingpay';
     const upiNote = encodeURIComponent('Arambh Order - ' + (product || 'T-Shirt'));
+    const quantityInput = document.getElementById('quantity');
 
     function refreshUpiLinks() {
       const qty = parseInt(quantityInput.value, 10) || 1;
       const amount = ((parseFloat(price) || 0) * qty) + currentDeliveryCharge;
-      document.getElementById('gpayLink').href = `tez://upi/pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
-      document.getElementById('phonepeLink').href = `phonepe://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
-      document.getElementById('paytmLink').href = `paytmmp://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
+      // Standard "upi://pay" intent — recognized by GPay, PhonePe, Paytm, BHIM, etc.
+      // App-specific schemes (tez://, phonepe://, paytmmp://) are unreliable across
+      // browsers/OS versions, so all three buttons point to the same universal link;
+      // the phone's UPI app chooser (or the named app, if only one is installed)
+      // handles it from there.
+      const upiLink = `upi://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
+      document.getElementById('gpayLink').href = upiLink;
+      document.getElementById('phonepeLink').href = upiLink;
+      document.getElementById('paytmLink').href = upiLink;
     }
     refreshUpiLinks();
 
@@ -583,7 +594,6 @@
     const deliveryZoneTag = document.getElementById('deliveryZoneTag');
     const deliveryChargeValue = document.getElementById('deliveryChargeValue');
     const orderTotalValue = document.getElementById('orderTotalValue');
-    const quantityInput = document.getElementById('quantity');
 
     let currentDeliveryCharge = 0;
     let currentZoneLabel = '';
@@ -600,7 +610,12 @@
     function updateOrderTotal() {
       const basePrice = parseFloat(price) || 0;
       const qty = parseInt(quantityInput.value, 10) || 1;
-      const total = (basePrice * qty) + currentDeliveryCharge;
+      const lineTotal = basePrice * qty;
+      const total = lineTotal + currentDeliveryCharge;
+      const productLineLabel = document.getElementById('productLineLabel');
+      const productLineValue = document.getElementById('productLineValue');
+      if (productLineLabel) productLineLabel.textContent = (product || 'Product') + (qty > 1 ? ` × ${qty}` : '');
+      if (productLineValue) productLineValue.textContent = '₹' + lineTotal;
       orderTotalValue.textContent = '₹' + total;
     }
 
@@ -608,7 +623,6 @@
       const token = ++pincodeLookupToken;
       pincodeStatus.className = 'pincode-status show loading';
       pincodeStatusText.textContent = 'Detecting location…';
-      deliveryBox.classList.remove('show');
 
       try {
         const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
@@ -639,7 +653,6 @@
         deliveryZoneTag.className = 'delivery-zone-tag ' + zone.tag;
         deliveryZoneTag.style.display = 'inline-block';
         deliveryChargeValue.textContent = '₹' + zone.charge;
-        deliveryBox.classList.add('show');
         updateOrderTotal();
         refreshUpiLinks();
       } catch (err) {
@@ -650,7 +663,10 @@
         pincodeStatusText.textContent = "Couldn't detect location — you can still continue, we'll confirm delivery charge on WhatsApp.";
         currentDeliveryCharge = 0;
         currentZoneLabel = '';
-        deliveryBox.classList.remove('show');
+        deliveryZoneValue.childNodes[0].textContent = 'Enter a valid pincode ';
+        deliveryZoneTag.style.display = 'none';
+        deliveryChargeValue.textContent = 'To be confirmed';
+        updateOrderTotal();
       }
     }
 
@@ -660,10 +676,13 @@
         lookupPincode(pin);
       } else {
         pincodeStatus.classList.remove('show');
-        deliveryBox.classList.remove('show');
         cityInput.value = '';
         stateInput.value = '';
         currentDeliveryCharge = 0;
+        deliveryZoneValue.childNodes[0].textContent = 'Enter pincode to calculate ';
+        deliveryZoneTag.style.display = 'none';
+        deliveryChargeValue.textContent = '₹0';
+        updateOrderTotal();
       }
     });
 

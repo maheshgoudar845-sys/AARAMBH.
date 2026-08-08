@@ -122,6 +122,46 @@
     .form-group.invalid input, .form-group.invalid select, .form-group.invalid textarea {
       border-color: #ff6b6b;
     }
+
+    /* PINCODE / DELIVERY DETECTION */
+    .pincode-status {
+      font-size: 12px; margin-top: 8px; display: none;
+      align-items: center; gap: 8px;
+      font-family: 'Syne', sans-serif; font-weight: 600; letter-spacing: 0.3px;
+    }
+    .pincode-status.show { display: flex; }
+    .pincode-status.loading { color: var(--muted); }
+    .pincode-status.found { color: #9be6b4; }
+    .pincode-status.error { color: #ff6b6b; }
+    .pincode-spinner {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.25); border-top-color: var(--muted);
+      animation: spin 0.7s linear infinite;
+    }
+
+    .delivery-box {
+      display: none;
+      margin-top: 14px;
+      background: rgba(var(--accent2-rgb),0.05);
+      border: 1px solid rgba(var(--accent2-rgb),0.2);
+      border-radius: 14px;
+      padding: 14px 18px;
+    }
+    .delivery-box.show { display: block; }
+    .delivery-row {
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: 'Syne', sans-serif; font-size: 12.5px;
+    }
+    .delivery-row + .delivery-row { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+    .delivery-row .label { color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; font-size: 11px; }
+    .delivery-row .value { color: var(--text); font-weight: 700; }
+    .delivery-row.total .value { color: var(--accent2); font-family: 'Bebas Neue', sans-serif; font-size: 20px; }
+    .delivery-zone-tag {
+      font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 100px; margin-left: 8px;
+    }
+    .delivery-zone-tag.near { background: rgba(155,230,180,0.15); color: #9be6b4; }
+    .delivery-zone-tag.far { background: rgba(255,250,205,0.12); color: var(--accent2); }
     .form-group.invalid .field-error { display: block; }
 
     /* PAYMENT PANEL */
@@ -337,12 +377,41 @@
           <div class="form-row">
             <div class="form-group" id="group-pincode">
               <label for="pincode">Pincode</label>
-              <input type="text" id="pincode" name="pincode" placeholder="560001" required>
+              <input type="text" id="pincode" name="pincode" placeholder="560001" maxlength="6" inputmode="numeric" required>
               <div class="field-error">Enter a valid 6-digit pincode</div>
+              <div class="pincode-status" id="pincodeStatus">
+                <span class="pincode-spinner"></span><span id="pincodeStatusText">Detecting location…</span>
+              </div>
             </div>
             <div class="form-group" id="group-qty">
               <label for="quantity">Quantity</label>
               <input type="number" id="quantity" name="quantity" value="1" min="1" max="10">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" name="city" placeholder="Auto-detected from pincode" readonly>
+            </div>
+            <div class="form-group">
+              <label for="state">State</label>
+              <input type="text" id="state" name="state" placeholder="Auto-detected from pincode" readonly>
+            </div>
+          </div>
+
+          <div class="delivery-box" id="deliveryBox">
+            <div class="delivery-row">
+              <span class="label">Delivery Zone</span>
+              <span class="value" id="deliveryZoneValue">—<span class="delivery-zone-tag" id="deliveryZoneTag" style="display:none;"></span></span>
+            </div>
+            <div class="delivery-row">
+              <span class="label">Delivery Charge</span>
+              <span class="value" id="deliveryChargeValue">₹0</span>
+            </div>
+            <div class="delivery-row total">
+              <span class="label">Order Total</span>
+              <span class="value" id="orderTotalValue">₹0</span>
             </div>
           </div>
 
@@ -475,13 +544,18 @@
     payCOD.addEventListener('click', () => selectMethod('COD'));
     payUPI.addEventListener('click', () => selectMethod('UPI'));
 
-    // ---------- UPI deep links (amount pre-filled) ----------
+    // ---------- UPI deep links (amount pre-filled, updates once delivery is known) ----------
     const UPI_ID = 'maheshgoudar076@pingpay';
-    const upiAmount = parseFloat(price) || 0;
     const upiNote = encodeURIComponent('Arambh Order - ' + (product || 'T-Shirt'));
-    document.getElementById('gpayLink').href = `tez://upi/pay?pa=${UPI_ID}&pn=Arambh&am=${upiAmount}&cu=INR&tn=${upiNote}`;
-    document.getElementById('phonepeLink').href = `phonepe://pay?pa=${UPI_ID}&pn=Arambh&am=${upiAmount}&cu=INR&tn=${upiNote}`;
-    document.getElementById('paytmLink').href = `paytmmp://pay?pa=${UPI_ID}&pn=Arambh&am=${upiAmount}&cu=INR&tn=${upiNote}`;
+
+    function refreshUpiLinks() {
+      const qty = parseInt(quantityInput.value, 10) || 1;
+      const amount = ((parseFloat(price) || 0) * qty) + currentDeliveryCharge;
+      document.getElementById('gpayLink').href = `tez://upi/pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
+      document.getElementById('phonepeLink').href = `phonepe://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
+      document.getElementById('paytmLink').href = `paytmmp://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
+    }
+    refreshUpiLinks();
 
     document.getElementById('copyUpiBtn').addEventListener('click', () => {
       navigator.clipboard.writeText(UPI_ID).then(() => {
@@ -491,6 +565,110 @@
         setTimeout(() => { btn.textContent = original; }, 1800);
       });
     });
+
+    // ---------- Pincode auto-detect (city/state) + delivery zone pricing ----------
+    // Delivery pricing: Goa & Karnataka pincodes are "near zone" (₹30), everywhere
+    // else in India is "far zone" (₹50). Applies to all products; used most on
+    // Polo & Oversized orders since those are the higher-volume categories.
+    const NEAR_ZONE_CHARGE = 30;
+    const FAR_ZONE_CHARGE = 50;
+
+    const pincodeInput = document.getElementById('pincode');
+    const pincodeStatus = document.getElementById('pincodeStatus');
+    const pincodeStatusText = document.getElementById('pincodeStatusText');
+    const cityInput = document.getElementById('city');
+    const stateInput = document.getElementById('state');
+    const deliveryBox = document.getElementById('deliveryBox');
+    const deliveryZoneValue = document.getElementById('deliveryZoneValue');
+    const deliveryZoneTag = document.getElementById('deliveryZoneTag');
+    const deliveryChargeValue = document.getElementById('deliveryChargeValue');
+    const orderTotalValue = document.getElementById('orderTotalValue');
+    const quantityInput = document.getElementById('quantity');
+
+    let currentDeliveryCharge = 0;
+    let currentZoneLabel = '';
+    let pincodeLookupToken = 0;
+
+    function getZoneForState(stateName) {
+      const s = (stateName || '').toLowerCase();
+      if (s.includes('goa') || s.includes('karnataka')) {
+        return { charge: NEAR_ZONE_CHARGE, label: 'Near Zone (Goa / Karnataka)', tag: 'near', tagText: 'Near' };
+      }
+      return { charge: FAR_ZONE_CHARGE, label: 'Standard Zone (Rest of India)', tag: 'far', tagText: 'Standard' };
+    }
+
+    function updateOrderTotal() {
+      const basePrice = parseFloat(price) || 0;
+      const qty = parseInt(quantityInput.value, 10) || 1;
+      const total = (basePrice * qty) + currentDeliveryCharge;
+      orderTotalValue.textContent = '₹' + total;
+    }
+
+    async function lookupPincode(pin) {
+      const token = ++pincodeLookupToken;
+      pincodeStatus.className = 'pincode-status show loading';
+      pincodeStatusText.textContent = 'Detecting location…';
+      deliveryBox.classList.remove('show');
+
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+        const json = await res.json();
+        if (token !== pincodeLookupToken) return; // a newer lookup superseded this one
+
+        const record = Array.isArray(json) ? json[0] : null;
+        if (!record || record.Status !== 'Success' || !record.PostOffice || !record.PostOffice.length) {
+          throw new Error('Not found');
+        }
+
+        const po = record.PostOffice[0];
+        const city = po.District || po.Block || po.Name || '';
+        const state = po.State || '';
+
+        cityInput.value = city;
+        stateInput.value = state;
+
+        pincodeStatus.className = 'pincode-status show found';
+        pincodeStatusText.textContent = `${city}, ${state}`;
+
+        const zone = getZoneForState(state);
+        currentDeliveryCharge = zone.charge;
+        currentZoneLabel = zone.label;
+
+        deliveryZoneValue.childNodes[0].textContent = zone.label + ' ';
+        deliveryZoneTag.textContent = zone.tagText;
+        deliveryZoneTag.className = 'delivery-zone-tag ' + zone.tag;
+        deliveryZoneTag.style.display = 'inline-block';
+        deliveryChargeValue.textContent = '₹' + zone.charge;
+        deliveryBox.classList.add('show');
+        updateOrderTotal();
+        refreshUpiLinks();
+      } catch (err) {
+        if (token !== pincodeLookupToken) return;
+        cityInput.value = '';
+        stateInput.value = '';
+        pincodeStatus.className = 'pincode-status show error';
+        pincodeStatusText.textContent = "Couldn't detect location — you can still continue, we'll confirm delivery charge on WhatsApp.";
+        currentDeliveryCharge = 0;
+        currentZoneLabel = '';
+        deliveryBox.classList.remove('show');
+      }
+    }
+
+    pincodeInput.addEventListener('input', () => {
+      const pin = pincodeInput.value.trim();
+      if (/^\d{6}$/.test(pin)) {
+        lookupPincode(pin);
+      } else {
+        pincodeStatus.classList.remove('show');
+        deliveryBox.classList.remove('show');
+        cityInput.value = '';
+        stateInput.value = '';
+        currentDeliveryCharge = 0;
+      }
+    });
+
+    quantityInput.addEventListener('input', () => { updateOrderTotal(); refreshUpiLinks(); });
+    updateOrderTotal();
 
     // ---------- Form validation + submit ----------
     const form = document.getElementById('orderForm');
@@ -533,9 +711,14 @@
         size: document.getElementById('size').value,
         address: document.getElementById('address').value.trim(),
         pincode: document.getElementById('pincode').value.trim(),
+        city: cityInput.value || 'Not detected',
+        state: stateInput.value || 'Not detected',
         quantity: document.getElementById('quantity').value || '1',
         notes: document.getElementById('notes').value.trim(),
-        paymentMethod: selectedMethod
+        paymentMethod: selectedMethod,
+        deliveryCharge: currentDeliveryCharge,
+        deliveryZone: currentZoneLabel || 'Unconfirmed — please advise',
+        orderTotal: (parseFloat(price) || 0) * (parseInt(document.getElementById('quantity').value, 10) || 1) + currentDeliveryCharge
       };
 
       submitBtn.classList.add('loading');
@@ -548,7 +731,9 @@
         ? emailjs.send('service_2xfx4td', 'template_j3gxuwf', {
             product: data.product, type: data.type, color: data.color, price: data.price,
             name: data.fullName, phone: data.phone, size: data.size, address: data.address,
-            pincode: data.pincode, quantity: data.quantity, notes: data.notes, payment: data.paymentMethod
+            pincode: data.pincode, city: data.city, state: data.state,
+            quantity: data.quantity, notes: data.notes, payment: data.paymentMethod,
+            deliveryCharge: data.deliveryCharge, deliveryZone: data.deliveryZone, orderTotal: data.orderTotal
           }).catch(err => console.error('EmailJS error:', err))
         : Promise.resolve();
 
@@ -566,10 +751,12 @@
           `Type/Color: ${data.type} / ${data.color}\n` +
           `Size: ${data.size} | Qty: ${data.quantity}\n` +
           `Price: ₹${data.price}\n` +
+          `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
+          `Order Total: ₹${data.orderTotal}\n` +
           `Payment: ${data.paymentMethod}\n\n` +
           `Name: ${data.fullName}\n` +
           `Phone: ${data.phone}\n` +
-          `Address: ${data.address}, ${data.pincode}` +
+          `Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}` +
           (data.notes ? `\nNotes: ${data.notes}` : '')
         );
         document.getElementById('successWhatsapp').href = `https://wa.me/919637748622?text=${waMessage}`;

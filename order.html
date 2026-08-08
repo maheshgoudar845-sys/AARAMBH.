@@ -443,6 +443,7 @@
     const color = params.get('color') || '';
     const price = params.get('price') || '0';
     const image = params.get('image') || 'logo.webp';
+    const sizeParam = (params.get('size') || '').toUpperCase();
 
     if (product) document.getElementById('productName').textContent = product;
     document.getElementById('productType').textContent = type || '—';
@@ -451,6 +452,13 @@
     document.getElementById('productImage').src = image;
     document.getElementById('productImage').alt = product || 'Product';
     document.title = (product ? product + ' — ' : '') + 'Place Your Order — Arambh';
+
+    // Auto-select size if it was passed in from the product page
+    if (sizeParam) {
+      const sizeSelect = document.getElementById('size');
+      const match = Array.from(sizeSelect.options).find(opt => opt.value.toUpperCase() === sizeParam);
+      if (match) sizeSelect.value = match.value;
+    }
 
     // ---------- Payment method toggle ----------
     const payCOD = document.getElementById('payCOD');

@@ -184,6 +184,50 @@
     .products-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
     .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; margin-bottom: 60px; }
 
+    /* BUNDLE OFFER BANNER */
+    .bundle-offer {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 22px;
+      background: linear-gradient(120deg, rgba(169,14,2,0.22), rgba(255,250,205,0.05));
+      border: 1px solid rgba(255,250,205,0.22);
+      border-radius: 22px;
+      padding: 30px 36px;
+      margin-bottom: 44px;
+      position: relative;
+      overflow: hidden;
+    }
+    .bundle-offer::before {
+      content: '';
+      position: absolute; top: -40%; right: -10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255,250,205,0.12), transparent 70%);
+      pointer-events: none;
+    }
+    .bundle-offer-left { position: relative; z-index: 1; }
+    .bundle-tag {
+      display: inline-block; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; background: var(--accent2); color: #2e2400;
+      padding: 5px 13px; border-radius: 100px; margin-bottom: 10px;
+    }
+    .bundle-offer-left h3 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(26px, 3.4vw, 38px); letter-spacing: 1px; line-height: 1.05; }
+    .bundle-offer-left p { color: var(--muted); font-size: 13.5px; margin-top: 6px; }
+    .bundle-offer-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; position: relative; z-index: 1; }
+    .bundle-strike { font-family: 'Syne', sans-serif; font-size: 15px; color: var(--muted); text-decoration: line-through; }
+    .bundle-price { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--accent2); letter-spacing: 1px; }
+    .bundle-btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px;
+      background: var(--accent2); color: #2e2400; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 100px; transition: transform 0.2s, box-shadow 0.3s;
+      box-shadow: 0 8px 24px rgba(255,250,205,0.2);
+    }
+    .bundle-btn:hover { transform: scale(1.04); }
+
+    @media (max-width: 600px) {
+      .bundle-offer { flex-direction: column; align-items: flex-start; padding: 26px 22px; }
+      .bundle-offer-right { width: 100%; justify-content: space-between; }
+      .bundle-btn { width: 100%; justify-content: center; }
+    }
+
     .product-card { background: linear-gradient(160deg, var(--surface), var(--surface2)); border-radius: 22px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; position: relative; }
     .product-card:hover { transform: translateY(-10px); box-shadow: 0 44px 80px rgba(0,0,0,0.7); border-color: rgba(169,14,2,0.3); }
     .card-media { position: relative; overflow: hidden; background: radial-gradient(circle at 50% 30%, #10101c, #0a0a14); }
@@ -363,6 +407,19 @@
     <span class="section-label reveal">The Range</span>
     <h2 class="section-title reveal">OVERSIZED TEES</h2>
     <p class="section-sub reveal">Drop-shoulder silhouettes cut from heavy fabric — relaxed, bold, and built to hold its shape.</p>
+
+    <div class="bundle-offer reveal">
+      <div class="bundle-offer-left">
+        <span class="bundle-tag">Bundle Deal</span>
+        <h3>PICK ANY 3 OVERSIZED TEES</h3>
+        <p>Mix &amp; match any colours — save on every set of 3</p>
+      </div>
+      <div class="bundle-offer-right">
+        <span class="bundle-strike">₹1,197</span>
+        <span class="bundle-price">₹1,099</span>
+        <a href="https://wa.me/919637748622?text=Hi!%20I%20want%20to%20order%20the%203%20Oversized%20Tees%20for%20%E2%82%B91099%20bundle." class="bundle-btn">💬 Claim Deal</a>
+      </div>
+    </div>
 
     <div class="products-label reveal">T-Shirts — ₹399 each</div>
     <div class="products-grid">

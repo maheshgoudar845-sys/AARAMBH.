@@ -99,7 +99,7 @@
 
     .nav-links {
       display: flex;
-      gap: 36px;
+      gap: 30px;
       list-style: none;
     }
     .nav-links a {
@@ -380,13 +380,13 @@
     /* COLLECTIONS */
     .collections-section {
       padding: 120px 40px;
-      max-width: 1400px;
+      max-width: 1500px;
       margin: auto;
     }
 
     .collections-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
     }
 
@@ -1024,6 +1024,10 @@
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
 
+    @media (max-width: 1100px) {
+      .collections-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
     @media (max-width: 900px) {
       nav { padding: 16px 20px; }
       .nav-links { display: none; }
@@ -1089,6 +1093,7 @@
       <li><a href="oversized.html">Oversized</a></li>
       <li><a href="printed.html">Printed</a></li>
       <li><a href="hoodie.html">Hoodies</a></li>
+      <li><a href="shirt.html">Shirts</a></li>
       <li><a href="feedback.html" style="color: var(--accent2); font-weight: 800;">Feedback</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
@@ -1105,6 +1110,7 @@
     <a href="oversized.html">Oversized</a>
     <a href="printed.html">Printed</a>
     <a href="hoodie.html">Hoodies</a>
+    <a href="shirt.html">Shirts</a>
     <a href="feedback.html" style="color: var(--accent2);">Feedback</a>
     <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
     <a href="tel:9637748622">📞 Order Now</a>
@@ -1150,14 +1156,14 @@
       <span>Wear Your Vibe</span>
       <span>Bold Prints</span>
       <span>Oversized Fits</span>
-      <span>🔥 New Shirt Drop Coming Soon</span>
+      <span>🔥 New Shirt Collection Live Now</span>
       <span>Premium GSM Fabric</span>
       <span>Streetwear</span>
       <span>Arambh</span>
       <span>Wear Your Vibe</span>
       <span>Bold Prints</span>
       <span>Oversized Fits</span>
-      <span>🔥 New Shirt Drop Coming Soon</span>
+      <span>🔥 New Shirt Collection Live Now</span>
     </div>
   </div>
 
@@ -1166,7 +1172,7 @@
     <div class="section-header reveal">
       <span class="section-label">Our Collections</span>
       <h2 class="section-title">SHOP THE DROPS</h2>
-      <p class="section-desc">Four distinct collections. One unmistakable identity.</p>
+      <p class="section-desc">Five distinct collections. One unmistakable identity.</p>
     </div>
 
     <div class="collections-grid">
@@ -1223,22 +1229,21 @@
         </div>
       </a>
 
+      <!-- SHIRTS -->
+      <a href="shirt.html" class="collection-card reveal">
+        <img src="shirt-graphic-black.jpg" alt="Shirt Collection" loading="lazy">
+        <div class="card-overlay"></div>
+        <span class="card-tag">New Drop</span>
+        <span class="card-tap">Tap to shop</span>
+        <div class="card-info">
+          <h2>Shirts</h2>
+          <p>Full variety, freshly dropped. Graphic, solid, denim and printed.</p>
+          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
+        </div>
+      </a>
+
     </div>
   </section>
-
-  <!-- NEW DROP TEASER -->
-  <section class="teaser-section">
-    <div class="teaser-box reveal">
-      <span class="teaser-pill"><span class="teaser-dot"></span> Coming Soon</span>
-      <h2 class="teaser-title">A NEW SHIRT<br><span>IS LANDING SOON.</span></h2>
-      <p class="teaser-copy">We're cooking up a brand new shirt drop — limited pieces, original artwork, made to sell out fast. Get on WhatsApp so you're the first to know when it launches.</p>
-      <div class="teaser-actions">
-        <a href="https://wa.me/919637748622?text=Hi%20ARAMBH%2C%20notify%20me%20when%20the%20new%20shirt%20drops" class="teaser-btn teaser-btn-primary">Notify Me on WhatsApp →</a>
-        <a href="https://instagram.com/aarambh.official__" class="teaser-btn teaser-btn-secondary" target="_blank" rel="noopener">Follow for Sneak Peeks</a>
-      </div>
-    </div>
-  </section>
-
 
   <!-- NEW DROPS -->
   <section class="drop-section" id="newDrops">
@@ -1249,8 +1254,8 @@
     </div>
     <div class="product-grid">
       <article class="product-card reveal">
-        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="explore_space_back.jpg" alt="Explore Space printed oversized T-shirt" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Explore Space Tee</h3><div class="product-row"><span class="product-price">₹549</span><a class="product-link" href="printed.html">Shop Now →</a></div></div>
+        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="shirt-graphic-black.jpg" alt="Black Graphic Shirt" loading="lazy"></div>
+        <div class="product-content"><span class="product-type">Graphic Print Shirt</span><h3 class="product-name">Black Graphic Shirt</h3><div class="product-row"><span class="product-price">₹699</span><a class="product-link" href="shirt.html">Shop Now →</a></div></div>
       </article>
       <article class="product-card reveal reveal-delay-1">
         <div class="product-image-wrap"><span class="product-badge">Popular Pick</span><img src="Royal_blue.jpg" alt="Royal blue oversized T-shirt" loading="lazy"></div>
@@ -1328,7 +1333,7 @@
         <div class="stat-label">Happy Customers</div>
       </div>
       <div class="stat-item reveal reveal-delay-1">
-        <div class="stat-num">4</div>
+        <div class="stat-num">5</div>
         <div class="stat-label">Signature Collections</div>
       </div>
       <div class="stat-item reveal reveal-delay-2">
@@ -1392,6 +1397,7 @@
             <li><a href="oversized.html">Oversized Collection</a></li>
             <li><a href="printed.html">Printed Collection</a></li>
             <li><a href="hoodie.html">Hoodies</a></li>
+            <li><a href="shirt.html">Shirts</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -1477,7 +1483,8 @@
       { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
       { name:'Explore Space Tee', type:'Printed Oversized', price:'₹549', image:'explore_space_back.jpg', link:'printed.html' },
       { name:'Classic Polo', type:'Polo Collection', price:'₹399', image:'polo1.jpg', link:'polo.html' },
-      { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' }
+      { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' },
+      { name:'Black Graphic Shirt', type:'Shirt Collection', price:'₹699', image:'shirt-graphic-black.jpg', link:'shirt.html' }
     ];
     const suggestedImage = document.getElementById('suggestedImage');
     const suggestedName = document.getElementById('suggestedName');

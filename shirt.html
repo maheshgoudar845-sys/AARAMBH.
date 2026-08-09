@@ -170,9 +170,77 @@
       .waitlist-banner { padding: 0 20px; }
       .waitlist-box { padding: 32px 22px; }
     }
+
+    /* ===== LAUNCH COUNTDOWN OVERLAY ===== */
+    #launch-overlay {
+      position: fixed; inset: 0; z-index: 999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 24px;
+      overflow: hidden;
+    }
+    #launch-overlay::before {
+      content: ''; position: absolute; width: 900px; height: 900px;
+      background: radial-gradient(circle, rgba(var(--accent-rgb),0.18) 0%, transparent 70%);
+      top: -350px; left: 50%; transform: translateX(-50%);
+    }
+    .launch-badge {
+      position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--accent2);
+      border: 1px solid rgba(var(--accent-rgb),0.4); background: rgba(var(--accent-rgb),0.1);
+      padding: 8px 18px; border-radius: 100px; margin-bottom: 26px;
+    }
+    .launch-title {
+      position: relative; z-index: 2;
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 8vw, 84px);
+      line-height: 0.95; letter-spacing: 1px; margin-bottom: 14px;
+    }
+    .launch-title span {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .launch-sub { position: relative; z-index: 2; color: var(--muted); max-width: 480px; margin: 0 auto 40px; line-height: 1.7; }
+    .countdown-row { position: relative; z-index: 2; display: flex; gap: 14px; margin-bottom: 44px; flex-wrap: wrap; justify-content: center; }
+    .countdown-unit {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 18px 20px; min-width: 84px;
+    }
+    .countdown-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--accent2); line-height: 1; }
+    .countdown-label { font-family: 'Syne', sans-serif; font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+    .launch-ig {
+      position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 10px;
+      text-decoration: none; color: #07120b;
+      background: linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);
+      padding: 15px 30px; border-radius: 100px;
+      font: 800 12px 'Syne', sans-serif; letter-spacing: 1.4px; text-transform: uppercase;
+      transition: transform 0.2s;
+    }
+    .launch-ig:hover { transform: translateY(-3px); }
+    #main-content { display: none; }
+    @media (max-width: 540px) {
+      .countdown-unit { min-width: 68px; padding: 14px 12px; }
+      .countdown-num { font-size: 32px; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- ===== COUNTDOWN OVERLAY (shown until launch time) ===== -->
+  <div id="launch-overlay">
+    <span class="launch-badge"><span class="hero-dot"></span> Dropping Soon</span>
+    <h1 class="launch-title">SHIRT <span>DROP</span></h1>
+    <p class="launch-sub">A new range of shirts is landing on ARAMBH. Same premium fabric, same original design language. The wait is almost over.</p>
+    <div class="countdown-row">
+      <div class="countdown-unit"><div class="countdown-num" id="cd-days">00</div><div class="countdown-label">Days</div></div>
+      <div class="countdown-unit"><div class="countdown-num" id="cd-hours">00</div><div class="countdown-label">Hours</div></div>
+      <div class="countdown-unit"><div class="countdown-num" id="cd-mins">00</div><div class="countdown-label">Minutes</div></div>
+      <div class="countdown-unit"><div class="countdown-num" id="cd-secs">00</div><div class="countdown-label">Seconds</div></div>
+    </div>
+    <a href="https://instagram.com/arambh.official" target="_blank" class="launch-ig">📸 Stay tuned on Instagram</a>
+  </div>
+
+  <div id="main-content">
 
   <nav>
     <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
@@ -287,7 +355,50 @@
     <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
   </footer>
 
+  </div><!-- /#main-content -->
+
   <script>
+    // ===== LAUNCH TIME CONFIG =====
+    // Set to Aug 10, 2026, 5:00 PM IST (+05:30)
+    const LAUNCH_TIME = new Date("2026-08-10T17:00:00+05:30").getTime();
+
+    const overlay = document.getElementById('launch-overlay');
+    const mainContent = document.getElementById('main-content');
+
+    function showMainSite() {
+      overlay.style.display = 'none';
+      mainContent.style.display = 'block';
+      clearInterval(countdownInterval);
+    }
+
+    function updateCountdown() {
+      const now = Date.now();
+      const distance = LAUNCH_TIME - now;
+
+      if (distance <= 0) {
+        showMainSite();
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+      document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+    }
+
+    // Run immediately, then check every second — auto-unlocks with no refresh needed
+    if (Date.now() >= LAUNCH_TIME) {
+      showMainSite();
+    } else {
+      updateCountdown();
+      var countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
     // Per-card size selection
     document.querySelectorAll('[data-sizes]').forEach(row => {
       row.querySelectorAll('.size-btn').forEach(btn => {

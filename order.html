@@ -62,7 +62,6 @@
     }
     .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 30px; }
 
-    /* CARD */
     .card {
       background: linear-gradient(160deg, var(--surface), var(--surface2));
       border: 1px solid var(--border);
@@ -70,7 +69,6 @@
       padding: 30px;
     }
 
-    /* PRODUCT SUMMARY */
     .product-summary {
       display: flex; gap: 16px;
       padding-bottom: 24px; margin-bottom: 24px;
@@ -93,7 +91,6 @@
     }
     .summary-price { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent2); }
 
-    /* FORM */
     .form-group { margin-bottom: 18px; }
     .form-group label {
       display: block; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
@@ -123,7 +120,6 @@
       border-color: #ff6b6b;
     }
 
-    /* PINCODE / DELIVERY DETECTION */
     .pincode-status {
       font-size: 12px; margin-top: 8px; display: none;
       align-items: center; gap: 8px;
@@ -164,7 +160,6 @@
     .delivery-zone-tag.far { background: rgba(255,250,205,0.12); color: var(--accent2); }
     .form-group.invalid .field-error { display: block; }
 
-    /* PAYMENT PANEL */
     .payment-options {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
       margin-bottom: 18px;
@@ -217,7 +212,6 @@
     .upi-deeplinks a:hover { background: rgba(255,255,255,0.14); }
     .upi-note { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
 
-    /* SUBMIT */
     .submit-btn {
       width: 100%; padding: 16px 20px;
       background: var(--accent); color: white; border: none;
@@ -248,7 +242,6 @@
       display: flex; align-items: center; gap: 6px;
     }
 
-    /* SIDE PANEL — WhatsApp fallback + help */
     .side-card { position: sticky; top: 90px; }
     .side-card h3 {
       font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 10px;
@@ -283,7 +276,6 @@
     }
     .side-list li b { color: var(--text); }
 
-    /* SUCCESS STATE */
     .success-overlay {
       display: none;
       text-align: center;
@@ -320,14 +312,12 @@
 
   <div class="page-wrap">
 
-    <!-- LEFT: ORDER FORM -->
     <div>
       <h1 class="page-title">Place Your Order</h1>
       <p class="page-sub">Fill in your details below — we'll confirm your order on WhatsApp.</p>
 
       <div class="card">
 
-        <!-- PRODUCT SUMMARY (auto-filled from URL) -->
         <div class="product-summary" id="productSummary">
           <img id="productImage" src="logo.webp" alt="Product">
           <div class="product-summary-info">
@@ -340,7 +330,6 @@
           </div>
         </div>
 
-        <!-- FORM -->
         <form id="orderForm" novalidate>
           <div class="form-group" id="group-name">
             <label for="fullName">Full Name</label>
@@ -424,7 +413,6 @@
             <textarea id="notes" name="notes" placeholder="Any special instructions"></textarea>
           </div>
 
-          <!-- PAYMENT -->
           <div class="form-group">
             <label>Payment Method</label>
             <div class="payment-options">
@@ -467,7 +455,6 @@
           </div>
         </form>
 
-        <!-- SUCCESS STATE -->
         <div class="success-overlay" id="successOverlay">
           <div class="success-icon">✅</div>
           <h3>Order Received!</h3>
@@ -478,7 +465,6 @@
       </div>
     </div>
 
-    <!-- RIGHT: HELP PANEL -->
     <div class="side-card">
       <div class="card">
         <h3>Need Help Ordering?</h3>
@@ -526,7 +512,6 @@
     document.getElementById('productImage').alt = product || 'Product';
     document.title = (product ? product + ' — ' : '') + 'Place Your Order — Arambh';
 
-    // Auto-select size if it was passed in from the product page
     if (sizeParam) {
       const sizeSelect = document.getElementById('size');
       const match = Array.from(sizeSelect.options).find(opt => opt.value.toUpperCase() === sizeParam);
@@ -548,6 +533,15 @@
     payCOD.addEventListener('click', () => selectMethod('COD'));
     payUPI.addEventListener('click', () => selectMethod('UPI'));
 
+    // ---------- State needed before any function that reads it runs ----------
+    // NOTE: these must be declared before refreshUpiLinks() is first invoked below,
+    // otherwise it throws a ReferenceError (temporal dead zone) and silently kills
+    // every listener defined after it in this script block — which is what was
+    // breaking pincode typing, delivery/total updates, and UPI links all at once.
+    let currentDeliveryCharge = 0;
+    let currentZoneLabel = '';
+    let pincodeLookupToken = 0;
+
     // ---------- UPI deep links (amount pre-filled, updates once delivery is known) ----------
     const UPI_ID = 'maheshgoudar076@pingpay';
     const upiNote = encodeURIComponent('Arambh Order - ' + (product || 'T-Shirt'));
@@ -556,11 +550,6 @@
     function refreshUpiLinks() {
       const qty = parseInt(quantityInput.value, 10) || 1;
       const amount = ((parseFloat(price) || 0) * qty) + currentDeliveryCharge;
-      // Standard "upi://pay" intent — recognized by GPay, PhonePe, Paytm, BHIM, etc.
-      // App-specific schemes (tez://, phonepe://, paytmmp://) are unreliable across
-      // browsers/OS versions, so all three buttons point to the same universal link;
-      // the phone's UPI app chooser (or the named app, if only one is installed)
-      // handles it from there.
       const upiLink = `upi://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
       document.getElementById('gpayLink').href = upiLink;
       document.getElementById('phonepeLink').href = upiLink;
@@ -578,9 +567,6 @@
     });
 
     // ---------- Pincode auto-detect (city/state) + delivery zone pricing ----------
-    // Delivery pricing: Goa & Karnataka pincodes are "near zone" (₹30), everywhere
-    // else in India is "far zone" (₹50). Applies to all products; used most on
-    // Polo & Oversized orders since those are the higher-volume categories.
     const NEAR_ZONE_CHARGE = 30;
     const FAR_ZONE_CHARGE = 50;
 
@@ -594,10 +580,6 @@
     const deliveryZoneTag = document.getElementById('deliveryZoneTag');
     const deliveryChargeValue = document.getElementById('deliveryChargeValue');
     const orderTotalValue = document.getElementById('orderTotalValue');
-
-    let currentDeliveryCharge = 0;
-    let currentZoneLabel = '';
-    let pincodeLookupToken = 0;
 
     function getZoneForState(stateName) {
       const s = (stateName || '').toLowerCase();
@@ -627,7 +609,7 @@
       try {
         const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
         const json = await res.json();
-        if (token !== pincodeLookupToken) return; // a newer lookup superseded this one
+        if (token !== pincodeLookupToken) return;
 
         const record = Array.isArray(json) ? json[0] : null;
         if (!record || record.Status !== 'Success' || !record.PostOffice || !record.PostOffice.length) {
@@ -744,8 +726,6 @@
       submitBtn.disabled = true;
       submitBtnText.textContent = 'Placing Order...';
 
-      // Try EmailJS first (owner notification), then Formspree, but never block
-      // the user's success flow on either — WhatsApp confirmation is the source of truth.
       const emailPromise = (window.emailjs)
         ? emailjs.send('service_2xfx4td', 'template_j3gxuwf', {
             product: data.product, type: data.type, color: data.color, price: data.price,
@@ -763,7 +743,6 @@
       }).catch(err => console.error('Formspree error:', err));
 
       Promise.allSettled([emailPromise, formspreePromise]).finally(() => {
-        // Build WhatsApp confirmation message
         const waMessage = encodeURIComponent(
           `Hi ARAMBH, I just placed an order:\n\n` +
           `Product: ${data.product}\n` +

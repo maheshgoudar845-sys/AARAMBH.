@@ -119,6 +119,41 @@
     .size-error { display: none; color: #ff6b6b; font-size: 11px; }
     .size-error.show { display: block; }
 
+    .size-chart-link {
+      background: none; border: none; padding: 0; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 11.5px; color: var(--accent2);
+      text-decoration: underline; text-underline-offset: 3px; align-self: flex-start;
+    }
+
+    .size-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .size-modal-overlay.show { display: flex; }
+    .size-modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      max-width: 560px; width: 100%; padding: 30px; position: relative;
+      max-height: 85vh; overflow-y: auto;
+    }
+    .size-modal-close {
+      position: absolute; top: 16px; right: 16px; background: none; border: none;
+      color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1;
+    }
+    .size-modal h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 1px; margin-bottom: 18px;
+    }
+    .size-table { width: 100%; border-collapse: collapse; }
+    .size-table th, .size-table td {
+      text-align: center; padding: 12px 6px; font-family: 'Syne', sans-serif;
+      font-size: 13px; border-bottom: 1px solid var(--border);
+    }
+    .size-table th { color: var(--accent2); letter-spacing: 0.5px; }
+    .size-table td:first-child, .size-table th:first-child {
+      text-align: left; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;
+    }
+    .size-modal-note { color: var(--muted); font-size: 11.5px; margin-top: 16px; text-align: center; }
+
     .buy-btn {
       margin-top: auto; text-align: center; cursor: pointer;
       color: white; background: var(--accent); border: none;
@@ -285,6 +320,7 @@
             <button class="size-btn" type="button">XL</button>
           </div>
           <div class="size-error">Please select a size</div>
+          <button type="button" class="size-chart-link" onclick="openSizeChart()">📏 Size Chart</button>
           <button class="buy-btn"
             onclick="buyNowSized(this,'Red Boxy Shirt','Boxy Shirt','Red',719,'red_boxy.jpeg')">
             Buy Now
@@ -308,6 +344,7 @@
             <button class="size-btn" type="button">XL</button>
           </div>
           <div class="size-error">Please select a size</div>
+          <button type="button" class="size-chart-link" onclick="openSizeChart()">📏 Size Chart</button>
           <button class="buy-btn"
             onclick="buyNowSized(this,'Blue Boxy Shirt','Boxy Shirt','Blue',719,'blue_boxy.jpeg')">
             Buy Now
@@ -331,6 +368,7 @@
             <button class="size-btn" type="button">XL</button>
           </div>
           <div class="size-error">Please select a size</div>
+          <button type="button" class="size-chart-link" onclick="openSizeChart()">📏 Size Chart</button>
           <button class="buy-btn"
             onclick="buyNowSized(this,'Pink Boxy Shirt','Boxy Shirt','Pink',719,'pink_boxy.jpeg')">
             Buy Now
@@ -354,6 +392,45 @@
   <footer>
     <p>© 2025 Aarambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
   </footer>
+
+  <!-- Size Chart Modal -->
+  <div class="size-modal-overlay" id="size-modal-overlay" onclick="if(event.target===this) closeSizeChart()">
+    <div class="size-modal">
+      <button class="size-modal-close" onclick="closeSizeChart()" aria-label="Close">×</button>
+      <h3>BOXY FIT SHIRT — SIZE CHART</h3>
+      <table class="size-table">
+        <thead>
+          <tr>
+            <th>In Inches</th>
+            <th>S</th>
+            <th>M</th>
+            <th>L</th>
+            <th>XL</th>
+            <th>2XL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Chest</td>
+            <td>42</td>
+            <td>44</td>
+            <td>46</td>
+            <td>48</td>
+            <td>50</td>
+          </tr>
+          <tr>
+            <td>Length</td>
+            <td>25</td>
+            <td>25.5</td>
+            <td>26</td>
+            <td>26.5</td>
+            <td>27</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="size-modal-note">All measurements in inches. Expect tolerance of +/- 1 inch.</p>
+    </div>
+  </div>
 
   </div><!-- /#main-content -->
 
@@ -397,6 +474,14 @@
     } else {
       updateCountdown();
       var countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    // Size chart modal
+    function openSizeChart() {
+      document.getElementById('size-modal-overlay').classList.add('show');
+    }
+    function closeSizeChart() {
+      document.getElementById('size-modal-overlay').classList.remove('show');
     }
 
     // Per-card size selection

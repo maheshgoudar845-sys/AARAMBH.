@@ -389,10 +389,25 @@
             </div>
           </div>
 
+          <div class="form-group" id="group-coupon">
+            <label for="couponCode">Discount Code (optional)</label>
+            <div style="display:flex; gap:10px;">
+              <input type="text" id="couponCode" name="couponCode" placeholder="e.g. NITG10" style="text-transform:uppercase;">
+              <button type="button" class="copy-btn" id="applyCouponBtn" style="flex-shrink:0; padding:0 18px;">Apply</button>
+            </div>
+            <div class="pincode-status show" id="couponStatus" style="display:none;">
+              <span id="couponStatusText"></span>
+            </div>
+          </div>
+
           <div class="delivery-box show" id="deliveryBox">
             <div class="delivery-row">
               <span class="label" id="productLineLabel">Product</span>
               <span class="value" id="productLineValue">—</span>
+            </div>
+            <div class="delivery-row" id="discountRow" style="display:none;">
+              <span class="label" id="discountLabel">Discount</span>
+              <span class="value" id="discountValue" style="color:#9be6b4;">−₹0</span>
             </div>
             <div class="delivery-row">
               <span class="label">Delivery Zone</span>
@@ -404,8 +419,12 @@
             </div>
             <div class="delivery-row total">
               <span class="label">Final Payable Amount</span>
-              <span class="value" id="orderTotalValue">₹0</span>
+              <span class="value" id="orderTotalValue">Enter pincode above</span>
             </div>
+          </div>
+
+          <div class="field-error" id="pincodeRequiredNotice" style="display:block; margin-top:-4px; margin-bottom:18px; color:var(--muted); font-size:12px;">
+            A valid pincode is required before you can place your order — it's how delivery charges get added to your total.
           </div>
 
           <div class="form-group">
@@ -541,15 +560,38 @@
     let currentDeliveryCharge = 0;
     let currentZoneLabel = '';
     let pincodeLookupToken = 0;
+    let pincodeConfirmed = false; // true only once delivery charge has actually been resolved
+    let appliedCoupon = ''; // raw text the customer typed and applied
 
     // ---------- UPI deep links (amount pre-filled, updates once delivery is known) ----------
     const UPI_ID = 'maheshgoudar076@pingpay';
     const upiNote = encodeURIComponent('Arambh Order - ' + (product || 'T-Shirt'));
     const quantityInput = document.getElementById('quantity');
 
+    // ---------- Discount logic ----------
+    // 1) Auto-applies when buying 3+ Oversized tees: 8% off.
+    // 2) Coupon NITG10: 10% off, entered manually. If both would apply, the
+    //    bigger discount wins rather than stacking.
+    function computeDiscount(lineTotal, qty) {
+      const candidates = [];
+      if (/oversized/i.test(type) && qty >= 3) {
+        candidates.push({ label: 'Oversized 3+ (8% off)', percent: 8 });
+      }
+      if (appliedCoupon === 'NITG10') {
+        candidates.push({ label: 'Coupon NITG10 (10% off)', percent: 10 });
+      }
+      if (!candidates.length) return { label: '', percent: 0, amount: 0 };
+      candidates.sort((a, b) => b.percent - a.percent);
+      const best = candidates[0];
+      const amount = Math.round(lineTotal * best.percent / 100);
+      return { label: best.label, percent: best.percent, amount };
+    }
+
     function refreshUpiLinks() {
       const qty = parseInt(quantityInput.value, 10) || 1;
-      const amount = ((parseFloat(price) || 0) * qty) + currentDeliveryCharge;
+      const lineTotal = (parseFloat(price) || 0) * qty;
+      const discount = computeDiscount(lineTotal, qty);
+      const amount = lineTotal - discount.amount + currentDeliveryCharge;
       const upiLink = `upi://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
       document.getElementById('gpayLink').href = upiLink;
       document.getElementById('phonepeLink').href = upiLink;
@@ -593,12 +635,37 @@
       const basePrice = parseFloat(price) || 0;
       const qty = parseInt(quantityInput.value, 10) || 1;
       const lineTotal = basePrice * qty;
-      const total = lineTotal + currentDeliveryCharge;
+      const discount = computeDiscount(lineTotal, qty);
+
       const productLineLabel = document.getElementById('productLineLabel');
       const productLineValue = document.getElementById('productLineValue');
       if (productLineLabel) productLineLabel.textContent = (product || 'Product') + (qty > 1 ? ` × ${qty}` : '');
       if (productLineValue) productLineValue.textContent = '₹' + lineTotal;
-      orderTotalValue.textContent = '₹' + total;
+
+      const discountRow = document.getElementById('discountRow');
+      const discountLabel = document.getElementById('discountLabel');
+      const discountValue = document.getElementById('discountValue');
+      if (discount.amount > 0) {
+        discountRow.style.display = 'flex';
+        discountLabel.textContent = discount.label;
+        discountValue.textContent = '−₹' + discount.amount;
+      } else {
+        discountRow.style.display = 'none';
+      }
+
+      // The final payable amount only appears once a pincode has actually been
+      // resolved to a delivery charge — otherwise the total silently understates
+      // what the customer owes, which was the original bug being fixed here.
+      if (pincodeConfirmed) {
+        const total = lineTotal - discount.amount + currentDeliveryCharge;
+        orderTotalValue.textContent = '₹' + total;
+        orderTotalValue.style.color = '';
+        document.getElementById('pincodeRequiredNotice').style.display = 'none';
+      } else {
+        orderTotalValue.textContent = 'Enter pincode above';
+        orderTotalValue.style.color = 'var(--muted)';
+        document.getElementById('pincodeRequiredNotice').style.display = 'block';
+      }
     }
 
     async function lookupPincode(pin) {
@@ -629,6 +696,7 @@
         const zone = getZoneForState(state);
         currentDeliveryCharge = zone.charge;
         currentZoneLabel = zone.label;
+        pincodeConfirmed = true;
 
         deliveryZoneValue.childNodes[0].textContent = zone.label + ' ';
         deliveryZoneTag.textContent = zone.tagText;
@@ -642,9 +710,10 @@
         cityInput.value = '';
         stateInput.value = '';
         pincodeStatus.className = 'pincode-status show error';
-        pincodeStatusText.textContent = "Couldn't detect location — you can still continue, we'll confirm delivery charge on WhatsApp.";
+        pincodeStatusText.textContent = "Couldn't detect this pincode — please double-check it. We can't calculate your delivery charge without a valid pincode.";
         currentDeliveryCharge = 0;
         currentZoneLabel = '';
+        pincodeConfirmed = false;
         deliveryZoneValue.childNodes[0].textContent = 'Enter a valid pincode ';
         deliveryZoneTag.style.display = 'none';
         deliveryChargeValue.textContent = 'To be confirmed';
@@ -661,11 +730,40 @@
         cityInput.value = '';
         stateInput.value = '';
         currentDeliveryCharge = 0;
+        pincodeConfirmed = false;
         deliveryZoneValue.childNodes[0].textContent = 'Enter pincode to calculate ';
         deliveryZoneTag.style.display = 'none';
         deliveryChargeValue.textContent = '₹0';
         updateOrderTotal();
       }
+    });
+
+    // ---------- Coupon code ----------
+    const couponCodeInput = document.getElementById('couponCode');
+    const applyCouponBtn = document.getElementById('applyCouponBtn');
+    const couponStatus = document.getElementById('couponStatus');
+    const couponStatusText = document.getElementById('couponStatusText');
+    const VALID_COUPONS = ['NITG10'];
+
+    applyCouponBtn.addEventListener('click', () => {
+      const code = couponCodeInput.value.trim().toUpperCase();
+      couponStatus.style.display = 'flex';
+      if (!code) {
+        appliedCoupon = '';
+        couponStatus.className = 'pincode-status show error';
+        couponStatusText.textContent = 'Enter a code first.';
+      } else if (VALID_COUPONS.includes(code)) {
+        appliedCoupon = code;
+        couponCodeInput.value = code;
+        couponStatus.className = 'pincode-status show found';
+        couponStatusText.textContent = `Code ${code} applied.`;
+      } else {
+        appliedCoupon = '';
+        couponStatus.className = 'pincode-status show error';
+        couponStatusText.textContent = 'That code isn\'t valid.';
+      }
+      updateOrderTotal();
+      refreshUpiLinks();
     });
 
     quantityInput.addEventListener('input', () => { updateOrderTotal(); refreshUpiLinks(); });
@@ -694,13 +792,24 @@
       ok = validateField('phone', /^[6-9]\d{9}$/.test(phone)) && ok;
       ok = validateField('size', size !== '') && ok;
       ok = validateField('address', address.length >= 8) && ok;
-      ok = validateField('pincode', /^\d{6}$/.test(pincode)) && ok;
+      // Require a pincode that has actually resolved to a delivery charge, not
+      // just one that matches the 6-digit shape — otherwise the order can be
+      // placed with delivery silently left out of the total.
+      ok = validateField('pincode', /^\d{6}$/.test(pincode) && pincodeConfirmed) && ok;
+      if (!pincodeConfirmed) {
+        document.getElementById('pincodeRequiredNotice').style.color = '#ff6b6b';
+        document.getElementById('pincode').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return ok;
     }
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!validateForm()) return;
+
+      const qtyNow = parseInt(document.getElementById('quantity').value, 10) || 1;
+      const lineTotalNow = (parseFloat(price) || 0) * qtyNow;
+      const discountNow = computeDiscount(lineTotalNow, qtyNow);
 
       const data = {
         product: product || 'Not specified',
@@ -719,7 +828,10 @@
         paymentMethod: selectedMethod,
         deliveryCharge: currentDeliveryCharge,
         deliveryZone: currentZoneLabel || 'Unconfirmed — please advise',
-        orderTotal: (parseFloat(price) || 0) * (parseInt(document.getElementById('quantity').value, 10) || 1) + currentDeliveryCharge
+        couponCode: appliedCoupon || 'None',
+        discountLabel: discountNow.label || 'None',
+        discountAmount: discountNow.amount,
+        orderTotal: lineTotalNow - discountNow.amount + currentDeliveryCharge
       };
 
       submitBtn.classList.add('loading');
@@ -732,7 +844,9 @@
             name: data.fullName, phone: data.phone, size: data.size, address: data.address,
             pincode: data.pincode, city: data.city, state: data.state,
             quantity: data.quantity, notes: data.notes, payment: data.paymentMethod,
-            deliveryCharge: data.deliveryCharge, deliveryZone: data.deliveryZone, orderTotal: data.orderTotal
+            deliveryCharge: data.deliveryCharge, deliveryZone: data.deliveryZone,
+            couponCode: data.couponCode, discountLabel: data.discountLabel, discountAmount: data.discountAmount,
+            orderTotal: data.orderTotal
           }).catch(err => console.error('EmailJS error:', err))
         : Promise.resolve();
 
@@ -749,6 +863,7 @@
           `Type/Color: ${data.type} / ${data.color}\n` +
           `Size: ${data.size} | Qty: ${data.quantity}\n` +
           `Price: ₹${data.price}\n` +
+          (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
           `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
           `Order Total: ₹${data.orderTotal}\n` +
           `Payment: ${data.paymentMethod}\n\n` +

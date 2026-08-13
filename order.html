@@ -434,6 +434,9 @@
 
           <div class="form-group">
             <label>Payment Method</label>
+            <div class="field-error" id="upiGuardNotice" style="display:none; margin-bottom:14px;">
+              Please fill in your name, phone, size, address and pincode first — we need these before you can pay.
+            </div>
             <div class="payment-options">
               <div class="pay-option active" data-method="COD" id="payCOD">
                 <span class="pay-icon">💵</span>
@@ -606,6 +609,24 @@
         btn.textContent = 'Copied!';
         setTimeout(() => { btn.textContent = original; }, 1800);
       });
+    });
+
+    // ---------- Require all details before payment can proceed ----------
+    // Applies to the UPI deep links specifically, since those are the actual
+    // "pay now" action; validateForm() is defined further down but function
+    // declarations are hoisted, so it's safe to call from here.
+    function guardUpiPayment(e) {
+      if (!validateForm()) {
+        e.preventDefault();
+        document.getElementById('upiGuardNotice').style.display = 'block';
+        const firstInvalid = document.querySelector('.form-group.invalid');
+        if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        document.getElementById('upiGuardNotice').style.display = 'none';
+      }
+    }
+    ['gpayLink', 'phonepeLink', 'paytmLink'].forEach(id => {
+      document.getElementById(id).addEventListener('click', guardUpiPayment);
     });
 
     // ---------- Pincode auto-detect (city/state) + delivery zone pricing ----------

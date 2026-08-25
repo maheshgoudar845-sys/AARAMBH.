@@ -69,27 +69,58 @@
       padding: 30px;
     }
 
-    .product-summary {
-      display: flex; gap: 16px;
+    /* ---- Order summary (single item or multi-item cart) ---- */
+    .summary-block {
       padding-bottom: 24px; margin-bottom: 24px;
       border-bottom: 1px solid var(--border);
     }
-    .product-summary img {
-      width: 92px; height: 92px; object-fit: contain;
-      background: #0a0a14; border-radius: 14px; border: 1px solid var(--border);
-      padding: 8px;
+    .summary-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
     }
-    .product-summary-info h2 {
-      font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px;
+    .summary-heading h2 {
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
     }
-    .summary-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-    .summary-tag {
-      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
-      letter-spacing: 1px; text-transform: uppercase;
+    .cart-item-row {
+      display: flex; gap: 14px; align-items: center;
+      padding: 10px 0;
+    }
+    .cart-item-row + .cart-item-row { border-top: 1px dashed var(--border); }
+    .cart-item-row img {
+      width: 64px; height: 64px; object-fit: contain;
+      background: #0a0a14; border-radius: 12px; border: 1px solid var(--border);
+      padding: 6px; flex-shrink: 0;
+    }
+    .cart-item-info { flex: 1; min-width: 0; }
+    .cart-item-info h4 {
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cart-item-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+    .cart-item-tags span {
+      font-family: 'Syne', sans-serif; font-size: 9.5px; font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase;
       border: 1px solid var(--border); color: var(--muted);
-      padding: 4px 10px; border-radius: 100px;
+      padding: 3px 8px; border-radius: 100px;
     }
-    .summary-price { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--accent2); }
+    .cart-item-qtyprice {
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .cart-item-qtyprice .price {
+      font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent2);
+      white-space: nowrap;
+    }
+    .cart-item-remove {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: 13px; padding: 4px 6px; line-height: 1;
+      transition: color 0.2s;
+    }
+    .cart-item-remove:hover { color: #ff6b6b; }
+    .empty-cart {
+      text-align: center; padding: 20px 0; color: var(--muted); font-size: 13.5px; line-height: 1.7;
+    }
+    .empty-cart a { color: var(--accent2); }
 
     .form-group { margin-bottom: 18px; }
     .form-group label {
@@ -318,16 +349,11 @@
 
       <div class="card">
 
-        <div class="product-summary" id="productSummary">
-          <img id="productImage" src="logo.webp" alt="Product">
-          <div class="product-summary-info">
-            <h2 id="productName">Select a product</h2>
-            <div class="summary-tags">
-              <span class="summary-tag" id="productType">—</span>
-              <span class="summary-tag" id="productColor">—</span>
-            </div>
-            <div class="summary-price" id="productPrice">₹0</div>
+        <div class="summary-block" id="summaryBlock">
+          <div class="summary-heading">
+            <h2 id="summaryHeading">Your Order</h2>
           </div>
+          <div id="cartItemsList"></div>
         </div>
 
         <form id="orderForm" novalidate>
@@ -392,7 +418,7 @@
           <div class="form-group" id="group-coupon">
             <label for="couponCode">Discount Code (optional)</label>
             <div style="display:flex; gap:10px;">
-              <input type="text" id="couponCode" name="couponCode" placeholder="e.g. NITG10" style="text-transform:uppercase;">
+              <input type="text" id="couponCode" name="couponCode" placeholder="Have a code?" style="text-transform:uppercase;">
               <button type="button" class="copy-btn" id="applyCouponBtn" style="flex-shrink:0; padding:0 18px;">Apply</button>
             </div>
             <div class="pincode-status show" id="couponStatus" style="display:none;">
@@ -491,8 +517,8 @@
       <div class="card">
         <h3>Need Help Ordering?</h3>
         <p>Prefer to order directly, or have a sizing question before you buy? Message us — a real person replies, not a bot.</p>
-        <a href="https://wa.me/919637748622?text=Hi%20ARAMBH%2C%20I%20want%20to%20place%20an%20order" class="wa-btn">💬 Order on WhatsApp</a>
-        <a href="tel:9637748622" class="call-btn">📞 Call 9637748622</a>
+        <a href="https://wa.me/919405074832?text=Hi%20ARAMBH%2C%20I%20want%20to%20place%20an%20order" class="wa-btn">💬 Order on WhatsApp</a>
+        <a href="tel:9405074832" class="call-btn">📞 Call 9405074832</a>
 
         <div class="side-divider"></div>
 
@@ -508,7 +534,7 @@
   </div>
 
   <footer>
-    <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+    <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9405074832">9405074832</a></p>
   </footer>
 
   <script>
@@ -517,28 +543,136 @@
       if (window.emailjs) emailjs.init({ publicKey: 'ZXVO8aPvZTkk1NLI6' });
     })();
 
-    // ---------- Auto-fill product summary from URL params ----------
+    const CART_KEY = 'arambhCart';
     const params = new URLSearchParams(window.location.search);
-    const product = params.get('product') || '';
-    const type = params.get('type') || '';
-    const color = params.get('color') || '';
-    const price = params.get('price') || '0';
-    const image = params.get('image') || 'logo.webp';
-    const sizeParam = (params.get('size') || '').toUpperCase();
+    const cartMode = params.get('cart') === '1';
 
-    if (product) document.getElementById('productName').textContent = product;
-    document.getElementById('productType').textContent = type || '—';
-    document.getElementById('productColor').textContent = color || '—';
-    document.getElementById('productPrice').textContent = '₹' + price;
-    document.getElementById('productImage').src = image;
-    document.getElementById('productImage').alt = product || 'Product';
-    document.title = (product ? product + ' — ' : '') + 'Place Your Order — Arambh';
-
-    if (sizeParam) {
-      const sizeSelect = document.getElementById('size');
-      const match = Array.from(sizeSelect.options).find(opt => opt.value.toUpperCase() === sizeParam);
-      if (match) sizeSelect.value = match.value;
+    // ---------- Build the working list of order items ----------
+    // Cart mode: read the array saved by product.html's "Add to Cart" button.
+    // Single-item mode ("Buy Now"): build a one-item array from URL params,
+    // same as the page always did.
+    function readCart() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(CART_KEY));
+        return Array.isArray(raw) ? raw : [];
+      } catch (e) { return []; }
     }
+    function saveCart(items) {
+      localStorage.setItem(CART_KEY, JSON.stringify(items));
+    }
+
+    let orderItems = [];
+    if (cartMode) {
+      orderItems = readCart().map(item => ({
+        id: item.id,
+        product: item.product || 'Product',
+        type: item.type || '—',
+        color: item.color || '—',
+        price: Number(item.price) || 0,
+        qty: Number(item.qty) || 1,
+        image: item.image || 'logo.webp',
+        size: item.size || ''
+      }));
+    } else {
+      const product = params.get('product') || '';
+      const type = params.get('type') || '';
+      const color = params.get('color') || '';
+      const price = Number(params.get('price')) || 0;
+      const image = params.get('image') || 'logo.webp';
+      const sizeParam = (params.get('size') || '').toUpperCase();
+      const qtyParam = Math.max(1, Math.min(10, parseInt(params.get('qty'), 10) || 1));
+      if (product) {
+        orderItems = [{ id: 'single', product, type, color, price, qty: qtyParam, image, size: sizeParam }];
+      }
+    }
+
+    // Kept for the WhatsApp/email summary text when there's exactly one item —
+    // mirrors the old single-product variables used lower in the script.
+    const product = orderItems.length === 1 ? orderItems[0].product : '';
+    const type = orderItems.length === 1 ? orderItems[0].type : '';
+    const color = orderItems.length === 1 ? orderItems[0].color : '';
+
+    document.title = (orderItems.length === 1 ? orderItems[0].product + ' — ' : '') + 'Place Your Order — Arambh';
+
+    // ---------- Render order summary (single item or cart list) ----------
+    const cartItemsList = document.getElementById('cartItemsList');
+    const summaryHeading = document.getElementById('summaryHeading');
+    const quantityGroup = document.getElementById('group-qty');
+    const sizeGroup = document.getElementById('group-size');
+    const quantityInput = document.getElementById('quantity');
+    const sizeSelect = document.getElementById('size');
+
+    function renderSummary() {
+      if (!orderItems.length) {
+        summaryHeading.textContent = cartMode ? 'Your Cart' : 'Your Order';
+        cartItemsList.innerHTML = `<div class="empty-cart">${
+          cartMode
+            ? "Your cart is empty. <a href=\"index.html\">Head back to the shop</a> to add something first."
+            : "No product selected. <a href=\"index.html\">Head back to the shop</a> to pick something."
+        }</div>`;
+        return;
+      }
+      summaryHeading.textContent = cartMode ? `Your Cart (${orderItems.length} item${orderItems.length > 1 ? 's' : ''})` : 'Your Order';
+      cartItemsList.innerHTML = orderItems.map((item, idx) => `
+        <div class="cart-item-row" data-idx="${idx}">
+          <img src="${item.image}" alt="${item.product}">
+          <div class="cart-item-info">
+            <h4>${item.product}</h4>
+            <div class="cart-item-tags">
+              <span>${item.type || '—'}</span>
+              <span>${item.color || '—'}</span>
+              ${item.size ? `<span>Size ${item.size}</span>` : ''}
+              <span>Qty ${item.qty}</span>
+            </div>
+          </div>
+          <div class="cart-item-qtyprice">
+            <span class="price">₹${item.price * item.qty}</span>
+            ${cartMode ? `<button type="button" class="cart-item-remove" data-idx="${idx}" title="Remove">✕</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeItem(idx) {
+      orderItems.splice(idx, 1);
+      if (cartMode) saveCart(orderItems);
+      renderSummary();
+      updateOrderTotal();
+      refreshUpiLinks();
+    }
+    cartItemsList.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cart-item-remove');
+      if (!btn) return;
+      removeItem(Number(btn.dataset.idx));
+    });
+
+    // In cart mode, each item already carries its own size and quantity from
+    // product.html, so the single global Size/Quantity fields don't apply —
+    // hide them. In single-item ("Buy Now") mode, keep them exactly as before.
+    if (cartMode) {
+      quantityGroup.style.display = 'none';
+      sizeGroup.style.display = 'none';
+      quantityInput.removeAttribute('required');
+      sizeSelect.removeAttribute('required');
+    } else if (orderItems.length) {
+      quantityInput.value = orderItems[0].qty;
+      const sizeParam = orderItems[0].size;
+      if (sizeParam) {
+        const match = Array.from(sizeSelect.options).find(opt => opt.value.toUpperCase() === sizeParam);
+        if (match) sizeSelect.value = match.value;
+      }
+    }
+    // Single-item quantity field edits the one line item directly.
+    quantityInput.addEventListener('input', () => {
+      if (!cartMode && orderItems.length) {
+        orderItems[0].qty = Math.max(1, Math.min(10, parseInt(quantityInput.value, 10) || 1));
+        renderSummary();
+      }
+      updateOrderTotal();
+      refreshUpiLinks();
+    });
+
+    renderSummary();
 
     // ---------- Payment method toggle ----------
     const payCOD = document.getElementById('payCOD');
@@ -558,8 +692,7 @@
     // ---------- State needed before any function that reads it runs ----------
     // NOTE: these must be declared before refreshUpiLinks() is first invoked below,
     // otherwise it throws a ReferenceError (temporal dead zone) and silently kills
-    // every listener defined after it in this script block — which is what was
-    // breaking pincode typing, delivery/total updates, and UPI links all at once.
+    // every listener defined after it in this script block.
     let currentDeliveryCharge = 0;
     let currentZoneLabel = '';
     let pincodeLookupToken = 0;
@@ -568,20 +701,32 @@
 
     // ---------- UPI deep links (amount pre-filled, updates once delivery is known) ----------
     const UPI_ID = 'maheshgoudar076@pingpay';
-    const upiNote = encodeURIComponent('Arambh Order - ' + (product || 'T-Shirt'));
-    const quantityInput = document.getElementById('quantity');
+    const upiNote = encodeURIComponent('Arambh Order - ' + (orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} items`));
+
+    // ---------- Totals across every item in orderItems ----------
+    function getLineTotal() {
+      return orderItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+    }
+    function getOversizedQty() {
+      return orderItems.reduce((sum, item) => sum + (/oversized/i.test(item.type) ? item.qty : 0), 0);
+    }
 
     // ---------- Discount logic ----------
-    // 1) Auto-applies when buying 3+ Oversized tees: 8% off.
-    // 2) Coupon NITG10: 10% off, entered manually. If both would apply, the
+    // 1) Auto-applies when the cart has 3+ Oversized tees total: 8% off.
+    // 2) Coupon codes (NITG10, UNSEEN10): 10% off each, entered manually.
+    //    Only one coupon can be applied at a time (appliedCoupon holds a
+    //    single value), and if the auto-discount would also apply, the
     //    bigger discount wins rather than stacking.
-    function computeDiscount(lineTotal, qty) {
+    function computeDiscount(lineTotal) {
       const candidates = [];
-      if (/oversized/i.test(type) && qty >= 3) {
+      if (getOversizedQty() >= 3) {
         candidates.push({ label: 'Oversized 3+ (8% off)', percent: 8 });
       }
       if (appliedCoupon === 'NITG10') {
         candidates.push({ label: 'Coupon NITG10 (10% off)', percent: 10 });
+      }
+      if (appliedCoupon === 'UNSEEN10') {
+        candidates.push({ label: 'Coupon UNSEEN10 (10% off)', percent: 10 });
       }
       if (!candidates.length) return { label: '', percent: 0, amount: 0 };
       candidates.sort((a, b) => b.percent - a.percent);
@@ -591,9 +736,8 @@
     }
 
     function refreshUpiLinks() {
-      const qty = parseInt(quantityInput.value, 10) || 1;
-      const lineTotal = (parseFloat(price) || 0) * qty;
-      const discount = computeDiscount(lineTotal, qty);
+      const lineTotal = getLineTotal();
+      const discount = computeDiscount(lineTotal);
       const amount = lineTotal - discount.amount + currentDeliveryCharge;
       const upiLink = `upi://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
       document.getElementById('gpayLink').href = upiLink;
@@ -612,9 +756,6 @@
     });
 
     // ---------- Require all details before payment can proceed ----------
-    // Applies to the UPI deep links specifically, since those are the actual
-    // "pay now" action; validateForm() is defined further down but function
-    // declarations are hoisted, so it's safe to call from here.
     function guardUpiPayment(e) {
       if (!validateForm()) {
         e.preventDefault();
@@ -653,14 +794,17 @@
     }
 
     function updateOrderTotal() {
-      const basePrice = parseFloat(price) || 0;
-      const qty = parseInt(quantityInput.value, 10) || 1;
-      const lineTotal = basePrice * qty;
-      const discount = computeDiscount(lineTotal, qty);
+      const lineTotal = getLineTotal();
+      const discount = computeDiscount(lineTotal);
+      const itemCount = orderItems.reduce((sum, item) => sum + item.qty, 0);
 
       const productLineLabel = document.getElementById('productLineLabel');
       const productLineValue = document.getElementById('productLineValue');
-      if (productLineLabel) productLineLabel.textContent = (product || 'Product') + (qty > 1 ? ` × ${qty}` : '');
+      if (productLineLabel) {
+        productLineLabel.textContent = orderItems.length === 1
+          ? (orderItems[0].product) + (orderItems[0].qty > 1 ? ` × ${orderItems[0].qty}` : '')
+          : `${orderItems.length} product${orderItems.length !== 1 ? 's' : ''} (${itemCount} item${itemCount !== 1 ? 's' : ''})`;
+      }
       if (productLineValue) productLineValue.textContent = '₹' + lineTotal;
 
       const discountRow = document.getElementById('discountRow');
@@ -676,8 +820,8 @@
 
       // The final payable amount only appears once a pincode has actually been
       // resolved to a delivery charge — otherwise the total silently understates
-      // what the customer owes, which was the original bug being fixed here.
-      if (pincodeConfirmed) {
+      // what the customer owes.
+      if (pincodeConfirmed && orderItems.length) {
         const total = lineTotal - discount.amount + currentDeliveryCharge;
         orderTotalValue.textContent = '₹' + total;
         orderTotalValue.style.color = '';
@@ -685,7 +829,7 @@
       } else {
         orderTotalValue.textContent = 'Enter pincode above';
         orderTotalValue.style.color = 'var(--muted)';
-        document.getElementById('pincodeRequiredNotice').style.display = 'block';
+        document.getElementById('pincodeRequiredNotice').style.display = orderItems.length ? 'block' : 'none';
       }
     }
 
@@ -764,7 +908,7 @@
     const applyCouponBtn = document.getElementById('applyCouponBtn');
     const couponStatus = document.getElementById('couponStatus');
     const couponStatusText = document.getElementById('couponStatusText');
-    const VALID_COUPONS = ['NITG10'];
+    const VALID_COUPONS = ['NITG10', 'UNSEEN10'];
 
     applyCouponBtn.addEventListener('click', () => {
       const code = couponCodeInput.value.trim().toUpperCase();
@@ -787,7 +931,6 @@
       refreshUpiLinks();
     });
 
-    quantityInput.addEventListener('input', () => { updateOrderTotal(); refreshUpiLinks(); });
     updateOrderTotal();
 
     // ---------- Form validation + submit ----------
@@ -809,9 +952,10 @@
       const pincode = document.getElementById('pincode').value.trim();
 
       let ok = true;
+      ok = orderItems.length > 0 && ok;
       ok = validateField('name', name.length >= 2) && ok;
       ok = validateField('phone', /^[6-9]\d{9}$/.test(phone)) && ok;
-      ok = validateField('size', size !== '') && ok;
+      if (!cartMode) ok = validateField('size', size !== '') && ok;
       ok = validateField('address', address.length >= 8) && ok;
       // Require a pincode that has actually resolved to a delivery charge, not
       // just one that matches the 6-digit shape — otherwise the order can be
@@ -828,23 +972,26 @@
       e.preventDefault();
       if (!validateForm()) return;
 
-      const qtyNow = parseInt(document.getElementById('quantity').value, 10) || 1;
-      const lineTotalNow = (parseFloat(price) || 0) * qtyNow;
-      const discountNow = computeDiscount(lineTotalNow, qtyNow);
+      const lineTotalNow = getLineTotal();
+      const discountNow = computeDiscount(lineTotalNow);
+      const itemsSummary = orderItems.map(item =>
+        `${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''}) x${item.qty} — ₹${item.price * item.qty}`
+      ).join('\n');
 
       const data = {
-        product: product || 'Not specified',
-        type: type || '—',
-        color: color || '—',
-        price: price,
+        product: orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} products`,
+        type: orderItems.length === 1 ? orderItems[0].type : '—',
+        color: orderItems.length === 1 ? orderItems[0].color : '—',
+        itemsSummary: itemsSummary || 'No items',
+        price: lineTotalNow,
         fullName: document.getElementById('fullName').value.trim(),
         phone: document.getElementById('phone').value.trim(),
-        size: document.getElementById('size').value,
+        size: cartMode ? '—' : document.getElementById('size').value,
         address: document.getElementById('address').value.trim(),
         pincode: document.getElementById('pincode').value.trim(),
         city: cityInput.value || 'Not detected',
         state: stateInput.value || 'Not detected',
-        quantity: document.getElementById('quantity').value || '1',
+        quantity: cartMode ? orderItems.reduce((s, i) => s + i.qty, 0) : (document.getElementById('quantity').value || '1'),
         notes: document.getElementById('notes').value.trim(),
         paymentMethod: selectedMethod,
         deliveryCharge: currentDeliveryCharge,
@@ -862,6 +1009,7 @@
       const emailPromise = (window.emailjs)
         ? emailjs.send('service_2xfx4td', 'template_j3gxuwf', {
             product: data.product, type: data.type, color: data.color, price: data.price,
+            items: data.itemsSummary,
             name: data.fullName, phone: data.phone, size: data.size, address: data.address,
             pincode: data.pincode, city: data.city, state: data.state,
             quantity: data.quantity, notes: data.notes, payment: data.paymentMethod,
@@ -880,10 +1028,7 @@
       Promise.allSettled([emailPromise, formspreePromise]).finally(() => {
         const waMessage = encodeURIComponent(
           `Hi ARAMBH, I just placed an order:\n\n` +
-          `Product: ${data.product}\n` +
-          `Type/Color: ${data.type} / ${data.color}\n` +
-          `Size: ${data.size} | Qty: ${data.quantity}\n` +
-          `Price: ₹${data.price}\n` +
+          `${data.itemsSummary}\n\n` +
           (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
           `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
           `Order Total: ₹${data.orderTotal}\n` +
@@ -893,7 +1038,12 @@
           `Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}` +
           (data.notes ? `\nNotes: ${data.notes}` : '')
         );
-        document.getElementById('successWhatsapp').href = `https://wa.me/919637748622?text=${waMessage}`;
+        document.getElementById('successWhatsapp').href = `https://wa.me/919405074832?text=${waMessage}`;
+
+        // Clear the cart now that the order has actually been placed.
+        if (cartMode) {
+          localStorage.removeItem(CART_KEY);
+        }
 
         form.style.display = 'none';
         document.getElementById('successOverlay').classList.add('show');

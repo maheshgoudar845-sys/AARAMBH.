@@ -377,6 +377,59 @@
       margin-right: auto;
     }
 
+    /* UNSEEN x VEILED PROMO */
+    .unseen-promo-section { padding: 20px 40px 100px; max-width: 1400px; margin: auto; }
+    .unseen-promo-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent2); background: rgba(var(--accent-rgb),0.1); border: 1px solid rgba(var(--accent-rgb),0.35);
+      padding: 8px 18px; border-radius: 100px; margin-bottom: 20px;
+    }
+    .unseen-promo-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); animation: teaser-pulse 1.4s ease-in-out infinite; }
+    @keyframes teaser-pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.35;transform:scale(1.4);} }
+    .unseen-promo-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .unseen-promo-card {
+      position: relative; border-radius: 24px; overflow: hidden; text-decoration: none; color: inherit;
+      background: var(--surface); border: 1px solid var(--border); display: block;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
+    }
+    .unseen-promo-card:hover { transform: translateY(-8px); box-shadow: 0 40px 90px rgba(0,0,0,0.8); border-color: rgba(var(--accent-rgb),0.3); }
+    .unseen-promo-media { display: flex; height: 560px; background: #0a0a14; }
+    .unseen-promo-media img { width: 50%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .unseen-promo-card:hover .unseen-promo-media img { transform: scale(1.05); }
+    .unseen-promo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(4,4,10,0.95) 0%, rgba(4,4,10,0.25) 45%, transparent 70%);
+      pointer-events: none;
+    }
+    .unseen-promo-tag {
+      position: absolute; top: 18px; left: 18px; z-index: 3;
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--accent2); background: var(--accent); padding: 6px 14px; border-radius: 100px;
+    }
+    .unseen-promo-info { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; padding: 28px 26px 30px; }
+    .unseen-promo-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 1px; line-height: 1; color: #fff; margin-bottom: 8px; }
+    .unseen-promo-info p { color: rgba(255,255,255,0.65); font-size: 13px; line-height: 1.6; margin-bottom: 18px; max-width: 340px; }
+    .unseen-promo-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+      color: white; border: 1px solid rgba(255,255,255,0.25); padding: 10px 18px 10px 16px; border-radius: 100px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .unseen-promo-card:hover .unseen-promo-cta { background: var(--accent); border-color: var(--accent); }
+    .unseen-promo-price { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent2); }
+    @media (max-width: 900px) {
+      .unseen-promo-grid { grid-template-columns: 1fr; }
+      .unseen-promo-media { height: 440px; }
+      .unseen-promo-info h3 { font-size: 36px; }
+    }
+    @media (max-width: 540px) {
+      .unseen-promo-section { padding: 10px 20px 70px; }
+      .unseen-promo-media { height: 380px; }
+    }
+
     /* COLLECTIONS */
     .collections-section {
       padding: 120px 40px;
@@ -1126,18 +1179,18 @@
     <h1 class="hero-heading">WEAR YOUR<br><span>VIBE</span></h1>
     <p class="hero-sub">Premium streetwear. Built different. Designed for the bold.</p>
     <div class="hero-actions">
-      <a href="#newDrops" class="hero-primary-btn">Shop New Drops →</a>
+      <a href="#unseenDrop" class="hero-primary-btn">Shop UNSEEN Drop →</a>
       <a href="#yourPick" class="hero-secondary-btn">Find My Pick</a>
     </div>
 
     <div class="hero-strip">
       <div class="strip-item">
-        <img src="promo-cap-fit.webp" alt="Arambh Cap Fit">
-        <span class="strip-tag">Fit Check</span>
+        <img src="un_white_f.png" alt="Unseen Tee Front">
+        <span class="strip-tag">UNSEEN — Just Dropped</span>
       </div>
       <div class="strip-item">
-        <img src="explore_space_back.jpg" alt="Explore Space Acid Wash Tee">
-        <span class="strip-tag">UNSEEN Series — Just Dropped</span>
+        <img src="un_white_b.png" alt="Unseen Tee Back">
+        <span class="strip-tag">Covered, But Not Contained</span>
       </div>
     </div>
 
@@ -1166,6 +1219,51 @@
       <span>🔥 UNSEEN Series Tee — Live Now</span>
     </div>
   </div>
+
+  <!-- UNSEEN x VEILED PROMO -->
+  <section class="unseen-promo-section" id="unseenDrop">
+    <div class="section-header reveal">
+      <span class="unseen-promo-badge"><span class="dot"></span>Just Dropped</span>
+      <h2 class="section-title">UNSEEN. VEILED BLOOM.</h2>
+      <p class="section-desc">Two stories, one drop. Grab yours before the run sells out — ₹549 each.</p>
+    </div>
+
+    <div class="unseen-promo-grid">
+      <a href="printed.html#unseenDrop" class="unseen-promo-card reveal">
+        <div class="unseen-promo-media">
+          <img src="un_white_f.png" alt="Unseen Front" loading="lazy">
+          <img src="un_white_b.png" alt="Unseen Back" loading="lazy">
+        </div>
+        <div class="unseen-promo-overlay"></div>
+        <span class="unseen-promo-tag">New Drop</span>
+        <div class="unseen-promo-info">
+          <h3>UNSEEN</h3>
+          <p>"Covered, but not contained." Bold back graphic, White / Royal Blue / Black.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+            <span class="unseen-promo-price">₹549</span>
+            <span class="unseen-promo-cta">Shop Now <span style="display:inline-block;width:16px;height:16px;background:var(--accent);border-radius:50%;text-align:center;line-height:16px;font-size:9px;">→</span></span>
+          </div>
+        </div>
+      </a>
+
+      <a href="printed.html#unseenDrop" class="unseen-promo-card reveal reveal-delay-1">
+        <div class="unseen-promo-media">
+          <img src="veiled_blue_f.png" alt="Veiled Bloom Front" loading="lazy">
+          <img src="veiled_blue_b.png" alt="Veiled Bloom Back" loading="lazy">
+        </div>
+        <div class="unseen-promo-overlay"></div>
+        <span class="unseen-promo-tag">New Drop</span>
+        <div class="unseen-promo-info">
+          <h3>VEILED BLOOM</h3>
+          <p>"Elegance in silence." Delicate floral artwork, Royal Blue / White.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+            <span class="unseen-promo-price">₹549</span>
+            <span class="unseen-promo-cta">Shop Now <span style="display:inline-block;width:16px;height:16px;background:var(--accent);border-radius:50%;text-align:center;line-height:16px;font-size:9px;">→</span></span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
 
   <!-- COLLECTIONS -->
   <section class="collections-section">
@@ -1205,7 +1303,7 @@
 
       <!-- PRINTED -->
       <a href="printed.html" class="collection-card reveal reveal-delay-2">
-        <img src="explore_space_back.jpg" alt="Printed Collection" loading="lazy">
+        <img src="un_white_f.png" alt="Printed Collection" loading="lazy">
         <div class="card-overlay"></div>
         <span class="card-tag">New Drop</span>
         <span class="card-tap">Tap to shop</span>
@@ -1254,12 +1352,12 @@
     </div>
     <div class="product-grid">
       <article class="product-card reveal">
-        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="blue_boxy.jpeg" alt="Blue Boxy" loading="lazy"></div>
-        <div class="product-content"><span class="product-type"> Shirt</span><h3 class="product-name"> Shirt</h3><div class="product-row"><span class="product-price">₹719</span><a class="product-link" href="shirt.html">Shop Now →</a></div></div>
+        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="un_white_f.png" alt="Unseen" loading="lazy"></div>
+        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Unseen</h3><div class="product-row"><span class="product-price">₹549</span><a class="product-link" href="printed.html#unseenDrop">Shop Now →</a></div></div>
       </article>
       <article class="product-card reveal reveal-delay-1">
-        <div class="product-image-wrap"><span class="product-badge">Popular Pick</span><img src="Royal_blue.jpg" alt="Royal blue oversized T-shirt" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Plain Oversized</span><h3 class="product-name">Royal Blue Oversized</h3><div class="product-row"><span class="product-price">₹399</span><a class="product-link" href="oversized.html">Shop Now →</a></div></div>
+        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="veiled_blue_b.png" alt="Veiled Bloom" loading="lazy"></div>
+        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Veiled Bloom</h3><div class="product-row"><span class="product-price">₹549</span><a class="product-link" href="printed.html#unseenDrop">Shop Now →</a></div></div>
       </article>
       <article class="product-card reveal reveal-delay-2">
         <div class="product-image-wrap"><span class="product-badge">Bestseller</span><img src="polo1.jpg" alt="ARAMBH polo T-shirt" loading="lazy"></div>
@@ -1481,7 +1579,8 @@
     /* RANDOM PRODUCT RECOMMENDATION */
     const recommendedProducts = [
       { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
-      { name:'Explore Space Tee', type:'Printed Oversized', price:'₹549', image:'explore_space_back.jpg', link:'printed.html' },
+      { name:'Unseen', type:'Printed Oversized', price:'₹549', image:'un_white_f.png', link:'printed.html#unseenDrop' },
+      { name:'Veiled Bloom', type:'Printed Oversized', price:'₹549', image:'veiled_blue_b.png', link:'printed.html#unseenDrop' },
       { name:'Classic Polo', type:'Polo Collection', price:'₹399', image:'polo1.jpg', link:'polo.html' },
       { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' },
       { name:'Red Boxy Shirt', type:'Shirt Collection', price:'₹699', image:'red_boxy.jpeg', link:'shirt.html' }

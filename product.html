@@ -601,7 +601,11 @@
         : itemTypeKey === 'polo'
           ? Object.keys(poloVariants).map(color => ({color, ...poloVariants[color]}))
           : [{color:item.color,image:item.image,image2:item.image2}]);
-    const first=itemVariants[0];
+    // FIX: match the variant to this catalog item's own colour instead of
+    // always taking itemVariants[0] — previously every oversized/polo card
+    // showed the first colour in the list (e.g. Royal Blue) regardless of
+    // its actual name/colour.
+    const first = itemVariants.find(v => v.color.toLowerCase() === item.color.toLowerCase()) || itemVariants[0];
     const enriched={...item,color:first.color,image:first.image,image2:first.image2||first.image};
     const params = new URLSearchParams(enriched);
     const dots=itemVariants.map(v=>`<span class="related-color" title="${v.color}" style="background:${colorHex[v.color]||'#777'}"></span>`).join('');

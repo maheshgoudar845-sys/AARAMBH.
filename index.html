@@ -1108,6 +1108,114 @@
       .feedback-form { padding: 30px 22px; }
     }
 
+    /* SEARCH OVERLAY */
+    .nav-search-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03); color: var(--text); display: flex; align-items: center;
+      justify-content: center; cursor: pointer; transition: border-color .25s, background .25s; flex-shrink: 0;
+    }
+    .nav-search-btn:hover { border-color: var(--accent); background: rgba(var(--accent-rgb),0.08); }
+    .search-overlay {
+      position: fixed; inset: 0; z-index: 300; background: rgba(4,4,10,0.88); backdrop-filter: blur(14px);
+      opacity: 0; pointer-events: none; transition: opacity .3s ease;
+      display: flex; flex-direction: column; align-items: center; padding: 90px 24px 40px;
+    }
+    .search-overlay.open { opacity: 1; pointer-events: auto; }
+    .search-overlay-inner { width: 100%; max-width: 720px; transform: translateY(-16px); transition: transform .35s ease; }
+    .search-overlay.open .search-overlay-inner { transform: translateY(0); }
+    .search-overlay-close {
+      position: absolute; top: 24px; right: 28px; width: 42px; height: 42px; border-radius: 50%;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text);
+      font-size: 20px; cursor: pointer;
+    }
+    .search-box {
+      display: flex; align-items: center; gap: 12px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 100px; padding: 14px 22px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    }
+    .search-box svg { flex-shrink: 0; opacity: .55; }
+    .search-box input {
+      flex: 1; background: none; border: none; outline: none; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+    .search-overlay-results { margin-top: 18px; max-height: 60vh; overflow-y: auto; }
+    .search-result-item {
+      display: flex; align-items: center; gap: 16px; padding: 14px 18px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      margin-bottom: 10px; text-decoration: none; color: var(--text);
+      transition: border-color .2s, transform .2s;
+    }
+    .search-result-item:hover { border-color: var(--accent); transform: translateX(4px); }
+    .search-result-item img { width: 52px; height: 62px; object-fit: cover; border-radius: 8px; background: #0a0a14; flex-shrink: 0; }
+    .search-result-item .sr-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+    .search-result-item .sr-meta { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .search-empty-state { color: var(--muted); text-align: center; padding: 30px 10px; font-size: 14px; }
+
+    /* ALL PRODUCTS */
+    .all-products-section { padding: 100px 40px; max-width: 1500px; margin: auto; }
+    .ap-controls {
+      display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 44px;
+    }
+    .ap-chip {
+      padding: 10px 20px; border-radius: 100px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted); font-family: 'Syne', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: .2s ease;
+    }
+    .ap-chip:hover { color: var(--text); border-color: rgba(var(--accent-rgb),.4); }
+    .ap-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+    .ap-sort {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      border-radius: 100px; padding: 10px 16px; font-family: 'Syne', sans-serif; font-size: 12px;
+      cursor: pointer;
+    }
+    .ap-shuffle {
+      display: flex; align-items: center; gap: 8px;
+      background: transparent; border: 1px solid rgba(var(--accent-rgb),.4); color: var(--accent2);
+      border-radius: 100px; padding: 10px 18px; font-family: 'Syne', sans-serif; font-size: 12px;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: .2s;
+    }
+    .ap-shuffle:hover { background: rgba(var(--accent-rgb),.12); }
+    .ap-shuffle svg { transition: transform .5s ease; }
+    .ap-shuffle.spin svg { transform: rotate(360deg); }
+    .ap-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+    }
+    .ap-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
+      text-decoration: none; color: var(--text); display: block; position: relative;
+      opacity: 0; transform: translateY(22px) scale(.97);
+      animation: ap-in .5s cubic-bezier(.22,1,.36,1) forwards;
+      transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    }
+    @keyframes ap-in { to { opacity: 1; transform: translateY(0) scale(1); } }
+    .ap-card:hover { transform: translateY(-7px); border-color: rgba(var(--accent-rgb),.4); box-shadow: 0 30px 70px rgba(0,0,0,.5); }
+    .ap-card-img { height: 300px; overflow: hidden; background: #0a0a14; position: relative; }
+    .ap-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+    .ap-card:hover .ap-card-img img { transform: scale(1.08); }
+    .ap-card-badge {
+      position: absolute; top: 12px; left: 12px; z-index: 2; background: var(--accent); color: var(--accent2);
+      font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 5px 11px; border-radius: 100px;
+    }
+    .ap-card-info { padding: 16px 18px 18px; }
+    .ap-card-type { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.3px; }
+    .ap-card-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; margin: 6px 0 8px; }
+    .ap-card-row { display: flex; justify-content: space-between; align-items: center; }
+    .ap-card-price { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent2); }
+    .ap-card-cta {
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase; color: white; background: rgba(255,255,255,.08); border: 1px solid var(--border);
+      padding: 7px 12px; border-radius: 100px; transition: background .25s, border-color .25s;
+    }
+    .ap-card:hover .ap-card-cta { background: var(--accent); border-color: var(--accent); }
+    .ap-no-results { grid-column: 1/-1; text-align: center; padding: 50px 20px; color: var(--muted); }
+    @media (max-width: 1100px) { .ap-grid { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 760px) { .ap-grid { grid-template-columns: repeat(2,1fr); gap: 12px; } .ap-card-img { height: 220px; } .all-products-section { padding: 70px 20px; } }
+    @media (max-width: 480px) { .ap-controls { gap: 7px; } .ap-chip, .ap-sort, .ap-shuffle { padding: 8px 14px; font-size: 10.5px; } }
+
     @media (max-width: 540px) {
       .collections-grid { grid-template-columns: 1fr; }
       .hero-actions { width:100%; }
@@ -1151,15 +1259,32 @@
       <li><a href="feedback.html" style="color: var(--accent2); font-weight: 800;">Feedback</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
+    <button class="nav-search-btn" id="navSearchBtn" aria-label="Search products">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
     <a href="tel:9405074832" class="nav-cta">📞 Order Now</a>
     <button class="hamburger" id="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </nav>
 
+  <!-- SEARCH OVERLAY -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-overlay-close" id="searchOverlayClose" aria-label="Close search">&times;</button>
+    <div class="search-overlay-inner">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="siteSearchInput" placeholder="Search polos, oversized tees, hoodies, prints...">
+      </div>
+      <div class="search-overlay-results" id="siteSearchResults"></div>
+    </div>
+  </div>
+
   <div class="menu-backdrop" id="menuBackdrop"></div>
   <div class="mobile-menu" id="mobileMenu">
     <a href="#" class="active">Home</a>
+    <a href="#" id="mobileSearchTrigger">🔍 Search</a>
+    <a href="#allProducts">All Products</a>
     <a href="polo.html">Polos</a>
     <a href="oversized.html">Oversized</a>
     <a href="printed.html">Printed</a>
@@ -1342,6 +1467,32 @@
       </a>
 
     </div>
+  </section>
+
+  <!-- ALL PRODUCTS (randomised, filterable, searchable) -->
+  <section class="all-products-section" id="allProducts">
+    <div class="section-header reveal">
+      <span class="section-label">Every Single Drop</span>
+      <h2 class="section-title">SHOP ALL PRODUCTS</h2>
+      <p class="section-desc">The full ARAMBH lineup, shuffled fresh — filter by collection or just see what catches your eye.</p>
+    </div>
+    <div class="ap-controls">
+      <button class="ap-chip active" data-ap-filter="all">All</button>
+      <button class="ap-chip" data-ap-filter="polo">Polo</button>
+      <button class="ap-chip" data-ap-filter="oversized">Oversized</button>
+      <button class="ap-chip" data-ap-filter="printed">Printed</button>
+      <button class="ap-chip" data-ap-filter="hoodie">Hoodie</button>
+      <select class="ap-sort" id="apSort">
+        <option value="shuffled">Sort: Shuffled</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+      </select>
+      <button class="ap-shuffle" id="apShuffleBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+        Shuffle
+      </button>
+    </div>
+    <div class="ap-grid" id="apGrid"></div>
   </section>
 
   <!-- NEW DROPS -->
@@ -1576,6 +1727,158 @@
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     });
+
+    /* ===== FULL PRODUCT CATALOG (mirrors product.html) — used by search + All Products ===== */
+    const siteCatalog = [
+      {product:'White Polo Tee', type:'Polo', color:'White', price:399, image:'White_front.png', image2:'White_back.png'},
+      {product:'Black Polo Tee', type:'Polo', color:'Black', price:399, image:'Black_front.png', image2:'Black_back.png'},
+      {product:'Navy Blue Polo Tee', type:'Polo', color:'Navy Blue', price:399, image:'Navy_Blue_front.png', image2:'Navy_Blue_back.png'},
+      {product:'Maroon Polo Tee', type:'Polo', color:'Maroon', price:399, image:'Maroon_front.png', image2:'Maroon_back.png'},
+      {product:'Gray Polo Tee', type:'Polo', color:'Gray', price:399, image:'Gray_front.png', image2:'Gray_back.png'},
+      {product:'Charcoal Polo Tee', type:'Polo', color:'Charcoal', price:399, image:'Charcoal_front.png', image2:'Charcoal_back.png'},
+      {product:'Beige Oversized Tee', type:'Oversized', color:'Beige', price:349, image:'BEIGEA_FRONT.png', image2:'BEIGEA_BACK.png'},
+      {product:'Black Oversized Tee', type:'Oversized', color:'Black', price:349, image:'BLACK_FRONT.png', image2:'BLACK_BACK.png'},
+      {product:'Navy Blue Oversized Tee', type:'Oversized', color:'Navy Blue', price:349, image:'NAVY_BLUE_FRONT.png', image2:'NAVY_BLUE_BACK.png'},
+      {product:'Royal Blue Oversized Tee', type:'Oversized', color:'Royal Blue', price:349, image:'ROYAL_BLUE_FRONT.png', image2:'ROYAL_BLUE_BACK.png'},
+      {product:'Sky Blue Oversized Tee', type:'Oversized', color:'Sky Blue', price:349, image:'SKY_BLUE_FRONT.png', image2:'SKY_BLUE_BACK.png'},
+      {product:'Red Oversized Tee', type:'Oversized', color:'Red', price:349, image:'RED_FRONT.png', image2:'RED_BACK.png'},
+      {product:'Baby Pink Oversized Tee', type:'Oversized', color:'Baby Pink', price:349, image:'BABY_PINK_FRONT.png', image2:'BABY_PINK_BACK.png'},
+      {product:'White Oversized Tee', type:'Oversized', color:'White', price:349, image:'WHITE_FRONT.png', image2:'WHITE_BACK.png'},
+      {product:'Army Green Oversized Tee', type:'Oversized', color:'Army Green', price:349, image:'ARMY_GREEN_FRONT.png', image2:'ARMY_GREEN_BACK.png'},
+      {product:'Lavender Oversized Tee', type:'Oversized', color:'Lavender', price:349, image:'LAVENDER_FRONT.png', image2:'LAVENDER_BACK.png'},
+      {product:'Off-White Oversized Tee', type:'Oversized', color:'Off-White', price:349, image:'OFF_WHITE_FRONT.png', image2:'OFF_WHITE-BACK.png'},
+      {product:'Maroon Oversized Tee', type:'Oversized', color:'Maroon', price:349, image:'MAROON_FRONT.png', image2:'MAROON_BACK.png'},
+      {product:'Beige Hoodie', type:'Hoodie', color:'Beige', price:599, image:'hoodie1.jpg', image2:'hoodie1.jpg'},
+      {product:'Black Hoodie', type:'Hoodie', color:'Black', price:599, image:'hoodie2.jpg', image2:'hoodie2.jpg'},
+      {product:'Unseen', type:'Printed Oversized Tee', color:'White', price:549, image:'un_white_f.png', image2:'un_white_b.png'},
+      {product:'Veiled Bloom', type:'Printed Oversized Tee', color:'Royal Blue', price:549, image:'veiled_blue_f.png', image2:'veiled_blue_b.png'},
+      {product:'Explore Space Acid Wash', type:'Printed Oversized Tee', color:'Acid Wash', price:699, image:'explore_space_front.jpg', image2:'explore_space_back.jpg'},
+      {product:'Grace', type:'Printed T-Shirt', color:'Red', price:599, image:'Grace_red_f.png', image2:'Grace_red_b.png'},
+      {product:'Anime', type:'Printed T-Shirt', color:'Black', price:599, image:'anime_b_f.png', image2:'anime_b_b.png'},
+      {product:'Naruto', type:'Printed T-Shirt', color:'White', price:599, image:'naruto_w_f.png', image2:'naruto_w_b.png'},
+      {product:'One Piece', type:'Printed T-Shirt', color:'White', price:599, image:'one_w_f.png', image2:'one_w_b.png'},
+      {product:'Tanjiro', type:'Printed T-Shirt', color:'White', price:599, image:'tanjiro_w_f.png', image2:'tanjiro_w_b.png'},
+      {product:'Luffy', type:'Printed T-Shirt', color:'Black', price:549, image:'luffy_b_f.png', image2:'luffy_b_b.png'},
+      {product:'Justice', type:'Printed T-Shirt', color:'Red', price:549, image:'Justice_r_f.png', image2:'Justice_r_b.png'},
+      {product:'Porsche', type:'Printed T-Shirt', color:'Black', price:549, image:'Porsche_black_front.png', image2:'Porsche_black_back.png'},
+      {product:'Kungfu Panda', type:'Printed T-Shirt', color:'White', price:649, image:'Kufu_white.jpeg', image2:'Kufu_white.jpeg'},
+      {product:'Red Boxy Shirt', type:'Shirt', color:'Red', price:699, image:'red_boxy.jpeg', image2:'red_boxy.jpeg'},
+      {product:'Classic Polo', type:'Polo', color:'White', price:399, image:'polo1.jpg', image2:'polo1.jpg'}
+    ];
+
+    function apFilterKey(type){
+      const t = type.toLowerCase();
+      if(t.includes('hoodie')) return 'hoodie';
+      if(t.includes('printed')) return 'printed';
+      if(t.includes('polo')) return 'polo';
+      if(t.includes('oversized')) return 'oversized';
+      if(t.includes('shirt')) return 'shirt';
+      return t;
+    }
+    function apProductUrl(item){
+      const params = new URLSearchParams({product:item.product, type:item.type, color:item.color, price:String(item.price), image:item.image, image2:item.image2||item.image});
+      return 'product.html?' + params.toString();
+    }
+    function shuffleArray(arr){
+      const a = [...arr];
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+    let apOrder = shuffleArray(siteCatalog);
+    let apActiveFilter = 'all';
+
+    function renderAllProducts(){
+      let items = apActiveFilter === 'all' ? apOrder : apOrder.filter(i => apFilterKey(i.type) === apActiveFilter);
+      const sort = document.getElementById('apSort').value;
+      items = [...items];
+      if(sort === 'price-asc') items.sort((a,b)=>a.price-b.price);
+      if(sort === 'price-desc') items.sort((a,b)=>b.price-a.price);
+
+      const grid = document.getElementById('apGrid');
+      if(!items.length){
+        grid.innerHTML = '<div class="ap-no-results">No products match this filter yet.</div>';
+        return;
+      }
+      const badges = ['Bestseller','New','Trending','Popular'];
+      grid.innerHTML = items.map((item, i) => `
+        <a class="ap-card" href="${apProductUrl(item)}" style="animation-delay:${Math.min(i,10)*0.045}s">
+          <div class="ap-card-img">
+            <span class="ap-card-badge">${badges[i % badges.length]}</span>
+            <img src="${item.image}" alt="${item.product}" loading="lazy">
+          </div>
+          <div class="ap-card-info">
+            <div class="ap-card-type">${item.type}</div>
+            <div class="ap-card-name">${item.product}</div>
+            <div class="ap-card-row">
+              <span class="ap-card-price">₹${item.price}</span>
+              <span class="ap-card-cta">View →</span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+    renderAllProducts();
+
+    document.querySelectorAll('.ap-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.ap-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        apActiveFilter = chip.dataset.apFilter;
+        renderAllProducts();
+      });
+    });
+    document.getElementById('apSort').addEventListener('change', renderAllProducts);
+    document.getElementById('apShuffleBtn').addEventListener('click', function(){
+      apOrder = shuffleArray(siteCatalog);
+      this.classList.remove('spin'); void this.offsetWidth; this.classList.add('spin');
+      renderAllProducts();
+    });
+
+    /* ===== SITE-WIDE SEARCH OVERLAY ===== */
+    const navSearchBtn = document.getElementById('navSearchBtn');
+    const searchOverlay = document.getElementById('searchOverlay');
+    const searchOverlayClose = document.getElementById('searchOverlayClose');
+    const siteSearchInput = document.getElementById('siteSearchInput');
+    const siteSearchResults = document.getElementById('siteSearchResults');
+
+    function openSearch(){
+      searchOverlay.classList.add('open');
+      setTimeout(() => siteSearchInput.focus(), 200);
+    }
+    function closeSearch(){
+      searchOverlay.classList.remove('open');
+    }
+    navSearchBtn.addEventListener('click', openSearch);
+    const mobileSearchTrigger = document.getElementById('mobileSearchTrigger');
+    if(mobileSearchTrigger) mobileSearchTrigger.addEventListener('click', e => { e.preventDefault(); closeMenu(); openSearch(); });
+    searchOverlayClose.addEventListener('click', closeSearch);
+    searchOverlay.addEventListener('click', e => { if(e.target === searchOverlay) closeSearch(); });
+    document.addEventListener('keydown', e => {
+      if(e.key === '/' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); openSearch(); }
+      if(e.key === 'Escape') closeSearch();
+    });
+
+    function renderSiteSearch(query){
+      const q = query.trim().toLowerCase();
+      if(!q){ siteSearchResults.innerHTML = ''; return; }
+      const matches = siteCatalog.filter(item =>
+        item.product.toLowerCase().includes(q) || item.type.toLowerCase().includes(q) || item.color.toLowerCase().includes(q)
+      ).slice(0, 8);
+      if(!matches.length){
+        siteSearchResults.innerHTML = `<div class="search-empty-state">No products found for "${query}"</div>`;
+        return;
+      }
+      siteSearchResults.innerHTML = matches.map(item => `
+        <a class="search-result-item" href="${apProductUrl(item)}">
+          <img src="${item.image}" alt="${item.product}">
+          <div><div class="sr-name">${item.product}</div><div class="sr-meta">${item.type} · ₹${item.price}</div></div>
+        </a>
+      `).join('');
+    }
+    siteSearchInput.addEventListener('input', e => renderSiteSearch(e.target.value));
 
     /* RANDOM PRODUCT RECOMMENDATION */
     const recommendedProducts = [

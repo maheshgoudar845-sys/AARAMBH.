@@ -332,6 +332,79 @@
       .form-row { grid-template-columns: 1fr; }
       .payment-options { grid-template-columns: 1fr 1fr; }
     }
+
+    /* ===== BEAUTIFICATION LAYER (purely visual — no logic below touches IDs used by the existing script) ===== */
+    @keyframes ob-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ob-glow { 0%,100% { box-shadow: 0 0 0 rgba(var(--accent-rgb),0); } 50% { box-shadow: 0 0 26px rgba(var(--accent-rgb),.18); } }
+    @keyframes ob-pulse-once { 0% { transform: scale(1); } 35% { transform: scale(1.06); color: #9be6b4; } 100% { transform: scale(1); } }
+    @keyframes ob-shine { from { transform: translateX(-120%) skewX(-15deg); } to { transform: translateX(220%) skewX(-15deg); } }
+    @keyframes ob-check-pop { 0% { transform: scale(0.3) rotate(-15deg); opacity:0; } 60% { transform: scale(1.15) rotate(4deg); opacity:1; } 100% { transform: scale(1) rotate(0); } }
+    @keyframes ob-ring { 0% { transform: scale(0.8); opacity: .7; } 100% { transform: scale(1.7); opacity: 0; } }
+
+    .page-wrap > div, .side-card { animation: ob-fade-up .6s cubic-bezier(.22,1,.36,1) both; }
+    .side-card { animation-delay: .08s; }
+
+    .card { position: relative; overflow: hidden; }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background-size: 200% 100%; animation: ob-shine-line 3.5s linear infinite;
+    }
+    @keyframes ob-shine-line { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+
+    /* Order progress indicator (visual guide only) */
+    .ob-steps { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
+    .ob-step { display: flex; align-items: center; gap: 8px; }
+    .ob-step-num {
+      width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted);
+      transition: background .3s, border-color .3s, color .3s;
+    }
+    .ob-step.done .ob-step-num { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .ob-step-label { font-family: 'Syne', sans-serif; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .ob-step.done .ob-step-label { color: var(--text); }
+    .ob-step-line { flex: 1; height: 1px; background: var(--border); min-width: 16px; }
+
+    input, select, textarea { transition: border-color 0.25s, background 0.25s, box-shadow .25s; }
+    input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.12); }
+
+    .pay-option { position: relative; }
+    .pay-option.active { animation: ob-glow 2.2s ease-in-out infinite; }
+    .pay-option.active .pay-icon { transform: scale(1.15); }
+    .pay-option .pay-icon { display: inline-block; transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+
+    .submit-btn { position: relative; overflow: hidden; }
+    .submit-btn::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 40%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.28), transparent);
+      animation: ob-shine 3s ease-in-out infinite;
+    }
+
+    #orderTotalValue.ob-pulse { animation: ob-pulse-once .5s ease; }
+
+    .cart-item-row { animation: ob-fade-up .4s ease both; }
+
+    .success-overlay.show .success-icon { display: inline-block; animation: ob-check-pop .5s cubic-bezier(.34,1.56,.64,1) both; position: relative; }
+    .success-overlay.show .success-icon::after {
+      content: ''; position: absolute; inset: -10px; border: 2px solid rgba(155,230,180,0.5); border-radius: 50%;
+      animation: ob-ring 1s ease-out .3s;
+    }
+    .success-overlay.show h3, .success-overlay.show p, .success-overlay.show .wa-btn {
+      animation: ob-fade-up .5s ease both;
+    }
+    .success-overlay.show p { animation-delay: .08s; }
+    .success-overlay.show .wa-btn { animation-delay: .16s; }
+
+    .trust-row span { transition: color .25s, transform .25s; }
+    .trust-row span:hover { color: var(--accent2); transform: translateY(-2px); }
+
+    .side-card .card { transition: border-color .3s, box-shadow .3s; }
+    .side-card .card:hover { border-color: rgba(var(--accent-rgb),.3); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; }
+    }
   </style>
 </head>
 <body>
@@ -348,6 +421,16 @@
       <p class="page-sub">Fill in your details below — we'll confirm your order on WhatsApp.</p>
 
       <div class="card">
+
+        <div class="ob-steps" id="obSteps">
+          <div class="ob-step done"><span class="ob-step-num">1</span><span class="ob-step-label">Cart</span></div>
+          <div class="ob-step-line"></div>
+          <div class="ob-step" id="obStepDetails"><span class="ob-step-num">2</span><span class="ob-step-label">Details</span></div>
+          <div class="ob-step-line"></div>
+          <div class="ob-step" id="obStepPay"><span class="ob-step-num">3</span><span class="ob-step-label">Payment</span></div>
+          <div class="ob-step-line"></div>
+          <div class="ob-step" id="obStepConfirm"><span class="ob-step-num">4</span><span class="ob-step-label">Confirm</span></div>
+        </div>
 
         <div class="summary-block" id="summaryBlock">
           <div class="summary-heading">
@@ -1050,6 +1133,57 @@
         submitBtn.classList.remove('loading');
       });
     });
+  </script>
+
+  <script>
+    /* ===== BEAUTIFICATION-ONLY SCRIPT ===== */
+    /* Purely observational — reads the DOM the main script already updates and
+       adds visual feedback. Never writes to any field the order logic reads,
+       so it cannot affect validation, totals, or submission. */
+    (function () {
+      const totalEl = document.getElementById('orderTotalValue');
+      if (totalEl) {
+        let lastText = totalEl.textContent;
+        new MutationObserver(() => {
+          if (totalEl.textContent !== lastText) {
+            lastText = totalEl.textContent;
+            totalEl.classList.remove('ob-pulse');
+            void totalEl.offsetWidth;
+            totalEl.classList.add('ob-pulse');
+          }
+        }).observe(totalEl, { childList: true, characterData: true, subtree: true });
+      }
+
+      // Step indicator: lights up as the customer fills required fields —
+      // cosmetic guidance only, does not gate anything the real form doesn't already gate.
+      const stepDetails = document.getElementById('obStepDetails');
+      const stepPay = document.getElementById('obStepPay');
+      const stepConfirm = document.getElementById('obStepConfirm');
+      const fieldIds = ['fullName', 'phone', 'address', 'pincode'];
+      function refreshSteps() {
+        const filled = fieldIds.every(id => {
+          const el = document.getElementById(id);
+          return el && el.value.trim().length > 0;
+        });
+        if (stepDetails) stepDetails.classList.toggle('done', filled);
+        const upiOpen = document.getElementById('upiPanel');
+        const paySelected = document.getElementById('payUPI');
+        if (stepPay) stepPay.classList.toggle('done', filled && (paySelected ? true : true));
+        if (stepConfirm) stepConfirm.classList.toggle('done', document.getElementById('successOverlay').classList.contains('show'));
+      }
+      fieldIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', refreshSteps);
+      });
+      const pay1 = document.getElementById('payCOD');
+      const pay2 = document.getElementById('payUPI');
+      [pay1, pay2].forEach(el => { if (el) el.addEventListener('click', refreshSteps); });
+      const successOverlay = document.getElementById('successOverlay');
+      if (successOverlay) {
+        new MutationObserver(refreshSteps).observe(successOverlay, { attributes: true, attributeFilter: ['class'] });
+      }
+      refreshSteps();
+    })();
   </script>
 </body>
 </html>

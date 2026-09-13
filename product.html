@@ -588,6 +588,7 @@
     if(typeKey === 'polo') return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
     if(typeKey === 'oversized') return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
     if(typeKey === 'hoodie') return {material:'Premium Fabric',gsm:'See product description',fit:'Relaxed Fit',description:'Comfortable premium hoodie with a relaxed fit for layering.'};
+    if(typeKey === 'shirt') return {material:'100% Cotton',gsm:'190 GSM',fit:'Boxy Fit',description:'Structured boxy-fit shirt in breathable cotton.'};
     return {material:'Premium Fabric',gsm:'—',fit:'Regular Fit',description:'Premium ARAMBH apparel.'};
   }
 
@@ -666,6 +667,7 @@
     const img=document.getElementById('sizeChartImage');
     const caption=document.getElementById('chartCaption');
     if(typeKey === 'polo') { img.src='polo_size_chart.png'; caption.textContent='Polo T-shirt size chart'; }
+    else if(typeKey === 'shirt') { img.src='ShirtSizeChart.jpeg'; caption.textContent='Boxy Fit Shirt size chart'; }
     else if(isPrinted && selectedFit === 'Regular') { img.src='regular_size_chart.png'; caption.textContent='Regular-fit 180 GSM printed T-shirt size chart'; }
     else { img.src='oversized_chart.png'; caption.textContent=isPrinted?'Oversized 240 GSM printed T-shirt size chart':'Oversized T-shirt size chart'; }
   }

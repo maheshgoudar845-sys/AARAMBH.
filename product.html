@@ -198,6 +198,53 @@
   .trust-item span{display:block;font-size:.7rem;color:var(--muted);line-height:1.35;}
   @media(max-width:420px){.trust-strip{grid-template-columns:1fr 1fr 1fr;}.trust-item{padding:9px 6px;}.trust-item span{font-size:.62rem;}}
 
+  /* ---- Pincode delivery check ---- */
+  .pincode-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:18px 0;}
+  .pincode-box .option-label{margin-bottom:10px;}
+  .pincode-row{display:flex;gap:8px;}
+  .pincode-row input{
+    flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);
+    padding:11px 14px;font-family:'DM Sans';font-size:.9rem;outline:none;transition:border-color .18s;
+  }
+  .pincode-row input:focus{border-color:var(--accent);}
+  .pincode-row button{
+    background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:0 18px;
+    font-family:'Syne';font-weight:700;font-size:.82rem;letter-spacing:.5px;cursor:pointer;transition:.18s var(--ease);
+  }
+  .pincode-row button:hover{background:var(--accent2);color:#fff;}
+  .pincode-row button:disabled{opacity:.5;cursor:not-allowed;}
+  .pincode-result{margin-top:10px;font-size:.82rem;line-height:1.5;display:none;}
+  .pincode-result.show{display:block;}
+  .pincode-result.ok{color:#3DDC84;}
+  .pincode-result.bad{color:var(--accent2);}
+  .pincode-result .pc-city{color:var(--muted);}
+
+  /* ---- What You Get feature grid ---- */
+  .feature-section{max-width:1200px;margin:56px auto 0;padding:0 20px;}
+  .feature-section h2{font-size:1.9rem;margin-bottom:18px;}
+  .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .feature-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 16px;text-align:center;transition:.2s var(--ease);}
+  .feature-card:hover{border-color:var(--accent);transform:translateY(-3px);}
+  .feature-card svg{width:30px;height:30px;stroke:var(--accent2);margin-bottom:10px;}
+  .feature-card h3{font-family:'Syne';font-size:.92rem;font-weight:700;margin-bottom:5px;}
+  .feature-card p{color:var(--muted);font-size:.78rem;line-height:1.4;}
+  @media(max-width:860px){.feature-grid{grid-template-columns:1fr 1fr;}}
+
+  /* ---- Info tabs ---- */
+  .tabs-section{max-width:1200px;margin:52px auto 0;padding:0 20px;}
+  .tab-nav{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:20px;}
+  .tab-btn{
+    background:none;border:none;color:var(--muted);font-family:'Syne';font-weight:700;font-size:.85rem;
+    letter-spacing:.4px;padding:12px 16px;cursor:pointer;position:relative;transition:color .18s;
+  }
+  .tab-btn::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent);transform:scaleX(0);transition:transform .22s var(--ease);}
+  .tab-btn.active{color:var(--text);}
+  .tab-btn.active::after{transform:scaleX(1);}
+  .tab-panel{display:none;color:var(--muted);font-size:.9rem;line-height:1.7;}
+  .tab-panel.active{display:block;}
+  .tab-panel strong{color:var(--text);}
+  .tab-panel table{margin-top:10px;}
+
   /* ---- Sticky mobile bar ---- */
   .sticky-bar{
     position:fixed;bottom:0;left:0;right:0;background:var(--card);
@@ -392,6 +439,15 @@
 
     <div class="policy-note"><strong>Return policy:</strong> Returns are accepted only for print-related issues, and the issue must be reported within 3 days of receiving the delivery.</div>
 
+    <div class="pincode-box">
+      <div class="option-label" style="margin:0 0 10px;">Check delivery to your pincode</div>
+      <div class="pincode-row">
+        <input type="text" id="pincodeInput" placeholder="Enter 6-digit pincode" inputmode="numeric" maxlength="6">
+        <button type="button" id="pincodeCheckBtn">CHECK</button>
+      </div>
+      <div class="pincode-result" id="pincodeResult"></div>
+    </div>
+
     <div class="buy-row">
       <div class="qty">
         <button id="qtyMinus">−</button>
@@ -409,6 +465,59 @@
     </div>
   </div>
 </div>
+
+<section class="feature-section reveal" style="animation-delay:.1s">
+  <h2>What You Get</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M4 4h16v4H4z"></path><path d="M4 8l2 12h12l2-12"></path></svg>
+      <h3>Heavyweight Fabric</h3>
+      <p>Structured cotton built for everyday comfort</p>
+    </div>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+      <h3>Flexible Payment</h3>
+      <p>UPI, cards, and Cash on Delivery available</p>
+    </div>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="1" y="7" width="15" height="10" rx="1"></rect><path d="M16 10h4l3 3v4h-7z"></path><circle cx="5.5" cy="18.5" r="1.5"></circle><circle cx="18.5" cy="18.5" r="1.5"></circle></svg>
+      <h3>Fast Delivery</h3>
+      <p>Made to order and shipped within a few days</p>
+    </div>
+    <div class="feature-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"></path><path d="M3 4v8h8"></path></svg>
+      <h3>Easy Resolution</h3>
+      <p>Print-quality issues reported within 3 days are made right</p>
+    </div>
+  </div>
+</section>
+
+<section class="tabs-section reveal" style="animation-delay:.12s">
+  <div class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="sizefit">Size &amp; Fit</button>
+    <button class="tab-btn" data-tab="fabric">Fabric &amp; Care</button>
+    <button class="tab-btn" data-tab="about">About</button>
+    <button class="tab-btn" data-tab="shipping">Shipping</button>
+    <button class="tab-btn" data-tab="returns">Returns &amp; Exchange</button>
+  </div>
+  <div class="tab-panel active" data-panel="sizefit">
+    Fits true to size — most customers pick their usual size. Use the <strong>Size Chart</strong> above to compare chest and length measurements before ordering, especially if you're between sizes.
+  </div>
+  <div class="tab-panel" data-panel="fabric">
+    <strong>Composition:</strong> Premium combed cotton, built for structure and everyday comfort.<br>
+    <strong>Wash care:</strong> Machine wash cold with similar colours. Only non-chlorine bleach. Tumble dry low. Warm iron if needed.
+  </div>
+  <div class="tab-panel" data-panel="about">
+    AARAMBH is an independent Indian streetwear label — every piece is made to order, so quality checks happen before it ships, not after.
+  </div>
+  <div class="tab-panel" data-panel="shipping">
+    Orders are made to order and typically ship within a few working days. Delivery charges are calculated at checkout based on your pincode.
+  </div>
+  <div class="tab-panel" data-panel="returns">
+    <strong>Returns:</strong> Accepted only for print or stitching defects, reported within 3 days of delivery.<br>
+    <strong>Exchange:</strong> Size exchanges are handled case-by-case — reach out to us on WhatsApp or email with your order details.
+  </div>
+</section>
 
 <section class="related-section reveal" style="animation-delay:.14s">
   <div class="related-head">
@@ -676,6 +785,77 @@
   document.getElementById('productName').textContent = productData.product;
   document.getElementById('productPrice').textContent = `₹${productData.price}`;
   document.getElementById('mobileProductPrice').textContent = `₹${productData.price}`;
+
+  /* ---------------- Strikethrough MRP + discount badge ---------------- */
+  (function renderDiscount(){
+    const price = Number(productData.price);
+    if(!price) return;
+    const mrp = Math.round((price / 0.8) / 5) * 5; // implies a 20% saving, rounded to nearest ₹5
+    const off = Math.round((1 - price / mrp) * 100);
+    const wasEl = document.getElementById('productWasPrice');
+    const offEl = document.getElementById('productDiscount');
+    if(mrp > price){
+      wasEl.textContent = `₹${mrp}`;
+      wasEl.style.display = 'inline';
+      offEl.textContent = `Save ${off}%`;
+      offEl.style.display = 'inline';
+    }
+  })();
+
+  /* ---------------- Pincode delivery check ---------------- */
+  (function pincodeCheck(){
+    const input = document.getElementById('pincodeInput');
+    const btn = document.getElementById('pincodeCheckBtn');
+    const result = document.getElementById('pincodeResult');
+    if(!input || !btn) return;
+    btn.addEventListener('click', async () => {
+      const pin = input.value.trim();
+      result.classList.remove('ok','bad');
+      if(!/^\d{6}$/.test(pin)){
+        result.textContent = 'Please enter a valid 6-digit pincode.';
+        result.classList.add('bad','show');
+        return;
+      }
+      btn.disabled = true;
+      result.textContent = 'Checking serviceability…';
+      result.classList.add('show');
+      try{
+        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+        const data = await res.json();
+        const info = data && data[0];
+        if(info && info.Status === 'Success' && info.PostOffice && info.PostOffice.length){
+          const office = info.PostOffice[0];
+          const state = office.State || '';
+          const isLowZone = /goa|karnataka/i.test(state);
+          const charge = isLowZone ? 30 : 50;
+          result.innerHTML = `Delivering to <span class="pc-city">${office.District}, ${state}</span> — usually 4–7 working days · ₹${charge} delivery (COD available)`;
+          result.classList.add('ok');
+        } else {
+          result.textContent = 'Sorry, we couldn\'t find that pincode. Please double-check and try again.';
+          result.classList.add('bad');
+        }
+      } catch(err){
+        result.textContent = 'Could not check delivery right now — please try again in a moment.';
+        result.classList.add('bad');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+    input.addEventListener('keydown', e => { if(e.key === 'Enter') btn.click(); });
+  })();
+
+  /* ---------------- Info tabs ---------------- */
+  (function initTabs(){
+    const nav = document.getElementById('tabNav');
+    if(!nav) return;
+    nav.addEventListener('click', e => {
+      const btn = e.target.closest('.tab-btn'); if(!btn) return;
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector(`.tab-panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+    });
+  })();
 
   const mainImg = document.getElementById('mainImg');
   const thumbs = document.getElementById('thumbs');

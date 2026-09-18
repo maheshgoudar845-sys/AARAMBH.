@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Place Your Order — Arambh</title>
+  <title>Place Your Order — Aarambh</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -452,6 +452,14 @@
               <input type="tel" id="phone" name="phone" placeholder="9876543210" required>
               <div class="field-error">Enter a valid 10-digit number</div>
             </div>
+            <div class="form-group" id="group-email">
+              <label for="email">Email (for your bill)</label>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required>
+              <div class="field-error">Enter a valid email — we send your bill here</div>
+            </div>
+          </div>
+
+          <div class="form-row">
             <div class="form-group" id="group-size">
               <label for="size">Size</label>
               <select id="size" name="size" required>
@@ -463,6 +471,10 @@
                 <option value="XXL">XXL</option>
               </select>
               <div class="field-error">Please select a size</div>
+            </div>
+            <div class="form-group" id="group-qty">
+              <label for="quantity">Quantity</label>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" max="10">
             </div>
           </div>
 
@@ -481,21 +493,18 @@
                 <span class="pincode-spinner"></span><span id="pincodeStatusText">Detecting location…</span>
               </div>
             </div>
-            <div class="form-group" id="group-qty">
-              <label for="quantity">Quantity</label>
-              <input type="number" id="quantity" name="quantity" value="1" min="1" max="10">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" name="city" placeholder="Auto-detected from pincode" readonly>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="city">City</label>
-              <input type="text" id="city" name="city" placeholder="Auto-detected from pincode" readonly>
-            </div>
-            <div class="form-group">
               <label for="state">State</label>
               <input type="text" id="state" name="state" placeholder="Auto-detected from pincode" readonly>
             </div>
+            <div></div>
           </div>
 
           <div class="form-group" id="group-coupon">
@@ -589,7 +598,7 @@
         <div class="success-overlay" id="successOverlay">
           <div class="success-icon">✅</div>
           <h3>Order Received!</h3>
-          <p>Thanks for your order — we've got your details. Tap below to confirm instantly on WhatsApp so we can start processing it right away.</p>
+          <p>Thanks for your order — we've got your details, and your bill has been emailed to you. Tap below to confirm instantly on WhatsApp so we can start processing it right away.</p>
           <a href="#" id="successWhatsapp" class="wa-btn">💬 Confirm on WhatsApp</a>
         </div>
 
@@ -795,11 +804,6 @@
     }
 
     // ---------- Discount logic ----------
-    // 1) Auto-applies when the cart has 3+ Oversized tees total: 8% off.
-    // 2) Coupon codes (NITG10, UNSEEN10): 10% off each, entered manually.
-    //    Only one coupon can be applied at a time (appliedCoupon holds a
-    //    single value), and if the auto-discount would also apply, the
-    //    bigger discount wins rather than stacking.
     function computeDiscount(lineTotal) {
       const candidates = [];
       if (getOversizedQty() >= 3) {
@@ -901,9 +905,6 @@
         discountRow.style.display = 'none';
       }
 
-      // The final payable amount only appears once a pincode has actually been
-      // resolved to a delivery charge — otherwise the total silently understates
-      // what the customer owes.
       if (pincodeConfirmed && orderItems.length) {
         const total = lineTotal - discount.amount + currentDeliveryCharge;
         orderTotalValue.textContent = '₹' + total;
@@ -1016,6 +1017,88 @@
 
     updateOrderTotal();
 
+    // ================= BILL / INVOICE GENERATION =================
+
+    const SHOP_INSTAGRAM = 'aarambh.official';
+    const SHOP_PHONE = '9405074832';
+    // Absolute URL so the logo actually renders inside email clients
+    // (relative paths break once the HTML leaves your site's domain).
+    const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
+
+    function generateOrderId() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const rand = Math.floor(1000 + Math.random() * 9000);
+      return `AARAMBH-${y}${m}${day}-${rand}`;
+    }
+
+    // Plain-text item lines, reused by both the WhatsApp message and the email.
+    function buildItemLines(items) {
+      return items.map(item =>
+        `${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''}) x${item.qty} — ₹${item.price * item.qty}`
+      ).join('\n');
+    }
+
+    // HTML rows for the emailed bill.
+    function buildItemsHtml(items) {
+      return items.map(item => `
+        <tr>
+          <td style="padding:8px 0;border-bottom:1px solid #eee;">${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''})</td>
+          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:center;">${item.qty}</td>
+          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;">₹${item.price * item.qty}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Full self-contained invoice HTML — sent as the {{{bill_html}}} raw
+    // variable inside the EmailJS "customer bill" template (see setup notes).
+    function buildBillHtml(data) {
+      return `
+      <div style="max-width:560px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
+        <div style="text-align:center;padding:20px 0;">
+          <img src="${LOGO_URL}" alt="AARAMBH" style="height:64px;">
+        </div>
+        <h2 style="text-align:center;margin:0 0 4px;font-size:20px;">Order Bill</h2>
+        <p style="text-align:center;color:#777;margin:0 0 20px;font-size:13px;">Order ID: <b>${data.orderId}</b> &nbsp;•&nbsp; ${data.orderDate}</p>
+
+        <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px;">
+          <thead>
+            <tr>
+              <th style="text-align:left;border-bottom:2px solid #A90E02;padding-bottom:6px;">Item</th>
+              <th style="text-align:center;border-bottom:2px solid #A90E02;padding-bottom:6px;">Qty</th>
+              <th style="text-align:right;border-bottom:2px solid #A90E02;padding-bottom:6px;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${buildItemsHtml(data.items)}
+          </tbody>
+        </table>
+
+        <table style="width:100%;font-size:14px;margin-bottom:20px;">
+          <tr><td style="padding:4px 0;color:#555;">Subtotal</td><td style="text-align:right;padding:4px 0;">₹${data.lineTotal}</td></tr>
+          ${data.discountAmount > 0 ? `<tr><td style="padding:4px 0;color:#2e7d32;">${data.discountLabel}</td><td style="text-align:right;padding:4px 0;color:#2e7d32;">−₹${data.discountAmount}</td></tr>` : ''}
+          <tr><td style="padding:4px 0;color:#555;">Delivery (${data.deliveryZone})</td><td style="text-align:right;padding:4px 0;">₹${data.deliveryCharge}</td></tr>
+          <tr><td style="padding:10px 0 4px;font-weight:bold;border-top:1px solid #ddd;">Total Paid / Payable</td><td style="text-align:right;padding:10px 0 4px;font-weight:bold;border-top:1px solid #ddd;">₹${data.orderTotal}</td></tr>
+        </table>
+
+        <table style="width:100%;font-size:13px;color:#555;margin-bottom:20px;">
+          <tr><td style="padding:2px 0;">Billed To</td><td style="text-align:right;">${data.fullName}</td></tr>
+          <tr><td style="padding:2px 0;">Phone</td><td style="text-align:right;">${data.phone}</td></tr>
+          <tr><td style="padding:2px 0;">Delivery Address</td><td style="text-align:right;">${data.address}, ${data.city}, ${data.state} - ${data.pincode}</td></tr>
+          <tr><td style="padding:2px 0;">Payment Method</td><td style="text-align:right;">${data.paymentMethod}</td></tr>
+          ${data.notes ? `<tr><td style="padding:2px 0;">Notes</td><td style="text-align:right;">${data.notes}</td></tr>` : ''}
+        </table>
+
+        <div style="text-align:center;padding-top:16px;border-top:1px dashed #ccc;color:#777;font-size:12.5px;line-height:1.7;">
+          Thank you for shopping with AARAMBH!<br>
+          Exchanges/returns: message us within 3 days of delivery.<br>
+          Instagram: <b>@${data.instagram}</b> &nbsp;•&nbsp; Phone: <b>${data.phone2}</b>
+        </div>
+      </div>`;
+    }
+
     // ---------- Form validation + submit ----------
     const form = document.getElementById('orderForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -1030,6 +1113,7 @@
     function validateForm() {
       const name = document.getElementById('fullName').value.trim();
       const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
       const size = document.getElementById('size').value;
       const address = document.getElementById('address').value.trim();
       const pincode = document.getElementById('pincode').value.trim();
@@ -1038,11 +1122,9 @@
       ok = orderItems.length > 0 && ok;
       ok = validateField('name', name.length >= 2) && ok;
       ok = validateField('phone', /^[6-9]\d{9}$/.test(phone)) && ok;
+      ok = validateField('email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
       if (!cartMode) ok = validateField('size', size !== '') && ok;
       ok = validateField('address', address.length >= 8) && ok;
-      // Require a pincode that has actually resolved to a delivery charge, not
-      // just one that matches the 6-digit shape — otherwise the order can be
-      // placed with delivery silently left out of the total.
       ok = validateField('pincode', /^\d{6}$/.test(pincode) && pincodeConfirmed) && ok;
       if (!pincodeConfirmed) {
         document.getElementById('pincodeRequiredNotice').style.color = '#ff6b6b';
@@ -1057,18 +1139,23 @@
 
       const lineTotalNow = getLineTotal();
       const discountNow = computeDiscount(lineTotalNow);
-      const itemsSummary = orderItems.map(item =>
-        `${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''}) x${item.qty} — ₹${item.price * item.qty}`
-      ).join('\n');
+      const itemsSummary = buildItemLines(orderItems);
+      const orderId = generateOrderId();
+      const orderDate = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
 
       const data = {
+        orderId,
+        orderDate,
         product: orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} products`,
         type: orderItems.length === 1 ? orderItems[0].type : '—',
         color: orderItems.length === 1 ? orderItems[0].color : '—',
+        items: orderItems,
         itemsSummary: itemsSummary || 'No items',
         price: lineTotalNow,
+        lineTotal: lineTotalNow,
         fullName: document.getElementById('fullName').value.trim(),
         phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
         size: cartMode ? '—' : document.getElementById('size').value,
         address: document.getElementById('address').value.trim(),
         pincode: document.getElementById('pincode').value.trim(),
@@ -1082,24 +1169,67 @@
         couponCode: appliedCoupon || 'None',
         discountLabel: discountNow.label || 'None',
         discountAmount: discountNow.amount,
-        orderTotal: lineTotalNow - discountNow.amount + currentDeliveryCharge
+        orderTotal: lineTotalNow - discountNow.amount + currentDeliveryCharge,
+        instagram: SHOP_INSTAGRAM,
+        phone2: SHOP_PHONE
       };
+
+      // Plain-text bill for WhatsApp (customer's own confirmation message,
+      // unchanged in spirit from before) and the one-tap "send bill to
+      // customer" link that goes to YOU inside the owner notification.
+      const billText =
+        `AARAMBH — ORDER BILL\n` +
+        `Order ID: ${data.orderId}\n` +
+        `Date: ${data.orderDate}\n\n` +
+        `${data.itemsSummary}\n\n` +
+        `Subtotal: ₹${data.lineTotal}\n` +
+        (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
+        `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
+        `Total: ₹${data.orderTotal}\n` +
+        `Payment: ${data.paymentMethod}\n\n` +
+        `Billed to: ${data.fullName}\n` +
+        `Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}` +
+        (data.notes ? `\nNotes: ${data.notes}` : '') + `\n\n` +
+        `Thank you for shopping with AARAMBH!\n` +
+        `Instagram: @${data.instagram} | Phone: ${data.phone2}`;
+
+      // wa.me link to the CUSTOMER's number, pre-filled with the bill — this
+      // is the "one-tap" link. It goes out in the owner-notification email/
+      // Formspree payload as customerBillLink so you can tap it from your phone.
+      data.customerBillLink = `https://wa.me/91${data.phone}?text=${encodeURIComponent(billText)}`;
+      data.billHtml = buildBillHtml(data);
 
       submitBtn.classList.add('loading');
       submitBtn.disabled = true;
       submitBtnText.textContent = 'Placing Order...';
 
-      const emailPromise = (window.emailjs)
+      // 1) Owner notification email (existing template) — now also carries
+      //    the order ID and the tap-to-send WhatsApp bill link.
+      const ownerEmailPromise = (window.emailjs)
         ? emailjs.send('service_2xfx4td', 'template_j3gxuwf', {
             product: data.product, type: data.type, color: data.color, price: data.price,
             items: data.itemsSummary,
-            name: data.fullName, phone: data.phone, size: data.size, address: data.address,
+            name: data.fullName, phone: data.phone, email: data.email, size: data.size, address: data.address,
             pincode: data.pincode, city: data.city, state: data.state,
             quantity: data.quantity, notes: data.notes, payment: data.paymentMethod,
             deliveryCharge: data.deliveryCharge, deliveryZone: data.deliveryZone,
             couponCode: data.couponCode, discountLabel: data.discountLabel, discountAmount: data.discountAmount,
-            orderTotal: data.orderTotal
-          }).catch(err => console.error('EmailJS error:', err))
+            orderTotal: data.orderTotal, orderId: data.orderId,
+            customerBillLink: data.customerBillLink
+          }).catch(err => console.error('EmailJS owner error:', err))
+        : Promise.resolve();
+
+      // 2) Customer bill email — separate template, sent straight to the
+      //    customer's own inbox, no action needed from anyone.
+      const customerBillPromise = (window.emailjs)
+        ? emailjs.send('service_2xfx4td', 'template_customer_bill', {
+            to_email: data.email,
+            customer_name: data.fullName,
+            order_id: data.orderId,
+            order_date: data.orderDate,
+            order_total: data.orderTotal,
+            bill_html: data.billHtml
+          }).catch(err => console.error('EmailJS bill error:', err))
         : Promise.resolve();
 
       const formspreePromise = fetch('https://formspree.io/f/xqejgjzw', {
@@ -1108,9 +1238,9 @@
         body: JSON.stringify(data)
       }).catch(err => console.error('Formspree error:', err));
 
-      Promise.allSettled([emailPromise, formspreePromise]).finally(() => {
+      Promise.allSettled([ownerEmailPromise, customerBillPromise, formspreePromise]).finally(() => {
         const waMessage = encodeURIComponent(
-          `Hi ARAMBH, I just placed an order:\n\n` +
+          `Hi ARAMBH, I just placed an order (${data.orderId}):\n\n` +
           `${data.itemsSummary}\n\n` +
           (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
           `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
@@ -1123,7 +1253,6 @@
         );
         document.getElementById('successWhatsapp').href = `https://wa.me/919405074832?text=${waMessage}`;
 
-        // Clear the cart now that the order has actually been placed.
         if (cartMode) {
           localStorage.removeItem(CART_KEY);
         }
@@ -1137,9 +1266,6 @@
 
   <script>
     /* ===== BEAUTIFICATION-ONLY SCRIPT ===== */
-    /* Purely observational — reads the DOM the main script already updates and
-       adds visual feedback. Never writes to any field the order logic reads,
-       so it cannot affect validation, totals, or submission. */
     (function () {
       const totalEl = document.getElementById('orderTotalValue');
       if (totalEl) {
@@ -1154,8 +1280,6 @@
         }).observe(totalEl, { childList: true, characterData: true, subtree: true });
       }
 
-      // Step indicator: lights up as the customer fills required fields —
-      // cosmetic guidance only, does not gate anything the real form doesn't already gate.
       const stepDetails = document.getElementById('obStepDetails');
       const stepPay = document.getElementById('obStepPay');
       const stepConfirm = document.getElementById('obStepConfirm');

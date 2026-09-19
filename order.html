@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Place Your Order — Aarambh</title>
+  <title>Place Your Order — Arambh</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     :root {
@@ -1025,6 +1026,79 @@
     // (relative paths break once the HTML leaves your site's domain).
     const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
 
+    // Set this to your deployed Cloudflare Worker URL (see worker.js setup notes).
+    const ORDER_WORKER_URL = 'https://aarambh.arambhofficial2025.workers.dev';
+
+    // jsPDF can't read .webp directly — convert it to a PNG data URL via canvas first.
+    function loadLogoAsPngDataUrl() {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width; canvas.height = img.height;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+          } catch (e) { resolve(null); }
+        };
+        img.onerror = () => resolve(null);
+        img.src = LOGO_URL;
+      });
+    }
+
+    // Builds the PDF bill and returns its base64 content (no "data:" prefix),
+    // ready to hand to the Worker as an email attachment.
+    async function buildBillPdfBase64(data) {
+      if (!window.jspdf) return null;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      const logoDataUrl = await loadLogoAsPngDataUrl();
+
+      let y = 40;
+      if (logoDataUrl) { doc.addImage(logoDataUrl, 'PNG', 250, y, 90, 90); y += 100; }
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
+      doc.text('AARAMBH — Order Bill', 297, y, { align: 'center' }); y += 20;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(100);
+      doc.text(`Order ID: ${data.orderId}   |   ${data.orderDate}`, 297, y, { align: 'center' }); y += 30;
+
+      doc.setTextColor(0); doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Item', 50, y); doc.text('Qty', 380, y); doc.text('Amount', 500, y, { align: 'right' });
+      y += 8; doc.setLineWidth(1); doc.line(50, y, 545, y); y += 16;
+      doc.setFont('helvetica', 'normal');
+      data.items.forEach(item => {
+        const label = `${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''})`;
+        doc.text(label, 50, y, { maxWidth: 300 });
+        doc.text(String(item.qty), 380, y);
+        doc.text(`Rs.${item.price * item.qty}`, 500, y, { align: 'right' });
+        y += 20;
+      });
+      y += 10; doc.setLineWidth(0.5); doc.line(350, y, 545, y); y += 18;
+
+      doc.text('Subtotal', 380, y); doc.text(`Rs.${data.lineTotal}`, 500, y, { align: 'right' }); y += 16;
+      if (data.discountAmount > 0) {
+        doc.text(data.discountLabel, 380, y); doc.text(`-Rs.${data.discountAmount}`, 500, y, { align: 'right' }); y += 16;
+      }
+      doc.text(`Delivery (${data.deliveryZone})`, 380, y); doc.text(`Rs.${data.deliveryCharge}`, 500, y, { align: 'right' }); y += 16;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+      doc.text('Total', 380, y); doc.text(`Rs.${data.orderTotal}`, 500, y, { align: 'right' }); y += 30;
+
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5);
+      doc.text(`Billed To: ${data.fullName}`, 50, y); y += 16;
+      doc.text(`Phone: ${data.phone}`, 50, y); y += 16;
+      doc.text(`Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}`, 50, y, { maxWidth: 495 }); y += 32;
+      doc.text(`Payment Method: ${data.paymentMethod}`, 50, y); y += 16;
+      if (data.notes) { doc.text(`Notes: ${data.notes}`, 50, y, { maxWidth: 495 }); y += 24; }
+
+      y += 20; doc.setDrawColor(200); doc.line(50, y, 545, y); y += 20;
+      doc.setFontSize(10); doc.setTextColor(120);
+      doc.text('Thank you for shopping with AARAMBH!', 297, y, { align: 'center' }); y += 14;
+      doc.text(`Instagram: @${data.instagram}   |   Phone: ${data.phone2}`, 297, y, { align: 'center' });
+
+      return doc.output('datauristring').split(',')[1]; // strip "data:application/pdf;filename=...;base64," prefix
+    }
+
     function generateOrderId() {
       const d = new Date();
       const y = d.getFullYear();
@@ -1203,6 +1277,26 @@
       submitBtn.disabled = true;
       submitBtnText.textContent = 'Placing Order...';
 
+      // Build the PDF, then POST it (plus the bill data) to the Worker,
+      // which emails it to the customer with the PDF attached via Resend.
+      const pdfBillPromise = buildBillPdfBase64(data)
+        .then(pdfBase64 => {
+          if (!pdfBase64) return;
+          return fetch(ORDER_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to_email: data.email,
+              customer_name: data.fullName,
+              order_id: data.orderId,
+              order_total: data.orderTotal,
+              bill_html: data.billHtml,
+              pdf_base64: pdfBase64
+            })
+          });
+        })
+        .catch(err => console.error('PDF bill send error:', err));
+
       // 1) Owner notification email (existing template) — now also carries
       //    the order ID and the tap-to-send WhatsApp bill link.
       const ownerEmailPromise = (window.emailjs)
@@ -1219,26 +1313,13 @@
           }).catch(err => console.error('EmailJS owner error:', err))
         : Promise.resolve();
 
-      // 2) Customer bill email — separate template, sent straight to the
-      //    customer's own inbox, no action needed from anyone.
-      const customerBillPromise = (window.emailjs)
-        ? emailjs.send('service_2xfx4td', 'template_customer_bill', {
-            to_email: data.email,
-            customer_name: data.fullName,
-            order_id: data.orderId,
-            order_date: data.orderDate,
-            order_total: data.orderTotal,
-            bill_html: data.billHtml
-          }).catch(err => console.error('EmailJS bill error:', err))
-        : Promise.resolve();
-
       const formspreePromise = fetch('https://formspree.io/f/xqejgjzw', {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       }).catch(err => console.error('Formspree error:', err));
 
-      Promise.allSettled([ownerEmailPromise, customerBillPromise, formspreePromise]).finally(() => {
+      Promise.allSettled([ownerEmailPromise, pdfBillPromise, formspreePromise]).finally(() => {
         const waMessage = encodeURIComponent(
           `Hi ARAMBH, I just placed an order (${data.orderId}):\n\n` +
           `${data.itemsSummary}\n\n` +

@@ -413,15 +413,6 @@
     <div class="swatches" id="swatches"></div>
     <div class="selected-option" id="selectedColorLabel"></div>
 
-    <div id="fitSelectorWrap" style="display:none;">
-      <div class="option-label">T-shirt type</div>
-      <div class="fit-options">
-        <button type="button" class="fit-btn active" data-fit="Oversized">Oversized — 240 GSM</button>
-        <button type="button" class="fit-btn" data-fit="Regular">Regular — 180 GSM</button>
-      </div>
-      <p class="fit-help">Printed T-shirts are supplied in oversized fit by default. Select Regular when you prefer a standard fit.</p>
-    </div>
-
     <div class="size-head">
       <div class="option-label" style="margin:0;">Size</div>
       <button class="size-chart-link" id="openChart">Size Chart</button>
@@ -584,7 +575,10 @@
 
   const typeKey = productData.type.toLowerCase();
   const isPrinted = typeKey.includes('printed');
-  let selectedFit = isPrinted ? 'Oversized' : (typeKey === 'oversized' ? 'Oversized' : 'Regular');
+  // All current T-shirts (including every printed design) are oversized only.
+  // Regular fit is reserved for the upcoming Regular Fit line, so there's no
+  // in-page fit toggle here anymore.
+  let selectedFit = 'Oversized';
   let selectedColor = productData.color;
   let selectedImages = [productData.image, productData.image2].filter(Boolean);
 
@@ -692,7 +686,6 @@
   ].filter(Boolean);
 
   function currentSpecs(){
-    if(isPrinted && selectedFit === 'Regular') return {material:'100% Pure Cotton',gsm:'180 GSM',fit:'Regular Fit',description:'Pure-cotton printed T-shirt in a comfortable regular fit.'};
     if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
     if(typeKey === 'polo') return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
     if(typeKey === 'oversized') return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
@@ -777,7 +770,6 @@
     const caption=document.getElementById('chartCaption');
     if(typeKey === 'polo') { img.src='polo_size_chart.png'; caption.textContent='Polo T-shirt size chart'; }
     else if(typeKey === 'shirt') { img.src='ShirtSizeChart.jpeg'; caption.textContent='Boxy Fit Shirt size chart'; }
-    else if(isPrinted && selectedFit === 'Regular') { img.src='regular_size_chart.png'; caption.textContent='Regular-fit 180 GSM printed T-shirt size chart'; }
     else { img.src='oversized_chart.png'; caption.textContent=isPrinted?'Oversized 240 GSM printed T-shirt size chart':'Oversized T-shirt size chart'; }
   }
 
@@ -883,17 +875,6 @@
   });
   renderSwatches();
 
-  // Acid Wash printed tees are only made in oversized fit — no Regular option exists for this drop.
-  const oversizedOnlyPrinted = productData.product === 'Explore Space Acid Wash';
-  if(isPrinted && !oversizedOnlyPrinted){
-    document.getElementById('fitSelectorWrap').style.display='block';
-    document.querySelectorAll('.fit-btn').forEach(btn=>btn.addEventListener('click',()=>{
-      document.querySelectorAll('.fit-btn').forEach(x=>x.classList.remove('active'));
-      btn.classList.add('active'); selectedFit=btn.dataset.fit; updateSpecs();
-    }));
-  } else if(oversizedOnlyPrinted){
-    selectedFit = 'Oversized';
-  }
   updateSpecs();
 
   document.querySelectorAll('.size-btn').forEach(button => {
@@ -932,12 +913,9 @@
   }
   function seededRating(name){
     const h = hashOf(name);
-    // Wider, less-uniform spread (3.8–4.9) with one decimal that isn't always
-    // a round-feeling number, and a review count that varies by an order of
-    // magnitude instead of clustering in one narrow band.
     const ratingSteps = [3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9];
     const rating = ratingSteps[h % ratingSteps.length];
-    const magnitude = h % 5; // 0-4, biases most products toward smaller counts
+    const magnitude = h % 5;
     const base = magnitude === 0 ? 12 : magnitude === 1 ? 40 : magnitude === 2 ? 90 : magnitude === 3 ? 180 : 340;
     const count = base + (h % 57);
     return {rating, count};
@@ -948,7 +926,6 @@
     const fullStars = Math.floor(rating);
     const hasHalf = (rating - fullStars) >= 0.5;
     const starSvg = (state) => {
-      // state: 'full' | 'half' | 'empty'
       if(state === 'half'){
         return `<svg viewBox="0 0 24 24"><defs><linearGradient id="halfGrad"><stop offset="50%" stop-color="#F5B301"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 21.5 12 17.5 5.5 21.5 7 14.5 2 9.5 9 9" fill="url(#halfGrad)" stroke="#F5B301" stroke-width="1.5"></polygon></svg>`;
       }
@@ -963,9 +940,9 @@
   /* ---------------- Social proof + stock urgency ---------------- */
   (function urgency(){
     const h = hashOf(productData.product + '|' + selectedColor);
-    const boughtRecently = 3 + (h % 24); // 3–26, feels less scripted than a flat 5–24
+    const boughtRecently = 3 + (h % 24);
     document.getElementById('socialProofText').textContent = `${boughtRecently} people bought this in the last 48 hours`;
-    const stockLeft = 2 + (h % 9); // 2–10
+    const stockLeft = 2 + (h % 9);
     document.getElementById('stockBadge').innerHTML = `<span class="dot"></span> Only ${stockLeft} left in ${selectedColor}`;
   })();
 
@@ -1015,7 +992,6 @@
   const sameCategory = productCatalog.filter(item => item.product.toLowerCase() !== currentName && item.type.toLowerCase() === typeKey);
   const otherTshirts = productCatalog.filter(item => item.product.toLowerCase() !== currentName && !item.type.toLowerCase().includes('hoodie'));
   let relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))];
-  // de-dupe by product name, keep first occurrence order, cap at 8 so filtering has something to show
   const seen = new Set();
   relatedItems = relatedItems.filter(item => {
     if(seen.has(item.product)) return false;
@@ -1055,9 +1031,6 @@
   }
   renderRelated(relatedItems);
 
-  // Full catalog minus the current product — used once a specific filter chip
-  // is picked, so every category (even ones with few "same category" picks
-  // in the default 8-item spread) can still show its full range of options.
   const fullCatalogOptions = productCatalog.filter(item => item.product.toLowerCase() !== currentName);
 
   let activeTypeFilter = 'all';

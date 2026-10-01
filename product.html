@@ -10,78 +10,21 @@
   :root{
     --bg:#080810;
     --card:#101018;
-    --accent:#E8452C;
+    --accent:#E8452C;   /* red/orange accent - swap per category if needed */
     --accent2:#FF7A45;
     --text:#F5F3EE;
     --muted:#9A96A8;
     --line:#232130;
-    --ease:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;}
   body{
     background:var(--bg);
     color:var(--text);
     font-family:'DM Sans',sans-serif;
-    padding-bottom:90px;
+    padding-bottom:90px; /* room for sticky bar on mobile */
   }
   h1,h2,.display{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
   .brand{font-family:'Syne',sans-serif;font-weight:800;}
-  @media (prefers-reduced-motion: reduce){
-    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
-  }
-
-  /* ---- Top utility nav (search) ---- */
-  .top-nav{
-    position:sticky;top:0;z-index:70;background:rgba(8,8,16,.86);backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--line);
-  }
-  .top-nav-inner{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px;}
-  .nav-logo{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:1px;color:var(--text);text-decoration:none;font-size:1.05rem;flex-shrink:0;}
-  .nav-logo span{color:var(--accent);}
-  .search-shell{
-    flex:1;display:flex;align-items:center;gap:8px;background:var(--card);
-    border:1px solid var(--line);border-radius:999px;padding:9px 16px;
-    transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
-  }
-  .search-shell:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,69,44,.15);}
-  .search-shell svg{flex-shrink:0;opacity:.6;}
-  .search-shell input{
-    flex:1;background:none;border:none;outline:none;color:var(--text);
-    font-family:'DM Sans';font-size:.9rem;
-  }
-  .search-shell input::placeholder{color:var(--muted);}
-  .search-results{
-    position:absolute;top:56px;left:0;right:0;max-width:1200px;margin:0 auto;
-    padding:0 20px;z-index:69;pointer-events:none;
-  }
-  .search-panel{
-    pointer-events:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;
-    margin-top:6px;overflow:hidden;max-height:0;opacity:0;transition:max-height .32s var(--ease), opacity .22s var(--ease);
-  }
-  .search-panel.open{max-height:420px;opacity:1;overflow-y:auto;}
-  .search-item{
-    display:flex;align-items:center;gap:12px;padding:10px 14px;text-decoration:none;color:var(--text);
-    border-bottom:1px solid var(--line);transition:background .15s;
-  }
-  .search-item:last-child{border-bottom:none;}
-  .search-item:hover{background:rgba(232,69,44,.08);}
-  .search-item img{width:42px;height:52px;object-fit:cover;border-radius:6px;background:#0b0b13;flex-shrink:0;}
-  .search-item .si-name{font-weight:600;font-size:.88rem;}
-  .search-item .si-meta{color:var(--muted);font-size:.75rem;}
-  .search-empty{padding:18px 14px;color:var(--muted);font-size:.85rem;text-align:center;}
-
-  .cart-link{background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:999px;padding:9px 14px;font-family:'Syne';font-size:.78rem;font-weight:700;flex-shrink:0;display:inline-flex;align-items:center;transition:transform .18s var(--ease), border-color .18s;}
-  .cart-link:hover{border-color:var(--accent);}
-  .cart-link.bump{animation:cartBump .4s var(--ease);}
-  @keyframes cartBump{0%{transform:scale(1)}35%{transform:scale(1.18)}100%{transform:scale(1)}}
-  .cart-count{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;background:var(--accent);border-radius:50%;margin-left:6px;font-size:.72rem;}
-  .cart-toast{position:fixed;top:70px;right:18px;z-index:120;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px 16px;opacity:0;transform:translateY(-10px) scale(.96);pointer-events:none;transition:opacity .3s var(--ease), transform .3s var(--ease);}
-  .cart-toast.show{opacity:1;transform:translateY(0) scale(1);}
-
-  /* ---- Page load choreography ---- */
-  .reveal{opacity:0;transform:translateY(14px);animation:revealIn .55s var(--ease) forwards;}
-  @keyframes revealIn{to{opacity:1;transform:translateY(0);}}
 
   .wrap{
     max-width:1200px;margin:0 auto;padding:24px 20px;
@@ -90,160 +33,104 @@
   @media(max-width:860px){ .wrap{grid-template-columns:1fr;gap:24px;padding:16px;} }
 
   /* ---- Gallery ---- */
-  .gallery{position:sticky;top:70px;align-self:start;}
+  .gallery{position:sticky;top:20px;align-self:start;}
   @media(max-width:860px){ .gallery{position:static;} }
   .main-image{
     width:100%;aspect-ratio:4/5;border-radius:14px;overflow:hidden;
     background:var(--card);border:1px solid var(--line);
     position:relative;
   }
-  .main-image img{width:100%;height:100%;object-fit:cover;display:block;}
+  .main-image img{width:100%;height:100%;object-fit:cover;display:block;
+    animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   .thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:4px;}
   .thumb{
     width:76px;height:92px;flex:0 0 auto;border-radius:8px;overflow:hidden;
-    border:2px solid var(--line);cursor:pointer;opacity:.6;transition:.2s var(--ease);background:var(--card);
+    border:2px solid var(--line);cursor:pointer;opacity:.6;transition:.2s;background:var(--card);
   }
   .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-  .thumb.active{border-color:var(--accent);opacity:1;transform:scale(1.03);}
+  .thumb.active{border-color:var(--accent);opacity:1;}
   .thumb:hover{opacity:1;}
-
-  .stock-badge{
-    position:absolute;top:12px;left:12px;z-index:5;background:rgba(232,69,44,.92);color:#fff;
-    padding:6px 12px;border-radius:999px;font-family:'Syne';font-size:.68rem;font-weight:700;
-    letter-spacing:.6px;text-transform:uppercase;display:flex;align-items:center;gap:6px;
-  }
-  .stock-badge .dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulseDot 1.4s infinite;}
-  @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.25}}
-  .wishlist-btn{
-    position:absolute;top:12px;right:12px;z-index:5;width:38px;height:38px;border-radius:50%;
-    background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;
-    cursor:pointer;transition:transform .2s var(--ease), background .2s;
-  }
-  .wishlist-btn:hover{transform:scale(1.08);}
-  .wishlist-btn.active svg{fill:var(--accent);stroke:var(--accent);}
-  .wishlist-btn svg{transition:.2s var(--ease);}
-  .wishlist-btn.active{animation:wishPop .35s var(--ease);}
-  @keyframes wishPop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
 
   /* ---- Info ---- */
   .info .cat{color:var(--accent2);text-transform:uppercase;font-size:.75rem;letter-spacing:2px;font-weight:600;}
-  .info h1{font-size:2.4rem;line-height:1;margin:8px 0 10px;}
-  .rating-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
-  .stars{display:inline-flex;gap:2px;}
-  .stars svg{width:15px;height:15px;fill:#F5B301;}
-  .rating-text{color:var(--muted);font-size:.82rem;}
+  .info h1{font-size:2.4rem;line-height:1;margin:8px 0 12px;}
   .price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;}
   .price-now{font-size:1.6rem;font-weight:700;font-family:'Syne',sans-serif;}
   .price-was{color:var(--muted);text-decoration:line-through;font-size:1rem;}
   .price-off{color:var(--accent);font-size:.85rem;font-weight:600;}
-  .desc{color:var(--muted);font-size:.95rem;line-height:1.6;margin:16px 0 20px;}
+  .desc{color:var(--muted);font-size:.95rem;line-height:1.6;margin:16px 0 24px;}
 
-  .social-proof{
-    display:flex;align-items:center;gap:8px;background:rgba(232,69,44,.07);border:1px solid rgba(232,69,44,.22);
-    border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:.82rem;color:var(--text);
-  }
-  .social-proof .dot{width:7px;height:7px;border-radius:50%;background:#3DDC84;flex-shrink:0;animation:pulseDot 1.6s infinite;}
-
+  /* ---- Color swatches (for multi-color variant consolidation) ---- */
   .option-label{font-size:.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;font-weight:600;}
   .swatches{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
   .selected-option{color:var(--accent2);font-size:.82rem;margin-bottom:20px;}
   .fit-options{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-  .fit-btn{padding:11px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:600;transition:.18s var(--ease);}
+  .fit-btn{padding:11px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:600;}
   .fit-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
   .fit-help{color:var(--muted);font-size:.82rem;line-height:1.45;margin-bottom:22px;}
   .swatch{
     width:34px;height:34px;border-radius:50%;cursor:pointer;
-    border:2px solid var(--line);position:relative;transition:transform .18s var(--ease), border-color .18s, box-shadow .18s;
+    border:2px solid var(--line);position:relative;transition:.2s;
   }
-  .swatch:hover{transform:translateY(-2px) scale(1.06);}
   .swatch.active{border-color:var(--text);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent);}
 
+  /* ---- Size selector ---- */
   .size-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
   .size-chart-link{font-size:.8rem;color:var(--accent2);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;}
-  .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
   .size-btn{
     padding:10px 16px;border-radius:8px;border:1px solid var(--line);
     background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:500;
-    min-width:48px;text-align:center;transition:.15s var(--ease);
+    min-width:48px;text-align:center;transition:.15s;
   }
-  .size-btn:hover{border-color:var(--accent2);transform:translateY(-2px);}
+  .size-btn:hover{border-color:var(--accent2);}
   .size-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
   .size-btn.oos{opacity:.35;text-decoration:line-through;cursor:not-allowed;}
-  .size-btn.oos:hover{transform:none;}
 
-  .fit-finder{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:10px;}
-  .fit-finder strong{color:var(--text);}
-
+  /* ---- Quantity + CTA (desktop inline) ---- */
   .buy-row{display:flex;gap:12px;margin-top:8px;}
   .qty{
     display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;
   }
-  .qty button{background:var(--card);color:var(--text);border:none;width:40px;height:48px;font-size:1.1rem;cursor:pointer;transition:background .15s;}
-  .qty button:hover{background:rgba(255,255,255,.05);}
+  .qty button{background:var(--card);color:var(--text);border:none;width:40px;height:48px;font-size:1.1rem;cursor:pointer;}
   .qty span{width:40px;text-align:center;font-weight:600;}
   .buy-now{
     flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;
     font-family:'Syne';font-weight:700;font-size:1rem;letter-spacing:.5px;
-    cursor:pointer;transition:background .2s var(--ease), transform .12s var(--ease);
+    cursor:pointer;transition:.2s;
   }
-  .buy-now:hover{background:var(--accent2);transform:translateY(-1px);}
-  .buy-now:active{transform:scale(.97);}
-  .add-cart{flex:1;background:transparent;color:var(--text);border:1px solid var(--accent);border-radius:8px;font-family:'Syne';font-weight:700;font-size:.95rem;letter-spacing:.5px;cursor:pointer;transition:background .2s var(--ease), transform .12s var(--ease);}
+  .buy-now:hover{background:var(--accent2);}
+  .add-cart{flex:1;background:transparent;color:var(--text);border:1px solid var(--accent);border-radius:8px;font-family:'Syne';font-weight:700;font-size:.95rem;letter-spacing:.5px;cursor:pointer;transition:.2s;}
   .add-cart:hover{background:rgba(232,69,44,.12);}
-  .add-cart:active{transform:scale(.97);}
-
-  .trust-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px;}
-  .trust-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 10px;text-align:center;}
-  .trust-item svg{width:20px;height:20px;stroke:var(--accent2);margin-bottom:6px;}
-  .trust-item span{display:block;font-size:.7rem;color:var(--muted);line-height:1.35;}
-  @media(max-width:420px){.trust-strip{grid-template-columns:1fr 1fr 1fr;}.trust-item{padding:9px 6px;}.trust-item span{font-size:.62rem;}}
-
-  /* ---- Pincode delivery check ---- */
-  .pincode-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:18px 0;}
-  .pincode-box .option-label{margin-bottom:10px;}
-  .pincode-row{display:flex;gap:8px;}
-  .pincode-row input{
-    flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);
-    padding:11px 14px;font-family:'DM Sans';font-size:.9rem;outline:none;transition:border-color .18s;
-  }
-  .pincode-row input:focus{border-color:var(--accent);}
-  .pincode-row button{
-    background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:0 18px;
-    font-family:'Syne';font-weight:700;font-size:.82rem;letter-spacing:.5px;cursor:pointer;transition:.18s var(--ease);
-  }
-  .pincode-row button:hover{background:var(--accent2);color:#fff;}
-  .pincode-row button:disabled{opacity:.5;cursor:not-allowed;}
-  .pincode-result{margin-top:10px;font-size:.82rem;line-height:1.5;display:none;}
-  .pincode-result.show{display:block;}
-  .pincode-result.ok{color:#3DDC84;}
-  .pincode-result.bad{color:var(--accent2);}
-  .pincode-result .pc-city{color:var(--muted);}
-
-  /* ---- What You Get feature grid ---- */
-  .feature-section{max-width:1200px;margin:56px auto 0;padding:0 20px;}
-  .feature-section h2{font-size:1.9rem;margin-bottom:18px;}
-  .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-  .feature-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 16px;text-align:center;transition:.2s var(--ease);}
-  .feature-card:hover{border-color:var(--accent);transform:translateY(-3px);}
-  .feature-card svg{width:30px;height:30px;stroke:var(--accent2);margin-bottom:10px;}
-  .feature-card h3{font-family:'Syne';font-size:.92rem;font-weight:700;margin-bottom:5px;}
-  .feature-card p{color:var(--muted);font-size:.78rem;line-height:1.4;}
-  @media(max-width:860px){.feature-grid{grid-template-columns:1fr 1fr;}}
-
-  /* ---- Info tabs ---- */
-  .tabs-section{max-width:1200px;margin:52px auto 0;padding:0 20px;}
-  .tab-nav{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:20px;}
-  .tab-btn{
-    background:none;border:none;color:var(--muted);font-family:'Syne';font-weight:700;font-size:.85rem;
-    letter-spacing:.4px;padding:12px 16px;cursor:pointer;position:relative;transition:color .18s;
-  }
-  .tab-btn::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent);transform:scaleX(0);transition:transform .22s var(--ease);}
-  .tab-btn.active{color:var(--text);}
-  .tab-btn.active::after{transform:scaleX(1);}
-  .tab-panel{display:none;color:var(--muted);font-size:.9rem;line-height:1.7;}
-  .tab-panel.active{display:block;}
-  .tab-panel strong{color:var(--text);}
-  .tab-panel table{margin-top:10px;}
+  /* ---- Site header: brand, search, cart ---- */
+  .site-head{max-width:1200px;margin:0 auto;padding:20px 20px 0;display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .brand-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:1.65rem;letter-spacing:.4em;text-indent:.4em;color:var(--text);text-decoration:none;line-height:1;}
+  .brand-mark:focus-visible,.cart-link:focus-visible,.search-box input:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  .search-row{display:flex;align-items:center;gap:10px;width:100%;}
+  .search-box{position:relative;flex:1;min-width:0;}
+  .search-box input{width:100%;height:46px;background:var(--card);border:1px solid var(--line);border-radius:999px;color:var(--text);padding:0 18px 0 46px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;transition:border-color .2s,box-shadow .2s;}
+  .search-box input::placeholder{color:var(--muted);}
+  .search-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,69,44,.2);}
+  .search-ico{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none;}
+  .search-list{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:70;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.6);max-height:min(62vh,460px);overflow-y:auto;padding:6px;}
+  .search-list[hidden]{display:none;}
+  .search-group{padding:10px 12px 4px;font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);}
+  .search-item a{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:10px;color:var(--text);text-decoration:none;}
+  .search-item.active a,.search-item a:hover{background:rgba(232,69,44,.14);}
+  .search-thumb{width:42px;height:52px;flex:0 0 auto;border-radius:6px;background:#0b0b13;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);}
+  .search-thumb img{width:100%;height:100%;object-fit:contain;display:block;}
+  .search-thumb.coll{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;color:var(--accent2);}
+  .search-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;line-height:1.2;}
+  .search-meta{color:var(--muted);font-size:.78rem;margin-top:3px;}
+  .search-empty{padding:16px 14px 8px;color:var(--muted);font-size:.88rem;line-height:1.5;}
+  .cart-link{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;height:46px;background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:999px;padding:0 16px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.5px;transition:border-color .2s;}
+  .cart-link:hover{border-color:var(--accent);}
+  .cart-link svg{width:18px;height:18px;}
+  @media(max-width:480px){.brand-mark{font-size:1.4rem;}.cart-link{padding:0 13px;}.cart-text{display:none;}}
+  .cart-count{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;background:var(--accent);border-radius:50%;margin-left:0;font-size:.7rem;}
+  .cart-toast{position:fixed;bottom:96px;left:50%;z-index:80;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px 16px;opacity:0;transform:translate(-50%,8px);pointer-events:none;transition:.25s;}
+  .cart-toast.show{opacity:1;transform:translate(-50%,0);}
 
   /* ---- Sticky mobile bar ---- */
   .sticky-bar{
@@ -259,25 +146,23 @@
   .sticky-bar .buy-now{height:48px;}
   .sticky-bar .price-now{font-size:1.1rem;white-space:nowrap;}
 
-  /* ---- Modals (size chart, quick view, search-mobile) ---- */
+  /* ---- Size chart modal ---- */
   .modal-overlay{
-    position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;opacity:0;pointer-events:none;
-    align-items:center;justify-content:center;z-index:100;padding:20px;transition:opacity .25s var(--ease);
+    position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;
+    align-items:center;justify-content:center;z-index:100;padding:20px;
   }
-  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal-overlay.open{display:flex;}
   .modal{
     background:var(--card);border:1px solid var(--line);border-radius:14px;
     max-width:480px;width:100%;padding:24px;max-height:85vh;overflow-y:auto;
-    transform:translateY(18px) scale(.97);opacity:0;transition:transform .3s var(--ease), opacity .3s var(--ease);
   }
-  .modal-overlay.open .modal{transform:translateY(0) scale(1);opacity:1;}
   .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
   .modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;}
   table{width:100%;border-collapse:collapse;font-size:.85rem;}
   th,td{padding:8px;text-align:center;border-bottom:1px solid var(--line);}
   th{color:var(--accent2);font-weight:600;}
 
-  .size-note{margin:-6px 0 22px;color:var(--accent2);font-size:.82rem;line-height:1.5;}
+  .size-note{margin:-14px 0 22px;color:var(--accent2);font-size:.82rem;line-height:1.5;}
   .details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 22px;}
   .detail-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;}
   .detail-card small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;}
@@ -285,10 +170,17 @@
   .policy-note{background:rgba(232,69,44,.08);border:1px solid rgba(232,69,44,.28);border-radius:10px;padding:13px 14px;margin:0 0 22px;color:var(--muted);font-size:.84rem;line-height:1.55;}
   .policy-note strong{color:var(--text);}
 
+  /* One full product view at a time: front first, then back automatically. */
   .main-image img{transition:opacity .35s ease;}
   .main-image img.gallery-fade{opacity:.08;}
   .main-image.combined-mockup img{
-    position:absolute;top:0;width:200%;max-width:none;height:100%;object-fit:contain;padding:12px 0;
+    position:absolute;
+    top:0;
+    width:200%;
+    max-width:none;
+    height:100%;
+    object-fit:contain;
+    padding:12px 0;
     transition:left .5s ease, opacity .35s ease;
   }
   .main-image.combined-mockup img.show-front{left:0;}
@@ -299,82 +191,48 @@
     font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
   }
   .gallery-dots{position:absolute;left:50%;bottom:17px;transform:translateX(-50%);z-index:4;display:flex;gap:7px;padding:6px 9px;border-radius:999px;background:rgba(0,0,0,.42);}
-  .gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.38);transition:.2s;}
+  .gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.38);}
   .gallery-dots span.active{background:var(--accent);transform:scale(1.25);}
 
   .related-images{position:relative;display:block;height:230px;overflow:hidden;background:#0b0b13;}
   .related-images img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;padding:8px;opacity:0;transition:opacity .45s ease;}
   .related-images img.active{opacity:1;}
+  .related-images img+img{border-left:none;}
 
   .related-section{max-width:1200px;margin:60px auto 10px;padding:0 20px;}
-  .related-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
-  .related-section h2{font-size:2rem;}
-
-  /* ---- Filter bar ---- */
-  .filter-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-  .filter-chip{
-    padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);
-    color:var(--muted);font-size:.78rem;font-weight:600;cursor:pointer;transition:.18s var(--ease);
-    font-family:'DM Sans';white-space:nowrap;
-  }
-  .filter-chip:hover{border-color:var(--accent2);color:var(--text);}
-  .filter-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .filter-sort{
-    background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:999px;
-    padding:8px 12px;font-family:'DM Sans';font-size:.78rem;cursor:pointer;
-  }
-
+  .related-section h2{font-size:2rem;margin-bottom:18px;}
   .related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
-  .related-card{
-    display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-    text-decoration:none;color:var(--text);transition:transform .22s var(--ease), border-color .22s var(--ease), opacity .22s var(--ease);
-    opacity:1;transform:scale(1);
-  }
-  .related-card.hide{display:none;}
-  .related-card:hover{transform:translateY(-5px);border-color:var(--accent);}
+  .related-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--text);transition:.2s;}
+  .related-card:hover{transform:translateY(-4px);border-color:var(--accent);}
   .related-card-info{padding:14px;} .related-card-info h3{font-family:'Syne';font-size:.95rem;margin-bottom:5px;}
   .related-colors{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
   .related-color{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35);}
   .related-color-label{font-size:.72rem;color:var(--muted);margin-top:7px;}
   .related-card-info span{color:var(--accent2);font-weight:700;}
-  .no-results{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);font-size:.9rem;}
   @media(max-width:860px){.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.related-images{height:190px;}}
-
-  /* ---- Recently viewed ---- */
-  .recent-section{max-width:1200px;margin:50px auto 0;padding:0 20px;}
-  .recent-strip{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;}
-  .recent-card{flex:0 0 auto;width:120px;text-decoration:none;color:var(--text);}
-  .recent-card img{width:120px;height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--card);transition:.2s var(--ease);}
-  .recent-card:hover img{border-color:var(--accent);transform:translateY(-3px);}
-  .recent-card .rc-name{font-size:.75rem;margin-top:6px;color:var(--muted);}
 </style>
 </head>
 <body>
-
-<nav class="top-nav">
-  <div class="top-nav-inner">
-    <a class="nav-logo" href="index.html">AARA<span>MBH</span></a>
-    <div class="search-shell" id="searchShell">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="text" id="searchInput" placeholder="Search polos, tees, hoodies..." autocomplete="off">
+<header class="site-head">
+  <a class="brand-mark" href="index.html" aria-label="AARAMBH home">AARAMBH</a>
+  <div class="search-row">
+    <div class="search-box">
+      <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="siteSearch" type="search" placeholder="Search tees, designs or colours" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchList" aria-autocomplete="list" aria-label="Search products" enterkeyhint="search">
+      <ul class="search-list" id="searchList" role="listbox" hidden></ul>
     </div>
-    <a class="cart-link" href="order.html?cart=1" id="cartLink">CART <span class="cart-count" id="cartCount">0</span></a>
+    <a class="cart-link" href="order.html?cart=1" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+      <span class="cart-text">CART</span> <span class="cart-count" id="cartCount">0</span>
+    </a>
   </div>
-  <div class="search-results">
-    <div class="search-panel" id="searchPanel"></div>
-  </div>
-</nav>
-
+</header>
 <div class="cart-toast" id="cartToast">Added to cart</div>
 
 <div class="wrap">
   <!-- GALLERY -->
-  <div class="gallery reveal" style="animation-delay:.02s">
+  <div class="gallery">
     <div class="main-image" id="mainImageFrame">
-      <span class="stock-badge" id="stockBadge"><span class="dot"></span> Only a few left</span>
-      <button class="wishlist-btn" id="wishlistBtn" aria-label="Save to wishlist">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
-      </button>
       <img id="mainImg" src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front" alt="Product image">
       <span class="view-status" id="viewStatus">Front</span>
       <span class="gallery-dots" id="galleryDots" aria-hidden="true"><span class="active"></span><span></span></span>
@@ -382,25 +240,21 @@
     <div class="thumbs" id="thumbs">
       <div class="thumb active" data-src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front"><img src="https://via.placeholder.com/160x200/101018/E8452C?text=Front"></div>
       <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/FF7A45?text=Back"><img src="https://via.placeholder.com/160x200/101018/FF7A45?text=Back"></div>
+      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/E8452C?text=Detail"><img src="https://via.placeholder.com/160x200/101018/E8452C?text=Detail"></div>
+      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/FF7A45?text=Model"><img src="https://via.placeholder.com/160x200/101018/FF7A45?text=Model"></div>
     </div>
   </div>
 
   <!-- INFO -->
-  <div class="info reveal" style="animation-delay:.08s">
+  <div class="info">
     <div class="cat" id="productCategory">Collection</div>
     <h1 id="productName">PRODUCT</h1>
-    <div class="rating-row">
-      <span class="stars" id="starRow"></span>
-      <span class="rating-text" id="ratingText">4.6 · 128 ratings</span>
-    </div>
     <div class="price-row">
       <span class="price-now" id="productPrice">₹0</span>
       <span class="price-was" id="productWasPrice" style="display:none"></span>
       <span class="price-off" id="productDiscount" style="display:none"></span>
     </div>
-    <p class="desc" id="productDescription">Premium AARAMBH apparel. Select your size and continue to order.</p>
-
-    <div class="social-proof"><span class="dot"></span><span id="socialProofText">14 people bought this in the last 48 hours</span></div>
+    <p class="desc" id="productDescription">Premium ARAMBH apparel. Select your size and continue to order.</p>
 
     <div class="details-grid">
       <div class="detail-card"><small>Material</small><strong id="materialDetail">—</strong></div>
@@ -412,6 +266,15 @@
     <div class="option-label">Colour</div>
     <div class="swatches" id="swatches"></div>
     <div class="selected-option" id="selectedColorLabel"></div>
+
+    <div id="fitSelectorWrap" style="display:none;">
+      <div class="option-label">T-shirt type</div>
+      <div class="fit-options">
+        <button type="button" class="fit-btn active" data-fit="Oversized">Oversized — 240 GSM</button>
+        <button type="button" class="fit-btn" data-fit="Regular">Regular — 180 GSM</button>
+      </div>
+      <p class="fit-help">Printed T-shirts are supplied in oversized fit by default. Select Regular when you prefer a standard fit.</p>
+    </div>
 
     <div class="size-head">
       <div class="option-label" style="margin:0;">Size</div>
@@ -425,19 +288,7 @@
       <div class="size-btn" data-size="2XL">2XL</div>
     </div>
     <p class="size-note">Please review the size chart carefully before placing your order.</p>
-
-    <div class="fit-finder">💬 <span><strong>Not sure of your size?</strong> Most customers pick <strong>M</strong> for a true-to-size fit, or <strong>L</strong> for extra room.</span></div>
-
     <div class="policy-note"><strong>Return policy:</strong> Returns are accepted only for print-related issues, and the issue must be reported within 3 days of receiving the delivery.</div>
-
-    <div class="pincode-box">
-      <div class="option-label" style="margin:0 0 10px;">Check delivery to your pincode</div>
-      <div class="pincode-row">
-        <input type="text" id="pincodeInput" placeholder="Enter 6-digit pincode" inputmode="numeric" maxlength="6">
-        <button type="button" id="pincodeCheckBtn">CHECK</button>
-      </div>
-      <div class="pincode-result" id="pincodeResult"></div>
-    </div>
 
     <div class="buy-row">
       <div class="qty">
@@ -448,93 +299,14 @@
       <button class="add-cart" id="addCartDesktop">ADD TO CART</button>
       <button class="buy-now" id="buyNowDesktop">BUY NOW</button>
     </div>
-
-    <div class="trust-strip">
-      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path></svg><span>Secure UPI checkout</span></div>
-      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a4 4 0 0 1 8 0v2"></path></svg><span>Made to order, shipped fast</span></div>
-      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg><span>Print-quality guaranteed</span></div>
-    </div>
   </div>
 </div>
 
-<section class="feature-section reveal" style="animation-delay:.1s">
-  <h2>What You Get</h2>
-  <div class="feature-grid">
-    <div class="feature-card">
-      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M4 4h16v4H4z"></path><path d="M4 8l2 12h12l2-12"></path></svg>
-      <h3>Heavyweight Fabric</h3>
-      <p>Structured cotton built for everyday comfort</p>
-    </div>
-    <div class="feature-card">
-      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-      <h3>Flexible Payment</h3>
-      <p>UPI, cards, and Cash on Delivery available</p>
-    </div>
-    <div class="feature-card">
-      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="1" y="7" width="15" height="10" rx="1"></rect><path d="M16 10h4l3 3v4h-7z"></path><circle cx="5.5" cy="18.5" r="1.5"></circle><circle cx="18.5" cy="18.5" r="1.5"></circle></svg>
-      <h3>Fast Delivery</h3>
-      <p>Made to order and shipped within a few days</p>
-    </div>
-    <div class="feature-card">
-      <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9"></path><path d="M3 4v8h8"></path></svg>
-      <h3>Easy Resolution</h3>
-      <p>Print-quality issues reported within 3 days are made right</p>
-    </div>
-  </div>
-</section>
 
-<section class="tabs-section reveal" style="animation-delay:.12s">
-  <div class="tab-nav" id="tabNav">
-    <button class="tab-btn active" data-tab="sizefit">Size &amp; Fit</button>
-    <button class="tab-btn" data-tab="fabric">Fabric &amp; Care</button>
-    <button class="tab-btn" data-tab="about">About</button>
-    <button class="tab-btn" data-tab="shipping">Shipping</button>
-    <button class="tab-btn" data-tab="returns">Returns &amp; Exchange</button>
-  </div>
-  <div class="tab-panel active" data-panel="sizefit">
-    Fits true to size — most customers pick their usual size. Use the <strong>Size Chart</strong> above to compare chest and length measurements before ordering, especially if you're between sizes.
-  </div>
-  <div class="tab-panel" data-panel="fabric">
-    <strong>Composition:</strong> Premium combed cotton, built for structure and everyday comfort.<br>
-    <strong>Wash care:</strong> Machine wash cold with similar colours. Only non-chlorine bleach. Tumble dry low. Warm iron if needed.
-  </div>
-  <div class="tab-panel" data-panel="about">
-    AARAMBH is an independent Indian streetwear label — every piece is made to order, so quality checks happen before it ships, not after.
-  </div>
-  <div class="tab-panel" data-panel="shipping">
-    Orders are made to order and typically ship within a few working days. Delivery charges are calculated at checkout based on your pincode.
-  </div>
-  <div class="tab-panel" data-panel="returns">
-    <strong>Returns:</strong> Accepted only for print or stitching defects, reported within 3 days of delivery.<br>
-    <strong>Exchange:</strong> Size exchanges are handled case-by-case — reach out to us on WhatsApp or email with your order details.
-  </div>
-</section>
-
-<section class="related-section reveal" style="animation-delay:.14s">
-  <div class="related-head">
-    <div>
-      <div class="option-label">You may also like</div>
-      <h2>MORE T-SHIRT OPTIONS</h2>
-    </div>
-    <div class="filter-bar" id="filterBar">
-      <button class="filter-chip active" data-filter-type="all">All</button>
-      <button class="filter-chip" data-filter-type="oversized">Oversized</button>
-      <button class="filter-chip" data-filter-type="polo">Polo</button>
-      <button class="filter-chip" data-filter-type="printed">Printed</button>
-      <button class="filter-chip" data-filter-type="hoodie">Hoodie</button>
-      <select class="filter-sort" id="sortSelect">
-        <option value="relevance">Sort: Relevance</option>
-        <option value="price-asc">Price: Low to High</option>
-        <option value="price-desc">Price: High to Low</option>
-      </select>
-    </div>
-  </div>
+<section class="related-section">
+  <div class="option-label">You may also like</div>
+  <h2>MORE T-SHIRT OPTIONS</h2>
   <div class="related-grid" id="relatedGrid"></div>
-</section>
-
-<section class="recent-section" id="recentSection" style="display:none;">
-  <div class="option-label">Recently viewed</div>
-  <div class="recent-strip" id="recentStrip"></div>
 </section>
 
 <!-- STICKY MOBILE BAR -->
@@ -575,36 +347,32 @@
 
   const typeKey = productData.type.toLowerCase();
   const isPrinted = typeKey.includes('printed');
-  // All current T-shirts (including every printed design) are oversized only.
-  // Regular fit is reserved for the upcoming Regular Fit line, so there's no
-  // in-page fit toggle here anymore.
-  let selectedFit = 'Oversized';
+  let selectedFit = isPrinted ? 'Oversized' : (typeKey === 'oversized' ? 'Oversized' : 'Regular');
   let selectedColor = productData.color;
   let selectedImages = [productData.image, productData.image2].filter(Boolean);
 
   const colorHex = {
     'Black':'#111111','White':'#f5f3ee','Red':'#b51f2e','Blue':'#74b9ff','Royal Blue':'#2748a8',
-    'Sky Blue':'#74d6e8','Army Green':'#596b3d','Lavender':'#b9a3db','Pink':'#ef9db5','Beige':'#d9c3a5',
+    'Aqua/Sky Blue':'#74d6e8','Army Green':'#596b3d','Lavender':'#b9a3db','Pink':'#ef9db5','Beige':'#d9c3a5',
     'Cream':'#fff1cf','Grayish Green':'#7d8c7a','Navy Blue':'#000080','Maroon':'#741320',
-    'Baby Pink':'#f4c2d7','Off-White':'#f2ede1',
     'Gray':'#9DA1A2','Charcoal':'#36454F','Default':'#777777'
   };
 
+  // Real front/back photography for oversized colours (used when a page links
+  // here without explicit image/image2 params, e.g. related-product cards).
   const oversizedVariants = {
-    'Beige': {image:'BEIGEA_FRONT.png', image2:'BEIGEA_BACK.png'},
-    'Black': {image:'BLACK_FRONT.png', image2:'BLACK_BACK.png'},
-    'Navy Blue': {image:'NAVY_BLUE_FRONT.png', image2:'NAVY_BLUE_BACK.png'},
-    'Royal Blue': {image:'ROYAL_BLUE_FRONT.png', image2:'ROYAL_BLUE_BACK.png'},
-    'Sky Blue': {image:'SKY_BLUE_FRONT.png', image2:'SKY_BLUE_BACK.png'},
-    'Red': {image:'RED_FRONT.png', image2:'RED_BACK.png'},
-    'Baby Pink': {image:'BABY_PINK_FRONT.png', image2:'BABY_PINK_BACK.png'},
-    'White': {image:'WHITE_FRONT.png', image2:'WHITE_BACK.png'},
-    'Army Green': {image:'ARMY_GREEN_FRONT.png', image2:'ARMY_GREEN_BACK.png'},
-    'Lavender': {image:'LAVENDER_FRONT.png', image2:'LAVENDER_BACK.png'},
-    'Off-White': {image:'OFF_WHITE_FRONT.png', image2:'OFF_WHITE-BACK.png'},
-    'Maroon': {image:'MAROON_FRONT.png', image2:'MAROON_BACK.png'}
+    'Royal Blue': {image:'Royal_blue.jpg', image2:'Royal_blue_back.jpg'},
+    'Aqua/Sky Blue': {image:'Aqua_sky_blue.png', image2:'Aqua_sky_blue_back.png'},
+    'Beige': {image:'Beige.png', image2:'Beige_back.png'},
+    'White': {image:'White.jpg', image2:'White_back.jpg'},
+    'Black': {image:'Black.jpg', image2:'Black_back.jpg'},
+    'Army Green': {image:'Army_green.png', image2:'Army_green_back.png'},
+    'Lavender': {image:'Lavender .png', image2:'Lavender _back.png'},
+    'Red': {image:'Red.jpg', image2:'Red_back.jpg'},
+    'Pink': {image:'Pink.png', image2:'Pink_back.png'}
   };
 
+  // Polo colourways. Add these image files beside product.html using the exact names below.
   const poloVariants = {
     'White': {image:'White_front.png', image2:'White_back.png'},
     'Black': {image:'Black_front.png', image2:'Black_back.png'},
@@ -615,6 +383,15 @@
   };
 
   const printedVariants = {
+    'Unseen': [
+      {color:'White',image:'un_white_f.png',image2:'un_white_b.png'},
+      {color:'Royal Blue',image:'un_blue_f.png',image2:'un_blue_b.png'},
+      {color:'Black',image:'un_black_f.png',image2:'un_black_b.png'}
+    ],
+    'Veiled Bloom': [
+      {color:'Royal Blue',image:'veiled_blue_f.png',image2:'veiled_blue_b.png'},
+      {color:'White',image:'veiled_black_f.png',image2:'veiled_black_b.png'}
+    ],
     'Grace': [
       {color:'Red',image:'Grace_red_f.png',image2:'Grace_red_b.png'},
       {color:'Blue',image:'Grace_blue_f.png',image2:'Grace_blue_b.png'},
@@ -663,16 +440,24 @@
     ]
   };
 
+  // For plain oversized T-shirts (single-colour catalog entries, not the
+  // printed multi-colour drops), build a variants list from oversizedVariants
+  // so the colour swatches on the product page can switch between colours
+  // with correct front/back photography, same as printed items do.
   const isOversized = typeKey === 'oversized';
   const isPolo = typeKey === 'polo';
   let variants;
   if (isOversized) {
     variants = Object.keys(oversizedVariants).map(colorName => ({
-      color: colorName, image: oversizedVariants[colorName].image, image2: oversizedVariants[colorName].image2
+      color: colorName,
+      image: oversizedVariants[colorName].image,
+      image2: oversizedVariants[colorName].image2
     }));
   } else if (isPolo) {
     variants = Object.keys(poloVariants).map(colorName => ({
-      color: colorName, image: poloVariants[colorName].image, image2: poloVariants[colorName].image2
+      color: colorName,
+      image: poloVariants[colorName].image,
+      image2: poloVariants[colorName].image2
     }));
   } else {
     variants = printedVariants[productData.product] || [{color:productData.color,image:productData.image,image2:productData.image2}];
@@ -680,17 +465,20 @@
 
   const matchingVariant = variants.find(v => v.color.toLowerCase() === productData.color.toLowerCase()) || variants[0];
   selectedColor = matchingVariant.color;
+  // Prefer explicit URL params (so a click from the collection page always
+  // shows exactly the photo the shopper clicked on); fall back to the
+  // matched variant's photography otherwise.
   selectedImages = [
     productData.image || matchingVariant.image,
     productData.image2 || matchingVariant.image2
   ].filter(Boolean);
 
   function currentSpecs(){
+    if(isPrinted && selectedFit === 'Regular') return {material:'100% Pure Cotton',gsm:'180 GSM',fit:'Regular Fit',description:'Pure-cotton printed T-shirt in a comfortable regular fit.'};
     if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
     if(typeKey === 'polo') return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
     if(typeKey === 'oversized') return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
     if(typeKey === 'hoodie') return {material:'Premium Fabric',gsm:'See product description',fit:'Relaxed Fit',description:'Comfortable premium hoodie with a relaxed fit for layering.'};
-    if(typeKey === 'shirt') return {material:'100% Cotton',gsm:'190 GSM',fit:'Boxy Fit',description:'Structured boxy-fit shirt in breathable cotton.'};
     return {material:'Premium Fabric',gsm:'—',fit:'Regular Fit',description:'Premium ARAMBH apparel.'};
   }
 
@@ -742,6 +530,9 @@
     if(!images.length) return;
     selectedImages = images;
     galleryIndex = 0;
+    // Only fall back to the fake split-image mockup when we truly have no
+    // real second photo. Oversized items now ship with genuine front/back
+    // photography (image2), so this path is effectively legacy/unused for them.
     const combinedOversized = typeKey === 'oversized' && (!images[1] || images[1] === images[0]);
     mainImageFrame.classList.toggle('combined-mockup', combinedOversized);
 
@@ -769,7 +560,7 @@
     const img=document.getElementById('sizeChartImage');
     const caption=document.getElementById('chartCaption');
     if(typeKey === 'polo') { img.src='polo_size_chart.png'; caption.textContent='Polo T-shirt size chart'; }
-    else if(typeKey === 'shirt') { img.src='ShirtSizeChart.jpeg'; caption.textContent='Boxy Fit Shirt size chart'; }
+    else if(isPrinted && selectedFit === 'Regular') { img.src='regular_size_chart.png'; caption.textContent='Regular-fit 180 GSM printed T-shirt size chart'; }
     else { img.src='oversized_chart.png'; caption.textContent=isPrinted?'Oversized 240 GSM printed T-shirt size chart':'Oversized T-shirt size chart'; }
   }
 
@@ -777,77 +568,6 @@
   document.getElementById('productName').textContent = productData.product;
   document.getElementById('productPrice').textContent = `₹${productData.price}`;
   document.getElementById('mobileProductPrice').textContent = `₹${productData.price}`;
-
-  /* ---------------- Strikethrough MRP + discount badge ---------------- */
-  (function renderDiscount(){
-    const price = Number(productData.price);
-    if(!price) return;
-    const mrp = Math.round((price / 0.8) / 5) * 5; // implies a 20% saving, rounded to nearest ₹5
-    const off = Math.round((1 - price / mrp) * 100);
-    const wasEl = document.getElementById('productWasPrice');
-    const offEl = document.getElementById('productDiscount');
-    if(mrp > price){
-      wasEl.textContent = `₹${mrp}`;
-      wasEl.style.display = 'inline';
-      offEl.textContent = `Save ${off}%`;
-      offEl.style.display = 'inline';
-    }
-  })();
-
-  /* ---------------- Pincode delivery check ---------------- */
-  (function pincodeCheck(){
-    const input = document.getElementById('pincodeInput');
-    const btn = document.getElementById('pincodeCheckBtn');
-    const result = document.getElementById('pincodeResult');
-    if(!input || !btn) return;
-    btn.addEventListener('click', async () => {
-      const pin = input.value.trim();
-      result.classList.remove('ok','bad');
-      if(!/^\d{6}$/.test(pin)){
-        result.textContent = 'Please enter a valid 6-digit pincode.';
-        result.classList.add('bad','show');
-        return;
-      }
-      btn.disabled = true;
-      result.textContent = 'Checking serviceability…';
-      result.classList.add('show');
-      try{
-        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-        const data = await res.json();
-        const info = data && data[0];
-        if(info && info.Status === 'Success' && info.PostOffice && info.PostOffice.length){
-          const office = info.PostOffice[0];
-          const state = office.State || '';
-          const isLowZone = /goa|karnataka/i.test(state);
-          const charge = isLowZone ? 30 : 50;
-          result.innerHTML = `Delivering to <span class="pc-city">${office.District}, ${state}</span> — usually 4–7 working days · ₹${charge} delivery (COD available)`;
-          result.classList.add('ok');
-        } else {
-          result.textContent = 'Sorry, we couldn\'t find that pincode. Please double-check and try again.';
-          result.classList.add('bad');
-        }
-      } catch(err){
-        result.textContent = 'Could not check delivery right now — please try again in a moment.';
-        result.classList.add('bad');
-      } finally {
-        btn.disabled = false;
-      }
-    });
-    input.addEventListener('keydown', e => { if(e.key === 'Enter') btn.click(); });
-  })();
-
-  /* ---------------- Info tabs ---------------- */
-  (function initTabs(){
-    const nav = document.getElementById('tabNav');
-    if(!nav) return;
-    nav.addEventListener('click', e => {
-      const btn = e.target.closest('.tab-btn'); if(!btn) return;
-      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelector(`.tab-panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
-    });
-  })();
 
   const mainImg = document.getElementById('mainImg');
   const thumbs = document.getElementById('thumbs');
@@ -875,6 +595,13 @@
   });
   renderSwatches();
 
+  if(isPrinted){
+    document.getElementById('fitSelectorWrap').style.display='block';
+    document.querySelectorAll('.fit-btn').forEach(btn=>btn.addEventListener('click',()=>{
+      document.querySelectorAll('.fit-btn').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active'); selectedFit=btn.dataset.fit; updateSpecs();
+    }));
+  }
   updateSpecs();
 
   document.querySelectorAll('.size-btn').forEach(button => {
@@ -905,197 +632,47 @@
   document.getElementById('closeChart').onclick = () => overlay.classList.remove('open');
   overlay.addEventListener('click', event => { if (event.target === overlay) overlay.classList.remove('open'); });
 
-  /* ---------------- Star rating (deterministic per product, tuned to look like real review data) ---------------- */
-  function hashOf(name){
-    let h = 0;
-    for(let i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
-    return h;
-  }
-  function seededRating(name){
-    const h = hashOf(name);
-    const ratingSteps = [3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9];
-    const rating = ratingSteps[h % ratingSteps.length];
-    const magnitude = h % 5;
-    const base = magnitude === 0 ? 12 : magnitude === 1 ? 40 : magnitude === 2 ? 90 : magnitude === 3 ? 180 : 340;
-    const count = base + (h % 57);
-    return {rating, count};
-  }
-  function formatCount(n){ return n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n); }
-  (function renderStars(){
-    const {rating, count} = seededRating(productData.product + '|' + selectedColor);
-    const fullStars = Math.floor(rating);
-    const hasHalf = (rating - fullStars) >= 0.5;
-    const starSvg = (state) => {
-      if(state === 'half'){
-        return `<svg viewBox="0 0 24 24"><defs><linearGradient id="halfGrad"><stop offset="50%" stop-color="#F5B301"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 21.5 12 17.5 5.5 21.5 7 14.5 2 9.5 9 9" fill="url(#halfGrad)" stroke="#F5B301" stroke-width="1.5"></polygon></svg>`;
-      }
-      const filled = state === 'full';
-      return `<svg viewBox="0 0 24 24" style="fill:${filled?'#F5B301':'none'};stroke:${filled?'#F5B301':'#4a4658'};stroke-width:1.5"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 21.5 12 17.5 5.5 21.5 7 14.5 2 9.5 9 9"></polygon></svg>`;
-    };
-    const states = Array.from({length:5}).map((_,i)=> i<fullStars ? 'full' : (i===fullStars && hasHalf) ? 'half' : 'empty');
-    document.getElementById('starRow').innerHTML = states.map(starSvg).join('');
-    document.getElementById('ratingText').textContent = `${rating.toFixed(1)} · ${formatCount(count)} verified reviews`;
-  })();
 
-  /* ---------------- Social proof + stock urgency ---------------- */
-  (function urgency(){
-    const h = hashOf(productData.product + '|' + selectedColor);
-    const boughtRecently = 3 + (h % 24);
-    document.getElementById('socialProofText').textContent = `${boughtRecently} people bought this in the last 48 hours`;
-    const stockLeft = 2 + (h % 9);
-    document.getElementById('stockBadge').innerHTML = `<span class="dot"></span> Only ${stockLeft} left in ${selectedColor}`;
-  })();
-
-  /* ---------------- Wishlist ---------------- */
-  const WISH_KEY = 'arambhWishlist';
-  function getWishlist(){ try { return JSON.parse(localStorage.getItem(WISH_KEY)) || []; } catch(e){ return []; } }
-  const wishlistBtn = document.getElementById('wishlistBtn');
-  function wishId(){ return `${productData.product}|${selectedColor}`; }
-  function refreshWishlistBtn(){
-    wishlistBtn.classList.toggle('active', getWishlist().includes(wishId()));
-  }
-  wishlistBtn.addEventListener('click', () => {
-    let list = getWishlist();
-    const id = wishId();
-    if(list.includes(id)){ list = list.filter(x=>x!==id); }
-    else { list.push(id); wishlistBtn.classList.add('active'); }
-    localStorage.setItem(WISH_KEY, JSON.stringify(list));
-    refreshWishlistBtn();
-  });
-  refreshWishlistBtn();
-
-  /* ---------------- Catalog + related products + filters ---------------- */
-  const productCatalog = [{"product": "White Polo Tee", "type": "Polo", "color": "White", "price": "399", "image": "White_front.png", "image2": "White_back.png", "categoryPage": "polo.html"}, {"product": "Black Polo Tee", "type": "Polo", "color": "Black", "price": "399", "image": "Black_front.png", "image2": "Black_back.png", "categoryPage": "polo.html"}, {"product": "Navy Blue Polo Tee", "type": "Polo", "color": "Navy Blue", "price": "399", "image": "Navy_Blue_front.png", "image2": "Navy_Blue_back.png", "categoryPage": "polo.html"}, {"product": "Maroon Polo Tee", "type": "Polo", "color": "Maroon", "price": "399", "image": "Maroon_front.png", "image2": "Maroon_back.png", "categoryPage": "polo.html"}, {"product": "Gray Polo Tee", "type": "Polo", "color": "Gray", "price": "399", "image": "Gray_front.png", "image2": "Gray_back.png", "categoryPage": "polo.html"}, {"product": "Charcoal Polo Tee", "type": "Polo", "color": "Charcoal", "price": "399", "image": "Charcoal_front.png", "image2": "Charcoal_back.png", "categoryPage": "polo.html"}, {"product": "Beige Oversized Tee", "type": "Oversized", "color": "Beige", "price": "349", "image": "BEIGEA_FRONT.png", "image2": "BEIGEA_BACK.png", "categoryPage": "oversized.html"}, {"product": "Black Oversized Tee", "type": "Oversized", "color": "Black", "price": "349", "image": "BLACK_FRONT.png", "image2": "BLACK_BACK.png", "categoryPage": "oversized.html"}, {"product": "Navy Blue Oversized Tee", "type": "Oversized", "color": "Navy Blue", "price": "349", "image": "NAVY_BLUE_FRONT.png", "image2": "NAVY_BLUE_BACK.png", "categoryPage": "oversized.html"}, {"product": "Royal Blue Oversized Tee", "type": "Oversized", "color": "Royal Blue", "price": "349", "image": "ROYAL_BLUE_FRONT.png", "image2": "ROYAL_BLUE_BACK.png", "categoryPage": "oversized.html"}, {"product": "Sky Blue Oversized Tee", "type": "Oversized", "color": "Sky Blue", "price": "349", "image": "SKY_BLUE_FRONT.png", "image2": "SKY_BLUE_BACK.png", "categoryPage": "oversized.html"}, {"product": "Red Oversized Tee", "type": "Oversized", "color": "Red", "price": "349", "image": "RED_FRONT.png", "image2": "RED_BACK.png", "categoryPage": "oversized.html"}, {"product": "Baby Pink Oversized Tee", "type": "Oversized", "color": "Baby Pink", "price": "349", "image": "BABY_PINK_FRONT.png", "image2": "BABY_PINK_BACK.png", "categoryPage": "oversized.html"}, {"product": "White Oversized Tee", "type": "Oversized", "color": "White", "price": "349", "image": "WHITE_FRONT.png", "image2": "WHITE_BACK.png", "categoryPage": "oversized.html"}, {"product": "Army Green Oversized Tee", "type": "Oversized", "color": "Army Green", "price": "349", "image": "ARMY_GREEN_FRONT.png", "image2": "ARMY_GREEN_BACK.png", "categoryPage": "oversized.html"}, {"product": "Lavender Oversized Tee", "type": "Oversized", "color": "Lavender", "price": "349", "image": "LAVENDER_FRONT.png", "image2": "LAVENDER_BACK.png", "categoryPage": "oversized.html"}, {"product": "Off-White Oversized Tee", "type": "Oversized", "color": "Off-White", "price": "349", "image": "OFF_WHITE_FRONT.png", "image2": "OFF_WHITE-BACK.png", "categoryPage": "oversized.html"}, {"product": "Maroon Oversized Tee", "type": "Oversized", "color": "Maroon", "price": "349", "image": "MAROON_FRONT.png", "image2": "MAROON_BACK.png", "categoryPage": "oversized.html"}, {"product": "Beige Hoodie", "type": "Hoodie", "color": "Beige", "price": "599", "image": "hoodie1.jpg", "categoryPage": "oversized.html"}, {"product": "Black Hoodie", "type": "Hoodie", "color": "Black", "price": "599", "image": "hoodie2.jpg", "categoryPage": "oversized.html"}, {"product": "Explore Space Acid Wash", "type": "Printed Oversized Tee", "price": "699", "color": "Default", "image": "explore_space_front.jpg", "image2": "explore_space_back.jpg", "categoryPage": "printed.html"}, {"product": "Grace", "type": "Printed T-Shirt", "price": "599", "color": "Red", "image": "Grace_red_f.png", "image2": "Grace_red_b.png", "categoryPage": "printed.html"}, {"product": "Anime", "type": "Printed T-Shirt", "price": "599", "color": "Black", "image": "anime_b_f.png", "image2": "anime_b_b.png", "categoryPage": "printed.html"}, {"product": "Naruto", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "naruto_w_f.png", "image2": "naruto_w_b.png", "categoryPage": "printed.html"}, {"product": "One Piece", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "one_w_f.png", "image2": "one_w_b.png", "categoryPage": "printed.html"}, {"product": "Tanjiro", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "tanjiro_w_f.png", "image2": "tanjiro_w_b.png", "categoryPage": "printed.html"}, {"product": "Luffy", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "luffy_b_f.png", "image2": "luffy_b_b.png", "categoryPage": "printed.html"}, {"product": "Justice", "type": "Printed T-Shirt", "price": "549", "color": "Red", "image": "Justice_r_f.png", "image2": "Justice_r_b.png", "categoryPage": "printed.html"}, {"product": "Porsche", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "Porsche_black_front.png", "image2": "Porsche_black_back.png", "categoryPage": "printed.html"}, {"product": "Kungfu Panda", "type": "Printed T-Shirt", "price": "649", "color": "White", "image": "Kufu_white.jpeg", "image2": "Kufu_white.jpeg", "categoryPage": "printed.html"}];
-
-  function variantsForItem(item){
-    const itk = item.type.toLowerCase();
-    return (printedVariants[item.product]) ||
-      (itk === 'oversized' ? Object.keys(oversizedVariants).map(color => ({color, ...oversizedVariants[color]}))
-      : itk === 'polo' ? Object.keys(poloVariants).map(color => ({color, ...poloVariants[color]}))
-      : [{color:item.color,image:item.image,image2:item.image2}]);
-  }
-  function firstImageForItem(item){
-    const vs = variantsForItem(item);
-    return vs.find(v => v.color.toLowerCase() === item.color.toLowerCase()) || vs[0];
-  }
-  function filterKeyForType(t){
-    const tk = t.toLowerCase();
-    if(tk.includes('hoodie')) return 'hoodie';
-    if(tk.includes('printed')) return 'printed';
-    if(tk.includes('polo')) return 'polo';
-    if(tk.includes('oversized')) return 'oversized';
-    return tk;
-  }
-
+  const productCatalog = [{"product": "Polo T-Shirt", "type": "Polo", "color": "White", "price": "399", "image": "White_front.png", "image2": "White_back.png", "categoryPage": "polo.html"}, {"product": "Royal Blue Oversized Tee", "type": "Oversized", "color": "Royal Blue", "price": "349", "image": "Royal_blue.jpg", "image2": "Royal_blue_back.jpg", "categoryPage": "oversized.html"}, {"product": "Aqua/Sky Blue Oversized Tee", "type": "Oversized", "color": "Aqua/Sky Blue", "price": "349", "image": "Aqua_sky_blue.png", "image2": "Aqua_sky_blue_back.png", "categoryPage": "oversized.html"}, {"product": "Beige Oversized Tee", "type": "Oversized", "color": "Beige", "price": "349", "image": "Beige.png", "image2": "Beige_back.png", "categoryPage": "oversized.html"}, {"product": "White Oversized Tee", "type": "Oversized", "color": "White", "price": "349", "image": "White.jpg", "image2": "White_back.jpg", "categoryPage": "oversized.html"}, {"product": "Black Oversized Tee", "type": "Oversized", "color": "Black", "price": "349", "image": "Black.jpg", "image2": "Black_back.jpg", "categoryPage": "oversized.html"}, {"product": "Army Green Oversized Tee", "type": "Oversized", "color": "Army Green", "price": "349", "image": "Army_green.png", "image2": "Army_green_back.png", "categoryPage": "oversized.html"}, {"product": "Lavender Oversized Tee", "type": "Oversized", "color": "Lavender", "price": "349", "image": "Lavender .png", "image2": "Lavender _back.png", "categoryPage": "oversized.html"}, {"product": "Red Oversized Tee", "type": "Oversized", "color": "Red", "price": "349", "image": "Red.jpg", "image2": "Red_back.jpg", "categoryPage": "oversized.html"}, {"product": "Pink Oversized Tee", "type": "Oversized", "color": "Pink", "price": "349", "image": "Pink.png", "image2": "Pink_back.png", "categoryPage": "oversized.html"}, {"product": "Beige Hoodie", "type": "Hoodie", "color": "Beige", "price": "599", "image": "hoodie1.jpg", "categoryPage": "oversized.html"}, {"product": "Black Hoodie", "type": "Hoodie", "color": "Black", "price": "599", "image": "hoodie2.jpg", "categoryPage": "oversized.html"}, {"product": "Explore Space Acid Wash", "type": "Printed Oversized Tee", "price": "699", "color": "Default", "image": "explore_space_front.jpg", "image2": "explore_space_back.jpg", "categoryPage": "printed.html"}, {"product": "Grace", "type": "Printed T-Shirt", "price": "599", "color": "Red", "image": "Grace_red_f.png", "image2": "Grace_red_b.png", "categoryPage": "printed.html"}, {"product": "Anime", "type": "Printed T-Shirt", "price": "599", "color": "Black", "image": "anime_b_f.png", "image2": "anime_b_b.png", "categoryPage": "printed.html"}, {"product": "Naruto", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "naruto_w_f.png", "image2": "naruto_w_b.png", "categoryPage": "printed.html"}, {"product": "One Piece", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "one_w_f.png", "image2": "one_w_b.png", "categoryPage": "printed.html"}, {"product": "Tanjiro", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "tanjiro_w_f.png", "image2": "tanjiro_w_b.png", "categoryPage": "printed.html"}, {"product": "Luffy", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "luffy_b_f.png", "image2": "luffy_b_b.png", "categoryPage": "printed.html"}, {"product": "Justice", "type": "Printed T-Shirt", "price": "549", "color": "Red", "image": "Justice_r_f.png", "image2": "Justice_r_b.png", "categoryPage": "printed.html"}, {"product": "Porsche", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "Porsche_black_front.png", "image2": "Porsche_black_back.png", "categoryPage": "printed.html"}, {"product": "Kungfu Panda", "type": "Printed T-Shirt", "price": "649", "color": "White", "image": "Kufu_white.jpeg", "image2": "Kufu_white.jpeg", "categoryPage": "printed.html"}, {"product": "Unseen", "type": "Printed T-Shirt", "color": "White", "price": "549", "image": "un_white_f.png", "image2": "un_white_b.png", "categoryPage": "printed.html"}, {"product": "Veiled Bloom", "type": "Printed T-Shirt", "color": "Royal Blue", "price": "549", "image": "veiled_blue_f.png", "image2": "veiled_blue_b.png", "categoryPage": "printed.html"}];
   const relatedGrid = document.getElementById('relatedGrid');
   const currentName = productData.product.toLowerCase();
   const sameCategory = productCatalog.filter(item => item.product.toLowerCase() !== currentName && item.type.toLowerCase() === typeKey);
   const otherTshirts = productCatalog.filter(item => item.product.toLowerCase() !== currentName && !item.type.toLowerCase().includes('hoodie'));
-  let relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))];
-  const seen = new Set();
-  relatedItems = relatedItems.filter(item => {
-    if(seen.has(item.product)) return false;
-    seen.add(item.product); return true;
-  }).slice(0, 8);
+  const relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))].slice(0, 4);
+  relatedGrid.innerHTML = relatedItems.map(item => {
+    const itemTypeKey = item.type.toLowerCase();
+    const itemVariants = (printedVariants[item.product]) ||
+      (itemTypeKey === 'oversized'
+        ? Object.keys(oversizedVariants).map(color => ({color, ...oversizedVariants[color]}))
+        : itemTypeKey === 'polo'
+          ? Object.keys(poloVariants).map(color => ({color, ...poloVariants[color]}))
+          : [{color:item.color,image:item.image,image2:item.image2}]);
+    // FIX: match the variant to this catalog item's own colour instead of
+    // always taking itemVariants[0] — previously every oversized/polo card
+    // showed the first colour in the list (e.g. Royal Blue) regardless of
+    // its actual name/colour.
+    const first = itemVariants.find(v => v.color.toLowerCase() === item.color.toLowerCase()) || itemVariants[0];
+    const enriched={...item,color:first.color,image:first.image,image2:first.image2||first.image};
+    const params = new URLSearchParams(enriched);
+    const dots=itemVariants.map(v=>`<span class="related-color" title="${v.color}" style="background:${colorHex[v.color]||'#777'}"></span>`).join('');
+    return `<a class="related-card" href="product.html?${params.toString()}">
+      <div class="related-images"><img class="active" src="${first.image}" alt="${item.product} front"><img src="${first.image2||first.image}" alt="${item.product} back"><span class="view-status">Front</span><span class="gallery-dots" aria-hidden="true"><span class="active"></span><span></span></span></div>
+      <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span><div class="related-colors">${dots}</div><div class="related-color-label">${itemVariants.map(v=>v.color).join(' · ')}</div></div>
+    </a>`;
+  }).join('');
 
-  function renderRelated(items){
-    if(!items.length){
-      relatedGrid.innerHTML = `<div class="no-results">No products match these filters. <button class="filter-chip active" style="margin-left:8px;" onclick="document.querySelector('[data-filter-type=all]').click()">Clear filters</button></div>`;
-      return;
-    }
-    relatedGrid.innerHTML = items.map((item, i) => {
-      const itemVariants = variantsForItem(item);
-      const first = firstImageForItem(item);
-      const enriched={...item,color:first.color,image:first.image,image2:first.image2||first.image};
-      const params = new URLSearchParams(enriched);
-      const dots=itemVariants.map(v=>`<span class="related-color" title="${v.color}" style="background:${colorHex[v.color]||'#777'}"></span>`).join('');
-      return `<a class="related-card reveal" style="animation-delay:${.04*i}s" href="product.html?${params.toString()}" data-type="${filterKeyForType(item.type)}" data-price="${item.price}">
-        <div class="related-images"><img class="active" src="${first.image}" alt="${item.product} front"><img src="${first.image2||first.image}" alt="${item.product} back"><span class="view-status">Front</span><span class="gallery-dots" aria-hidden="true"><span class="active"></span><span></span></span></div>
-        <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span><div class="related-colors">${dots}</div><div class="related-color-label">${itemVariants.map(v=>v.color).join(' · ')}</div></div>
-      </a>`;
-    }).join('');
-
-    document.querySelectorAll('#relatedGrid .related-images').forEach((frame,index)=>{
-      const pictures=frame.querySelectorAll('img');
-      const label=frame.querySelector('.view-status');
-      const dots=frame.querySelectorAll('.gallery-dots span');
-      if(pictures.length<2) return;
-      let current=0;
-      setInterval(()=>{
-        current=(current+1)%2;
-        pictures.forEach((img,i)=>img.classList.toggle('active',i===current));
-        dots.forEach((dot,i)=>dot.classList.toggle('active',i===current));
-        if(label) label.textContent=current===0?'Front':'Back';
-      },3400+(index%3)*180);
-    });
-  }
-  renderRelated(relatedItems);
-
-  const fullCatalogOptions = productCatalog.filter(item => item.product.toLowerCase() !== currentName);
-
-  let activeTypeFilter = 'all';
-  document.getElementById('filterBar').addEventListener('click', e => {
-    const chip = e.target.closest('.filter-chip'); if(!chip) return;
-    document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active');
-    activeTypeFilter = chip.dataset.filterType;
-    applyFilters();
-  });
-  document.getElementById('sortSelect').addEventListener('change', applyFilters);
-
-  function applyFilters(){
-    const pool = activeTypeFilter === 'all' ? relatedItems : fullCatalogOptions;
-    let items = activeTypeFilter === 'all' ? pool : pool.filter(i => filterKeyForType(i.type) === activeTypeFilter);
-    const sort = document.getElementById('sortSelect').value;
-    items = [...items];
-    if(sort === 'price-asc') items.sort((a,b)=>Number(a.price)-Number(b.price));
-    if(sort === 'price-desc') items.sort((a,b)=>Number(b.price)-Number(a.price));
-    renderRelated(items);
-  }
-
-  /* ---------------- Site-wide search ---------------- */
-  const searchInput = document.getElementById('searchInput');
-  const searchPanel = document.getElementById('searchPanel');
-  function renderSearch(query){
-    const q = query.trim().toLowerCase();
-    if(!q){ searchPanel.classList.remove('open'); searchPanel.innerHTML=''; return; }
-    const matches = productCatalog.filter(item =>
-      item.product.toLowerCase().includes(q) ||
-      item.type.toLowerCase().includes(q) ||
-      item.color.toLowerCase().includes(q)
-    ).slice(0, 8);
-    if(!matches.length){
-      searchPanel.innerHTML = `<div class="search-empty">No products found for "${query}"</div>`;
-    } else {
-      searchPanel.innerHTML = matches.map(item => {
-        const first = firstImageForItem(item);
-        const enriched={...item,color:first.color,image:first.image,image2:first.image2||first.image};
-        const params = new URLSearchParams(enriched);
-        return `<a class="search-item" href="product.html?${params.toString()}">
-          <img src="${first.image}" alt="${item.product}">
-          <span><span class="si-name">${item.product}</span><br><span class="si-meta">${item.type} · ₹${item.price}</span></span>
-        </a>`;
-      }).join('');
-    }
-    searchPanel.classList.add('open');
-  }
-  searchInput.addEventListener('input', e => renderSearch(e.target.value));
-  searchInput.addEventListener('focus', e => { if(e.target.value) renderSearch(e.target.value); });
-  document.addEventListener('click', e => {
-    if(!e.target.closest('.search-shell') && !e.target.closest('.search-results')) searchPanel.classList.remove('open');
-  });
-  document.addEventListener('keydown', e => { if(e.key === 'Escape') searchPanel.classList.remove('open'); });
-
-  /* ---------------- Cart ---------------- */
   const CART_KEY = 'arambhCart';
+
   function getCart(){
     try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
     catch (error) { return []; }
   }
+
   function updateCartCount(){
     const count = getCart().reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
     document.getElementById('cartCount').textContent = count;
   }
+
   function currentSelection(){
     const activeSize = document.querySelector('.size-btn.active');
     return {
@@ -1111,6 +688,7 @@
       qty: qty
     };
   }
+
   function addToCart(){
     const selected = currentSelection();
     const cart = getCart();
@@ -1119,13 +697,12 @@
     else { cart.push(selected); }
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
     updateCartCount();
-    const cartLink = document.getElementById('cartLink');
-    cartLink.classList.remove('bump'); void cartLink.offsetWidth; cartLink.classList.add('bump');
     const toast = document.getElementById('cartToast');
     toast.textContent = `${selected.product} added to cart`;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 1800);
   }
+
   updateCartCount();
   document.getElementById('addCartDesktop').onclick = addToCart;
   document.getElementById('addCartMobile').onclick = addToCart;
@@ -1146,24 +723,121 @@
   document.getElementById('buyNowDesktop').onclick = goToOrder;
   document.getElementById('buyNowMobile').onclick = goToOrder;
 
-  /* ---------------- Recently viewed ---------------- */
-  const RECENT_KEY = 'arambhRecentlyViewed';
-  function getRecent(){ try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch(e){ return []; } }
-  (function trackRecent(){
-    let recent = getRecent().filter(p => p.product !== productData.product);
-    recent.unshift({product: productData.product, type: productData.type, color: selectedColor, price: productData.price, image: selectedImages[0] || productData.image});
-    recent = recent.slice(0, 8);
-    localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+
+  // Rotate related product cards between complete front and back views.
+  document.querySelectorAll('.related-images').forEach((frame,index)=>{
+    const pictures=frame.querySelectorAll('img');
+    const label=frame.querySelector('.view-status');
+    const dots=frame.querySelectorAll('.gallery-dots span');
+    if(pictures.length<2) return;
+    let current=0;
+    setInterval(()=>{
+      current=(current+1)%2;
+      pictures.forEach((img,i)=>img.classList.toggle('active',i===current));
+      dots.forEach((dot,i)=>dot.classList.toggle('active',i===current));
+      if(label) label.textContent=current===0?'Front':'Back';
+    },3400+(index%3)*180);
+  });
+
+
+  // ===== Header search =====
+  (function(){
+    const input = document.getElementById('siteSearch');
+    const list = document.getElementById('searchList');
+    const collections = [
+      {name:'Polos', href:'polo.html', note:'Collar tees', keys:'polo polos collar'},
+      {name:'Oversized', href:'oversized.html', note:'Plain drop-shoulder tees', keys:'oversized plain drop shoulder'},
+      {name:'Printed', href:'printed.html', note:'Graphic and anime tees', keys:'printed graphic anime tee tees'},
+      {name:'Hoodies', href:'hoodie.html', note:'Heavy-weight hoodies', keys:'hoodie hoodies'},
+      {name:'Shirts', href:'shirt.html', note:'Boxy-fit shirts', keys:'shirt shirts boxy'}
+    ];
+    const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    function variantsFor(item){
+      const k = item.type.toLowerCase();
+      return printedVariants[item.product] ||
+        (k === 'oversized' ? Object.keys(oversizedVariants).map(c => ({color:c, ...oversizedVariants[c]}))
+        : k === 'polo' ? Object.keys(poloVariants).map(c => ({color:c, ...poloVariants[c]}))
+        : [{color:item.color, image:item.image, image2:item.image2}]);
+    }
+    function pick(item, tokens){
+      const v = variantsFor(item);
+      const byQuery = tokens.length && v.find(x => tokens.some(t => x.color.toLowerCase().split(/[^a-z0-9]+/).some(w => w.startsWith(t))));
+      return byQuery || v.find(x => x.color.toLowerCase() === item.color.toLowerCase()) || v[0];
+    }
+    function hrefFor(item, tokens){
+      const first = pick(item, tokens);
+      return 'product.html?' + new URLSearchParams({...item, color:first.color, image:first.image, image2:first.image2 || first.image}).toString();
+    }
+    const label = item => { const k = item.type.toLowerCase(); return k.includes('printed') ? 'Printed tee' : k === 'oversized' ? 'Oversized tee' : k === 'polo' ? 'Polo' : item.type; };
+    const items = productCatalog.filter(i => !i.type.toLowerCase().includes('hoodie')).map(i => {
+      const v = variantsFor(i);
+      return {item:i, variants:v, hay:[i.product, i.type, i.categoryPage.replace('.html',''), 'tee t-shirt tshirt', ...(i.type.toLowerCase() === 'oversized' ? [i.color] : v.map(x => x.color))].join(' ').toLowerCase()};
+    });
+    const words = h => h.split(/[^a-z0-9]+/);
+    const hit = (hay, t) => words(hay).some(w => w.startsWith(t));
+
+    let rows = [], active = -1;
+
+    function render(){
+      const q = input.value.trim().toLowerCase();
+      const tokens = q.split(/\s+/).filter(Boolean);
+      let html = '', n = 0; rows = [];
+      const row = (href, thumb, name, meta) => {
+        const id = 'sr-' + (n++);
+        rows.push(id);
+        return `<li class="search-item" role="option" id="${id}"><a href="${href}">${thumb}<span><div class="search-name">${name}</div><div class="search-meta">${meta}</div></span></a></li>`;
+      };
+      const collRow = c => row(c.href, `<span class="search-thumb coll">${esc(c.name[0])}</span>`, esc(c.name), esc(c.note));
+      if(!tokens.length){
+        html += '<li class="search-group" role="presentation">Browse collections</li>' + collections.map(collRow).join('');
+      } else {
+        const cm = collections.filter(c => tokens.every(t => hit((c.name + ' ' + c.keys).toLowerCase(), t)));
+        const pm = items.filter(x => tokens.every(t => hit(x.hay, t))).slice(0, 8);
+        if(cm.length) html += '<li class="search-group" role="presentation">Collections</li>' + cm.map(collRow).join('');
+        if(pm.length) html += '<li class="search-group" role="presentation">Products</li>' + pm.map(x => {
+          const first = pick(x.item, tokens);
+          const cols = x.variants.length > 1 ? ` · ${x.variants.length} colours` : '';
+          return row(hrefFor(x.item, tokens), `<span class="search-thumb"><img src="${esc(first.image)}" alt=""></span>`, esc(x.item.product), `₹${esc(x.item.price)} · ${esc(label(x.item))}${cols}`);
+        }).join('');
+        if(!cm.length && !pm.length){
+          html += `<li class="search-empty" role="presentation">No match for “${esc(input.value.trim())}”. Try a colour or a design name, or browse a collection.</li><li class="search-group" role="presentation">Browse collections</li>` + collections.map(collRow).join('');
+        }
+      }
+      list.innerHTML = html;
+      active = -1;
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+    function close(){ list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; }
+    function setActive(i){
+      if(!rows.length) return;
+      active = (i + rows.length) % rows.length;
+      list.querySelectorAll('.search-item').forEach((li, k) => li.classList.toggle('active', k === active));
+      const li = list.querySelectorAll('.search-item')[active];
+      input.setAttribute('aria-activedescendant', li.id);
+      li.scrollIntoView({block:'nearest'});
+    }
+
+    input.addEventListener('focus', render);
+    input.addEventListener('input', render);
+    input.addEventListener('keydown', e => {
+      if(e.key === 'ArrowDown'){ e.preventDefault(); if(list.hidden) render(); setActive(active + 1); }
+      else if(e.key === 'ArrowUp'){ e.preventDefault(); setActive(active - 1); }
+      else if(e.key === 'Escape'){ close(); input.blur(); }
+      else if(e.key === 'Enter'){
+        const target = list.querySelectorAll('.search-item')[active >= 0 ? active : 0];
+        if(target && input.value.trim()){ e.preventDefault(); target.querySelector('a').click(); }
+      }
+    });
+    list.addEventListener('mousemove', e => {
+      const li = e.target.closest('.search-item'); if(!li) return;
+      const k = [...list.querySelectorAll('.search-item')].indexOf(li);
+      if(k !== active){ active = k; list.querySelectorAll('.search-item').forEach((x, n) => x.classList.toggle('active', n === k)); }
+    });
+    document.addEventListener('click', e => { if(!e.target.closest('.search-box')) close(); });
   })();
-  (function renderRecent(){
-    const recent = getRecent().filter(p => p.product !== productData.product);
-    if(!recent.length) return;
-    document.getElementById('recentSection').style.display = 'block';
-    document.getElementById('recentStrip').innerHTML = recent.map(p => {
-      const params = new URLSearchParams(p);
-      return `<a class="recent-card" href="product.html?${params.toString()}"><img src="${p.image}" alt="${p.product}"><div class="rc-name">${p.product}</div></a>`;
-    }).join('');
-  })();
+
 </script>
 
 </body>

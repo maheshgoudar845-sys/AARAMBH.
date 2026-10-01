@@ -7,105 +7,90 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#080810;
-    --card:#101018;
-    --accent:#E8452C;   /* red/orange accent - swap per category if needed */
-    --accent2:#FF7A45;
-    --text:#F5F3EE;
-    --muted:#9A96A8;
-    --line:#232130;
-  }
+  :root{--bg:#080810;--card:#101018;--accent:#E8452C;--accent2:#FF7A45;--text:#F5F3EE;--muted:#9A96A8;--line:#232130;--ease:cubic-bezier(.2,.7,.2,1);}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'DM Sans',sans-serif;
-    padding-bottom:90px; /* room for sticky bar on mobile */
-  }
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;padding-bottom:90px;animation:pageIn .5s var(--ease) both;transition:opacity .22s ease,transform .22s ease;}
+  body.leaving{opacity:0;transform:translateY(-8px);pointer-events:none;}
+  @keyframes pageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   h1,h2,.display{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
-  .brand{font-family:'Syne',sans-serif;font-weight:800;}
+  #navProgress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:200;transition:width .25s ease,opacity .3s;}
 
-  .wrap{
-    max-width:1200px;margin:0 auto;padding:24px 20px;
-    display:grid;grid-template-columns:1.1fr 1fr;gap:48px;
-  }
-  @media(max-width:860px){ .wrap{grid-template-columns:1fr;gap:24px;padding:16px;} }
+  .wrap{max-width:1200px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;}
+  @media(max-width:860px){.wrap{grid-template-columns:1fr;gap:24px;padding:16px;}}
 
-  /* ---- Gallery ---- */
-  .gallery{position:sticky;top:20px;align-self:start;}
-  @media(max-width:860px){ .gallery{position:static;} }
-  .main-image{
-    width:100%;aspect-ratio:4/5;border-radius:14px;overflow:hidden;
-    background:var(--card);border:1px solid var(--line);
-    position:relative;
-  }
-  .main-image img{width:100%;height:100%;object-fit:cover;display:block;
-    animation:fadeIn .25s ease;}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  /* ---- Gallery (click to flip front/back) ---- */
+  .gallery{position:sticky;top:130px;align-self:start;animation:slideUp .6s .1s var(--ease) both;}
+  @media(max-width:860px){.gallery{position:static;}}
+  .main-image{width:100%;aspect-ratio:4/5;border-radius:14px;background:var(--card);border:1px solid var(--line);position:relative;perspective:1400px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;outline:none;}
+  .main-image:focus-visible{box-shadow:0 0 0 3px rgba(232,69,44,.5);}
+  .flip-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s var(--ease);}
+  .flip-inner.is-back{transform:rotateY(180deg);}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;overflow:hidden;background:#0b0b13;}
+  .face.back{transform:rotateY(180deg);}
+  .face img{width:100%;height:100%;object-fit:contain;padding:10px;display:block;}
+  .main-image:hover .flip-inner:not(.is-back){transform:rotateY(6deg);}
+  .main-image:hover .flip-inner.is-back{transform:rotateY(174deg);}
+  .main-image.single{cursor:default;}
+  .main-image.single .flip-inner{transform:none !important;}
+  .view-status,.flip-hint{position:absolute;z-index:4;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.64);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;pointer-events:none;}
+  .view-status{left:14px;bottom:14px;}
+  .flip-hint{right:14px;bottom:14px;display:flex;align-items:center;gap:6px;animation:hintPulse 2.4s ease-in-out infinite;}
+  .flip-hint svg{width:13px;height:13px;}
+  .main-image.single .flip-hint,.main-image.single .gallery-dots,.main-image.single .view-status{display:none;}
+  @keyframes hintPulse{0%,100%{opacity:.75}50%{opacity:1;transform:translateY(-2px)}}
+  .gallery-dots{position:absolute;left:50%;bottom:17px;transform:translateX(-50%);z-index:4;display:flex;gap:7px;padding:6px 9px;border-radius:999px;background:rgba(0,0,0,.42);pointer-events:none;}
+  .gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.38);transition:.3s;}
+  .gallery-dots span.active{background:var(--accent);transform:scale(1.25);}
   .thumbs{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:4px;}
-  .thumb{
-    width:76px;height:92px;flex:0 0 auto;border-radius:8px;overflow:hidden;
-    border:2px solid var(--line);cursor:pointer;opacity:.6;transition:.2s;background:var(--card);
-  }
-  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-  .thumb.active{border-color:var(--accent);opacity:1;}
+  .thumb{width:76px;height:92px;flex:0 0 auto;border-radius:8px;overflow:hidden;border:2px solid var(--line);cursor:pointer;opacity:.6;transition:.25s var(--ease);background:var(--card);}
+  .thumb img{width:100%;height:100%;object-fit:contain;display:block;}
+  .thumb.active{border-color:var(--accent);opacity:1;transform:translateY(-3px);}
   .thumb:hover{opacity:1;}
 
   /* ---- Info ---- */
+  .info{animation:slideUp .6s .2s var(--ease) both;}
+  @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
   .info .cat{color:var(--accent2);text-transform:uppercase;font-size:.75rem;letter-spacing:2px;font-weight:600;}
   .info h1{font-size:2.4rem;line-height:1;margin:8px 0 12px;}
   .price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;}
   .price-now{font-size:1.6rem;font-weight:700;font-family:'Syne',sans-serif;}
-  .price-was{color:var(--muted);text-decoration:line-through;font-size:1rem;}
-  .price-off{color:var(--accent);font-size:.85rem;font-weight:600;}
   .desc{color:var(--muted);font-size:.95rem;line-height:1.6;margin:16px 0 24px;}
-
-  /* ---- Color swatches (for multi-color variant consolidation) ---- */
   .option-label{font-size:.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;font-weight:600;}
   .swatches{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
   .selected-option{color:var(--accent2);font-size:.82rem;margin-bottom:20px;}
   .fit-options{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-  .fit-btn{padding:11px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:600;}
+  .fit-btn{padding:11px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:600;transition:.2s;}
   .fit-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
   .fit-help{color:var(--muted);font-size:.82rem;line-height:1.45;margin-bottom:22px;}
-  .swatch{
-    width:34px;height:34px;border-radius:50%;cursor:pointer;
-    border:2px solid var(--line);position:relative;transition:.2s;
-  }
-  .swatch.active{border-color:var(--text);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent);}
-
-  /* ---- Size selector ---- */
+  .swatch{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid var(--line);position:relative;transition:transform .25s var(--ease),box-shadow .25s;}
+  .swatch:hover{transform:scale(1.15);}
+  .swatch.active{border-color:var(--text);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent);transform:scale(1.08);}
   .size-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
   .size-chart-link{font-size:.8rem;color:var(--accent2);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;}
   .sizes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
-  .size-btn{
-    padding:10px 16px;border-radius:8px;border:1px solid var(--line);
-    background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:500;
-    min-width:48px;text-align:center;transition:.15s;
-  }
-  .size-btn:hover{border-color:var(--accent2);}
+  .size-btn{padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:500;min-width:48px;text-align:center;transition:.2s var(--ease);}
+  .size-btn:hover{border-color:var(--accent2);transform:translateY(-2px);}
   .size-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .size-btn.oos{opacity:.35;text-decoration:line-through;cursor:not-allowed;}
-
-  /* ---- Quantity + CTA (desktop inline) ---- */
   .buy-row{display:flex;gap:12px;margin-top:8px;}
-  .qty{
-    display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;
-  }
+  .qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
   .qty button{background:var(--card);color:var(--text);border:none;width:40px;height:48px;font-size:1.1rem;cursor:pointer;}
   .qty span{width:40px;text-align:center;font-weight:600;}
-  .buy-now{
-    flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;
-    font-family:'Syne';font-weight:700;font-size:1rem;letter-spacing:.5px;
-    cursor:pointer;transition:.2s;
-  }
-  .buy-now:hover{background:var(--accent2);}
-  .add-cart{flex:1;background:transparent;color:var(--text);border:1px solid var(--accent);border-radius:8px;font-family:'Syne';font-weight:700;font-size:.95rem;letter-spacing:.5px;cursor:pointer;transition:.2s;}
-  .add-cart:hover{background:rgba(232,69,44,.12);}
-  /* ---- Site header: brand, search, cart ---- */
-  .site-head{max-width:1200px;margin:0 auto;padding:20px 20px 0;display:flex;flex-direction:column;align-items:center;gap:14px;}
-  .brand-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:1.65rem;letter-spacing:.4em;text-indent:.4em;color:var(--text);text-decoration:none;line-height:1;}
+  .buy-now{flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:'Syne';font-weight:700;font-size:1rem;letter-spacing:.5px;cursor:pointer;transition:.2s var(--ease);}
+  .buy-now:hover{background:var(--accent2);transform:translateY(-2px);}
+  .add-cart{flex:1;background:transparent;color:var(--text);border:1px solid var(--accent);border-radius:8px;font-family:'Syne';font-weight:700;font-size:.95rem;letter-spacing:.5px;cursor:pointer;transition:.2s var(--ease);}
+  .add-cart:hover{background:rgba(232,69,44,.12);transform:translateY(-2px);}
+  .buy-now:active,.add-cart:active{transform:scale(.97);}
+
+  /* ---- Header ---- */
+  .site-head{position:sticky;top:0;z-index:60;background:rgba(8,8,16,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;padding:16px 20px 14px;transition:transform .35s var(--ease),padding .3s,border-color .3s;}
+  .site-head.scrolled{padding:10px 20px;border-bottom-color:var(--line);}
+  .site-head.hide{transform:translateY(-110%);}
+  .head-inner{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .brand-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:1.65rem;letter-spacing:.4em;text-indent:.4em;color:var(--text);text-decoration:none;line-height:1;position:relative;transition:font-size .3s,letter-spacing .3s;}
+  .brand-mark::after{content:'';position:absolute;left:.4em;right:0;bottom:-6px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease);}
+  .brand-mark:hover::after{transform:scaleX(1);}
+  .site-head.scrolled .brand-mark{font-size:1.2rem;}
   .brand-mark:focus-visible,.cart-link:focus-visible,.search-box input:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
   .search-row{display:flex;align-items:center;gap:10px;width:100%;}
   .search-box{position:relative;flex:1;min-width:0;}
@@ -113,32 +98,31 @@
   .search-box input::placeholder{color:var(--muted);}
   .search-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,69,44,.2);}
   .search-ico{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none;}
-  .search-list{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:70;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.6);max-height:min(62vh,460px);overflow-y:auto;padding:6px;}
+  .search-list{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:70;list-style:none;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.6);max-height:min(62vh,460px);overflow-y:auto;padding:6px;animation:dropIn .22s var(--ease);transform-origin:top;}
+  @keyframes dropIn{from{opacity:0;transform:translateY(-8px) scaleY(.96)}to{opacity:1;transform:none}}
   .search-list[hidden]{display:none;}
   .search-group{padding:10px 12px 4px;font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);}
-  .search-item a{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:10px;color:var(--text);text-decoration:none;}
-  .search-item.active a,.search-item a:hover{background:rgba(232,69,44,.14);}
+  .search-item a{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:10px;color:var(--text);text-decoration:none;transition:background .15s,transform .15s;}
+  .search-item.active a,.search-item a:hover{background:rgba(232,69,44,.14);transform:translateX(3px);}
   .search-thumb{width:42px;height:52px;flex:0 0 auto;border-radius:6px;background:#0b0b13;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);}
   .search-thumb img{width:100%;height:100%;object-fit:contain;display:block;}
   .search-thumb.coll{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;color:var(--accent2);}
   .search-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;line-height:1.2;}
   .search-meta{color:var(--muted);font-size:.78rem;margin-top:3px;}
   .search-empty{padding:16px 14px 8px;color:var(--muted);font-size:.88rem;line-height:1.5;}
-  .cart-link{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;height:46px;background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:999px;padding:0 16px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.5px;transition:border-color .2s;}
-  .cart-link:hover{border-color:var(--accent);}
+  .cart-link{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;height:46px;background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:999px;padding:0 16px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.5px;transition:border-color .2s,transform .2s;}
+  .cart-link:hover{border-color:var(--accent);transform:translateY(-2px);}
   .cart-link svg{width:18px;height:18px;}
+  .cart-link.bump{animation:bump .5s var(--ease);}
+  @keyframes bump{30%{transform:scale(1.15)}60%{transform:scale(.95)}}
   @media(max-width:480px){.brand-mark{font-size:1.4rem;}.cart-link{padding:0 13px;}.cart-text{display:none;}}
-  .cart-count{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;background:var(--accent);border-radius:50%;margin-left:0;font-size:.7rem;}
+  .cart-count{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;background:var(--accent);border-radius:50%;font-size:.7rem;}
   .cart-toast{position:fixed;bottom:96px;left:50%;z-index:80;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px 16px;opacity:0;transform:translate(-50%,8px);pointer-events:none;transition:.25s;}
   .cart-toast.show{opacity:1;transform:translate(-50%,0);}
 
   /* ---- Sticky mobile bar ---- */
-  .sticky-bar{
-    position:fixed;bottom:0;left:0;right:0;background:var(--card);
-    border-top:1px solid var(--line);padding:12px 16px;display:none;
-    align-items:center;gap:12px;z-index:50;
-  }
-  @media(max-width:860px){ .sticky-bar{display:flex;} .buy-row{display:none;} }
+  .sticky-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:none;align-items:center;gap:12px;z-index:50;}
+  @media(max-width:860px){.sticky-bar{display:flex;}.buy-row{display:none;}}
   .sticky-qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-shrink:0;}
   .sticky-qty button{background:var(--card);color:var(--text);border:none;width:34px;height:48px;font-size:1.05rem;cursor:pointer;}
   .sticky-qty span{width:30px;text-align:center;font-weight:700;font-size:.9rem;}
@@ -146,21 +130,15 @@
   .sticky-bar .buy-now{height:48px;}
   .sticky-bar .price-now{font-size:1.1rem;white-space:nowrap;}
 
-  /* ---- Size chart modal ---- */
-  .modal-overlay{
-    position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;
-    align-items:center;justify-content:center;z-index:100;padding:20px;
-  }
-  .modal-overlay.open{display:flex;}
-  .modal{
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    max-width:480px;width:100%;padding:24px;max-height:85vh;overflow-y:auto;
-  }
+  /* ---- Modal ---- */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .modal-overlay.open{display:flex;animation:fadeIn .25s ease;}
+  .modal-overlay.open .modal{animation:modalIn .35s var(--ease);}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:14px;max-width:480px;width:100%;padding:24px;max-height:85vh;overflow-y:auto;}
   .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
   .modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;}
-  table{width:100%;border-collapse:collapse;font-size:.85rem;}
-  th,td{padding:8px;text-align:center;border-bottom:1px solid var(--line);}
-  th{color:var(--accent2);font-weight:600;}
 
   .size-note{margin:-14px 0 22px;color:var(--accent2);font-size:.82rem;line-height:1.5;}
   .details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 22px;}
@@ -170,50 +148,33 @@
   .policy-note{background:rgba(232,69,44,.08);border:1px solid rgba(232,69,44,.28);border-radius:10px;padding:13px 14px;margin:0 0 22px;color:var(--muted);font-size:.84rem;line-height:1.55;}
   .policy-note strong{color:var(--text);}
 
-  /* One full product view at a time: front first, then back automatically. */
-  .main-image img{transition:opacity .35s ease;}
-  .main-image img.gallery-fade{opacity:.08;}
-  .main-image.combined-mockup img{
-    position:absolute;
-    top:0;
-    width:200%;
-    max-width:none;
-    height:100%;
-    object-fit:contain;
-    padding:12px 0;
-    transition:left .5s ease, opacity .35s ease;
-  }
-  .main-image.combined-mockup img.show-front{left:0;}
-  .main-image.combined-mockup img.show-back{left:-100%;}
-  .view-status{
-    position:absolute;left:14px;bottom:14px;z-index:4;padding:5px 10px;border-radius:999px;
-    background:rgba(0,0,0,.64);border:1px solid rgba(255,255,255,.14);color:#fff;
-    font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;
-  }
-  .gallery-dots{position:absolute;left:50%;bottom:17px;transform:translateX(-50%);z-index:4;display:flex;gap:7px;padding:6px 9px;border-radius:999px;background:rgba(0,0,0,.42);}
-  .gallery-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.38);}
-  .gallery-dots span.active{background:var(--accent);transform:scale(1.25);}
-
+  /* ---- Related ---- */
   .related-images{position:relative;display:block;height:230px;overflow:hidden;background:#0b0b13;}
-  .related-images img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;padding:8px;opacity:0;transition:opacity .45s ease;}
+  .related-images img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;padding:8px;opacity:0;transition:opacity .45s ease,transform .5s var(--ease);}
   .related-images img.active{opacity:1;}
-  .related-images img+img{border-left:none;}
-
+  .related-card:hover .related-images img{transform:scale(1.05);}
+  .related-images .view-status{left:10px;bottom:10px;}
+  .related-images .gallery-dots{bottom:13px;}
   .related-section{max-width:1200px;margin:60px auto 10px;padding:0 20px;}
   .related-section h2{font-size:2rem;margin-bottom:18px;}
   .related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
-  .related-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--text);transition:.2s;}
-  .related-card:hover{transform:translateY(-4px);border-color:var(--accent);}
+  .related-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--text);opacity:0;transform:translateY(30px);transition:opacity .6s var(--ease),transform .6s var(--ease),border-color .2s,box-shadow .3s;}
+  .related-card.in{opacity:1;transform:none;}
+  .related-card.in:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 22px 50px rgba(0,0,0,.5);}
   .related-card-info{padding:14px;} .related-card-info h3{font-family:'Syne';font-size:.95rem;margin-bottom:5px;}
   .related-colors{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
   .related-color{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35);}
   .related-color-label{font-size:.72rem;color:var(--muted);margin-top:7px;}
   .related-card-info span{color:var(--accent2);font-weight:700;}
   @media(max-width:860px){.related-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.related-images{height:190px;}}
+
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
 </style>
 </head>
 <body>
-<header class="site-head">
+<div id="navProgress"></div>
+<header class="site-head" id="siteHead">
+ <div class="head-inner">
   <a class="brand-mark" href="index.html" aria-label="AARAMBH home">AARAMBH</a>
   <div class="search-row">
     <div class="search-box">
@@ -221,40 +182,34 @@
       <input id="siteSearch" type="search" placeholder="Search tees, designs or colours" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="searchList" aria-autocomplete="list" aria-label="Search products" enterkeyhint="search">
       <ul class="search-list" id="searchList" role="listbox" hidden></ul>
     </div>
-    <a class="cart-link" href="order.html?cart=1" aria-label="Open cart">
+    <a class="cart-link" id="cartLink" href="order.html?cart=1" aria-label="Open cart">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
       <span class="cart-text">CART</span> <span class="cart-count" id="cartCount">0</span>
     </a>
   </div>
+ </div>
 </header>
 <div class="cart-toast" id="cartToast">Added to cart</div>
 
 <div class="wrap">
-  <!-- GALLERY -->
   <div class="gallery">
-    <div class="main-image" id="mainImageFrame">
-      <img id="mainImg" src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front" alt="Product image">
+    <div class="main-image" id="mainImageFrame" role="button" tabindex="0" aria-label="Product image. Click to flip between front and back.">
+      <div class="flip-inner" id="flipInner">
+        <div class="face front"><img id="imgFront" alt="Product front view"></div>
+        <div class="face back"><img id="imgBack" alt="Product back view"></div>
+      </div>
       <span class="view-status" id="viewStatus">Front</span>
+      <span class="flip-hint" id="flipHint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg><span id="hintText">Tap to flip</span></span>
       <span class="gallery-dots" id="galleryDots" aria-hidden="true"><span class="active"></span><span></span></span>
     </div>
-    <div class="thumbs" id="thumbs">
-      <div class="thumb active" data-src="https://via.placeholder.com/800x1000/101018/E8452C?text=Front"><img src="https://via.placeholder.com/160x200/101018/E8452C?text=Front"></div>
-      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/FF7A45?text=Back"><img src="https://via.placeholder.com/160x200/101018/FF7A45?text=Back"></div>
-      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/E8452C?text=Detail"><img src="https://via.placeholder.com/160x200/101018/E8452C?text=Detail"></div>
-      <div class="thumb" data-src="https://via.placeholder.com/800x1000/101018/FF7A45?text=Model"><img src="https://via.placeholder.com/160x200/101018/FF7A45?text=Model"></div>
-    </div>
+    <div class="thumbs" id="thumbs"></div>
   </div>
 
-  <!-- INFO -->
   <div class="info">
     <div class="cat" id="productCategory">Collection</div>
     <h1 id="productName">PRODUCT</h1>
-    <div class="price-row">
-      <span class="price-now" id="productPrice">₹0</span>
-      <span class="price-was" id="productWasPrice" style="display:none"></span>
-      <span class="price-off" id="productDiscount" style="display:none"></span>
-    </div>
-    <p class="desc" id="productDescription">Premium ARAMBH apparel. Select your size and continue to order.</p>
+    <div class="price-row"><span class="price-now" id="productPrice">₹0</span></div>
+    <p class="desc" id="productDescription">Premium AARAMBH apparel. Select your size and continue to order.</p>
 
     <div class="details-grid">
       <div class="detail-card"><small>Material</small><strong id="materialDetail">—</strong></div>
@@ -291,17 +246,12 @@
     <div class="policy-note"><strong>Return policy:</strong> Returns are accepted only for print-related issues, and the issue must be reported within 3 days of receiving the delivery.</div>
 
     <div class="buy-row">
-      <div class="qty">
-        <button id="qtyMinus">−</button>
-        <span id="qtyVal">1</span>
-        <button id="qtyPlus">+</button>
-      </div>
+      <div class="qty"><button id="qtyMinus">−</button><span id="qtyVal">1</span><button id="qtyPlus">+</button></div>
       <button class="add-cart" id="addCartDesktop">ADD TO CART</button>
       <button class="buy-now" id="buyNowDesktop">BUY NOW</button>
     </div>
   </div>
 </div>
-
 
 <section class="related-section">
   <div class="option-label">You may also like</div>
@@ -309,7 +259,6 @@
   <div class="related-grid" id="relatedGrid"></div>
 </section>
 
-<!-- STICKY MOBILE BAR -->
 <div class="sticky-bar">
   <span class="price-now" id="mobileProductPrice">₹0</span>
   <div class="sticky-qty" aria-label="Quantity selector">
@@ -321,20 +270,67 @@
   <button class="buy-now" id="buyNowMobile" style="flex:1;">BUY NOW</button>
 </div>
 
-<!-- SIZE CHART MODAL -->
 <div class="modal-overlay" id="chartOverlay">
   <div class="modal">
-    <div class="modal-head">
-      <h2 class="display" style="font-size:1.5rem;">SIZE CHART</h2>
-      <button class="modal-close" id="closeChart">&times;</button>
-    </div>
+    <div class="modal-head"><h2 class="display" style="font-size:1.5rem;">SIZE CHART</h2><button class="modal-close" id="closeChart" aria-label="Close">&times;</button></div>
     <p id="chartCaption" style="color:var(--muted);font-size:.85rem;margin-bottom:12px;"></p>
     <img id="sizeChartImage" src="oversized_chart.png" alt="Size chart" style="width:100%;height:auto;border-radius:10px;display:block;">
   </div>
 </div>
 
 <script>
-  const qs = new URLSearchParams(window.location.search);
+  const $ = id => document.getElementById(id);
+
+  /* ===== Page transitions (fade out on link click, progress bar) ===== */
+  function go(url){
+    const bar = $('navProgress');
+    bar.style.opacity = 1; bar.style.width = '70%';
+    document.body.classList.add('leaving');
+    setTimeout(() => { bar.style.width = '100%'; location.href = url; }, 220);
+  }
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href]');
+    if(!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button || a.target === '_blank') return;
+    let u; try { u = new URL(a.href, location.href); } catch(_) { return; }
+    if(u.origin !== location.origin || (u.pathname === location.pathname && u.hash)) return;
+    e.preventDefault(); go(a.href);
+  });
+  addEventListener('pageshow', e => { if(e.persisted){ document.body.classList.remove('leaving'); $('navProgress').style.width = 0; } });
+
+  /* ===== Header: shrinks on scroll, hides when scrolling down ===== */
+  (function(){
+    const head = $('siteHead'); let last = scrollY;
+    addEventListener('scroll', () => {
+      const y = scrollY;
+      head.classList.toggle('scrolled', y > 40);
+      const typing = document.activeElement === $('siteSearch');
+      head.classList.toggle('hide', y > last && y > 160 && !typing);
+      last = y;
+    }, {passive:true});
+  })();
+
+  /* ===== Image fallbacks: try .png/.jpg/.jpeg swaps, Navy_Blue_ <-> Blue_, then placeholder ===== */
+  const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="100%" height="100%" fill="#101018"/><text x="50%" y="50%" fill="#9A96A8" font-family="sans-serif" font-size="32" text-anchor="middle">Image coming soon</text></svg>');
+  function altCandidates(src){
+    const out = [], m = src.match(/^(.*)\.(png|jpe?g)$/i);
+    const bases = [src.replace(/\.(png|jpe?g)$/i,'')];
+    if(/Navy_Blue_/.test(src)) bases.push(bases[0].replace('Navy_Blue_','Blue_'));
+    else if(/(^|\/)Blue_(front|back)/.test(src)) bases.push(bases[0].replace('Blue_','Navy_Blue_'));
+    if(m) bases.forEach(b => ['png','jpg','jpeg'].forEach(x => { const c = b + '.' + x; if(c !== src) out.push(c); }));
+    return out;
+  }
+  document.addEventListener('error', e => {
+    const t = e.target;
+    if(!t || t.tagName !== 'IMG') return;
+    const cur = t.getAttribute('src');
+    if(!cur || cur === FALLBACK_IMG) return;
+    if(!t._queue){ t._queue = altCandidates(cur); t._origin = cur; }
+    const next = t._queue.shift();
+    t.src = next || FALLBACK_IMG;
+  }, true);
+
+  /* ===== Product data ===== */
+  const qs = new URLSearchParams(location.search);
   const productData = {
     product: qs.get('product') || 'ARAMBH Product',
     type: qs.get('type') || 'Apparel',
@@ -344,406 +340,278 @@
     image2: qs.get('image2') || '',
     description: qs.get('description') || ''
   };
-
   const typeKey = productData.type.toLowerCase();
   const isPrinted = typeKey.includes('printed');
-  let selectedFit = isPrinted ? 'Oversized' : (typeKey === 'oversized' ? 'Oversized' : 'Regular');
+  const isOversized = typeKey === 'oversized';
+  const isPolo = typeKey === 'polo';
+  let selectedFit = isPrinted ? 'Oversized' : (isOversized ? 'Oversized' : 'Regular');
   let selectedColor = productData.color;
   let selectedImages = [productData.image, productData.image2].filter(Boolean);
 
-  const colorHex = {
-    'Black':'#111111','White':'#f5f3ee','Red':'#b51f2e','Blue':'#74b9ff','Royal Blue':'#2748a8',
-    'Aqua/Sky Blue':'#74d6e8','Army Green':'#596b3d','Lavender':'#b9a3db','Pink':'#ef9db5','Beige':'#d9c3a5',
-    'Cream':'#fff1cf','Grayish Green':'#7d8c7a','Navy Blue':'#000080','Maroon':'#741320',
-    'Gray':'#9DA1A2','Charcoal':'#36454F','Default':'#777777'
-  };
+  const colorHex = {'Black':'#111111','White':'#f5f3ee','Red':'#b51f2e','Blue':'#74b9ff','Royal Blue':'#2748a8','Aqua/Sky Blue':'#74d6e8','Army Green':'#596b3d','Lavender':'#b9a3db','Pink':'#ef9db5','Beige':'#d9c3a5','Cream':'#fff1cf','Grayish Green':'#7d8c7a','Navy Blue':'#000080','Maroon':'#741320','Gray':'#9DA1A2','Charcoal':'#36454F','Acid Wash':'#8f9aa3','Default':'#777777'};
 
-  // Real front/back photography for oversized colours (used when a page links
-  // here without explicit image/image2 params, e.g. related-product cards).
+  /* Filenames below match what oversized.html / polo.html actually display.
+     The fallback above also tries the other extension automatically. */
   const oversizedVariants = {
-    'Royal Blue': {image:'Royal_blue.jpg', image2:'Royal_blue_back.jpg'},
+    'Royal Blue': {image:'Royal_blue.jpg', image2:'Royal_blue_back.png'},
     'Aqua/Sky Blue': {image:'Aqua_sky_blue.png', image2:'Aqua_sky_blue_back.png'},
     'Beige': {image:'Beige.png', image2:'Beige_back.png'},
-    'White': {image:'White.jpg', image2:'White_back.jpg'},
-    'Black': {image:'Black.jpg', image2:'Black_back.jpg'},
+    'White': {image:'White.jpg', image2:'White_back.png'},
+    'Black': {image:'Black.jpg', image2:'Black_back.png'},
     'Army Green': {image:'Army_green.png', image2:'Army_green_back.png'},
-    'Lavender': {image:'Lavender .png', image2:'Lavender _back.png'},
-    'Red': {image:'Red.jpg', image2:'Red_back.jpg'},
+    'Lavender': {image:'Lavender .png', image2:'Lavender_back.png'},
+    'Red': {image:'Red.jpg', image2:'Red_back.png'},
     'Pink': {image:'Pink.png', image2:'Pink_back.png'}
   };
-
-  // Polo colourways. Add these image files beside product.html using the exact names below.
   const poloVariants = {
     'White': {image:'White_front.png', image2:'White_back.png'},
     'Black': {image:'Black_front.png', image2:'Black_back.png'},
-    'Navy Blue': {image:'Navy_Blue_front.png', image2:'Navy_Blue_back.png'},
+    'Navy Blue': {image:'Blue_front.png', image2:'Blue_back.png'},
     'Maroon': {image:'Maroon_front.png', image2:'Maroon_back.png'},
     'Gray': {image:'Gray_front.png', image2:'Gray_back.png'},
     'Charcoal': {image:'Charcoal_front.png', image2:'Charcoal_back.png'}
   };
-
   const printedVariants = {
-    'Unseen': [
-      {color:'White',image:'un_white_f.png',image2:'un_white_b.png'},
-      {color:'Royal Blue',image:'un_blue_f.png',image2:'un_blue_b.png'},
-      {color:'Black',image:'un_black_f.png',image2:'un_black_b.png'}
-    ],
-    'Veiled Bloom': [
-      {color:'Royal Blue',image:'veiled_blue_f.png',image2:'veiled_blue_b.png'},
-      {color:'White',image:'veiled_black_f.png',image2:'veiled_black_b.png'}
-    ],
-    'Grace': [
-      {color:'Red',image:'Grace_red_f.png',image2:'Grace_red_b.png'},
-      {color:'Blue',image:'Grace_blue_f.png',image2:'Grace_blue_b.png'},
-      {color:'White',image:'Grace_white_f.png',image2:'Grace_white_b.png'},
-      {color:'Black',image:'Grace_black_f.jpeg',image2:'Grace_black_b.jpeg'}
-    ],
-    'Anime': [
-      {color:'Black',image:'anime_b_f.png',image2:'anime_b_b.png'},
-      {color:'White',image:'anime_w_f.png',image2:'anime_w_b.png'},
-      {color:'Red',image:'anime_r_f.png',image2:'anime_r_b.png'}
-    ],
-    'Naruto': [
-      {color:'White',image:'naruto_w_f.png',image2:'naruto_w_b.png'},
-      {color:'Black',image:'naruto_b_f.png',image2:'naruto_b_b.png'},
-      {color:'Red',image:'naruto_r_f.png',image2:'naruto_r_b.png'}
-    ],
-    'One Piece': [
-      {color:'White',image:'one_w_f.png',image2:'one_w_b.png'},
-      {color:'Black',image:'one_b_f.png',image2:'one_b_b.png'},
-      {color:'Red',image:'one_r_f.png',image2:'one_r_b.png'}
-    ],
-    'Tanjiro': [
-      {color:'White',image:'tanjiro_w_f.png',image2:'tanjiro_w_b.png'},
-      {color:'Black',image:'tanjiro_b_f.png',image2:'tanjiro_b_b.png'},
-      {color:'Red',image:'tanjiro_r_f.png',image2:'tanjiro_r_b.png'}
-    ],
-    'Luffy': [
-      {color:'Black',image:'luffy_b_f.png',image2:'luffy_b_b.png'},
-      {color:'Red',image:'luffy_r_f.png',image2:'luffy_r_b.png'},
-      {color:'White',image:'luffy_w_f.png',image2:'luffy_w_b.png'}
-    ],
-    'Justice': [
-      {color:'Red',image:'Justice_r_f.png',image2:'Justice_r_b.png'},
-      {color:'White',image:'Justice_w_f.png',image2:'Justice_w_b.png'}
-    ],
-    'Porsche': [
-      {color:'Black',image:'Porsche_black_front.png',image2:'Porsche_black_back.png'},
-      {color:'Red',image:'Porsche_red_front.png',image2:'Porsche_red_back.png'}
-    ],
-    'Kungfu Panda': [
-      {color:'White',image:'Kufu_white.jpeg',image2:'Kufu_white.jpeg'},
-      {color:'Black',image:'Kufu_black.jpeg',image2:'Kufu_black.jpeg'}
-    ],
-    'Explore Space Acid Wash': [
-      {color:'Acid Wash',image:'explore_space_front.jpg',image2:'explore_space_back.jpg'}
-    ]
+    'Unseen': [{color:'White',image:'un_white_f.png',image2:'un_white_b.png'},{color:'Royal Blue',image:'un_blue_f.png',image2:'un_blue_b.png'},{color:'Black',image:'un_black_f.png',image2:'un_black_b.png'}],
+    'Veiled Bloom': [{color:'Royal Blue',image:'veiled_blue_f.png',image2:'veiled_blue_b.png'},{color:'White',image:'veiled_black_f.png',image2:'veiled_black_b.png'}],
+    'Grace': [{color:'Red',image:'Grace_red_f.png',image2:'Grace_red_b.png'},{color:'Blue',image:'Grace_blue_f.png',image2:'Grace_blue_b.png'},{color:'White',image:'Grace_white_f.png',image2:'Grace_white_b.png'},{color:'Black',image:'Grace_black_f.jpeg',image2:'Grace_black_b.jpeg'}],
+    'Anime': [{color:'Black',image:'anime_b_f.png',image2:'anime_b_b.png'},{color:'White',image:'anime_w_f.png',image2:'anime_w_b.png'},{color:'Red',image:'anime_r_f.png',image2:'anime_r_b.png'}],
+    'Naruto': [{color:'White',image:'naruto_w_f.png',image2:'naruto_w_b.png'},{color:'Black',image:'naruto_b_f.png',image2:'naruto_b_b.png'},{color:'Red',image:'naruto_r_f.png',image2:'naruto_r_b.png'}],
+    'One Piece': [{color:'White',image:'one_w_f.png',image2:'one_w_b.png'},{color:'Black',image:'one_b_f.png',image2:'one_b_b.png'},{color:'Red',image:'one_r_f.png',image2:'one_r_b.png'}],
+    'Tanjiro': [{color:'White',image:'tanjiro_w_f.png',image2:'tanjiro_w_b.png'},{color:'Black',image:'tanjiro_b_f.png',image2:'tanjiro_b_b.png'},{color:'Red',image:'tanjiro_r_f.png',image2:'tanjiro_r_b.png'}],
+    'Luffy': [{color:'Black',image:'luffy_b_f.png',image2:'luffy_b_b.png'},{color:'Red',image:'luffy_r_f.png',image2:'luffy_r_b.png'},{color:'White',image:'luffy_w_f.png',image2:'luffy_w_b.png'}],
+    'Justice': [{color:'Red',image:'Justice_r_f.png',image2:'Justice_r_b.png'},{color:'White',image:'Justice_w_f.png',image2:'Justice_w_b.png'}],
+    'Porsche': [{color:'Black',image:'Porsche_black_front.png',image2:'Porsche_black_back.png'},{color:'Red',image:'Porsche_red_front.png',image2:'Porsche_red_back.png'}],
+    'Kungfu Panda': [{color:'White',image:'Kufu_white.jpeg',image2:'Kufu_white.jpeg'},{color:'Black',image:'Kufu_black.jpeg',image2:'Kufu_black.jpeg'}],
+    'Explore Space Acid Wash': [{color:'Acid Wash',image:'explore_space_front.jpg',image2:'explore_space_back.jpg'}]
   };
-
-  // For plain oversized T-shirts (single-colour catalog entries, not the
-  // printed multi-colour drops), build a variants list from oversizedVariants
-  // so the colour swatches on the product page can switch between colours
-  // with correct front/back photography, same as printed items do.
-  const isOversized = typeKey === 'oversized';
-  const isPolo = typeKey === 'polo';
-  let variants;
-  if (isOversized) {
-    variants = Object.keys(oversizedVariants).map(colorName => ({
-      color: colorName,
-      image: oversizedVariants[colorName].image,
-      image2: oversizedVariants[colorName].image2
-    }));
-  } else if (isPolo) {
-    variants = Object.keys(poloVariants).map(colorName => ({
-      color: colorName,
-      image: poloVariants[colorName].image,
-      image2: poloVariants[colorName].image2
-    }));
-  } else {
-    variants = printedVariants[productData.product] || [{color:productData.color,image:productData.image,image2:productData.image2}];
-  }
+  const toList = obj => Object.keys(obj).map(color => ({color, ...obj[color]}));
+  let variants = isOversized ? toList(oversizedVariants) : isPolo ? toList(poloVariants)
+    : (printedVariants[productData.product] || [{color:productData.color,image:productData.image,image2:productData.image2}]);
 
   const matchingVariant = variants.find(v => v.color.toLowerCase() === productData.color.toLowerCase()) || variants[0];
   selectedColor = matchingVariant.color;
-  // Prefer explicit URL params (so a click from the collection page always
-  // shows exactly the photo the shopper clicked on); fall back to the
-  // matched variant's photography otherwise.
-  selectedImages = [
-    productData.image || matchingVariant.image,
-    productData.image2 || matchingVariant.image2
-  ].filter(Boolean);
+  selectedImages = [productData.image || matchingVariant.image, productData.image2 || matchingVariant.image2].filter(Boolean);
 
   function currentSpecs(){
     if(isPrinted && selectedFit === 'Regular') return {material:'100% Pure Cotton',gsm:'180 GSM',fit:'Regular Fit',description:'Pure-cotton printed T-shirt in a comfortable regular fit.'};
     if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
-    if(typeKey === 'polo') return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
-    if(typeKey === 'oversized') return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
+    if(isPolo) return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
+    if(isOversized) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
     if(typeKey === 'hoodie') return {material:'Premium Fabric',gsm:'See product description',fit:'Relaxed Fit',description:'Comfortable premium hoodie with a relaxed fit for layering.'};
-    return {material:'Premium Fabric',gsm:'—',fit:'Regular Fit',description:'Premium ARAMBH apparel.'};
+    return {material:'Premium Fabric',gsm:'—',fit:'Regular Fit',description:'Premium AARAMBH apparel.'};
   }
-
+  function updateSizeChart(){
+    const img = $('sizeChartImage'), cap = $('chartCaption');
+    if(isPolo){ img.src='polo_size_chart.png'; cap.textContent='Polo T-shirt size chart'; }
+    else if(isPrinted && selectedFit === 'Regular'){ img.src='regular_size_chart.png'; cap.textContent='Regular-fit 180 GSM printed T-shirt size chart'; }
+    else { img.src='oversized_chart.png'; cap.textContent = isPrinted ? 'Oversized 240 GSM printed T-shirt size chart' : 'Oversized T-shirt size chart'; }
+  }
   function updateSpecs(){
-    const specs=currentSpecs();
-    document.getElementById('productDescription').textContent = productData.description || specs.description;
-    document.getElementById('materialDetail').textContent = specs.material;
-    document.getElementById('gsmDetail').textContent = specs.gsm;
-    document.getElementById('fitDetail').textContent = specs.fit;
-    document.getElementById('productCategory').textContent = isPrinted ? `Printed ${selectedFit} T-Shirt` : `${productData.type} Collection`;
+    const s = currentSpecs();
+    $('productDescription').textContent = productData.description || s.description;
+    $('materialDetail').textContent = s.material;
+    $('gsmDetail').textContent = s.gsm;
+    $('fitDetail').textContent = s.fit;
+    $('productCategory').textContent = isPrinted ? `Printed ${selectedFit} T-Shirt` : `${productData.type} Collection`;
     updateSizeChart();
   }
-
-  let galleryTimer = null;
-  let galleryIndex = 0;
-  const mainImageFrame = document.getElementById('mainImageFrame');
-  const viewStatus = document.getElementById('viewStatus');
-  const galleryDots = document.getElementById('galleryDots');
-
-  function setGalleryView(index){
-    galleryIndex = index;
-    const isBack = index === 1;
-    viewStatus.textContent = isBack ? 'Back' : 'Front';
-    galleryDots.querySelectorAll('span').forEach((dot,i)=>dot.classList.toggle('active',i===index));
-
-    if(mainImageFrame.classList.contains('combined-mockup')){
-      mainImg.classList.toggle('show-front', !isBack);
-      mainImg.classList.toggle('show-back', isBack);
-    } else {
-      const nextSrc = selectedImages[index] || selectedImages[0];
-      if(mainImg.getAttribute('src') !== nextSrc){
-        mainImg.classList.add('gallery-fade');
-        setTimeout(()=>{
-          mainImg.src = nextSrc;
-          mainImg.classList.remove('gallery-fade');
-        },180);
-      }
-    }
-    thumbs.querySelectorAll('.thumb').forEach((thumb,i)=>thumb.classList.toggle('active',i===index));
+  function setTitle(){
+    $('pageTitle').textContent = `${productData.product} — AARAMBH`;
+    $('productName').textContent = productData.product;
   }
+  setTitle();
+  $('productPrice').textContent = `₹${productData.price}`;
+  $('mobileProductPrice').textContent = `₹${productData.price}`;
 
-  function startGalleryRotation(){
-    if(galleryTimer) clearInterval(galleryTimer);
-    if(selectedImages.length < 2) return;
-    galleryTimer=setInterval(()=>setGalleryView((galleryIndex+1)%2),3200);
+  /* ===== Gallery: click / tap / swipe / keyboard to flip front <-> back ===== */
+  const frame = $('mainImageFrame'), flip = $('flipInner'), imgFront = $('imgFront'), imgBack = $('imgBack');
+  const thumbs = $('thumbs'), viewStatus = $('viewStatus'), dots = $('galleryDots').querySelectorAll('span');
+  let view = 0, autoTimer = null, userTouched = false;
+
+  function setView(i, byUser){
+    view = i;
+    flip.classList.toggle('is-back', i === 1);
+    viewStatus.textContent = i === 1 ? 'Back' : 'Front';
+    $('hintText').textContent = i === 1 ? 'Tap for front' : 'Tap for back';
+    dots.forEach((d,k) => d.classList.toggle('active', k === i));
+    thumbs.querySelectorAll('.thumb').forEach((t,k) => t.classList.toggle('active', k === i));
+    if(byUser){ userTouched = true; stopAuto(); }
   }
-
+  const hasBack = () => selectedImages.length > 1 && selectedImages[1] !== selectedImages[0];
+  function stopAuto(){ clearInterval(autoTimer); autoTimer = null; }
+  function startAuto(){
+    stopAuto();
+    if(userTouched || !hasBack() || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    autoTimer = setInterval(() => setView(view ? 0 : 1), 3600);
+  }
   function renderGallery(images){
-    if(!images.length) return;
     selectedImages = images;
-    galleryIndex = 0;
-    // Only fall back to the fake split-image mockup when we truly have no
-    // real second photo. Oversized items now ship with genuine front/back
-    // photography (image2), so this path is effectively legacy/unused for them.
-    const combinedOversized = typeKey === 'oversized' && (!images[1] || images[1] === images[0]);
-    mainImageFrame.classList.toggle('combined-mockup', combinedOversized);
-
-    if(combinedOversized){
-      mainImg.src=images[0];
-      mainImg.classList.add('show-front');
-      mainImg.classList.remove('show-back');
-      selectedImages=[images[0],images[0]];
-      thumbs.innerHTML=`
-        <div class="thumb active" data-index="0"><img src="${images[0]}" alt="${productData.product} front view" style="width:200%;max-width:none;object-fit:contain;object-position:left center;"></div>
-        <div class="thumb" data-index="1"><img src="${images[0]}" alt="${productData.product} back view" style="width:200%;max-width:none;object-fit:contain;object-position:right center;transform:translateX(-50%);"></div>`;
-    }else{
-      mainImg.classList.remove('show-front','show-back');
-      mainImg.src=images[0];
-      thumbs.innerHTML=images.slice(0,2).map((src,index)=>`<div class="thumb ${index===0?'active':''}" data-index="${index}"><img src="${src}" alt="${productData.product} ${index===0?'front':'back'} view"></div>`).join('');
-    }
-    mainImg.alt=productData.product;
-    galleryDots.style.display = selectedImages.length > 1 ? 'flex' : 'none';
-    viewStatus.style.display = selectedImages.length > 1 ? 'inline-flex' : 'none';
-    setGalleryView(0);
-    startGalleryRotation();
+    const two = hasBack();
+    [imgFront, imgBack].forEach(i => { i._queue = null; });
+    imgFront.src = images[0];
+    imgBack.src = two ? images[1] : images[0];
+    imgFront.alt = `${productData.product} ${selectedColor} front view`;
+    imgBack.alt = `${productData.product} ${selectedColor} back view`;
+    frame.classList.toggle('single', !two);
+    thumbs.innerHTML = (two ? images.slice(0,2) : images.slice(0,1)).map((src,i) =>
+      `<div class="thumb" data-index="${i}" role="button" tabindex="0" aria-label="${i ? 'Back' : 'Front'} view"><img src="${src}" alt="${i ? 'Back' : 'Front'} thumbnail"></div>`).join('');
+    thumbs.style.display = two ? 'flex' : 'none';
+    setView(0);
+    frame.animate([{opacity:.2},{opacity:1}], {duration:350, easing:'ease-out'});
+    startAuto();
   }
-
-  function updateSizeChart(){
-    const img=document.getElementById('sizeChartImage');
-    const caption=document.getElementById('chartCaption');
-    if(typeKey === 'polo') { img.src='polo_size_chart.png'; caption.textContent='Polo T-shirt size chart'; }
-    else if(isPrinted && selectedFit === 'Regular') { img.src='regular_size_chart.png'; caption.textContent='Regular-fit 180 GSM printed T-shirt size chart'; }
-    else { img.src='oversized_chart.png'; caption.textContent=isPrinted?'Oversized 240 GSM printed T-shirt size chart':'Oversized T-shirt size chart'; }
-  }
-
-  document.getElementById('pageTitle').textContent = `${productData.product} — ARAMBH`;
-  document.getElementById('productName').textContent = productData.product;
-  document.getElementById('productPrice').textContent = `₹${productData.price}`;
-  document.getElementById('mobileProductPrice').textContent = `₹${productData.price}`;
-
-  const mainImg = document.getElementById('mainImg');
-  const thumbs = document.getElementById('thumbs');
-  renderGallery(selectedImages);
-
-  thumbs.addEventListener('click', (event) => {
-    const thumb = event.target.closest('.thumb');
-    if (!thumb) return;
-    setGalleryView(Number(thumb.dataset.index || 0));
-    startGalleryRotation();
+  /* click/tap toggles; horizontal swipe also flips */
+  let px = 0;
+  frame.addEventListener('pointerdown', e => { px = e.clientX; });
+  frame.addEventListener('pointerup', e => {
+    if(!hasBack()) return;
+    const dx = e.clientX - px;
+    if(Math.abs(dx) > 45) setView(dx < 0 ? 1 : 0, true);
+    else setView(view ? 0 : 1, true);
   });
+  frame.addEventListener('keydown', e => {
+    if(!hasBack()) return;
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setView(view ? 0 : 1, true); }
+    if(e.key === 'ArrowLeft') setView(0, true);
+    if(e.key === 'ArrowRight') setView(1, true);
+  });
+  frame.addEventListener('mouseenter', stopAuto);
+  frame.addEventListener('mouseleave', startAuto);
+  thumbs.addEventListener('click', e => { const t = e.target.closest('.thumb'); if(t) setView(Number(t.dataset.index), true); });
+  thumbs.addEventListener('keydown', e => { const t = e.target.closest('.thumb'); if(t && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); setView(Number(t.dataset.index), true); } });
 
-  const swatches = document.getElementById('swatches');
-  const selectedColorLabel=document.getElementById('selectedColorLabel');
+  /* ===== Swatches (name, URL and photos follow the colour) ===== */
+  const swatches = $('swatches');
   function renderSwatches(){
-    swatches.innerHTML=variants.map((v,index)=>`<button type="button" class="swatch ${v.color===selectedColor?'active':''}" data-index="${index}" title="${v.color}" aria-label="Select ${v.color}" style="background:${colorHex[v.color]||'#777'}"></button>`).join('');
-    selectedColorLabel.textContent=`Selected colour: ${selectedColor}`;
+    swatches.innerHTML = variants.map((v,i) => `<button type="button" class="swatch ${v.color === selectedColor ? 'active' : ''}" data-index="${i}" title="${v.color}" aria-label="Select ${v.color}" style="background:${colorHex[v.color] || '#777'}"></button>`).join('');
+    $('selectedColorLabel').textContent = `Selected colour: ${selectedColor}`;
   }
-  swatches.addEventListener('click',event=>{
-    const button=event.target.closest('.swatch'); if(!button) return;
-    const variant=variants[Number(button.dataset.index)];
-    selectedColor=variant.color;
-    selectedImages=[variant.image,variant.image2].filter(Boolean);
-    renderSwatches(); renderGallery(selectedImages);
+  swatches.addEventListener('click', e => {
+    const b = e.target.closest('.swatch'); if(!b) return;
+    const v = variants[Number(b.dataset.index)];
+    selectedColor = v.color;
+    if(isOversized){ productData.product = `${selectedColor} Oversized Tee`; setTitle(); }
+    renderSwatches();
+    renderGallery([v.image, v.image2].filter(Boolean));
+    try {
+      const p = new URLSearchParams(location.search);
+      p.set('product', productData.product); p.set('color', v.color); p.set('image', v.image); p.set('image2', v.image2 || v.image);
+      history.replaceState(null, '', '?' + p.toString());
+    } catch(_) {}
   });
   renderSwatches();
+  renderGallery(selectedImages);
 
   if(isPrinted){
-    document.getElementById('fitSelectorWrap').style.display='block';
-    document.querySelectorAll('.fit-btn').forEach(btn=>btn.addEventListener('click',()=>{
-      document.querySelectorAll('.fit-btn').forEach(x=>x.classList.remove('active'));
-      btn.classList.add('active'); selectedFit=btn.dataset.fit; updateSpecs();
+    $('fitSelectorWrap').style.display = 'block';
+    document.querySelectorAll('.fit-btn').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('.fit-btn').forEach(x => x.classList.remove('active'));
+      btn.classList.add('active'); selectedFit = btn.dataset.fit; updateSpecs();
     }));
   }
   updateSpecs();
 
-  document.querySelectorAll('.size-btn').forEach(button => {
-    if (button.classList.contains('oos')) return;
-    button.addEventListener('click', () => {
-      document.querySelectorAll('.size-btn').forEach(x => x.classList.remove('active'));
-      button.classList.add('active');
-    });
-  });
+  document.querySelectorAll('.size-btn').forEach(button => button.addEventListener('click', () => {
+    document.querySelectorAll('.size-btn').forEach(x => x.classList.remove('active'));
+    button.classList.add('active');
+  }));
 
+  /* ===== Quantity ===== */
   let qty = 1;
-  const qtyVal = document.getElementById('qtyVal');
-  const qtyValMobile = document.getElementById('qtyValMobile');
-  function renderQuantity(){
-    qtyVal.textContent = qty;
-    qtyValMobile.textContent = qty;
-  }
-  function increaseQuantity(){ if(qty < 10){ qty += 1; renderQuantity(); } }
-  function decreaseQuantity(){ if(qty > 1){ qty -= 1; renderQuantity(); } }
-  document.getElementById('qtyPlus').onclick = increaseQuantity;
-  document.getElementById('qtyMinus').onclick = decreaseQuantity;
-  document.getElementById('qtyPlusMobile').onclick = increaseQuantity;
-  document.getElementById('qtyMinusMobile').onclick = decreaseQuantity;
+  function renderQuantity(){ $('qtyVal').textContent = qty; $('qtyValMobile').textContent = qty; }
+  const inc = () => { if(qty < 10){ qty++; renderQuantity(); } };
+  const dec = () => { if(qty > 1){ qty--; renderQuantity(); } };
+  $('qtyPlus').onclick = inc; $('qtyMinus').onclick = dec; $('qtyPlusMobile').onclick = inc; $('qtyMinusMobile').onclick = dec;
   renderQuantity();
 
-  const overlay = document.getElementById('chartOverlay');
-  document.getElementById('openChart').onclick = () => overlay.classList.add('open');
-  document.getElementById('closeChart').onclick = () => overlay.classList.remove('open');
-  overlay.addEventListener('click', event => { if (event.target === overlay) overlay.classList.remove('open'); });
+  /* ===== Size chart modal ===== */
+  const overlay = $('chartOverlay');
+  $('openChart').onclick = () => overlay.classList.add('open');
+  $('closeChart').onclick = () => overlay.classList.remove('open');
+  overlay.addEventListener('click', e => { if(e.target === overlay) overlay.classList.remove('open'); });
+  addEventListener('keydown', e => { if(e.key === 'Escape') overlay.classList.remove('open'); });
 
+  /* ===== Catalog + related products ===== */
+  /* Oversized price set to 399 to match oversized.html. */
+  const productCatalog = [{"product":"Polo T-Shirt","type":"Polo","color":"White","price":"399","image":"White_front.png","image2":"White_back.png","categoryPage":"polo.html"},{"product":"Royal Blue Oversized Tee","type":"Oversized","color":"Royal Blue","price":"399","image":"Royal_blue.jpg","image2":"Royal_blue_back.png","categoryPage":"oversized.html"},{"product":"Aqua/Sky Blue Oversized Tee","type":"Oversized","color":"Aqua/Sky Blue","price":"399","image":"Aqua_sky_blue.png","image2":"Aqua_sky_blue_back.png","categoryPage":"oversized.html"},{"product":"Beige Oversized Tee","type":"Oversized","color":"Beige","price":"399","image":"Beige.png","image2":"Beige_back.png","categoryPage":"oversized.html"},{"product":"White Oversized Tee","type":"Oversized","color":"White","price":"399","image":"White.jpg","image2":"White_back.png","categoryPage":"oversized.html"},{"product":"Black Oversized Tee","type":"Oversized","color":"Black","price":"399","image":"Black.jpg","image2":"Black_back.png","categoryPage":"oversized.html"},{"product":"Army Green Oversized Tee","type":"Oversized","color":"Army Green","price":"399","image":"Army_green.png","image2":"Army_green_back.png","categoryPage":"oversized.html"},{"product":"Lavender Oversized Tee","type":"Oversized","color":"Lavender","price":"399","image":"Lavender .png","image2":"Lavender_back.png","categoryPage":"oversized.html"},{"product":"Red Oversized Tee","type":"Oversized","color":"Red","price":"399","image":"Red.jpg","image2":"Red_back.png","categoryPage":"oversized.html"},{"product":"Pink Oversized Tee","type":"Oversized","color":"Pink","price":"399","image":"Pink.png","image2":"Pink_back.png","categoryPage":"oversized.html"},{"product":"Beige Hoodie","type":"Hoodie","color":"Beige","price":"599","image":"hoodie1.jpg","categoryPage":"oversized.html"},{"product":"Black Hoodie","type":"Hoodie","color":"Black","price":"599","image":"hoodie2.jpg","categoryPage":"oversized.html"},{"product":"Explore Space Acid Wash","type":"Printed Oversized Tee","price":"699","color":"Acid Wash","image":"explore_space_front.jpg","image2":"explore_space_back.jpg","categoryPage":"printed.html"},{"product":"Grace","type":"Printed T-Shirt","price":"599","color":"Red","image":"Grace_red_f.png","image2":"Grace_red_b.png","categoryPage":"printed.html"},{"product":"Anime","type":"Printed T-Shirt","price":"599","color":"Black","image":"anime_b_f.png","image2":"anime_b_b.png","categoryPage":"printed.html"},{"product":"Naruto","type":"Printed T-Shirt","price":"599","color":"White","image":"naruto_w_f.png","image2":"naruto_w_b.png","categoryPage":"printed.html"},{"product":"One Piece","type":"Printed T-Shirt","price":"599","color":"White","image":"one_w_f.png","image2":"one_w_b.png","categoryPage":"printed.html"},{"product":"Tanjiro","type":"Printed T-Shirt","price":"599","color":"White","image":"tanjiro_w_f.png","image2":"tanjiro_w_b.png","categoryPage":"printed.html"},{"product":"Luffy","type":"Printed T-Shirt","price":"549","color":"Black","image":"luffy_b_f.png","image2":"luffy_b_b.png","categoryPage":"printed.html"},{"product":"Justice","type":"Printed T-Shirt","price":"549","color":"Red","image":"Justice_r_f.png","image2":"Justice_r_b.png","categoryPage":"printed.html"},{"product":"Porsche","type":"Printed T-Shirt","price":"549","color":"Black","image":"Porsche_black_front.png","image2":"Porsche_black_back.png","categoryPage":"printed.html"},{"product":"Kungfu Panda","type":"Printed T-Shirt","price":"649","color":"White","image":"Kufu_white.jpeg","image2":"Kufu_white.jpeg","categoryPage":"printed.html"},{"product":"Unseen","type":"Printed T-Shirt","color":"White","price":"549","image":"un_white_f.png","image2":"un_white_b.png","categoryPage":"printed.html"},{"product":"Veiled Bloom","type":"Printed T-Shirt","color":"Royal Blue","price":"549","image":"veiled_blue_f.png","image2":"veiled_blue_b.png","categoryPage":"printed.html"}];
 
-  const productCatalog = [{"product": "Polo T-Shirt", "type": "Polo", "color": "White", "price": "399", "image": "White_front.png", "image2": "White_back.png", "categoryPage": "polo.html"}, {"product": "Royal Blue Oversized Tee", "type": "Oversized", "color": "Royal Blue", "price": "349", "image": "Royal_blue.jpg", "image2": "Royal_blue_back.jpg", "categoryPage": "oversized.html"}, {"product": "Aqua/Sky Blue Oversized Tee", "type": "Oversized", "color": "Aqua/Sky Blue", "price": "349", "image": "Aqua_sky_blue.png", "image2": "Aqua_sky_blue_back.png", "categoryPage": "oversized.html"}, {"product": "Beige Oversized Tee", "type": "Oversized", "color": "Beige", "price": "349", "image": "Beige.png", "image2": "Beige_back.png", "categoryPage": "oversized.html"}, {"product": "White Oversized Tee", "type": "Oversized", "color": "White", "price": "349", "image": "White.jpg", "image2": "White_back.jpg", "categoryPage": "oversized.html"}, {"product": "Black Oversized Tee", "type": "Oversized", "color": "Black", "price": "349", "image": "Black.jpg", "image2": "Black_back.jpg", "categoryPage": "oversized.html"}, {"product": "Army Green Oversized Tee", "type": "Oversized", "color": "Army Green", "price": "349", "image": "Army_green.png", "image2": "Army_green_back.png", "categoryPage": "oversized.html"}, {"product": "Lavender Oversized Tee", "type": "Oversized", "color": "Lavender", "price": "349", "image": "Lavender .png", "image2": "Lavender _back.png", "categoryPage": "oversized.html"}, {"product": "Red Oversized Tee", "type": "Oversized", "color": "Red", "price": "349", "image": "Red.jpg", "image2": "Red_back.jpg", "categoryPage": "oversized.html"}, {"product": "Pink Oversized Tee", "type": "Oversized", "color": "Pink", "price": "349", "image": "Pink.png", "image2": "Pink_back.png", "categoryPage": "oversized.html"}, {"product": "Beige Hoodie", "type": "Hoodie", "color": "Beige", "price": "599", "image": "hoodie1.jpg", "categoryPage": "oversized.html"}, {"product": "Black Hoodie", "type": "Hoodie", "color": "Black", "price": "599", "image": "hoodie2.jpg", "categoryPage": "oversized.html"}, {"product": "Explore Space Acid Wash", "type": "Printed Oversized Tee", "price": "699", "color": "Default", "image": "explore_space_front.jpg", "image2": "explore_space_back.jpg", "categoryPage": "printed.html"}, {"product": "Grace", "type": "Printed T-Shirt", "price": "599", "color": "Red", "image": "Grace_red_f.png", "image2": "Grace_red_b.png", "categoryPage": "printed.html"}, {"product": "Anime", "type": "Printed T-Shirt", "price": "599", "color": "Black", "image": "anime_b_f.png", "image2": "anime_b_b.png", "categoryPage": "printed.html"}, {"product": "Naruto", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "naruto_w_f.png", "image2": "naruto_w_b.png", "categoryPage": "printed.html"}, {"product": "One Piece", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "one_w_f.png", "image2": "one_w_b.png", "categoryPage": "printed.html"}, {"product": "Tanjiro", "type": "Printed T-Shirt", "price": "599", "color": "White", "image": "tanjiro_w_f.png", "image2": "tanjiro_w_b.png", "categoryPage": "printed.html"}, {"product": "Luffy", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "luffy_b_f.png", "image2": "luffy_b_b.png", "categoryPage": "printed.html"}, {"product": "Justice", "type": "Printed T-Shirt", "price": "549", "color": "Red", "image": "Justice_r_f.png", "image2": "Justice_r_b.png", "categoryPage": "printed.html"}, {"product": "Porsche", "type": "Printed T-Shirt", "price": "549", "color": "Black", "image": "Porsche_black_front.png", "image2": "Porsche_black_back.png", "categoryPage": "printed.html"}, {"product": "Kungfu Panda", "type": "Printed T-Shirt", "price": "649", "color": "White", "image": "Kufu_white.jpeg", "image2": "Kufu_white.jpeg", "categoryPage": "printed.html"}, {"product": "Unseen", "type": "Printed T-Shirt", "color": "White", "price": "549", "image": "un_white_f.png", "image2": "un_white_b.png", "categoryPage": "printed.html"}, {"product": "Veiled Bloom", "type": "Printed T-Shirt", "color": "Royal Blue", "price": "549", "image": "veiled_blue_f.png", "image2": "veiled_blue_b.png", "categoryPage": "printed.html"}];
-  const relatedGrid = document.getElementById('relatedGrid');
+  function variantsFor(item){
+    const k = item.type.toLowerCase();
+    return printedVariants[item.product] || (k === 'oversized' ? toList(oversizedVariants) : k === 'polo' ? toList(poloVariants) : [{color:item.color,image:item.image,image2:item.image2}]);
+  }
   const currentName = productData.product.toLowerCase();
-  const sameCategory = productCatalog.filter(item => item.product.toLowerCase() !== currentName && item.type.toLowerCase() === typeKey);
-  const otherTshirts = productCatalog.filter(item => item.product.toLowerCase() !== currentName && !item.type.toLowerCase().includes('hoodie'));
-  const relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))].slice(0, 4);
-  relatedGrid.innerHTML = relatedItems.map(item => {
-    const itemTypeKey = item.type.toLowerCase();
-    const itemVariants = (printedVariants[item.product]) ||
-      (itemTypeKey === 'oversized'
-        ? Object.keys(oversizedVariants).map(color => ({color, ...oversizedVariants[color]}))
-        : itemTypeKey === 'polo'
-          ? Object.keys(poloVariants).map(color => ({color, ...poloVariants[color]}))
-          : [{color:item.color,image:item.image,image2:item.image2}]);
-    // FIX: match the variant to this catalog item's own colour instead of
-    // always taking itemVariants[0] — previously every oversized/polo card
-    // showed the first colour in the list (e.g. Royal Blue) regardless of
-    // its actual name/colour.
-    const first = itemVariants.find(v => v.color.toLowerCase() === item.color.toLowerCase()) || itemVariants[0];
-    const enriched={...item,color:first.color,image:first.image,image2:first.image2||first.image};
-    const params = new URLSearchParams(enriched);
-    const dots=itemVariants.map(v=>`<span class="related-color" title="${v.color}" style="background:${colorHex[v.color]||'#777'}"></span>`).join('');
-    return `<a class="related-card" href="product.html?${params.toString()}">
-      <div class="related-images"><img class="active" src="${first.image}" alt="${item.product} front"><img src="${first.image2||first.image}" alt="${item.product} back"><span class="view-status">Front</span><span class="gallery-dots" aria-hidden="true"><span class="active"></span><span></span></span></div>
-      <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span><div class="related-colors">${dots}</div><div class="related-color-label">${itemVariants.map(v=>v.color).join(' · ')}</div></div>
+  const sameCategory = productCatalog.filter(i => i.product.toLowerCase() !== currentName && i.type.toLowerCase() === typeKey);
+  const otherTshirts = productCatalog.filter(i => i.product.toLowerCase() !== currentName && !i.type.toLowerCase().includes('hoodie'));
+  const relatedItems = [...sameCategory, ...otherTshirts.filter(x => !sameCategory.includes(x))].slice(0,4);
+  $('relatedGrid').innerHTML = relatedItems.map((item, n) => {
+    const iv = variantsFor(item);
+    const first = iv.find(v => v.color.toLowerCase() === item.color.toLowerCase()) || iv[0];
+    const params = new URLSearchParams({...item, color:first.color, image:first.image, image2:first.image2 || first.image});
+    const dotsHtml = iv.map(v => `<span class="related-color" title="${v.color}" style="background:${colorHex[v.color] || '#777'}"></span>`).join('');
+    return `<a class="related-card" style="transition-delay:${n*90}ms" href="product.html?${params.toString()}">
+      <div class="related-images"><img class="active" src="${first.image}" alt="${item.product} front"><img src="${first.image2 || first.image}" alt="${item.product} back"><span class="view-status">Front</span><span class="gallery-dots" aria-hidden="true"><span class="active"></span><span></span></span></div>
+      <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span><div class="related-colors">${dotsHtml}</div><div class="related-color-label">${iv.map(v => v.color).join(' · ')}</div></div>
     </a>`;
   }).join('');
+  const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.12});
+  document.querySelectorAll('.related-card').forEach(c => io.observe(c));
 
-  const CART_KEY = 'arambhCart';
-
-  function getCart(){
-    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
-    catch (error) { return []; }
-  }
-
-  function updateCartCount(){
-    const count = getCart().reduce((sum, item) => sum + (Number(item.qty) || 0), 0);
-    document.getElementById('cartCount').textContent = count;
-  }
-
-  function currentSelection(){
-    const activeSize = document.querySelector('.size-btn.active');
-    return {
-      id: `${productData.product}|${selectedColor}|${selectedFit}|${activeSize ? activeSize.dataset.size : 'M'}`,
-      product: productData.product,
-      type: isPrinted ? `Printed ${selectedFit} T-Shirt` : productData.type,
-      color: selectedColor,
-      fit: selectedFit,
-      price: productData.price,
-      image: selectedImages[0] || productData.image,
-      image2: selectedImages[1] || productData.image2,
-      size: activeSize ? activeSize.dataset.size : 'M',
-      qty: qty
-    };
-  }
-
-  function addToCart(){
-    const selected = currentSelection();
-    const cart = getCart();
-    const existing = cart.find(item => item.id === selected.id);
-    if(existing){ existing.qty = Math.min(10, (Number(existing.qty) || 0) + selected.qty); }
-    else { cart.push(selected); }
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-    updateCartCount();
-    const toast = document.getElementById('cartToast');
-    toast.textContent = `${selected.product} added to cart`;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 1800);
-  }
-
-  updateCartCount();
-  document.getElementById('addCartDesktop').onclick = addToCart;
-  document.getElementById('addCartMobile').onclick = addToCart;
-
-  function goToOrder() {
-    const activeSize = document.querySelector('.size-btn.active');
-    const params = new URLSearchParams({
-      product: productData.product,
-      type: isPrinted ? `Printed ${selectedFit} T-Shirt` : productData.type,
-      color: selectedColor,
-      fit: selectedFit,
-      size: activeSize ? activeSize.dataset.size : 'M',
-      qty: String(qty),
-      price: String(productData.price)
-    });
-    window.location.href = 'order.html?' + params.toString();
-  }
-  document.getElementById('buyNowDesktop').onclick = goToOrder;
-  document.getElementById('buyNowMobile').onclick = goToOrder;
-
-
-  // Rotate related product cards between complete front and back views.
-  document.querySelectorAll('.related-images').forEach((frame,index)=>{
-    const pictures=frame.querySelectorAll('img');
-    const label=frame.querySelector('.view-status');
-    const dots=frame.querySelectorAll('.gallery-dots span');
-    if(pictures.length<2) return;
-    let current=0;
-    setInterval(()=>{
-      current=(current+1)%2;
-      pictures.forEach((img,i)=>img.classList.toggle('active',i===current));
-      dots.forEach((dot,i)=>dot.classList.toggle('active',i===current));
-      if(label) label.textContent=current===0?'Front':'Back';
-    },3400+(index%3)*180);
+  document.querySelectorAll('.related-images').forEach((fr, index) => {
+    const pics = fr.querySelectorAll('img'), label = fr.querySelector('.view-status'), d = fr.querySelectorAll('.gallery-dots span');
+    if(pics.length < 2 || pics[1].getAttribute('src') === pics[0].getAttribute('src')) return;
+    let cur = 0;
+    setInterval(() => {
+      cur = (cur + 1) % 2;
+      pics.forEach((im,i) => im.classList.toggle('active', i === cur));
+      d.forEach((x,i) => x.classList.toggle('active', i === cur));
+      if(label) label.textContent = cur === 0 ? 'Front' : 'Back';
+    }, 3400 + (index % 3) * 180);
   });
 
+  /* ===== Cart ===== */
+  const CART_KEY = 'arambhCart';
+  const getCart = () => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch(_) { return []; } };
+  function updateCartCount(){ $('cartCount').textContent = getCart().reduce((s,i) => s + (Number(i.qty) || 0), 0); }
+  function currentSelection(){
+    const size = (document.querySelector('.size-btn.active') || {dataset:{size:'M'}}).dataset.size;
+    return {
+      id: `${productData.product}|${selectedColor}|${selectedFit}|${size}`,
+      product: productData.product,
+      type: isPrinted ? `Printed ${selectedFit} T-Shirt` : productData.type,
+      color: selectedColor, fit: selectedFit, price: productData.price,
+      image: selectedImages[0] || productData.image,
+      image2: selectedImages[1] || productData.image2,
+      size, qty
+    };
+  }
+  function addToCart(){
+    const sel = currentSelection(), cart = getCart();
+    const ex = cart.find(i => i.id === sel.id);
+    if(ex) ex.qty = Math.min(10, (Number(ex.qty) || 0) + sel.qty); else cart.push(sel);
+    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch(_) {}
+    updateCartCount();
+    const link = $('cartLink'); link.classList.remove('bump'); void link.offsetWidth; link.classList.add('bump');
+    const toast = $('cartToast');
+    toast.textContent = `${sel.product} (${sel.color}, ${sel.size}) added to cart`;
+    toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+  updateCartCount();
+  $('addCartDesktop').onclick = addToCart; $('addCartMobile').onclick = addToCart;
 
-  // ===== Header search =====
+  function goToOrder(){
+    const size = (document.querySelector('.size-btn.active') || {dataset:{size:'M'}}).dataset.size;
+    go('order.html?' + new URLSearchParams({
+      product: productData.product,
+      type: isPrinted ? `Printed ${selectedFit} T-Shirt` : productData.type,
+      color: selectedColor, fit: selectedFit, size, qty: String(qty), price: String(productData.price)
+    }).toString());
+  }
+  $('buyNowDesktop').onclick = goToOrder; $('buyNowMobile').onclick = goToOrder;
+
+  /* ===== Header search ===== */
   (function(){
-    const input = document.getElementById('siteSearch');
-    const list = document.getElementById('searchList');
+    const input = $('siteSearch'), list = $('searchList');
     const collections = [
       {name:'Polos', href:'polo.html', note:'Collar tees', keys:'polo polos collar'},
       {name:'Oversized', href:'oversized.html', note:'Plain drop-shoulder tees', keys:'oversized plain drop shoulder'},
@@ -752,73 +620,49 @@
       {name:'Shirts', href:'shirt.html', note:'Boxy-fit shirts', keys:'shirt shirts boxy'}
     ];
     const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-    function variantsFor(item){
-      const k = item.type.toLowerCase();
-      return printedVariants[item.product] ||
-        (k === 'oversized' ? Object.keys(oversizedVariants).map(c => ({color:c, ...oversizedVariants[c]}))
-        : k === 'polo' ? Object.keys(poloVariants).map(c => ({color:c, ...poloVariants[c]}))
-        : [{color:item.color, image:item.image, image2:item.image2}]);
-    }
     function pick(item, tokens){
       const v = variantsFor(item);
       const byQuery = tokens.length && v.find(x => tokens.some(t => x.color.toLowerCase().split(/[^a-z0-9]+/).some(w => w.startsWith(t))));
       return byQuery || v.find(x => x.color.toLowerCase() === item.color.toLowerCase()) || v[0];
     }
-    function hrefFor(item, tokens){
-      const first = pick(item, tokens);
-      return 'product.html?' + new URLSearchParams({...item, color:first.color, image:first.image, image2:first.image2 || first.image}).toString();
-    }
+    const hrefFor = (item, tokens) => { const f = pick(item, tokens); return 'product.html?' + new URLSearchParams({...item, color:f.color, image:f.image, image2:f.image2 || f.image}).toString(); };
     const label = item => { const k = item.type.toLowerCase(); return k.includes('printed') ? 'Printed tee' : k === 'oversized' ? 'Oversized tee' : k === 'polo' ? 'Polo' : item.type; };
     const items = productCatalog.filter(i => !i.type.toLowerCase().includes('hoodie')).map(i => {
       const v = variantsFor(i);
       return {item:i, variants:v, hay:[i.product, i.type, i.categoryPage.replace('.html',''), 'tee t-shirt tshirt', ...(i.type.toLowerCase() === 'oversized' ? [i.color] : v.map(x => x.color))].join(' ').toLowerCase()};
     });
-    const words = h => h.split(/[^a-z0-9]+/);
-    const hit = (hay, t) => words(hay).some(w => w.startsWith(t));
-
+    const hit = (hay, t) => hay.split(/[^a-z0-9]+/).some(w => w.startsWith(t));
     let rows = [], active = -1;
 
     function render(){
-      const q = input.value.trim().toLowerCase();
-      const tokens = q.split(/\s+/).filter(Boolean);
+      const tokens = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
       let html = '', n = 0; rows = [];
-      const row = (href, thumb, name, meta) => {
-        const id = 'sr-' + (n++);
-        rows.push(id);
-        return `<li class="search-item" role="option" id="${id}"><a href="${href}">${thumb}<span><div class="search-name">${name}</div><div class="search-meta">${meta}</div></span></a></li>`;
-      };
+      const row = (href, thumb, name, meta) => { const id = 'sr-' + (n++); rows.push(id); return `<li class="search-item" role="option" id="${id}"><a href="${href}">${thumb}<span><div class="search-name">${name}</div><div class="search-meta">${meta}</div></span></a></li>`; };
       const collRow = c => row(c.href, `<span class="search-thumb coll">${esc(c.name[0])}</span>`, esc(c.name), esc(c.note));
       if(!tokens.length){
         html += '<li class="search-group" role="presentation">Browse collections</li>' + collections.map(collRow).join('');
       } else {
         const cm = collections.filter(c => tokens.every(t => hit((c.name + ' ' + c.keys).toLowerCase(), t)));
-        const pm = items.filter(x => tokens.every(t => hit(x.hay, t))).slice(0, 8);
+        const pm = items.filter(x => tokens.every(t => hit(x.hay, t))).slice(0,8);
         if(cm.length) html += '<li class="search-group" role="presentation">Collections</li>' + cm.map(collRow).join('');
         if(pm.length) html += '<li class="search-group" role="presentation">Products</li>' + pm.map(x => {
-          const first = pick(x.item, tokens);
-          const cols = x.variants.length > 1 ? ` · ${x.variants.length} colours` : '';
-          return row(hrefFor(x.item, tokens), `<span class="search-thumb"><img src="${esc(first.image)}" alt=""></span>`, esc(x.item.product), `₹${esc(x.item.price)} · ${esc(label(x.item))}${cols}`);
+          const f = pick(x.item, tokens), cols = x.variants.length > 1 ? ` · ${x.variants.length} colours` : '';
+          return row(hrefFor(x.item, tokens), `<span class="search-thumb"><img src="${esc(f.image)}" alt=""></span>`, esc(x.item.product), `₹${esc(x.item.price)} · ${esc(label(x.item))}${cols}`);
         }).join('');
-        if(!cm.length && !pm.length){
-          html += `<li class="search-empty" role="presentation">No match for “${esc(input.value.trim())}”. Try a colour or a design name, or browse a collection.</li><li class="search-group" role="presentation">Browse collections</li>` + collections.map(collRow).join('');
-        }
+        if(!cm.length && !pm.length) html += `<li class="search-empty" role="presentation">No match for “${esc(input.value.trim())}”. Try a colour or a design name, or browse a collection.</li><li class="search-group" role="presentation">Browse collections</li>` + collections.map(collRow).join('');
       }
-      list.innerHTML = html;
-      active = -1;
-      list.hidden = false;
-      input.setAttribute('aria-expanded', 'true');
+      list.innerHTML = html; active = -1; list.hidden = false;
+      input.setAttribute('aria-expanded','true');
     }
-    function close(){ list.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; }
+    function close(){ list.hidden = true; input.setAttribute('aria-expanded','false'); input.removeAttribute('aria-activedescendant'); active = -1; }
     function setActive(i){
       if(!rows.length) return;
       active = (i + rows.length) % rows.length;
-      list.querySelectorAll('.search-item').forEach((li, k) => li.classList.toggle('active', k === active));
-      const li = list.querySelectorAll('.search-item')[active];
-      input.setAttribute('aria-activedescendant', li.id);
-      li.scrollIntoView({block:'nearest'});
+      const lis = list.querySelectorAll('.search-item');
+      lis.forEach((li,k) => li.classList.toggle('active', k === active));
+      input.setAttribute('aria-activedescendant', lis[active].id);
+      lis[active].scrollIntoView({block:'nearest'});
     }
-
     input.addEventListener('focus', render);
     input.addEventListener('input', render);
     input.addEventListener('keydown', e => {
@@ -833,12 +677,10 @@
     list.addEventListener('mousemove', e => {
       const li = e.target.closest('.search-item'); if(!li) return;
       const k = [...list.querySelectorAll('.search-item')].indexOf(li);
-      if(k !== active){ active = k; list.querySelectorAll('.search-item').forEach((x, n) => x.classList.toggle('active', n === k)); }
+      if(k !== active){ active = k; list.querySelectorAll('.search-item').forEach((x,n) => x.classList.toggle('active', n === k)); }
     });
     document.addEventListener('click', e => { if(!e.target.closest('.search-box')) close(); });
   })();
-
 </script>
-
 </body>
 </html>

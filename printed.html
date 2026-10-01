@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Printed Collection — Aarambh</title>
+  <title>Printed Collection — Arambh</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -484,7 +484,7 @@
       <div class="finder-row">
         <div class="color-filter" role="group" aria-label="Filter by colour">
           <span class="cf-label">Colour</span>
-          <button class="cf active" type="button" data-color="any" aria-pressed="true">Any</button><button class="cf" type="button" data-color="Black" aria-pressed="false"><i style="background:#111"></i>Black</button><button class="cf" type="button" data-color="White" aria-pressed="false"><i style="background:#fff"></i>White</button><button class="cf" type="button" data-color="Red" aria-pressed="false"><i style="background:#b51f2e"></i>Red</button><button class="cf" type="button" data-color="Blue" aria-pressed="false"><i style="background:#1a3fa0"></i>Blue</button><button class="cf" type="button" data-color="Acid Wash" aria-pressed="false"><i style="background:linear-gradient(135deg,#9fb0bf 0%,#59667a 48%,#c3ccd6 100%)"></i>Acid Wash</button>
+          <button class="cf active" type="button" data-color="any" aria-pressed="true">Any</button><button class="cf" type="button" data-color="Black" aria-pressed="false"><i style="background:#111"></i>Black</button><button class="cf" type="button" data-color="White" aria-pressed="false"><i style="background:#fff"></i>White</button><button class="cf" type="button" data-color="Red" aria-pressed="false"><i style="background:#b51f2e"></i>Red</button><button class="cf" type="button" data-color="Off White" aria-pressed="false"><i style="background:#ece6d6"></i>Off White</button><button class="cf" type="button" data-color="Blue" aria-pressed="false"><i style="background:#1a3fa0"></i>Blue</button><button class="cf" type="button" data-color="Acid Wash" aria-pressed="false"><i style="background:linear-gradient(135deg,#9fb0bf 0%,#59667a 48%,#c3ccd6 100%)"></i>Acid Wash</button>
         </div>
         <label class="sort"><span>Sort</span>
           <select id="sortSelect">
@@ -825,11 +825,11 @@
           </div>
         </div>
       </article>
-      <article class="tee-card" data-id="panda" data-theme="cars" data-price="649" data-colors="Black,White" data-order="15" data-design="Kungfu Panda">
+      <article class="tee-card" data-id="deadpool" data-theme="cars" data-price="649" data-colors="Black,Off White,White" data-order="15" data-design="Deadpool">
         <div class="card-media double-view">
           <div class="slide-track">
-            <img src="Kufu_white.jpeg" alt="Kungfu Panda White front" loading="lazy">
-            <img src="Kufu_black.jpeg" alt="Kungfu Panda White back" loading="lazy">
+            <img src="Deadpool-black-front.png" alt="Deadpool Black front" loading="lazy">
+            <img src="Deadpool-black-back.png" alt="Deadpool Black back" loading="lazy">
           </div>
           <span class="card-badge">New Arrival</span>
           <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
@@ -839,12 +839,12 @@
           </div>
         </div>
         <div class="card-body">
-          <h3>Kungfu Panda</h3>
+          <h3>Deadpool</h3>
           <p class="card-blurb">Front &amp; back designs included.</p>
-          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Kufu_white.jpeg" data-back="Kufu_black.jpeg" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Kufu_black.jpeg" data-back="Kufu_white.jpeg" onclick="selectColor(this)"></button></div><span class="selected-color">White</span></div>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Deadpool-black-front.png" data-back="Deadpool-black-back.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Off White" aria-label="View Off White" style="background:#ece6d6;" data-front="Deadpool-offwhite-front.png" data-back="Deadpool-offwhite-back.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Deadpool-white-front.png" data-back="Deadpool-white-back.png" onclick="selectColor(this)"></button></div><span class="selected-color">Black</span></div>
           <div class="buy-row">
             <div class="price">₹649</div>
-            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Kungfu Panda','Printed T-Shirt','649')">Buy now</button>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Deadpool','Printed T-Shirt','649')">Buy now</button>
           </div>
         </div>
       </article>
@@ -898,12 +898,12 @@
 
 
 
-    // ===== image extension fallback: tries .png, .jpg, .jpeg, .webp for the acid-wash photos =====
+    // ===== image extension fallback: tries .png, .jpg, .jpeg, .webp for the acid-wash and Deadpool photos =====
     const EXTS = ['png', 'jpg', 'jpeg', 'webp'];
     document.addEventListener('error', e => {
       const img = e.target;
       if (!(img instanceof HTMLImageElement)) return;
-      const m = (img.getAttribute('src') || '').match(/^(.*_acid_(?:front|back))\.(\w+)$/i);
+      const m = (img.getAttribute('src') || '').match(/^(.*(?:_acid_|Deadpool-[a-z]+-)(?:front|back))\.(\w+)$/i);
       if (!m) return;
       const tried = Number(img.dataset.extTry || 0);
       if (tried >= EXTS.length) return;

@@ -32,23 +32,10 @@
 
     body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: 0.5; }
 
-    .card-media.double-view {
-      display: flex;
-      flex-direction: row;
-      gap: 2px;
-      height: 320px;
-      background: #0a0a14;
-    }
-    .card-media.double-view img {
-      width: calc(50% - 1px);
-      height: 100%;
-      object-fit: contain;
-    }
-
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; background: rgba(8,8,16,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: padding 0.3s; }
     nav.scrolled { padding: 12px 40px; }
     .nav-logo img { height: 44px; }
-    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links { display: flex; gap: clamp(18px, 2.3vw, 36px); list-style: none; }
     .nav-links a { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; position: relative; transition: color 0.3s; }
     .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
     .nav-links a:hover { color: var(--text); }
@@ -79,7 +66,7 @@
     }
     .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
-    .page-header {position:relative;overflow:hidden; min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 140px 40px 80px; text-align: center; position: relative; overflow: hidden; }
+    .page-header {position:relative;overflow:hidden; min-height: 42vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 130px 40px 60px; text-align: center; position: relative; overflow: hidden; }
     .page-header::before { content: ''; position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(250,174,98,0.12) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 6s ease-in-out infinite; }
     .page-header::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(250,174,98,0.08) 1px, transparent 1px); background-size: 40px 40px; animation: dots-drift 20s linear infinite; pointer-events: none; }
     @keyframes dots-drift { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
@@ -100,68 +87,8 @@
     .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
     @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-    .products-section { padding: 100px 40px; max-width: 1280px; margin: auto; }
     .section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 14px; }
     .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 5vw, 64px); letter-spacing: 2px; margin-bottom: 50px; }
-
-    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-
-    .product-card { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease; position: relative; }
-    .product-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); }
-
-    .card-media { position: relative; overflow: hidden; background: #0a0a14; }
-    .card-media video, .card-media img { width: 100%; display: block; transition: transform 0.6s ease; }
-    .card-media video { height: 340px; object-fit: cover; }
-    .card-media img { height: 300px; object-fit: cover; }
-    .product-card:hover .card-media video,
-    .product-card:hover .card-media img { transform: scale(1.05); }
-
-    .card-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,8,16,0.85) 0%, transparent 50%); pointer-events: none; }
-
-    .card-overlay-title { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 20px 22px 0; }
-    .card-overlay-title h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; line-height: 1; }
-
-    .card-badge { position: absolute; top: 14px; right: 14px; z-index: 3; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; background: var(--accent); color: white; padding: 5px 12px; border-radius: 100px; }
-    .card-badge.video-badge { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(6px); }
-    .card-badge.video-badge::before { content: '▶ '; font-size: 8px; }
-
-    .card-body { padding: 14px 22px 24px; }
-    .card-meta { display: flex; align-items: center; justify-content: space-between; }
-    .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 1px; }
-    .type-tag { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: 100px; }
-
-    .color-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
-    .color-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-right: 2px; white-space: nowrap; }
-    .swatches { display: flex; gap: 7px; flex-wrap: wrap; }
-    .swatch {
-      width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
-      border: 2px solid transparent;
-      outline: 2px solid transparent;
-      transition: transform 0.2s, outline-color 0.2s;
-      position: relative;
-    }
-    .swatch:hover { transform: scale(1.2); }
-    .swatch.active { outline-color: var(--accent); outline-offset: 2px; }
-    .swatch[title]:hover::after {
-      content: attr(title);
-      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
-      background: rgba(15,15,26,0.95); border: 1px solid var(--border);
-      color: var(--text); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 600;
-      letter-spacing: 1px; white-space: nowrap; padding: 4px 10px; border-radius: 6px;
-      pointer-events: none; z-index: 10;
-    }
-    .selected-color { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--text); margin-left: auto; font-weight: 600; letter-spacing: 1px; transition: color 0.2s; }
-
-    /* BUY NOW BUTTON */
-    .buy-now-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; margin-top: 16px; padding: 13px 20px;
-      background: var(--accent); color: white; border: none; text-decoration: none;
-      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      border-radius: 100px; cursor: pointer; transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 8px 24px rgba(250,174,98,0.25);
-    }
-    .buy-now-btn:hover { background: #e0913f; transform: scale(1.02); box-shadow: 0 12px 32px rgba(250,174,98,0.35); }
 
     .size-section { max-width: 720px; margin: 0 auto 80px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
     .size-header { padding: 30px 36px 0; display: flex; align-items: center; gap: 14px; }
@@ -190,26 +117,6 @@
 
     @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-    .drops-section { padding: 20px 40px 100px; max-width: 1280px; margin: auto; }
-    .drops-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
-    .drops-header-left .section-label { margin-bottom: 14px; }
-    .drops-header-left .section-title { margin-bottom: 0; }
-    .drops-countdown { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(250,174,98,0.3); background: rgba(250,174,98,0.07); padding: 10px 20px; border-radius: 100px; display: flex; align-items: center; gap: 8px; }
-    .drops-countdown::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: blink 1.4s ease-in-out infinite; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-    .drops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-    .drop-card {
-      background: linear-gradient(160deg, var(--surface), #16161f);
-      border: 1px solid rgba(250,174,98,0.18);
-      border-radius: 20px; overflow: hidden; position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
-    }
-    .drop-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); border-color: rgba(250,174,98,0.4); }
-    .drop-card .card-body { padding: 20px 22px 26px; }
-    .drop-card .card-body h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 6px; }
-    .drop-card .card-body p { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
-
     .care-section { max-width: 720px; margin: 0 auto 60px; }
     .care-card {
       background: rgba(62,8,86,0.06); border: 1px solid rgba(62,8,86,0.25);
@@ -224,77 +131,164 @@
     .care-text p { font-size: 14px; color: var(--text); line-height: 1.7; opacity: 0.9; }
     .care-text p strong { color: var(--accent2); }
 
-    /* JUST DROPPED — highlight section for new priority launches */
-    .justdropped-section { padding: 60px 40px 20px; max-width: 1280px; margin: auto; }
-    .justdropped-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
-    .justdropped-badge {
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--bg); background: linear-gradient(135deg, var(--accent2), var(--accent));
-      padding: 10px 20px; border-radius: 100px; display: inline-flex; align-items: center; gap: 8px;
+
+    .justdropped-badge { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--bg); background: linear-gradient(135deg, var(--accent2), var(--accent)); padding: 10px 20px; border-radius: 100px; display: inline-flex; align-items: center; gap: 8px; }
+    .justdropped-badge::before { content: '\26A1'; }
+    .anchor-point { display: block; height: 0; scroll-margin-top: 100px; }
+
+    /* ===== SPOTLIGHT (sliding showcase) ===== */
+    .spotlight { max-width: 1280px; margin: 0 auto; padding: 56px 40px 20px; scroll-margin-top: 90px; }
+    .spot-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 26px; }
+    .spot-nav { display: flex; gap: 10px; }
+    .spot-arrow { width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); color: var(--text); font-size: 18px; cursor: pointer; transition: background .25s, border-color .25s, color .25s; }
+    .spot-arrow:hover { background: var(--accent); border-color: var(--accent); color: #1a1208; }
+    .spot-viewport { overflow: hidden; border-radius: 28px; border: 1px solid var(--border); background: var(--surface); touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+    .spot-viewport.dragging { cursor: grabbing; }
+    .spot-viewport:focus-visible, .tab:focus-visible, .cf:focus-visible, .vt-btn:focus-visible, .swatch:focus-visible, .spot-swatch:focus-visible, .spot-dot:focus-visible, .spot-arrow:focus-visible, .buy-now-btn:focus-visible, .sort select:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .spot-track { display: flex; transition: transform .85s cubic-bezier(.65, 0, .25, 1); will-change: transform; }
+    .spot-viewport.dragging .spot-track { transition: none; }
+    .spot-slide { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: .85fr 1.15fr; min-height: 540px; position: relative; isolation: isolate; }
+    .spot-slide::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse 60% 70% at 70% 50%, rgba(var(--tint), .34), transparent 70%); }
+    .spot-info { padding: 52px 20px 52px 56px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 14px; }
+    .spot-tag { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(250,174,98,.35); background: rgba(250,174,98,.08); padding: 6px 14px; border-radius: 100px; }
+    .spot-info h3 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: clamp(48px, 5.4vw, 84px); line-height: .95; letter-spacing: 1px; }
+    .spot-info p { color: var(--muted); font-size: 16px; line-height: 1.65; max-width: 380px; }
+    .spot-colors { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .spot-colorname { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
+    .spot-swatch { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; outline: 2px solid transparent; transition: transform .2s, outline-color .2s; }
+    .spot-swatch:hover { transform: scale(1.15); }
+    .spot-swatch.active { outline-color: var(--accent); outline-offset: 3px; }
+    .spot-price { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 1px; line-height: 1; margin-top: 4px; }
+    .spot-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .spot-actions .buy-now-btn { width: auto; padding: 15px 34px; }
+    .spot-ghost { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text); text-decoration: underline; text-underline-offset: 6px; text-decoration-color: rgba(255,255,255,.3); transition: text-decoration-color .3s, color .3s; }
+    .spot-ghost:hover { color: var(--accent); text-decoration-color: var(--accent); }
+    .spot-art { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr); gap: 10px; align-items: center; padding: 28px 28px 28px 0; min-width: 0; }
+    .spot-art figure { position: relative; height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateX(70px); transition: transform .9s cubic-bezier(.2,.7,.2,1) .25s, opacity .6s ease .25s; }
+    .spot-art figure + figure { transition-delay: .4s; }
+    .spot-slide.is-active .spot-art figure { opacity: 1; transform: none; }
+    .spot-art img { width: 100%; height: 100%; max-height: 470px; object-fit: contain; display: block; filter: drop-shadow(0 24px 40px rgba(0,0,0,.45)); }
+    .spot-art figcaption { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.7); background: rgba(8,8,16,.6); border: 1px solid rgba(255,255,255,.12); padding: 4px 12px; border-radius: 100px; }
+
+    .spot-dots { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .spot-dot { position: relative; overflow: hidden; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 100px; padding: 9px 16px; cursor: pointer; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; transition: color .3s, border-color .3s; }
+    .spot-dot-name { position: relative; z-index: 1; }
+    .spot-dot.active { color: #1a1208; border-color: var(--accent); }
+    .spot-dot::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform-origin: left; transform: scaleX(0); }
+    .spot-dot.active::after { animation: spotFill 5.5s linear forwards; }
+    .spotlight.is-paused .spot-dot.active::after { animation-play-state: paused; }
+    @keyframes spotFill { to { transform: scaleX(1); } }
+
+    /* ===== FINDER ===== */
+    .finder { max-width: 1280px; margin: 0 auto; padding: 56px 40px 90px; scroll-margin-top: 80px; }
+    .finder-head { margin-bottom: 26px; }
+    .finder-bar { position: sticky; top: 68px; z-index: 90; display: flex; flex-direction: column; gap: 14px; padding: 14px 0 16px; background: rgba(8,8,16,.9); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+    .tabs { position: relative; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 4px; border: 1px solid var(--border); border-radius: 100px; background: rgba(255,255,255,.03); align-self: flex-start; max-width: 100%; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-glider { position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 100px; background: var(--accent); transition: transform .45s cubic-bezier(.65,0,.25,1), width .45s cubic-bezier(.65,0,.25,1); z-index: 0; }
+    .tab { position: relative; z-index: 1; flex: 0 0 auto; background: none; border: none; cursor: pointer; padding: 10px 20px; border-radius: 100px; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; transition: color .3s; white-space: nowrap; }
+    .tab small { font-size: 10px; opacity: .7; }
+    .tab.active { color: #1a1208; }
+    .finder-row { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; }
+    .color-filter { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .cf-label, .sort span { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+    .cf { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.03); border: 1px solid var(--border); color: var(--text); border-radius: 100px; padding: 7px 14px 7px 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; transition: border-color .25s, background .25s; }
+    .cf[data-color="any"] { padding-left: 14px; }
+    .cf i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); display: inline-block; }
+    .cf:hover { border-color: rgba(250,174,98,.5); }
+    .cf.active { border-color: var(--accent); background: rgba(250,174,98,.12); }
+    .sort { display: inline-flex; align-items: center; gap: 8px; }
+    .sort select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 100px; padding: 9px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+    .fit-note { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; padding: 14px 18px; border: 1px solid var(--border); border-radius: 14px; background: rgba(255,255,255,.025); font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .fit-note strong { color: var(--text); font-weight: 600; margin-right: 6px; }
+    .finder-count { margin: 20px 0 18px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+
+    /* ===== PRODUCT GRID + CARDS ===== */
+    .tee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 22px; }
+    .tee-card { background: linear-gradient(160deg, var(--surface), #14141f); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .3s, box-shadow .4s; }
+    .tee-card:hover { border-color: rgba(250,174,98,.32); box-shadow: 0 30px 60px rgba(0,0,0,.55); }
+    .tee-card[hidden] { display: none; }
+    .tee-card.enter { animation: cardSlideIn .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 45ms); }
+    @keyframes cardSlideIn { from { opacity: 0; transform: translateX(46px); } to { opacity: 1; transform: none; } }
+
+    .card-media { position: relative; overflow: hidden; background: #0a0a14; aspect-ratio: 4 / 5; }
+    .slide-track { display: flex; height: 100%; width: 100%; transition: transform .6s cubic-bezier(.65,0,.25,1); cursor: pointer; }
+    .card-media.show-back .slide-track { transform: translateX(-100%); }
+    .slide-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; padding: 12px 12px 44px; display: block; }
+    .card-badge { position: absolute; top: 14px; left: 14px; z-index: 3; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; background: rgba(8,8,16,.72); color: var(--accent); border: 1px solid rgba(250,174,98,.35); backdrop-filter: blur(6px); padding: 5px 12px; border-radius: 100px; }
+    .view-toggle { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 3; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 100px; background: rgba(8,8,16,.78); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(8px); }
+    .vt-glider { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 100px; background: var(--accent); transition: transform .4s cubic-bezier(.65,0,.25,1); }
+    .view-toggle[data-view="back"] .vt-glider { transform: translateX(100%); }
+    .vt-btn { position: relative; z-index: 1; background: none; border: none; cursor: pointer; padding: 6px 16px; border-radius: 100px; color: rgba(255,255,255,.75); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; transition: color .3s; }
+    .vt-btn.active { color: #1a1208; }
+
+    .card-body { padding: 18px 20px 22px; display: flex; flex-direction: column; flex: 1; }
+    .card-body h3 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 28px; letter-spacing: 1px; line-height: 1.05; }
+    .card-blurb { color: var(--muted); font-size: 13px; line-height: 1.55; margin-top: 6px; }
+    .color-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .color-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+    .swatch { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; outline: 2px solid transparent; transition: transform .2s, outline-color .2s; position: relative; }
+    .swatch:hover { transform: scale(1.2); }
+    .swatch.active { outline-color: var(--accent); outline-offset: 2px; }
+    .selected-color { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--text); margin-left: auto; font-weight: 600; letter-spacing: 1px; }
+    .buy-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 18px; }
+    .price { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: #fff; letter-spacing: 1px; line-height: 1; }
+    .buy-now-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 22px; background: var(--accent); color: #1a1208; border: none; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; border-radius: 100px; cursor: pointer; transition: background .3s, transform .2s, box-shadow .3s; box-shadow: 0 8px 24px rgba(250,174,98,.25); }
+    .buy-now-btn:hover { background: #ffc07c; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(250,174,98,.35); }
+    .tee-empty { text-align: center; padding: 70px 20px; color: var(--muted); }
+    .tee-empty p { margin-bottom: 20px; font-size: 16px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .spot-track, .slide-track, .tab-glider, .vt-glider, .spot-art figure { transition: none !important; }
+      .spot-art figure { opacity: 1; transform: none; }
+      .spot-dot.active::after { animation: none; transform: scaleX(1); }
+      .tee-card.enter { animation: none; }
     }
-    .justdropped-badge::before { content: '⚡'; }
-    .justdropped-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-    .jd-card {
-      background: linear-gradient(160deg, var(--surface), #1a141a);
-      border: 1px solid rgba(62,8,86,0.3);
-      border-radius: 20px; overflow: hidden; position: relative;
-      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
-    }
-    .jd-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); border-color: rgba(62,8,86,0.55); }
-    .jd-card .card-badge { background: linear-gradient(135deg, var(--accent2), var(--accent)); }
-    .jd-card .card-body { padding: 20px 22px 26px; }
-    .jd-card .card-body h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 6px; }
-    .jd-card .card-body p { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
-    .jd-card .card-media.single-view { height: 340px; }
-    .jd-card .card-media.single-view img { width: 100%; height: 100%; object-fit: contain; }
 
     @media (max-width: 900px) {
       .nav-links { display: none; }
       .hamburger { display: flex; }
+      .spot-slide { grid-template-columns: 1fr; min-height: 0; }
+      .spot-art { order: -1; padding: 24px 20px 0; height: 340px; }
+      .spot-info { padding: 22px 24px 34px; }
+      .spot-info p { max-width: none; }
+      .finder-bar { position: static; }
     }
 
     @media (max-width: 768px) {
-      .drops-header { flex-direction: column; align-items: flex-start; }
-      .justdropped-header { flex-direction: column; align-items: flex-start; }
-      .care-card { flex-direction: column; }
       nav { padding: 14px 20px; }
       .nav-logo img { height: 36px; }
       .nav-cta { padding: 9px 16px; font-size: 11px; }
-      .page-header { padding: 100px 20px 50px; min-height: auto; }
+      .page-header { padding: 100px 20px 40px; min-height: auto; }
       .page-header::before { width: 500px; height: 500px; }
       .header-meta { gap: 12px; }
       .meta-chip { font-size: 10px; padding: 7px 14px; }
       .ticker span { font-size: 16px; padding: 0 22px; }
       .ticker span::after { margin-left: 22px; }
-      .products-section { padding: 60px 20px; }
       .section-title { margin-bottom: 32px; }
-      .products-grid { grid-template-columns: 1fr; gap: 18px; }
-      .card-media video { height: 280px; }
-      .card-media img { height: 260px; }
-      .card-overlay-title h3 { font-size: 24px; }
-      .drops-section { padding: 0 20px 70px; }
-      .justdropped-section { padding: 40px 20px 10px; }
-      .drops-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
-      .justdropped-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
-      .card-media.double-view { height: 260px; position: relative; }
-      .card-media.double-view img {
-        position: absolute; inset: 0; width: 100%; height: 100%;
-        object-fit: contain; opacity: 0; transition: opacity 0.5s ease;
-      }
-      .card-media.double-view img.slide-active { opacity: 1; }
-      .double-view-dots {
-        position: absolute; bottom: 10px; left: 0; right: 0; z-index: 3;
-        display: flex; justify-content: center; gap: 6px;
-      }
-      .double-view-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); transition: background 0.3s, transform 0.3s; }
-      .double-view-dots span.active { background: var(--accent); transform: scale(1.3); }
-      .jd-card .card-media.single-view { height: 220px; }
+      .spotlight { padding: 36px 20px 10px; }
+      .spot-art { height: 280px; gap: 6px; padding: 20px 12px 0; }
+      .spot-dots { justify-content: center; gap: 8px; margin-top: 14px; }
+      .spot-dot { width: 30px; height: 6px; padding: 0; border-radius: 6px; }
+      .spot-dot-name { display: none; }
+      .finder { padding: 40px 20px 70px; }
+      .tabs { align-self: stretch; }
+      .tee-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .card-body { padding: 14px 14px 16px; }
+      .card-body h3 { font-size: 22px; }
+      .card-blurb, .color-label { display: none; }
+      .selected-color { font-size: 10px; }
+      .buy-row { flex-direction: column; align-items: stretch; gap: 10px; }
+      .price { font-size: 26px; }
+      .buy-now-btn { width: 100%; padding: 11px 14px; font-size: 11px; }
+      .slide-track img { padding: 8px 8px 42px; }
       .size-section { margin: 0 20px 40px; }
       .size-header { padding: 24px 24px 0; }
       .size-note { padding: 12px 24px 16px; }
       .size-warning { padding: 16px 24px; font-size: 11px; }
       .care-section { margin: 0 20px 40px; }
-      .care-card { padding: 20px; }
+      .care-card { flex-direction: column; padding: 20px; }
       .order-section { padding: 0 20px 80px; }
       .order-btn, .whatsapp-btn { width: 100%; justify-content: center; padding: 16px 20px; }
       .whatsapp-btn { margin-left: 0; margin-top: 12px; }
@@ -304,17 +298,12 @@
 
     @media (max-width: 420px) {
       .page-header h1 { font-size: clamp(48px, 14vw, 72px); }
-      .swatches { gap: 5px; }
+      .swatches { gap: 6px; }
       .swatch { width: 20px; height: 20px; }
-      .color-label { width: 100%; margin-bottom: 4px; }
-      .selected-color { margin-left: 0; }
-      .card-media.double-view { height: 220px; }
-      .jd-card .card-media.single-view { height: 180px; }
+      .spot-art { height: 240px; }
+      .spot-actions .buy-now-btn { width: 100%; }
     }
 
-  
-    /* Product media opens the shared product-details page */
-    .product-card .card-media, .drop-card .card-media, .jd-card .card-media { cursor: pointer; }
 </style>
 </head>
 <body>
@@ -329,6 +318,7 @@
       <li><a href="oversized.html">Oversized</a></li>
       <li><a href="printed.html" class="active">Printed</a></li>
         <li><a href="hoodie.html">Hoodies</a></li>
+      <li><a href="shirt.html">Shirts</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
     <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
@@ -344,6 +334,7 @@
     <a href="oversized.html">Oversized</a>
     <a href="printed.html" class="active">Printed</a>
     <a href="hoodie.html">Hoodies</a>
+    <a href="shirt.html">Shirts</a>
     <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
     <a href="tel:9637748622">📞 Order Now</a>
   </div>
@@ -354,7 +345,7 @@
     <p>Express. Bold. Street.</p>
     <div class="header-meta">
       <span class="meta-chip hot">Limited Runs</span>
-      <span class="meta-chip">10 Designs</span>
+      <span class="meta-chip">12 Designs</span>
     </div>
   <div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;pointer-events:none;z-index:0;"><img src="dornat-demonslayer-tee.png" style="width:min(900px,85vw);opacity:.18;filter:drop-shadow(0 40px 80px rgba(0,0,0,.6));transform:translateY(20px);" loading="lazy"></div></header>
 
@@ -368,340 +359,431 @@
     </div>
   </div>
 
-  <!-- LATEST LAUNCH — newest product, highest priority slot -->
-  <section class="justdropped-section">
-    <div class="justdropped-header">
+  <!-- SPOTLIGHT: newest drops, sliding showcase -->
+  <section class="spotlight" id="unseenDrop" aria-roledescription="carousel" aria-label="Latest printed drops">
+    <span id="veiledBloom" class="anchor-point"></span>
+    <div class="spot-top">
       <div>
-        <span class="justdropped-badge">ACID-WASH COLLECTION</span>
+        <span class="justdropped-badge">Just dropped</span>
+        <h2 class="section-title" style="margin:14px 0 0;">LATEST DROPS</h2>
+      </div>
+      <div class="spot-nav">
+        <button class="spot-arrow" id="spotPrev" type="button" aria-label="Previous drop">&#8592;</button>
+        <button class="spot-arrow" id="spotNext" type="button" aria-label="Next drop">&#8594;</button>
       </div>
     </div>
-
-    <div class="justdropped-grid">
-      <div class="jd-card reveal">
-        <div class="card-media double-view">
-          <img src="explore_space_front.jpg" alt="Explore Space Acid Wash Front" loading="lazy">
-          <img src="explore_space_back.jpg" alt="Explore Space Acid Wash Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Explore Space — Acid Wash</h3>
-          <p>Pure cotton, acid-washed oversized tee. Front & back designs included.</p>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Explore Space Acid Wash','Printed Oversized Tee','699')">🛍️ Buy Now</button>
-        </div>
+    <div class="spot-viewport" id="spotViewport" tabindex="0" aria-label="Latest drops. Swipe or use the arrow keys.">
+      <div class="spot-track" id="spotTrack">
+        <article class="spot-slide" data-card="explore" style="--tint:125,140,154" role="group" aria-roledescription="slide" aria-label="1 of 5">
+          <div class="spot-info">
+            <span class="spot-tag">Acid Wash</span>
+            <h3>Explore Space — Acid Wash</h3>
+            <p>Pure cotton, acid-washed oversized tee. Front &amp; back designs included.</p>
+            
+            <div class="spot-price">₹699</div>
+            <div class="spot-actions">
+              <button class="buy-now-btn spot-buy" type="button" data-card="explore">Buy now</button>
+              <a class="spot-ghost" href="#designs">Browse all designs</a>
+            </div>
+          </div>
+          <div class="spot-art">
+            <figure><img src="explore_space_front.jpg" alt="Explore Space — Acid Wash front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="explore_space_back.jpg" alt="Explore Space — Acid Wash back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+          </div>
+        </article>
+        <article class="spot-slide" data-card="unseen" style="--tint:26,63,160" role="group" aria-roledescription="slide" aria-label="2 of 5">
+          <div class="spot-info">
+            <span class="spot-tag">Unseen Series</span>
+            <h3>Unseen</h3>
+            <p>“Covered, but not contained.” Front &amp; back designs included.</p>
+            <div class="spot-colors"><span class="color-label">Colours</span><div class="swatches"><button class="spot-swatch active" type="button" title="White" aria-label="Show White" style="background:#fff;" data-card="unseen" data-i="0"></button><button class="spot-swatch" type="button" title="Royal Blue" aria-label="Show Royal Blue" style="background:#1a3fa0;" data-card="unseen" data-i="1"></button><button class="spot-swatch" type="button" title="Black" aria-label="Show Black" style="background:#111;" data-card="unseen" data-i="2"></button></div><span class="spot-colorname">White</span></div>
+            <div class="spot-price">₹549</div>
+            <div class="spot-actions">
+              <button class="buy-now-btn spot-buy" type="button" data-card="unseen">Buy now</button>
+              <a class="spot-ghost" href="#designs">Browse all designs</a>
+            </div>
+          </div>
+          <div class="spot-art">
+            <figure><img src="un_white_f.png" alt="Unseen front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="un_white_b.png" alt="Unseen back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+          </div>
+        </article>
+        <article class="spot-slide" data-card="veiled" style="--tint:39,72,168" role="group" aria-roledescription="slide" aria-label="3 of 5">
+          <div class="spot-info">
+            <span class="spot-tag">Unseen Series</span>
+            <h3>Veiled Bloom</h3>
+            <p>“Elegance in silence.” Front &amp; back designs included.</p>
+            <div class="spot-colors"><span class="color-label">Colours</span><div class="swatches"><button class="spot-swatch active" type="button" title="Royal Blue" aria-label="Show Royal Blue" style="background:#1a3fa0;" data-card="veiled" data-i="0"></button><button class="spot-swatch" type="button" title="White" aria-label="Show White" style="background:#fff;" data-card="veiled" data-i="1"></button></div><span class="spot-colorname">Royal Blue</span></div>
+            <div class="spot-price">₹549</div>
+            <div class="spot-actions">
+              <button class="buy-now-btn spot-buy" type="button" data-card="veiled">Buy now</button>
+              <a class="spot-ghost" href="#designs">Browse all designs</a>
+            </div>
+          </div>
+          <div class="spot-art">
+            <figure><img src="veiled_blue_f.png" alt="Veiled Bloom front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="veiled_blue_b.png" alt="Veiled Bloom back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+          </div>
+        </article>
+        <article class="spot-slide" data-card="grace" style="--tint:181,31,46" role="group" aria-roledescription="slide" aria-label="4 of 5">
+          <div class="spot-info">
+            <span class="spot-tag">Grace Drop</span>
+            <h3>Grace</h3>
+            <p>New Grace design. Front &amp; back artwork included.</p>
+            <div class="spot-colors"><span class="color-label">Colours</span><div class="swatches"><button class="spot-swatch active" type="button" title="Red" aria-label="Show Red" style="background:#b51f2e;" data-card="grace" data-i="0"></button><button class="spot-swatch" type="button" title="Blue" aria-label="Show Blue" style="background:#88ccff;" data-card="grace" data-i="1"></button><button class="spot-swatch" type="button" title="White" aria-label="Show White" style="background:#fff;" data-card="grace" data-i="2"></button><button class="spot-swatch" type="button" title="Black" aria-label="Show Black" style="background:#111;" data-card="grace" data-i="3"></button></div><span class="spot-colorname">Red</span></div>
+            <div class="spot-price">₹599</div>
+            <div class="spot-actions">
+              <button class="buy-now-btn spot-buy" type="button" data-card="grace">Buy now</button>
+              <a class="spot-ghost" href="#designs">Browse all designs</a>
+            </div>
+          </div>
+          <div class="spot-art">
+            <figure><img src="Grace_red_f.png" alt="Grace front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="Grace_red_b.png" alt="Grace back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+          </div>
+        </article>
+        <article class="spot-slide" data-card="anime" style="--tint:181,31,46" role="group" aria-roledescription="slide" aria-label="5 of 5">
+          <div class="spot-info">
+            <span class="spot-tag">Anime</span>
+            <h3>Anime</h3>
+            <p>Front &amp; back designs included.</p>
+            <div class="spot-colors"><span class="color-label">Colours</span><div class="swatches"><button class="spot-swatch active" type="button" title="Black" aria-label="Show Black" style="background:#111;" data-card="anime" data-i="0"></button><button class="spot-swatch" type="button" title="White" aria-label="Show White" style="background:#fff;" data-card="anime" data-i="1"></button><button class="spot-swatch" type="button" title="Red" aria-label="Show Red" style="background:#b51f2e;" data-card="anime" data-i="2"></button></div><span class="spot-colorname">Black</span></div>
+            <div class="spot-price">₹599</div>
+            <div class="spot-actions">
+              <button class="buy-now-btn spot-buy" type="button" data-card="anime">Buy now</button>
+              <a class="spot-ghost" href="#designs">Browse all designs</a>
+            </div>
+          </div>
+          <div class="spot-art">
+            <figure><img src="anime_b_f.png" alt="Anime front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="anime_b_b.png" alt="Anime back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+          </div>
+        </article>
       </div>
-      <div class="jd-card reveal">
-        <div class="card-media double-view">
-          <img src="Conquer_acid_front.png" alt="Conquer Front" loading="lazy">
-          <img src="Conquer_acid_back.png" alt="Conquer Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Conquer</h3>
-          <p>Pure cotton, acid-washed oversized tee. Front & back designs included.</p>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Conquer Acid Wash','Printed Oversized Tee','599')">🛍️ Buy Now</button>
-        </div>
-      </div>
-      <div class="jd-card reveal">
-        <div class="card-media double-view">
-          <img src="Calm_acid_front.jpeg" alt="Calmness Front" loading="lazy">
-          <img src="Calm_acid_back.jpeg" alt="Calmness Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Calmness</h3>
-          <p>Pure cotton, acid-washed oversized tee. Front & back designs included.</p>
-          <div class="price" style="margin-top:14px;">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Calmness Acid Wash','Printed Oversized Tee','549')">🛍️ Buy Now</button>
-        </div>
-      </div>
-      <div class="jd-card reveal">
-        <div class="card-media double-view">
-          <img src="Spider_acid_front.png" alt="Spider Front" loading="lazy">
-          <img src="Spider_acid_back.png" alt="Spider Back" loading="lazy">
-        </div>
-        <div class="card-body">
-          <h3>Explore Space — Acid Wash</h3>
-          <p>Pure cotton, acid-washed oversized tee. Front & back designs included.</p>
-          <div class="price" style="margin-top:14px;">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Explore Space Acid Wash','Printed Oversized Tee','549')">🛍️ Buy Now</button>
-        </div>
-      </div>
+    </div>
+    <div class="spot-dots" id="spotDots" role="group" aria-label="Choose a drop">
+      <button type="button" class="spot-dot active" data-i="0" aria-label="Explore Space — Acid Wash"><span class="spot-dot-name">Explore Space</span></button>
+      <button type="button" class="spot-dot" data-i="1" aria-label="Unseen"><span class="spot-dot-name">Unseen</span></button>
+      <button type="button" class="spot-dot" data-i="2" aria-label="Veiled Bloom"><span class="spot-dot-name">Veiled Bloom</span></button>
+      <button type="button" class="spot-dot" data-i="3" aria-label="Grace"><span class="spot-dot-name">Grace</span></button>
+      <button type="button" class="spot-dot" data-i="4" aria-label="Anime"><span class="spot-dot-name">Anime</span></button>
     </div>
   </section>
 
-  <!-- UNSEEN SERIES — newest priority launch -->
-  <section class="justdropped-section">
-    <div class="justdropped-header">
-      <div>
-        <span class="justdropped-badge">UNSEEN SERIES</span>
-        <h2 class="section-title" style="margin-top:14px;margin-bottom:0;">UNSEEN COLLECTION</h2>
+  <!-- FINDER: filter + sort -->
+  <section class="finder" id="designs">
+    <div class="finder-head">
+      <span class="section-label">All printed designs</span>
+      <h2 class="section-title" style="margin-bottom:0;">PICK YOUR PRINT</h2>
+    </div>
+    <div class="finder-bar" id="finderBar">
+      <div class="tabs" id="tabs">
+        <span class="tab-glider" id="tabGlider" aria-hidden="true"></span>
+        <button class="tab active" type="button" data-theme="all" aria-pressed="true">All designs<small>12</small></button><button class="tab" type="button" data-theme="anime" aria-pressed="false">Anime<small>5</small></button><button class="tab" type="button" data-theme="art" aria-pressed="false">Art & statement<small>5</small></button><button class="tab" type="button" data-theme="cars" aria-pressed="false">Cars & cartoons<small>2</small></button>
+      </div>
+      <div class="finder-row">
+        <div class="color-filter" role="group" aria-label="Filter by colour">
+          <span class="cf-label">Colour</span>
+          <button class="cf active" type="button" data-color="any" aria-pressed="true">Any</button><button class="cf" type="button" data-color="Black" aria-pressed="false"><i style="background:#111"></i>Black</button><button class="cf" type="button" data-color="White" aria-pressed="false"><i style="background:#fff"></i>White</button><button class="cf" type="button" data-color="Red" aria-pressed="false"><i style="background:#b51f2e"></i>Red</button><button class="cf" type="button" data-color="Blue" aria-pressed="false"><i style="background:#1a3fa0"></i>Blue</button>
+        </div>
+        <label class="sort"><span>Sort</span>
+          <select id="sortSelect">
+            <option value="featured">Featured</option>
+            <option value="low">Price: low to high</option>
+            <option value="high">Price: high to low</option>
+          </select>
+        </label>
       </div>
     </div>
-    <div class="justdropped-grid">
-      <div class="jd-card reveal" data-design="Unseen">
+    <div class="fit-note">
+      <span><strong>Oversized</strong> 240 GSM, drop shoulder</span>
+      <span><strong>Regular</strong> 180 GSM, standard fit</span>
+      <span class="fit-hint">Every design comes in both. You pick fit and size on the next screen.</span>
+    </div>
+    <p class="finder-count" id="finderCount" aria-live="polite">Showing 12 designs</p>
+
+    <div class="tee-grid" id="teeGrid">
+      <article class="tee-card" data-id="explore" data-theme="art" data-price="699" data-colors="" data-order="1" data-design="Explore Space — Acid Wash">
         <div class="card-media double-view">
-          <img src="un_white_f.png" alt="Unseen White Front" loading="lazy">
-          <img src="un_white_b.png" alt="Unseen White Back" loading="lazy">
+          <div class="slide-track">
+            <img src="explore_space_front.jpg" alt="Explore Space — Acid Wash front" loading="lazy">
+            <img src="explore_space_back.jpg" alt="Explore Space — Acid Wash back" loading="lazy">
+          </div>
+          <span class="card-badge">Acid Wash</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>Explore Space — Acid Wash</h3>
+          <p class="card-blurb">Pure cotton, acid-washed oversized tee. Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Finish</span><span class="selected-color">Acid Wash</span></div>
+          <div class="buy-row">
+            <div class="price">₹699</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Explore Space Acid Wash','Printed Oversized Tee','699')">Buy now</button>
+          </div>
+        </div>
+      </article>
+      <article class="tee-card" data-id="unseen" data-theme="art" data-price="549" data-colors="Black,Blue,White" data-order="2" data-design="Unseen">
+        <div class="card-media double-view">
+          <div class="slide-track">
+            <img src="un_white_f.png" alt="Unseen White front" loading="lazy">
+            <img src="un_white_b.png" alt="Unseen White back" loading="lazy">
+          </div>
+          <span class="card-badge">Unseen Series</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Unseen</h3>
-          <p>"Covered, but not contained." Front & back designs included.</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="un_white_f.png" data-back="un_white_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Royal Blue" aria-label="View Royal Blue" style="background:#1a3fa0;" data-front="un_blue_f.png" data-back="un_blue_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="un_black_f.png" data-back="un_black_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">White</span>
+          <p class="card-blurb">“Covered, but not contained.” Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="un_white_f.png" data-back="un_white_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Royal Blue" aria-label="View Royal Blue" style="background:#1a3fa0;" data-front="un_blue_f.png" data-back="un_blue_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="un_black_f.png" data-back="un_black_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">White</span></div>
+          <div class="buy-row">
+            <div class="price">₹549</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Unseen','Printed T-Shirt','549')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Unseen','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
-      </div>
-      <div class="jd-card reveal reveal-delay-1" data-design="Veiled">
+      </article>
+      <article class="tee-card" data-id="veiled" data-theme="art" data-price="549" data-colors="Blue,White" data-order="3" data-design="Veiled Bloom">
         <div class="card-media double-view">
-          <img src="veiled_blue_f.png" alt="Veiled Bloom Royal Blue Front" loading="lazy">
-          <img src="veiled_blue_b.png" alt="Veiled Bloom Royal Blue Back" loading="lazy">
+          <div class="slide-track">
+            <img src="veiled_blue_f.png" alt="Veiled Bloom Royal Blue front" loading="lazy">
+            <img src="veiled_blue_b.png" alt="Veiled Bloom Royal Blue back" loading="lazy">
+          </div>
+          <span class="card-badge">Unseen Series</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Veiled Bloom</h3>
-          <p>"Elegance in silence." Front & back designs included.</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="Royal Blue" aria-label="View Royal Blue" style="background:#1a3fa0;" data-front="veiled_blue_f.png" data-back="veiled_blue_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="veiled_black_f.png" data-back="veiled_black_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">Royal Blue</span>
+          <p class="card-blurb">“Elegance in silence.” Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Royal Blue" aria-label="View Royal Blue" style="background:#1a3fa0;" data-front="veiled_blue_f.png" data-back="veiled_blue_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="veiled_black_f.png" data-back="veiled_black_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">Royal Blue</span></div>
+          <div class="buy-row">
+            <div class="price">₹549</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Veiled Bloom','Printed T-Shirt','549')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Veiled Bloom','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NEW GRACE DROP -->
-  <section class="justdropped-section">
-    <div class="justdropped-header">
-      <div>
-        <span class="justdropped-badge">New Drop</span>
-        <h2 class="section-title" style="margin-top:14px;margin-bottom:0;">GRACE COLLECTION</h2>
-      </div>
-    </div>
-    <div class="justdropped-grid">
-      <div class="jd-card reveal" data-design="Grace">
+      </article>
+      <article class="tee-card" data-id="grace" data-theme="art" data-price="599" data-colors="Black,Blue,Red,White" data-order="4" data-design="Grace">
         <div class="card-media double-view">
-          <img src="Grace_red_f.png" alt="Grace Red Front" loading="lazy">
-          <img src="Grace_red_b.png" alt="Grace Red Back" loading="lazy">
+          <div class="slide-track">
+            <img src="Grace_red_f.png" alt="Grace Red front" loading="lazy">
+            <img src="Grace_red_b.png" alt="Grace Red back" loading="lazy">
+          </div>
+          <span class="card-badge">Grace Drop</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Grace</h3>
-          <p>New Grace design — front & back artwork included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Grace_red_f.png" data-back="Grace_red_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Blue" aria-label="View Blue" style="background:#8cf;" data-front="Grace_blue_f.png" data-back="Grace_blue_b.png" onclick="selectColor(this)"></button>
-              <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Grace_white_f.png" data-back="Grace_white_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Grace_black_f.jpeg" data-back="Grace_black_b.jpeg" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">Red</span>
+          <p class="card-blurb">New Grace design. Front &amp; back artwork included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Grace_red_f.png" data-back="Grace_red_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Blue" aria-label="View Blue" style="background:#88ccff;" data-front="Grace_blue_f.png" data-back="Grace_blue_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Grace_white_f.png" data-back="Grace_white_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Grace_black_f.jpeg" data-back="Grace_black_b.jpeg" onclick="selectColor(this)"></button></div><span class="selected-color">Red</span></div>
+          <div class="buy-row">
+            <div class="price">₹599</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Grace','Printed T-Shirt','599')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Grace','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONSOLIDATED ANIME COLLECTION — one card per design, colours selectable -->
-  <section class="justdropped-section">
-    <div class="justdropped-header">
-      <div>
-        <span class="justdropped-badge">Just Dropped</span>
-        <h2 class="section-title" style="margin-top:14px;margin-bottom:0;">ANIME COLLECTION</h2>
-      </div>
-    </div>
-    <div class="justdropped-grid">
-      <div class="jd-card reveal" data-design="Anime">
+      </article>
+      <article class="tee-card" data-id="anime" data-theme="anime" data-price="599" data-colors="Black,Red,White" data-order="5" data-design="Anime">
         <div class="card-media double-view">
-          <img src="anime_b_f.png" alt="Anime Black Front" loading="lazy">
-          <img src="anime_b_b.png" alt="Anime Black Back" loading="lazy">
+          <div class="slide-track">
+            <img src="anime_b_f.png" alt="Anime Black front" loading="lazy">
+            <img src="anime_b_b.png" alt="Anime Black back" loading="lazy">
+          </div>
+          <span class="card-badge">Anime</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Anime</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="anime_b_f.png" data-back="anime_b_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="anime_w_f.png" data-back="anime_w_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="anime_r_f.png" data-back="anime_r_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">Black</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="anime_b_f.png" data-back="anime_b_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="anime_w_f.png" data-back="anime_w_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="anime_r_f.png" data-back="anime_r_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">Black</span></div>
+          <div class="buy-row">
+            <div class="price">₹599</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Anime','Printed T-Shirt','599')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Anime','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
-      </div>
-      <div class="jd-card reveal reveal-delay-1" data-design="Naruto">
+      </article>
+      <article class="tee-card" data-id="naruto" data-theme="anime" data-price="599" data-colors="Black,Red,White" data-order="6" data-design="Naruto">
         <div class="card-media double-view">
-          <img src="naruto_w_f.png" alt="Naruto White Front" loading="lazy">
-          <img src="naruto_w_b.png" alt="Naruto White Back" loading="lazy">
+          <div class="slide-track">
+            <img src="naruto_w_f.png" alt="Naruto White front" loading="lazy">
+            <img src="naruto_w_b.png" alt="Naruto White back" loading="lazy">
+          </div>
+          <span class="card-badge">Anime</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Naruto</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="naruto_w_f.png" data-back="naruto_w_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="naruto_b_f.png" data-back="naruto_b_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="naruto_r_f.png" data-back="naruto_r_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">White</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="naruto_w_f.png" data-back="naruto_w_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="naruto_b_f.png" data-back="naruto_b_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="naruto_r_f.png" data-back="naruto_r_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">White</span></div>
+          <div class="buy-row">
+            <div class="price">₹599</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Naruto','Printed T-Shirt','599')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Naruto','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
-      </div>
-      <div class="jd-card reveal reveal-delay-2" data-design="One Piece">
+      </article>
+      <article class="tee-card" data-id="onepiece" data-theme="anime" data-price="599" data-colors="Black,Red,White" data-order="7" data-design="One Piece">
         <div class="card-media double-view">
-          <img src="one_w_f.png" alt="One Piece White Front" loading="lazy">
-          <img src="one_w_b.png" alt="One Piece White Back" loading="lazy">
+          <div class="slide-track">
+            <img src="one_w_f.png" alt="One Piece White front" loading="lazy">
+            <img src="one_w_b.png" alt="One Piece White back" loading="lazy">
+          </div>
+          <span class="card-badge">Anime</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>One Piece</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="one_w_f.png" data-back="one_w_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="one_b_f.png" data-back="one_b_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="one_r_f.png" data-back="one_r_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">White</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="one_w_f.png" data-back="one_w_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="one_b_f.png" data-back="one_b_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="one_r_f.png" data-back="one_r_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">White</span></div>
+          <div class="buy-row">
+            <div class="price">₹599</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'One Piece','Printed T-Shirt','599')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'One Piece','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
-      </div>
-      <div class="jd-card reveal reveal-delay-3" data-design="Tanjiro">
+      </article>
+      <article class="tee-card" data-id="tanjiro" data-theme="anime" data-price="599" data-colors="Black,Red,White" data-order="8" data-design="Tanjiro">
         <div class="card-media double-view">
-          <img src="tanjiro_w_f.png" alt="Tanjiro White Front" loading="lazy">
-          <img src="tanjiro_w_b.png" alt="Tanjiro White Back" loading="lazy">
+          <div class="slide-track">
+            <img src="tanjiro_w_f.png" alt="Tanjiro White front" loading="lazy">
+            <img src="tanjiro_w_b.png" alt="Tanjiro White back" loading="lazy">
+          </div>
+          <span class="card-badge">Anime</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Tanjiro</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="tanjiro_w_f.png" data-back="tanjiro_w_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="tanjiro_b_f.png" data-back="tanjiro_b_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="tanjiro_r_f.png" data-back="tanjiro_r_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">White</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="tanjiro_w_f.png" data-back="tanjiro_w_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="tanjiro_b_f.png" data-back="tanjiro_b_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="tanjiro_r_f.png" data-back="tanjiro_r_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">White</span></div>
+          <div class="buy-row">
+            <div class="price">₹599</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Tanjiro','Printed T-Shirt','599')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹599</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Tanjiro','Printed T-Shirt','599')">🛍️ Buy Now</button>
         </div>
-      </div>
-      <div class="drop-card reveal reveal-delay-1" data-design="Luffy">
+      </article>
+      <article class="tee-card" data-id="luffy" data-theme="anime" data-price="549" data-colors="Black,Red,White" data-order="9" data-design="Luffy">
         <div class="card-media double-view">
-          <img src="luffy_b_f.png" alt="Luffy Black Front" loading="lazy">
-          <img src="luffy_b_b.png" alt="Luffy Black Back" loading="lazy">
+          <div class="slide-track">
+            <img src="luffy_b_f.png" alt="Luffy Black front" loading="lazy">
+            <img src="luffy_b_b.png" alt="Luffy Black back" loading="lazy">
+          </div>
+          <span class="card-badge">Anime</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Luffy</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="luffy_b_f.png" data-back="luffy_b_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="luffy_r_f.png" data-back="luffy_r_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="luffy_w_f.png" data-back="luffy_w_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">Black</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="luffy_b_f.png" data-back="luffy_b_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="luffy_r_f.png" data-back="luffy_r_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="luffy_w_f.png" data-back="luffy_w_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">Black</span></div>
+          <div class="buy-row">
+            <div class="price">₹549</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Luffy','Printed T-Shirt','549')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Luffy','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="drops-section">
-    <div class="drops-header">
-      <div class="drops-header-left">
-        <span class="section-label">🔥 Just Landed</span>
-        <h2 class="section-title">NEW ARRIVALS; GRAPHICS THAT SPEAK</h2>
-        <h4>ALL THE NEW ARRIVALS ARE AVAILABLE IN REGULAR FIT AS WELL AS OVERSIZED, CHOOSE THE SIZE PROPERLY</h4>
-      </div>
-    </div>
-
-    <div class="drops-grid">
-      <div class="drop-card reveal" data-design="Justice">
+      </article>
+      <article class="tee-card" data-id="justice" data-theme="art" data-price="549" data-colors="Red,White" data-order="10" data-design="Justice">
         <div class="card-media double-view">
-          <img src="Justice_r_f.png" alt="Justice Red Front" loading="lazy">
-          <img src="Justice_r_b.png" alt="Justice Red Back" loading="lazy">
+          <div class="slide-track">
+            <img src="Justice_r_f.png" alt="Justice Red front" loading="lazy">
+            <img src="Justice_r_b.png" alt="Justice Red back" loading="lazy">
+          </div>
+          <span class="card-badge">New Arrival</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Justice</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Justice_r_f.png" data-back="Justice_r_b.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Justice_w_f.png" data-back="Justice_w_b.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">Red</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Justice_r_f.png" data-back="Justice_r_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Justice_w_f.png" data-back="Justice_w_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">Red</span></div>
+          <div class="buy-row">
+            <div class="price">₹549</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Justice','Printed T-Shirt','549')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Justice','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
-      </div>
-      <div class="drop-card reveal reveal-delay-1" data-design="Porsche">
+      </article>
+      <article class="tee-card" data-id="porsche" data-theme="cars" data-price="549" data-colors="Black,Red" data-order="11" data-design="Porsche">
         <div class="card-media double-view">
-          <img src="Porsche_black_front.png" alt="Porsche Black Front" loading="lazy">
-          <img src="Porsche_black_back.png" alt="Porsche Black Back" loading="lazy">
+          <div class="slide-track">
+            <img src="Porsche_black_front.png" alt="Porsche Black front" loading="lazy">
+            <img src="Porsche_black_back.png" alt="Porsche Black back" loading="lazy">
+          </div>
+          <span class="card-badge">New Arrival</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Porsche</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Porsche_black_front.png" data-back="Porsche_black_back.png" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Porsche_red_front.png" data-back="Porsche_red_back.png" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">Black</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Porsche_black_front.png" data-back="Porsche_black_back.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="Porsche_red_front.png" data-back="Porsche_red_back.png" onclick="selectColor(this)"></button></div><span class="selected-color">Black</span></div>
+          <div class="buy-row">
+            <div class="price">₹549</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Porsche','Printed T-Shirt','549')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹549</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Porsche','Printed T-Shirt','549')">🛍️ Buy Now</button>
         </div>
-      </div>
-      <div class="drop-card reveal reveal-delay-2" data-design="Kungfu Panda">
+      </article>
+      <article class="tee-card" data-id="panda" data-theme="cars" data-price="649" data-colors="Black,White" data-order="12" data-design="Kungfu Panda">
         <div class="card-media double-view">
-          <img src="Kufu_white.jpeg" alt="Kungfu Panda White Front" loading="lazy">
-          <img src="Kufu_black.jpeg" alt="Kungfu Panda White Back" loading="lazy">
+          <div class="slide-track">
+            <img src="Kufu_white.jpeg" alt="Kungfu Panda White front" loading="lazy">
+            <img src="Kufu_black.jpeg" alt="Kungfu Panda White back" loading="lazy">
+          </div>
+          <span class="card-badge">New Arrival</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
         </div>
         <div class="card-body">
           <h3>Kungfu Panda</h3>
-          <p>Front & Back Designs Included</p>
-          <div class="color-row" style="margin-top:0;padding-top:0;border-top:none;">
-            <span class="color-label">Available colours:</span>
-            <div class="swatches">
-                <button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Kufu_white.jpeg" data-back="Kufu_black.jpeg" onclick="selectColor(this)"></button>
-                <button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Kufu_black.jpeg" data-back="Kufu_white.jpeg" onclick="selectColor(this)"></button>
-            </div>
-            <span class="selected-color">White</span>
+          <p class="card-blurb">Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="Kufu_white.jpeg" data-back="Kufu_black.jpeg" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Kufu_black.jpeg" data-back="Kufu_white.jpeg" onclick="selectColor(this)"></button></div><span class="selected-color">White</span></div>
+          <div class="buy-row">
+            <div class="price">₹649</div>
+            <button class="buy-now-btn" type="button" onclick="buyNow(this,'Kungfu Panda','Printed T-Shirt','649')">Buy now</button>
           </div>
-          <div class="price" style="margin-top:14px;">₹649</div>
-          <button class="buy-now-btn" onclick="buyNow(this,'Kungfu Panda','Printed T-Shirt','649')">🛍️ Buy Now</button>
         </div>
-      </div>
+      </article>
+    </div>
+
+    <div class="tee-empty" id="teeEmpty" hidden>
+      <p>No design matches that colour and style yet.</p>
+      <button type="button" class="buy-now-btn" id="resetFilters">Show all designs</button>
     </div>
   </section>
 
@@ -745,110 +827,242 @@
     menuBackdrop.addEventListener('click', closeMenu);
     mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
 
-    // MOBILE DOUBLE-VIEW SLIDER — shows front image first, auto-slides to back, tap to switch manually
-    function initDoubleViewSliders() {
-      const isMobileWidth = window.innerWidth <= 768;
-      document.querySelectorAll('.card-media.double-view').forEach(container => {
-        const imgs = container.querySelectorAll('img');
-        if (imgs.length < 2) return;
 
-        if (!isMobileWidth) {
-          // Desktop/tablet: reset to normal side-by-side view, stop any slider
-          if (container._sliderTimer) { clearInterval(container._sliderTimer); container._sliderTimer = null; }
-          imgs.forEach(img => img.classList.remove('slide-active'));
-          const existingDots = container.querySelector('.double-view-dots');
-          if (existingDots) existingDots.remove();
-          container.dataset.sliderInit = '';
-          return;
-        }
+    // ===== shared helpers =====
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const colourGroup = t => /blue/i.test(t) ? 'Blue' : t;
 
-        if (container.dataset.sliderInit === 'true') return; // already set up for mobile
-
-        imgs[0].classList.add('slide-active'); // front shown first
-        let idx = 0;
-
-        const dots = document.createElement('div');
-        dots.className = 'double-view-dots';
-        imgs.forEach((_, i) => {
-          const dot = document.createElement('span');
-          if (i === 0) dot.classList.add('active');
-          dots.appendChild(dot);
-        });
-        container.appendChild(dots);
-
-        function show(i) {
-          imgs.forEach((img, j) => img.classList.toggle('slide-active', j === i));
-          dots.querySelectorAll('span').forEach((d, j) => d.classList.toggle('active', j === i));
-        }
-
-        function startAutoSlide() {
-          if (container._sliderTimer) clearInterval(container._sliderTimer);
-          container._sliderTimer = setInterval(() => {
-            idx = (idx + 1) % imgs.length;
-            show(idx);
-          }, 2600);
-        }
-        startAutoSlide();
-
-        // Tap/click to manually advance
-        container.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          idx = (idx + 1) % imgs.length;
-          show(idx);
-          startAutoSlide(); // reset timer after manual tap
-        });
-
-        container.dataset.sliderInit = 'true';
-      });
-    }
-    initDoubleViewSliders();
-    window.addEventListener('resize', initDoubleViewSliders);
-
+    // ===== COLOUR SWATCH (grid card) =====
     function selectColor(el) {
       const row = el.closest('.color-row');
-      const card = el.closest('.product-card, .drop-card, .jd-card');
+      const card = el.closest('.tee-card');
       if (!row || !card) return;
-
       row.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
       el.classList.add('active');
-
       const color = el.getAttribute('title') || '';
       const label = row.querySelector('.selected-color');
       if (label) label.textContent = color;
-
       const images = card.querySelectorAll('.card-media img');
-      const front = el.dataset.front;
-      const back = el.dataset.back;
-      if (images[0] && front) {
-        images[0].src = front;
-        images[0].alt = `${card.dataset.design || 'Product'} ${color} Front`;
-      }
-      if (images[1] && back) {
-        images[1].src = back;
-        images[1].alt = `${card.dataset.design || 'Product'} ${color} Back`;
-      }
-
-      // Return mobile front/back slider to the front image after changing colour.
-      const media = card.querySelector('.card-media.double-view');
-      if (media && window.innerWidth <= 768) {
-        images.forEach((img, i) => img.classList.toggle('slide-active', i === 0));
-        media.querySelectorAll('.double-view-dots span').forEach((dot, i) => dot.classList.toggle('active', i === 0));
-      }
+      if (images[0] && el.dataset.front) { images[0].src = el.dataset.front; images[0].alt = `${card.dataset.design} ${color} front`; }
+      if (images[1] && el.dataset.back)  { images[1].src = el.dataset.back;  images[1].alt = `${card.dataset.design} ${color} back`; }
+      syncSlide(card.dataset.id);
     }
 
-    // BUY NOW — opens shared product details page with current colour and images
+    // ===== BUY NOW: opens the shared product page with current colour + images =====
     function buyNow(btn, productName, typeName, price) {
-      const card = btn.closest('.product-card, .drop-card, .jd-card');
+      const card = btn.closest('.tee-card');
       const colorEl = card ? card.querySelector('.selected-color') : null;
-      const activeSwatch = card ? card.querySelector('.swatch.active') : null;
-      const color = colorEl ? colorEl.textContent.trim() : (activeSwatch ? activeSwatch.title : 'Default');
-      const images = card ? [...card.querySelectorAll('.card-media img')].filter(img => img.offsetParent !== null || img.src) : [];
+      const color = colorEl ? colorEl.textContent.trim() : 'Default';
+      const images = card ? [...card.querySelectorAll('.card-media img')] : [];
       const params = new URLSearchParams({ product: productName, type: typeName, color: color, price: price });
       if (images[0]) params.set('image', images[0].getAttribute('src'));
       if (images[1]) params.set('image2', images[1].getAttribute('src'));
       window.location.href = 'product.html?' + params.toString();
     }
+
+    // ===== CARD FRONT / BACK SLIDER =====
+    function setView(media, view) {
+      media.classList.toggle('show-back', view === 'back');
+      const toggle = media.querySelector('.view-toggle');
+      if (!toggle) return;
+      toggle.dataset.view = view;
+      toggle.querySelectorAll('.vt-btn').forEach(b => {
+        const on = b.dataset.view === view;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', on);
+      });
+    }
+    const touchPeek = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const media = entry.target;
+        clearInterval(media._peek);
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          media._peek = setInterval(() => {
+            if (Date.now() < (media._holdUntil || 0)) return;
+            setView(media, media.classList.contains('show-back') ? 'front' : 'back');
+          }, 3200);
+        }
+      });
+    }, { threshold: [0, 0.6, 1] });
+
+    document.querySelectorAll('.tee-card .card-media').forEach(media => {
+      media.querySelectorAll('.vt-btn').forEach(b => b.addEventListener('click', e => {
+        e.stopPropagation();
+        setView(media, b.dataset.view);
+        media._holdUntil = Date.now() + 9000;
+      }));
+      if (finePointer) {
+        media.addEventListener('mouseenter', () => { media._hover = setTimeout(() => setView(media, 'back'), 250); });
+        media.addEventListener('mouseleave', () => { clearTimeout(media._hover); setView(media, 'front'); });
+      } else if (!reduceMotion) {
+        touchPeek.observe(media);
+      }
+      // image area opens the product page, same as Buy now
+      const track = media.querySelector('.slide-track');
+      track.setAttribute('role', 'link');
+      track.setAttribute('tabindex', '0');
+      track.setAttribute('aria-label', 'View product details');
+      const open = () => { const b = media.closest('.tee-card').querySelector('.buy-now-btn'); if (b) b.click(); };
+      track.addEventListener('click', open);
+      track.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+
+    // ===== SPOTLIGHT (sliding showcase) =====
+    const spot = document.getElementById('unseenDrop');
+    const spotViewport = document.getElementById('spotViewport');
+    const spotTrack = document.getElementById('spotTrack');
+    const slides = [...spotTrack.querySelectorAll('.spot-slide')];
+    const dots = [...document.querySelectorAll('.spot-dot')];
+    let spotIdx = 0;
+
+    function syncSlide(id) {
+      const slide = slides.find(s => s.dataset.card === id);
+      const card = document.querySelector(`.tee-card[data-id="${id}"]`);
+      if (!slide || !card) return;
+      const cardImgs = card.querySelectorAll('.card-media img');
+      const slideImgs = slide.querySelectorAll('.spot-art img');
+      slideImgs.forEach((img, i) => { if (cardImgs[i]) { img.src = cardImgs[i].getAttribute('src'); img.alt = cardImgs[i].alt; } });
+      const swatches = [...card.querySelectorAll('.swatch')];
+      const at = swatches.findIndex(s => s.classList.contains('active'));
+      slide.querySelectorAll('.spot-swatch').forEach((s, i) => s.classList.toggle('active', i === at));
+      const name = slide.querySelector('.spot-colorname');
+      if (name && swatches[at]) name.textContent = swatches[at].title;
+    }
+
+    function goSpot(i) {
+      spotIdx = (i + slides.length) % slides.length;
+      spotTrack.style.transform = `translateX(${-spotIdx * 100}%)`;
+      slides.forEach((s, k) => { s.classList.toggle('is-active', k === spotIdx); if (k === spotIdx) s.removeAttribute('inert'); else s.setAttribute('inert', ''); });
+      dots.forEach((d, k) => {
+        d.classList.remove('active');
+        if (k === spotIdx) { void d.offsetWidth; d.classList.add('active'); d.setAttribute('aria-current', 'true'); }
+        else d.removeAttribute('aria-current');
+      });
+    }
+    document.getElementById('spotPrev').addEventListener('click', () => goSpot(spotIdx - 1));
+    document.getElementById('spotNext').addEventListener('click', () => goSpot(spotIdx + 1));
+    dots.forEach(d => d.addEventListener('click', () => goSpot(Number(d.dataset.i))));
+    // autoplay is driven by the progress fill finishing
+    document.getElementById('spotDots').addEventListener('animationend', e => { if (e.animationName === 'spotFill') goSpot(spotIdx + 1); });
+
+    const pause = on => spot.classList.toggle('is-paused', on);
+    spotViewport.addEventListener('mouseenter', () => pause(true));
+    spotViewport.addEventListener('mouseleave', () => pause(false));
+    spotViewport.addEventListener('focusin', () => pause(true));
+    spotViewport.addEventListener('focusout', () => pause(false));
+    document.addEventListener('visibilitychange', () => pause(document.hidden));
+    new IntersectionObserver(es => es.forEach(e => pause(!e.isIntersecting)), { threshold: 0.3 }).observe(spot);
+    spotViewport.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); goSpot(spotIdx + 1); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); goSpot(spotIdx - 1); }
+    });
+
+    spotTrack.addEventListener('click', e => {
+      const sw = e.target.closest('.spot-swatch');
+      if (sw) {
+        const card = document.querySelector(`.tee-card[data-id="${sw.dataset.card}"]`);
+        const target = card && card.querySelectorAll('.swatch')[Number(sw.dataset.i)];
+        if (target) selectColor(target);
+      }
+      const buy = e.target.closest('.spot-buy');
+      if (buy) { const card = document.querySelector(`.tee-card[data-id="${buy.dataset.card}"]`); if (card) card.querySelector('.buy-now-btn').click(); }
+    });
+
+    // drag / swipe
+    let dragX = null, dragDX = 0;
+    spotViewport.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (e.target.closest('button, a')) return;
+      dragX = e.clientX; dragDX = 0;
+    });
+    window.addEventListener('pointermove', e => {
+      if (dragX === null) return;
+      dragDX = e.clientX - dragX;
+      if (Math.abs(dragDX) > 6) {
+        spotViewport.classList.add('dragging'); pause(true);
+        spotTrack.style.transform = `translateX(calc(${-spotIdx * 100}% + ${dragDX}px))`;
+      }
+    });
+    function endDrag() {
+      if (dragX === null) return;
+      const moved = dragDX;
+      dragX = null;
+      spotViewport.classList.remove('dragging');
+      pause(false);
+      goSpot(Math.abs(moved) > 60 ? spotIdx + (moved < 0 ? 1 : -1) : spotIdx);
+    }
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+
+    // links from the home page: printed.html#unseenDrop / #veiledBloom
+    goSpot(location.hash === '#veiledBloom' ? 2 : 0);
+
+    // ===== FINDER: filter, sort, sliding tab =====
+    const grid = document.getElementById('teeGrid');
+    const cards = [...grid.querySelectorAll('.tee-card')];
+    const tabsEl = document.getElementById('tabs');
+    const glider = document.getElementById('tabGlider');
+    const state = { theme: 'all', color: 'any', sort: 'featured' };
+
+    function moveGlider() {
+      const a = tabsEl.querySelector('.tab.active');
+      if (!a) return;
+      glider.style.width = a.offsetWidth + 'px';
+      glider.style.transform = `translateX(${a.offsetLeft}px)`;
+    }
+
+    function applyFilters(animate = true) {
+      const visible = [];
+      cards.forEach(card => {
+        const colors = card.dataset.colors ? card.dataset.colors.split(',') : [];
+        const ok = (state.theme === 'all' || card.dataset.theme === state.theme) &&
+                   (state.color === 'any' || colors.includes(state.color));
+        card.hidden = !ok;
+        if (ok) visible.push(card);
+        // show the chosen colour on each matching card; Any restores the default
+        const swatches = [...card.querySelectorAll('.swatch')];
+        if (swatches.length) {
+          const want = state.color === 'any'
+            ? swatches.find(s => s.hasAttribute('data-default'))
+            : swatches.find(s => colourGroup(s.title) === state.color);
+          if (want && !want.classList.contains('active')) selectColor(want);
+        }
+      });
+      const key = { featured: c => Number(c.dataset.order), low: c => Number(c.dataset.price), high: c => -Number(c.dataset.price) }[state.sort];
+      visible.sort((a, b) => key(a) - key(b) || Number(a.dataset.order) - Number(b.dataset.order));
+      cards.filter(c => c.hidden).forEach(c => grid.appendChild(c));
+      visible.forEach((c, i) => {
+        grid.insertBefore(c, grid.querySelector('.tee-card[hidden]'));
+        c.classList.remove('enter');
+        if (animate && !reduceMotion) { c.style.setProperty('--i', Math.min(i, 8)); void c.offsetWidth; c.classList.add('enter'); }
+      });
+      document.getElementById('finderCount').textContent = `Showing ${visible.length} of ${cards.length} designs`;
+      document.getElementById('teeEmpty').hidden = visible.length > 0;
+    }
+
+    tabsEl.addEventListener('click', e => {
+      const t = e.target.closest('.tab'); if (!t) return;
+      tabsEl.querySelectorAll('.tab').forEach(b => { const on = b === t; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+      state.theme = t.dataset.theme; moveGlider(); applyFilters();
+    });
+    document.querySelector('.color-filter').addEventListener('click', e => {
+      const b = e.target.closest('.cf'); if (!b) return;
+      document.querySelectorAll('.cf').forEach(x => { const on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
+      state.color = b.dataset.color; applyFilters();
+    });
+    document.getElementById('sortSelect').addEventListener('change', e => { state.sort = e.target.value; applyFilters(); });
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      state.theme = 'all'; state.color = 'any'; state.sort = 'featured';
+      document.getElementById('sortSelect').value = 'featured';
+      tabsEl.querySelectorAll('.tab').forEach(b => { const on = b.dataset.theme === 'all'; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+      document.querySelectorAll('.cf').forEach(x => { const on = x.dataset.color === 'any'; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
+      moveGlider(); applyFilters();
+    });
+    moveGlider();
+    window.addEventListener('load', moveGlider);
+    window.addEventListener('resize', moveGlider);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveGlider);
 
     const cursor = document.getElementById('cursor');
     const cursorRing = document.getElementById('cursorRing');
@@ -864,30 +1078,6 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
   
-
-    // Product image/media click -> same product-details page as Buy Now.
-    document.querySelectorAll('.product-card .card-media, .drop-card .card-media, .jd-card .card-media').forEach(media => {
-      media.setAttribute('role', 'link');
-      media.setAttribute('tabindex', '0');
-      media.setAttribute('aria-label', 'View product details');
-
-      const openDetails = () => {
-        const card = media.closest('.product-card, .drop-card, .jd-card');
-        const button = card && card.querySelector('.buy-now-btn');
-        if (button) button.click();
-      };
-
-      media.addEventListener('click', event => {
-        if (event.target.closest('.swatch, button, a')) return;
-        openDetails();
-      });
-      media.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          openDetails();
-        }
-      });
-    });
 
 </script>
 </body>

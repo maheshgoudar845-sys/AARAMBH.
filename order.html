@@ -813,8 +813,8 @@
       if (appliedCoupon === 'NITG10') {
         candidates.push({ label: 'Coupon NITG10 (10% off)', percent: 10 });
       }
-      if (appliedCoupon === 'UNSEEN10') {
-        candidates.push({ label: 'Coupon UNSEEN10 (10% off)', percent: 10 });
+      if (appliedCoupon === 'FIRSTDROP10') {
+        candidates.push({ label: 'Coupon FIRSTDROP10 (10% off)', percent: 10 });
       }
       if (!candidates.length) return { label: '', percent: 0, amount: 0 };
       candidates.sort((a, b) => b.percent - a.percent);
@@ -993,7 +993,11 @@
     const applyCouponBtn = document.getElementById('applyCouponBtn');
     const couponStatus = document.getElementById('couponStatus');
     const couponStatusText = document.getElementById('couponStatusText');
-    const VALID_COUPONS = ['NITG10', 'UNSEEN10'];
+    const VALID_COUPONS = ['NITG10', 'FIRSTDROP10'];
+    const FIRST_ORDER_KEY = 'arambhFirstOrderDone';
+    function hasOrderedBefore() {
+      try { return localStorage.getItem(FIRST_ORDER_KEY) === '1'; } catch (e) { return false; }
+    }
 
     applyCouponBtn.addEventListener('click', () => {
       const code = couponCodeInput.value.trim().toUpperCase();
@@ -1002,6 +1006,10 @@
         appliedCoupon = '';
         couponStatus.className = 'pincode-status show error';
         couponStatusText.textContent = 'Enter a code first.';
+      } else if (code === 'FIRSTDROP10' && hasOrderedBefore()) {
+        appliedCoupon = '';
+        couponStatus.className = 'pincode-status show error';
+        couponStatusText.textContent = 'FIRSTDROP10 is only for first-time buyers.';
       } else if (VALID_COUPONS.includes(code)) {
         appliedCoupon = code;
         couponCodeInput.value = code;
@@ -1337,6 +1345,7 @@
         if (cartMode) {
           localStorage.removeItem(CART_KEY);
         }
+        try { localStorage.setItem(FIRST_ORDER_KEY, '1'); } catch (e) {}
 
         form.style.display = 'none';
         document.getElementById('successOverlay').classList.add('show');

@@ -59,10 +59,6 @@
   .option-label{font-size:.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;font-weight:600;}
   .swatches{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
   .selected-option{color:var(--accent2);font-size:.82rem;margin-bottom:20px;}
-  .fit-options{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-  .fit-btn{padding:11px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:600;transition:.2s;}
-  .fit-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .fit-help{color:var(--muted);font-size:.82rem;line-height:1.45;margin-bottom:22px;}
   .swatch{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid var(--line);position:relative;transition:transform .25s var(--ease),box-shadow .25s;}
   .swatch:hover{transform:scale(1.15);}
   .swatch.active{border-color:var(--text);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent);transform:scale(1.08);}
@@ -222,15 +218,6 @@
     <div class="swatches" id="swatches"></div>
     <div class="selected-option" id="selectedColorLabel"></div>
 
-    <div id="fitSelectorWrap" style="display:none;">
-      <div class="option-label">T-shirt type</div>
-      <div class="fit-options">
-        <button type="button" class="fit-btn active" data-fit="Oversized">Oversized — 240 GSM</button>
-        <button type="button" class="fit-btn" data-fit="Regular">Regular — 180 GSM</button>
-      </div>
-      <p class="fit-help">Printed T-shirts are supplied in oversized fit by default. Select Regular when you prefer a standard fit.</p>
-    </div>
-
     <div class="size-head">
       <div class="option-label" style="margin:0;">Size</div>
       <button class="size-chart-link" id="openChart">Size Chart</button>
@@ -346,6 +333,7 @@
   const isPrinted = typeKey.includes('printed');
   const isOversized = typeKey === 'oversized';
   const isPolo = typeKey === 'polo';
+  /* Printed tees are oversized only; there is no regular-fit option. */
   let selectedFit = isPrinted ? 'Oversized' : (isOversized ? 'Oversized' : 'Regular');
   let selectedColor = productData.color;
   let selectedImages = [productData.image, productData.image2].filter(Boolean);
@@ -399,7 +387,6 @@
   selectedImages = [productData.image || matchingVariant.image, productData.image2 || matchingVariant.image2].filter(Boolean);
 
   function currentSpecs(){
-    if(isPrinted && selectedFit === 'Regular') return {material:'100% Pure Cotton',gsm:'180 GSM',fit:'Regular Fit',description:'Pure-cotton printed T-shirt in a comfortable regular fit.'};
     if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
     if(isPolo) return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
     if(isOversized) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
@@ -409,7 +396,6 @@
   function updateSizeChart(){
     const img = $('sizeChartImage'), cap = $('chartCaption');
     if(isPolo){ img.src='polo_size_chart.png'; cap.textContent='Polo T-shirt size chart'; }
-    else if(isPrinted && selectedFit === 'Regular'){ img.src='regular_size_chart.png'; cap.textContent='Regular-fit 180 GSM printed T-shirt size chart'; }
     else { img.src='oversized_chart.png'; cap.textContent = isPrinted ? 'Oversized 240 GSM printed T-shirt size chart' : 'Oversized T-shirt size chart'; }
   }
   function updateSpecs(){
@@ -508,13 +494,6 @@
   renderSwatches();
   renderGallery(selectedImages);
 
-  if(isPrinted){
-    $('fitSelectorWrap').style.display = 'block';
-    document.querySelectorAll('.fit-btn').forEach(btn => btn.addEventListener('click', () => {
-      document.querySelectorAll('.fit-btn').forEach(x => x.classList.remove('active'));
-      btn.classList.add('active'); selectedFit = btn.dataset.fit; updateSpecs();
-    }));
-  }
   updateSpecs();
 
   document.querySelectorAll('.size-btn').forEach(button => button.addEventListener('click', () => {
@@ -539,7 +518,7 @@
 
   /* ===== Catalog + related products ===== */
   /* Oversized price set to 399 to match oversized.html. */
-  const productCatalog = [{"product":"Polo T-Shirt","type":"Polo","color":"White","price":"399","image":"White_front.png","image2":"White_back.png","categoryPage":"polo.html"},{"product":"Royal Blue Oversized Tee","type":"Oversized","color":"Royal Blue","price":"399","image":"Royal_blue.jpg","image2":"Royal_blue_back.png","categoryPage":"oversized.html"},{"product":"Aqua/Sky Blue Oversized Tee","type":"Oversized","color":"Aqua/Sky Blue","price":"399","image":"Aqua_sky_blue.png","image2":"Aqua_sky_blue_back.png","categoryPage":"oversized.html"},{"product":"Beige Oversized Tee","type":"Oversized","color":"Beige","price":"399","image":"Beige.png","image2":"Beige_back.png","categoryPage":"oversized.html"},{"product":"White Oversized Tee","type":"Oversized","color":"White","price":"399","image":"White.jpg","image2":"White_back.jpg","categoryPage":"oversized.html"},{"product":"Black Oversized Tee","type":"Oversized","color":"Black","price":"399","image":"Black.jpg","image2":"Black_back.jpg","categoryPage":"oversized.html"},{"product":"Army Green Oversized Tee","type":"Oversized","color":"Army Green","price":"399","image":"Army_green.png","image2":"Army_green_back.png","categoryPage":"oversized.html"},{"product":"Lavender Oversized Tee","type":"Oversized","color":"Lavender","price":"399","image":"Lavender .png","image2":"Lavender_back.png","categoryPage":"oversized.html"},{"product":"Red Oversized Tee","type":"Oversized","color":"Red","price":"399","image":"Red.jpg","image2":"Red_back.png","categoryPage":"oversized.html"},{"product":"Pink Oversized Tee","type":"Oversized","color":"Pink","price":"399","image":"Pink.png","image2":"Pink_back.png","categoryPage":"oversized.html"},{"product":"Beige Hoodie","type":"Hoodie","color":"Beige","price":"599","image":"hoodie1.jpg","categoryPage":"oversized.html"},{"product":"Black Hoodie","type":"Hoodie","color":"Black","price":"599","image":"hoodie2.jpg","categoryPage":"oversized.html"},{"product":"Explore Space Acid Wash","type":"Printed Oversized Tee","price":"699","color":"Acid Wash","image":"explore_space_front.jpg","image2":"explore_space_back.jpg","categoryPage":"printed.html"},{"product":"Calm Acid Wash","type":"Printed Oversized Tee","price":"699","color":"Black","image":"Calm_acid_front.png","image2":"Calm_acid_back.png","categoryPage":"printed.html"},{"product":"Conquer Acid Wash","type":"Printed Oversized Tee","price":"699","color":"Black","image":"Conquer_acid_front.png","image2":"Conquer_acid_back.png","categoryPage":"printed.html"},{"product":"Spider Acid Wash","type":"Printed Oversized Tee","price":"699","color":"Black","image":"Spider_acid_front.png","image2":"Spider_acid_back.png","categoryPage":"printed.html"},{"product":"Grace","type":"Printed T-Shirt","price":"599","color":"Red","image":"Grace_red_f.png","image2":"Grace_red_b.png","categoryPage":"printed.html"},{"product":"Anime","type":"Printed T-Shirt","price":"599","color":"Black","image":"anime_b_f.png","image2":"anime_b_b.png","categoryPage":"printed.html"},{"product":"Naruto","type":"Printed T-Shirt","price":"599","color":"White","image":"naruto_w_f.png","image2":"naruto_w_b.png","categoryPage":"printed.html"},{"product":"One Piece","type":"Printed T-Shirt","price":"599","color":"White","image":"one_w_f.png","image2":"one_w_b.png","categoryPage":"printed.html"},{"product":"Tanjiro","type":"Printed T-Shirt","price":"599","color":"White","image":"tanjiro_w_f.png","image2":"tanjiro_w_b.png","categoryPage":"printed.html"},{"product":"Luffy","type":"Printed T-Shirt","price":"549","color":"Black","image":"luffy_b_f.png","image2":"luffy_b_b.png","categoryPage":"printed.html"},{"product":"Justice","type":"Printed T-Shirt","price":"549","color":"Red","image":"Justice_r_f.png","image2":"Justice_r_b.png","categoryPage":"printed.html"},{"product":"Porsche","type":"Printed T-Shirt","price":"549","color":"Black","image":"Porsche_black_front.png","image2":"Porsche_black_back.png","categoryPage":"printed.html"},{"product":"Deadpool","type":"Printed T-Shirt","price":"649","color":"Black","image":"Deadpool-black-front.png","image2":"Deadpool-black-back.png","categoryPage":"printed.html"},{"product":"Unseen","type":"Printed T-Shirt","color":"White","price":"549","image":"un_white_f.png","image2":"un_white_b.png","categoryPage":"printed.html"},{"product":"Veiled Bloom","type":"Printed T-Shirt","color":"Royal Blue","price":"549","image":"veiled_blue_f.png","image2":"veiled_blue_b.png","categoryPage":"printed.html"}];
+  const productCatalog = [{"product":"Polo T-Shirt","type":"Polo","color":"White","price":"399","image":"White_front.png","image2":"White_back.png","categoryPage":"polo.html"},{"product":"Royal Blue Oversized Tee","type":"Oversized","color":"Royal Blue","price":"399","image":"Royal_blue.jpg","image2":"Royal_blue_back.png","categoryPage":"oversized.html"},{"product":"Aqua/Sky Blue Oversized Tee","type":"Oversized","color":"Aqua/Sky Blue","price":"399","image":"Aqua_sky_blue.png","image2":"Aqua_sky_blue_back.png","categoryPage":"oversized.html"},{"product":"Beige Oversized Tee","type":"Oversized","color":"Beige","price":"399","image":"Beige.png","image2":"Beige_back.png","categoryPage":"oversized.html"},{"product":"White Oversized Tee","type":"Oversized","color":"White","price":"399","image":"White.jpg","image2":"White_back.jpg","categoryPage":"oversized.html"},{"product":"Black Oversized Tee","type":"Oversized","color":"Black","price":"399","image":"Black.jpg","image2":"Black_back.jpg","categoryPage":"oversized.html"},{"product":"Army Green Oversized Tee","type":"Oversized","color":"Army Green","price":"399","image":"Army_green.png","image2":"Army_green_back.png","categoryPage":"oversized.html"},{"product":"Lavender Oversized Tee","type":"Oversized","color":"Lavender","price":"399","image":"Lavender .png","image2":"Lavender_back.png","categoryPage":"oversized.html"},{"product":"Red Oversized Tee","type":"Oversized","color":"Red","price":"399","image":"Red.jpg","image2":"Red_back.png","categoryPage":"oversized.html"},{"product":"Pink Oversized Tee","type":"Oversized","color":"Pink","price":"399","image":"Pink.png","image2":"Pink_back.png","categoryPage":"oversized.html"},{"product":"Beige Hoodie","type":"Hoodie","color":"Beige","price":"599","image":"hoodie1.jpg","categoryPage":"oversized.html"},{"product":"Black Hoodie","type":"Hoodie","color":"Black","price":"599","image":"hoodie2.jpg","categoryPage":"oversized.html"},{"product":"Explore Space Acid Wash","type":"Printed Oversized Tee","price":"699","color":"Acid Wash","image":"explore_space_front.jpg","image2":"explore_space_back.jpg","categoryPage":"printed.html"},{"product":"Calm Acid Wash","type":"Printed Oversized Tee","price":"649","color":"Black","image":"Calm_acid_front.png","image2":"Calm_acid_back.png","categoryPage":"printed.html"},{"product":"Conquer Acid Wash","type":"Printed Oversized Tee","price":"649","color":"Black","image":"Conquer_acid_front.png","image2":"Conquer_acid_back.png","categoryPage":"printed.html"},{"product":"Spider Acid Wash","type":"Printed Oversized Tee","price":"649","color":"Black","image":"Spider_acid_front.png","image2":"Spider_acid_back.png","categoryPage":"printed.html"},{"product":"Grace","type":"Printed T-Shirt","price":"599","color":"Red","image":"Grace_red_f.png","image2":"Grace_red_b.png","categoryPage":"printed.html"},{"product":"Anime","type":"Printed T-Shirt","price":"599","color":"Black","image":"anime_b_f.png","image2":"anime_b_b.png","categoryPage":"printed.html"},{"product":"Naruto","type":"Printed T-Shirt","price":"599","color":"White","image":"naruto_w_f.png","image2":"naruto_w_b.png","categoryPage":"printed.html"},{"product":"One Piece","type":"Printed T-Shirt","price":"599","color":"White","image":"one_w_f.png","image2":"one_w_b.png","categoryPage":"printed.html"},{"product":"Tanjiro","type":"Printed T-Shirt","price":"599","color":"White","image":"tanjiro_w_f.png","image2":"tanjiro_w_b.png","categoryPage":"printed.html"},{"product":"Luffy","type":"Printed T-Shirt","price":"549","color":"Black","image":"luffy_b_f.png","image2":"luffy_b_b.png","categoryPage":"printed.html"},{"product":"Justice","type":"Printed T-Shirt","price":"549","color":"Red","image":"Justice_r_f.png","image2":"Justice_r_b.png","categoryPage":"printed.html"},{"product":"Porsche","type":"Printed T-Shirt","price":"549","color":"Black","image":"Porsche_black_front.png","image2":"Porsche_black_back.png","categoryPage":"printed.html"},{"product":"Deadpool","type":"Printed T-Shirt","price":"599","color":"Black","image":"Deadpool-black-front.png","image2":"Deadpool-black-back.png","categoryPage":"printed.html"},{"product":"Unseen","type":"Printed T-Shirt","color":"White","price":"549","image":"un_white_f.png","image2":"un_white_b.png","categoryPage":"printed.html"},{"product":"Veiled Bloom","type":"Printed T-Shirt","color":"Royal Blue","price":"549","image":"veiled_blue_f.png","image2":"veiled_blue_b.png","categoryPage":"printed.html"}];
 
   function variantsFor(item){
     const k = item.type.toLowerCase();

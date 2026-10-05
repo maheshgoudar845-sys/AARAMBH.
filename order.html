@@ -233,6 +233,10 @@
       letter-spacing: 1px; text-transform: uppercase;
       padding: 6px 12px; border-radius: 100px; cursor: pointer;
     }
+    .upi-amount {
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-top: 4px;
+    }
+    .upi-amount b { color: var(--accent2); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.5px; }
     .upi-deeplinks { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
     .upi-deeplinks a {
       font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
@@ -243,6 +247,8 @@
     }
     .upi-deeplinks a:hover { background: rgba(255,255,255,0.14); }
     .upi-note { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
+    .upi-warn { font-size: 12px; color: var(--accent2); margin-top: 10px; line-height: 1.6; display: none; }
+    .upi-warn.show { display: block; }
 
     .submit-btn {
       width: 100%; padding: 16px 20px;
@@ -334,7 +340,7 @@
       .payment-options { grid-template-columns: 1fr 1fr; }
     }
 
-    /* ===== BEAUTIFICATION LAYER (purely visual — no logic below touches IDs used by the existing script) ===== */
+    /* ===== BEAUTIFICATION LAYER (purely visual) ===== */
     @keyframes ob-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes ob-glow { 0%,100% { box-shadow: 0 0 0 rgba(var(--accent-rgb),0); } 50% { box-shadow: 0 0 26px rgba(var(--accent-rgb),.18); } }
     @keyframes ob-pulse-once { 0% { transform: scale(1); } 35% { transform: scale(1.06); color: #9be6b4; } 100% { transform: scale(1); } }
@@ -353,7 +359,6 @@
     }
     @keyframes ob-shine-line { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
 
-    /* Order progress indicator (visual guide only) */
     .ob-steps { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
     .ob-step { display: flex; align-items: center; gap: 8px; }
     .ob-step-num {
@@ -554,7 +559,7 @@
           <div class="form-group">
             <label>Payment Method</label>
             <div class="field-error" id="upiGuardNotice" style="display:none; margin-bottom:14px;">
-              Please fill in your name, phone, size, address and pincode first — we need these before you can pay.
+              Please fill in your name, phone, email, size, address and a valid pincode first — we need these before you can pay.
             </div>
             <div class="payment-options">
               <div class="pay-option active" data-method="COD" id="payCOD">
@@ -575,12 +580,14 @@
                 <span id="upiIdText">maheshgoudar076@pingpay</span>
                 <button type="button" class="copy-btn" id="copyUpiBtn">Copy</button>
               </div>
+              <p class="upi-amount">Amount to pay: <b id="upiAmountText">—</b></p>
               <div class="upi-deeplinks">
                 <a id="gpayLink" href="#" rel="noopener">Pay with GPay</a>
                 <a id="phonepeLink" href="#" rel="noopener">Pay with PhonePe</a>
                 <a id="paytmLink" href="#" rel="noopener">Pay with Paytm</a>
               </div>
-              <p class="upi-note">The buttons above only open a UPI app on mobile phones with GPay/PhonePe/Paytm installed. On a computer, please pay manually using the UPI ID shown above. After paying, take a screenshot and send it on WhatsApp along with your name — we'll confirm and dispatch your order.</p>
+              <p class="upi-warn" id="upiInAppWarn">Opening this page from Instagram or another in-app browser? UPI apps may not open from here. Tap ⋯ and choose “Open in browser”, or copy the UPI ID above and pay manually.</p>
+              <p class="upi-note">The buttons above only work on a phone with the app installed. If a button shows an error or does nothing, copy the UPI ID above, open any UPI app, and pay the amount shown. <b>After paying, tap “Confirm Order” below</b>, then send the payment screenshot on WhatsApp — we'll confirm and dispatch your order.</p>
             </div>
           </div>
 
@@ -599,7 +606,7 @@
         <div class="success-overlay" id="successOverlay">
           <div class="success-icon">✅</div>
           <h3>Order Received!</h3>
-          <p>Thanks for your order — we've got your details, and your bill has been emailed to you. Tap below to confirm instantly on WhatsApp so we can start processing it right away.</p>
+          <p>Thanks for your order — we've got your details and we're sending your bill to your email (check spam if you don't see it in a few minutes). Tap below to confirm instantly on WhatsApp so we can start processing it right away.</p>
           <a href="#" id="successWhatsapp" class="wa-btn">💬 Confirm on WhatsApp</a>
         </div>
 
@@ -631,19 +638,40 @@
   </footer>
 
   <script>
+    // =====================================================================
+    //  CONFIG — edit these in one place
+    // =====================================================================
+    const EMAILJS_PUBLIC_KEY = 'ZXVO8aPvZTkk1NLI6';
+    const EMAILJS_SERVICE_ID = 'service_gnkbabo';           // new service
+    const OWNER_TEMPLATE_ID = 'template_j3gxuwf';           // order alert sent to YOU
+    const CUSTOMER_TEMPLATE_ID = 'YOUR_CUSTOMER_TEMPLATE_ID'; // <-- paste your new customer-bill template ID here
+
+    // Optional: PDF bill via Cloudflare Worker + Resend. Resend only delivers to
+    // customers once you verify a domain. Set to false to rely on EmailJS only.
+    const USE_WORKER_PDF = true;
+    const ORDER_WORKER_URL = 'https://aarambh.arambhofficial2025.workers.dev';
+
+    const UPI_ID = 'maheshgoudar076@pingpay';
+    const SHOP_INSTAGRAM = 'aarambh.official';
+    const SHOP_PHONE = '9405074832';
+    const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
+
     // ---------- Init EmailJS ----------
     (function () {
-      if (window.emailjs) emailjs.init({ publicKey: 'ZXVO8aPvZTkk1NLI6' });
+      if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
     })();
+
+    // Escape anything coming from the URL or the customer before it goes into HTML.
+    function esc(v) {
+      return String(v == null ? '' : v)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
 
     const CART_KEY = 'arambhCart';
     const params = new URLSearchParams(window.location.search);
     const cartMode = params.get('cart') === '1';
 
-    // ---------- Build the working list of order items ----------
-    // Cart mode: read the array saved by product.html's "Add to Cart" button.
-    // Single-item mode ("Buy Now"): build a one-item array from URL params,
-    // same as the page always did.
     function readCart() {
       try {
         const raw = JSON.parse(localStorage.getItem(CART_KEY));
@@ -651,7 +679,7 @@
       } catch (e) { return []; }
     }
     function saveCart(items) {
-      localStorage.setItem(CART_KEY, JSON.stringify(items));
+      try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
     }
 
     let orderItems = [];
@@ -679,15 +707,9 @@
       }
     }
 
-    // Kept for the WhatsApp/email summary text when there's exactly one item —
-    // mirrors the old single-product variables used lower in the script.
-    const product = orderItems.length === 1 ? orderItems[0].product : '';
-    const type = orderItems.length === 1 ? orderItems[0].type : '';
-    const color = orderItems.length === 1 ? orderItems[0].color : '';
-
     document.title = (orderItems.length === 1 ? orderItems[0].product + ' — ' : '') + 'Place Your Order — Arambh';
 
-    // ---------- Render order summary (single item or cart list) ----------
+    // ---------- Render order summary ----------
     const cartItemsList = document.getElementById('cartItemsList');
     const summaryHeading = document.getElementById('summaryHeading');
     const quantityGroup = document.getElementById('group-qty');
@@ -708,14 +730,14 @@
       summaryHeading.textContent = cartMode ? `Your Cart (${orderItems.length} item${orderItems.length > 1 ? 's' : ''})` : 'Your Order';
       cartItemsList.innerHTML = orderItems.map((item, idx) => `
         <div class="cart-item-row" data-idx="${idx}">
-          <img src="${item.image}" alt="${item.product}">
+          <img src="${esc(item.image)}" alt="${esc(item.product)}">
           <div class="cart-item-info">
-            <h4>${item.product}</h4>
+            <h4>${esc(item.product)}</h4>
             <div class="cart-item-tags">
-              <span>${item.type || '—'}</span>
-              <span>${item.color || '—'}</span>
-              ${item.size ? `<span>Size ${item.size}</span>` : ''}
-              <span>Qty ${item.qty}</span>
+              <span>${esc(item.type || '—')}</span>
+              <span>${esc(item.color || '—')}</span>
+              ${item.size ? `<span>Size ${esc(item.size)}</span>` : ''}
+              <span>Qty ${esc(item.qty)}</span>
             </div>
           </div>
           <div class="cart-item-qtyprice">
@@ -739,9 +761,6 @@
       removeItem(Number(btn.dataset.idx));
     });
 
-    // In cart mode, each item already carries its own size and quantity from
-    // product.html, so the single global Size/Quantity fields don't apply —
-    // hide them. In single-item ("Buy Now") mode, keep them exactly as before.
     if (cartMode) {
       quantityGroup.style.display = 'none';
       sizeGroup.style.display = 'none';
@@ -755,7 +774,6 @@
         if (match) sizeSelect.value = match.value;
       }
     }
-    // Single-item quantity field edits the one line item directly.
     quantityInput.addEventListener('input', () => {
       if (!cartMode && orderItems.length) {
         orderItems[0].qty = Math.max(1, Math.min(10, parseInt(quantityInput.value, 10) || 1));
@@ -782,21 +800,21 @@
     payCOD.addEventListener('click', () => selectMethod('COD'));
     payUPI.addEventListener('click', () => selectMethod('UPI'));
 
+    // Warn customers inside Instagram / Facebook / etc. in-app browsers
+    if (/Instagram|FBAN|FBAV|FB_IAB|Line\/|Snapchat/i.test(navigator.userAgent)) {
+      document.getElementById('upiInAppWarn').classList.add('show');
+    }
+
     // ---------- State needed before any function that reads it runs ----------
-    // NOTE: these must be declared before refreshUpiLinks() is first invoked below,
-    // otherwise it throws a ReferenceError (temporal dead zone) and silently kills
-    // every listener defined after it in this script block.
     let currentDeliveryCharge = 0;
     let currentZoneLabel = '';
     let pincodeLookupToken = 0;
-    let pincodeConfirmed = false; // true only once delivery charge has actually been resolved
-    let appliedCoupon = ''; // raw text the customer typed and applied
+    let pincodeConfirmed = false;
+    let appliedCoupon = '';
 
-    // ---------- UPI deep links (amount pre-filled, updates once delivery is known) ----------
-    const UPI_ID = 'maheshgoudar076@pingpay';
+    // ---------- Totals ----------
     const upiNote = encodeURIComponent('Arambh Order - ' + (orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} items`));
 
-    // ---------- Totals across every item in orderItems ----------
     function getLineTotal() {
       return orderItems.reduce((sum, item) => sum + item.price * item.qty, 0);
     }
@@ -823,24 +841,33 @@
       return { label: best.label, percent: best.percent, amount };
     }
 
+    // ---------- UPI deep links (amount formatted, app-specific schemes) ----------
     function refreshUpiLinks() {
       const lineTotal = getLineTotal();
       const discount = computeDiscount(lineTotal);
-      const amount = lineTotal - discount.amount + currentDeliveryCharge;
-      const upiLink = `upi://pay?pa=${UPI_ID}&pn=Arambh&am=${amount}&cu=INR&tn=${upiNote}`;
-      document.getElementById('gpayLink').href = upiLink;
-      document.getElementById('phonepeLink').href = upiLink;
-      document.getElementById('paytmLink').href = upiLink;
+      const payable = lineTotal - discount.amount + currentDeliveryCharge;
+      const amount = payable.toFixed(2);
+      const q = `pa=${UPI_ID}&pn=${encodeURIComponent('Arambh')}&am=${amount}&cu=INR&tn=${upiNote}`;
+      document.getElementById('gpayLink').href = `gpay://upi/pay?${q}`;
+      document.getElementById('phonepeLink').href = `phonepe://pay?${q}`;
+      document.getElementById('paytmLink').href = `paytmmp://pay?${q}`;
+      const amtEl = document.getElementById('upiAmountText');
+      if (amtEl) amtEl.textContent = (pincodeConfirmed && orderItems.length) ? '₹' + payable : 'enter pincode first';
     }
     refreshUpiLinks();
 
     document.getElementById('copyUpiBtn').addEventListener('click', () => {
-      navigator.clipboard.writeText(UPI_ID).then(() => {
-        const btn = document.getElementById('copyUpiBtn');
-        const original = btn.textContent;
+      const btn = document.getElementById('copyUpiBtn');
+      const done = () => {
+        const original = 'Copy';
         btn.textContent = 'Copied!';
         setTimeout(() => { btn.textContent = original; }, 1800);
-      });
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(UPI_ID).then(done).catch(() => { btn.textContent = UPI_ID; });
+      } else {
+        btn.textContent = UPI_ID;
+      }
     });
 
     // ---------- Require all details before payment can proceed ----------
@@ -858,7 +885,7 @@
       document.getElementById(id).addEventListener('click', guardUpiPayment);
     });
 
-    // ---------- Pincode auto-detect (city/state) + delivery zone pricing ----------
+    // ---------- Pincode auto-detect + delivery zone pricing ----------
     const NEAR_ZONE_CHARGE = 30;
     const FAR_ZONE_CHARGE = 50;
 
@@ -867,7 +894,6 @@
     const pincodeStatusText = document.getElementById('pincodeStatusText');
     const cityInput = document.getElementById('city');
     const stateInput = document.getElementById('state');
-    const deliveryBox = document.getElementById('deliveryBox');
     const deliveryZoneValue = document.getElementById('deliveryZoneValue');
     const deliveryZoneTag = document.getElementById('deliveryZoneTag');
     const deliveryChargeValue = document.getElementById('deliveryChargeValue');
@@ -916,6 +942,7 @@
         orderTotalValue.style.color = 'var(--muted)';
         document.getElementById('pincodeRequiredNotice').style.display = orderItems.length ? 'block' : 'none';
       }
+      refreshUpiLinks();
     }
 
     async function lookupPincode(pin) {
@@ -954,7 +981,6 @@
         deliveryZoneTag.style.display = 'inline-block';
         deliveryChargeValue.textContent = '₹' + zone.charge;
         updateOrderTotal();
-        refreshUpiLinks();
       } catch (err) {
         if (token !== pincodeLookupToken) return;
         cityInput.value = '';
@@ -976,10 +1002,12 @@
       if (/^\d{6}$/.test(pin)) {
         lookupPincode(pin);
       } else {
+        pincodeLookupToken++;
         pincodeStatus.classList.remove('show');
         cityInput.value = '';
         stateInput.value = '';
         currentDeliveryCharge = 0;
+        currentZoneLabel = '';
         pincodeConfirmed = false;
         deliveryZoneValue.childNodes[0].textContent = 'Enter pincode to calculate ';
         deliveryZoneTag.style.display = 'none';
@@ -1021,33 +1049,25 @@
         couponStatusText.textContent = 'That code isn\'t valid.';
       }
       updateOrderTotal();
-      refreshUpiLinks();
     });
 
     updateOrderTotal();
 
     // ================= BILL / INVOICE GENERATION =================
 
-    const SHOP_INSTAGRAM = 'aarambh.official';
-    const SHOP_PHONE = '9405074832';
-    // Absolute URL so the logo actually renders inside email clients
-    // (relative paths break once the HTML leaves your site's domain).
-    const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
-
-    // Set this to your deployed Cloudflare Worker URL (see worker.js setup notes).
-    const ORDER_WORKER_URL = 'https://aarambh.arambhofficial2025.workers.dev';
-
-    // jsPDF can't read .webp directly — convert it to a PNG data URL via canvas first.
+    // jsPDF can't read .webp directly — convert to a small PNG via canvas.
     function loadLogoAsPngDataUrl() {
       return new Promise((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => {
           try {
+            const w = 300;
+            const h = Math.round(w * img.height / img.width) || w;
             const canvas = document.createElement('canvas');
-            canvas.width = img.width; canvas.height = img.height;
-            canvas.getContext('2d').drawImage(img, 0, 0);
-            resolve(canvas.toDataURL('image/png'));
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve({ url: canvas.toDataURL('image/png'), w, h });
           } catch (e) { resolve(null); }
         };
         img.onerror = () => resolve(null);
@@ -1055,18 +1075,23 @@
       });
     }
 
-    // Builds the PDF bill and returns its base64 content (no "data:" prefix),
-    // ready to hand to the Worker as an email attachment.
+    // Builds the PDF bill and returns base64 (no "data:" prefix).
     async function buildBillPdfBase64(data) {
       if (!window.jspdf) return null;
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-      const logoDataUrl = await loadLogoAsPngDataUrl();
+      const logo = await loadLogoAsPngDataUrl();
 
       let y = 40;
-      if (logoDataUrl) { doc.addImage(logoDataUrl, 'PNG', 250, y, 90, 90); y += 100; }
+      if (logo) {
+        try {
+          const lw = 90, lh = Math.round(90 * logo.h / logo.w);
+          doc.addImage(logo.url, 'PNG', 250, y, lw, lh);
+          y += lh + 10;
+        } catch (e) { console.warn('Logo skipped in PDF:', e); }
+      }
       doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
-      doc.text('AARAMBH — Order Bill', 297, y, { align: 'center' }); y += 20;
+      doc.text('AARAMBH - Order Bill', 297, y, { align: 'center' }); y += 20;
       doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(100);
       doc.text(`Order ID: ${data.orderId}   |   ${data.orderDate}`, 297, y, { align: 'center' }); y += 30;
 
@@ -1104,7 +1129,7 @@
       doc.text('Thank you for shopping with AARAMBH!', 297, y, { align: 'center' }); y += 14;
       doc.text(`Instagram: @${data.instagram}   |   Phone: ${data.phone2}`, 297, y, { align: 'center' });
 
-      return doc.output('datauristring').split(',')[1]; // strip "data:application/pdf;filename=...;base64," prefix
+      return doc.output('datauristring').split(',')[1];
     }
 
     function generateOrderId() {
@@ -1116,26 +1141,23 @@
       return `AARAMBH-${y}${m}${day}-${rand}`;
     }
 
-    // Plain-text item lines, reused by both the WhatsApp message and the email.
     function buildItemLines(items) {
       return items.map(item =>
         `${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''}) x${item.qty} — ₹${item.price * item.qty}`
       ).join('\n');
     }
 
-    // HTML rows for the emailed bill.
     function buildItemsHtml(items) {
       return items.map(item => `
         <tr>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;">${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''})</td>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:center;">${item.qty}</td>
+          <td style="padding:8px 0;border-bottom:1px solid #eee;">${esc(item.product)} (${esc(item.type)}/${esc(item.color)}${item.size ? ', Size ' + esc(item.size) : ''})</td>
+          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:center;">${esc(item.qty)}</td>
           <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;">₹${item.price * item.qty}</td>
         </tr>
       `).join('');
     }
 
-    // Full self-contained invoice HTML — sent as the {{{bill_html}}} raw
-    // variable inside the EmailJS "customer bill" template (see setup notes).
+    // Self-contained invoice HTML — sent as {{{bill_html}}} to the customer EmailJS template.
     function buildBillHtml(data) {
       return `
       <div style="max-width:560px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
@@ -1143,7 +1165,7 @@
           <img src="${LOGO_URL}" alt="AARAMBH" style="height:64px;">
         </div>
         <h2 style="text-align:center;margin:0 0 4px;font-size:20px;">Order Bill</h2>
-        <p style="text-align:center;color:#777;margin:0 0 20px;font-size:13px;">Order ID: <b>${data.orderId}</b> &nbsp;•&nbsp; ${data.orderDate}</p>
+        <p style="text-align:center;color:#777;margin:0 0 20px;font-size:13px;">Order ID: <b>${esc(data.orderId)}</b> &nbsp;•&nbsp; ${esc(data.orderDate)}</p>
 
         <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px;">
           <thead>
@@ -1160,23 +1182,23 @@
 
         <table style="width:100%;font-size:14px;margin-bottom:20px;">
           <tr><td style="padding:4px 0;color:#555;">Subtotal</td><td style="text-align:right;padding:4px 0;">₹${data.lineTotal}</td></tr>
-          ${data.discountAmount > 0 ? `<tr><td style="padding:4px 0;color:#2e7d32;">${data.discountLabel}</td><td style="text-align:right;padding:4px 0;color:#2e7d32;">−₹${data.discountAmount}</td></tr>` : ''}
-          <tr><td style="padding:4px 0;color:#555;">Delivery (${data.deliveryZone})</td><td style="text-align:right;padding:4px 0;">₹${data.deliveryCharge}</td></tr>
+          ${data.discountAmount > 0 ? `<tr><td style="padding:4px 0;color:#2e7d32;">${esc(data.discountLabel)}</td><td style="text-align:right;padding:4px 0;color:#2e7d32;">−₹${data.discountAmount}</td></tr>` : ''}
+          <tr><td style="padding:4px 0;color:#555;">Delivery (${esc(data.deliveryZone)})</td><td style="text-align:right;padding:4px 0;">₹${data.deliveryCharge}</td></tr>
           <tr><td style="padding:10px 0 4px;font-weight:bold;border-top:1px solid #ddd;">Total Paid / Payable</td><td style="text-align:right;padding:10px 0 4px;font-weight:bold;border-top:1px solid #ddd;">₹${data.orderTotal}</td></tr>
         </table>
 
         <table style="width:100%;font-size:13px;color:#555;margin-bottom:20px;">
-          <tr><td style="padding:2px 0;">Billed To</td><td style="text-align:right;">${data.fullName}</td></tr>
-          <tr><td style="padding:2px 0;">Phone</td><td style="text-align:right;">${data.phone}</td></tr>
-          <tr><td style="padding:2px 0;">Delivery Address</td><td style="text-align:right;">${data.address}, ${data.city}, ${data.state} - ${data.pincode}</td></tr>
-          <tr><td style="padding:2px 0;">Payment Method</td><td style="text-align:right;">${data.paymentMethod}</td></tr>
-          ${data.notes ? `<tr><td style="padding:2px 0;">Notes</td><td style="text-align:right;">${data.notes}</td></tr>` : ''}
+          <tr><td style="padding:2px 0;">Billed To</td><td style="text-align:right;">${esc(data.fullName)}</td></tr>
+          <tr><td style="padding:2px 0;">Phone</td><td style="text-align:right;">${esc(data.phone)}</td></tr>
+          <tr><td style="padding:2px 0;">Delivery Address</td><td style="text-align:right;">${esc(data.address)}, ${esc(data.city)}, ${esc(data.state)} - ${esc(data.pincode)}</td></tr>
+          <tr><td style="padding:2px 0;">Payment Method</td><td style="text-align:right;">${esc(data.paymentMethod)}</td></tr>
+          ${data.notes ? `<tr><td style="padding:2px 0;">Notes</td><td style="text-align:right;">${esc(data.notes)}</td></tr>` : ''}
         </table>
 
         <div style="text-align:center;padding-top:16px;border-top:1px dashed #ccc;color:#777;font-size:12.5px;line-height:1.7;">
           Thank you for shopping with AARAMBH!<br>
           Exchanges/returns: message us within 3 days of delivery.<br>
-          Instagram: <b>@${data.instagram}</b> &nbsp;•&nbsp; Phone: <b>${data.phone2}</b>
+          Instagram: <b>@${esc(data.instagram)}</b> &nbsp;•&nbsp; Phone: <b>${esc(data.phone2)}</b>
         </div>
       </div>`;
     }
@@ -1256,9 +1278,6 @@
         phone2: SHOP_PHONE
       };
 
-      // Plain-text bill for WhatsApp (customer's own confirmation message,
-      // unchanged in spirit from before) and the one-tap "send bill to
-      // customer" link that goes to YOU inside the owner notification.
       const billText =
         `AARAMBH — ORDER BILL\n` +
         `Order ID: ${data.orderId}\n` +
@@ -1275,9 +1294,7 @@
         `Thank you for shopping with AARAMBH!\n` +
         `Instagram: @${data.instagram} | Phone: ${data.phone2}`;
 
-      // wa.me link to the CUSTOMER's number, pre-filled with the bill — this
-      // is the "one-tap" link. It goes out in the owner-notification email/
-      // Formspree payload as customerBillLink so you can tap it from your phone.
+      // One-tap WhatsApp link to the CUSTOMER with the bill pre-filled (goes to you in the owner email).
       data.customerBillLink = `https://wa.me/91${data.phone}?text=${encodeURIComponent(billText)}`;
       data.billHtml = buildBillHtml(data);
 
@@ -1285,30 +1302,9 @@
       submitBtn.disabled = true;
       submitBtnText.textContent = 'Placing Order...';
 
-      // Build the PDF, then POST it (plus the bill data) to the Worker,
-      // which emails it to the customer with the PDF attached via Resend.
-      const pdfBillPromise = buildBillPdfBase64(data)
-        .then(pdfBase64 => {
-          if (!pdfBase64) return;
-          return fetch(ORDER_WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              to_email: data.email,
-              customer_name: data.fullName,
-              order_id: data.orderId,
-              order_total: data.orderTotal,
-              bill_html: data.billHtml,
-              pdf_base64: pdfBase64
-            })
-          });
-        })
-        .catch(err => console.error('PDF bill send error:', err));
-
-      // 1) Owner notification email (existing template) — now also carries
-      //    the order ID and the tap-to-send WhatsApp bill link.
+      // 1) Owner notification email
       const ownerEmailPromise = (window.emailjs)
-        ? emailjs.send('service_2xfx4td', 'template_j3gxuwf', {
+        ? emailjs.send(EMAILJS_SERVICE_ID, OWNER_TEMPLATE_ID, {
             product: data.product, type: data.type, color: data.color, price: data.price,
             items: data.itemsSummary,
             name: data.fullName, phone: data.phone, email: data.email, size: data.size, address: data.address,
@@ -1321,13 +1317,50 @@
           }).catch(err => console.error('EmailJS owner error:', err))
         : Promise.resolve();
 
+      // 2) Customer bill email (HTML bill) via EmailJS
+      //    Template setup: To Email = {{to_email}}, Subject = Your AARAMBH order {{order_id}},
+      //    body (HTML source) = {{{bill_html}}}
+      const customerEmailPromise = (window.emailjs && CUSTOMER_TEMPLATE_ID && !CUSTOMER_TEMPLATE_ID.startsWith('YOUR_'))
+        ? emailjs.send(EMAILJS_SERVICE_ID, CUSTOMER_TEMPLATE_ID, {
+            to_email: data.email,
+            customer_name: data.fullName,
+            order_id: data.orderId,
+            order_total: data.orderTotal,
+            bill_html: data.billHtml
+          }).catch(err => console.error('EmailJS customer error:', err))
+        : (console.warn('Customer email not sent: set CUSTOMER_TEMPLATE_ID'), Promise.resolve());
+
+      // 3) Optional PDF bill via Worker (Resend)
+      const pdfBillPromise = USE_WORKER_PDF
+        ? buildBillPdfBase64(data)
+            .then(pdfBase64 => {
+              if (!pdfBase64) return;
+              return fetch(ORDER_WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  to_email: data.email,
+                  customer_name: data.fullName,
+                  order_id: data.orderId,
+                  order_total: data.orderTotal,
+                  bill_html: data.billHtml,
+                  pdf_base64: pdfBase64
+                })
+              }).then(async res => {
+                if (!res.ok) console.error('PDF bill email failed:', res.status, await res.text());
+              });
+            })
+            .catch(err => console.error('PDF bill send error:', err))
+        : Promise.resolve();
+
+      // 4) Formspree backup copy
       const formspreePromise = fetch('https://formspree.io/f/xqejgjzw', {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       }).catch(err => console.error('Formspree error:', err));
 
-      Promise.allSettled([ownerEmailPromise, pdfBillPromise, formspreePromise]).finally(() => {
+      Promise.allSettled([ownerEmailPromise, customerEmailPromise, pdfBillPromise, formspreePromise]).finally(() => {
         const waMessage = encodeURIComponent(
           `Hi ARAMBH, I just placed an order (${data.orderId}):\n\n` +
           `${data.itemsSummary}\n\n` +
@@ -1343,7 +1376,7 @@
         document.getElementById('successWhatsapp').href = `https://wa.me/919405074832?text=${waMessage}`;
 
         if (cartMode) {
-          localStorage.removeItem(CART_KEY);
+          try { localStorage.removeItem(CART_KEY); } catch (e) {}
         }
         try { localStorage.setItem(FIRST_ORDER_KEY, '1'); } catch (e) {}
 
@@ -1380,18 +1413,17 @@
           return el && el.value.trim().length > 0;
         });
         if (stepDetails) stepDetails.classList.toggle('done', filled);
-        const upiOpen = document.getElementById('upiPanel');
-        const paySelected = document.getElementById('payUPI');
-        if (stepPay) stepPay.classList.toggle('done', filled && (paySelected ? true : true));
+        if (stepPay) stepPay.classList.toggle('done', filled);
         if (stepConfirm) stepConfirm.classList.toggle('done', document.getElementById('successOverlay').classList.contains('show'));
       }
       fieldIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', refreshSteps);
       });
-      const pay1 = document.getElementById('payCOD');
-      const pay2 = document.getElementById('payUPI');
-      [pay1, pay2].forEach(el => { if (el) el.addEventListener('click', refreshSteps); });
+      ['payCOD', 'payUPI'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', refreshSteps);
+      });
       const successOverlay = document.getElementById('successOverlay');
       if (successOverlay) {
         new MutationObserver(refreshSteps).observe(successOverlay, { attributes: true, attributeFilter: ['class'] });

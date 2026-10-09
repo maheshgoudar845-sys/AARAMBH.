@@ -438,9 +438,10 @@
       margin: auto;
     }
 
+    /* six collections: 3 x 2 on desktop, 2 columns on tablets, 1 on phones */
     .collections-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
     }
 
@@ -1078,10 +1079,6 @@
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
 
-    @media (max-width: 1100px) {
-      .collections-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-
     @media (max-width: 900px) {
       nav { padding: 16px 20px; }
       .nav-links { display: none; }
@@ -1148,6 +1145,7 @@
       <li><a href="printed.html">Printed</a></li>
       <li><a href="hoodie.html">Hoodies</a></li>
       <li><a href="shirt.html">Shirts</a></li>
+      <li><a href="crop.html">Ladies</a></li>
       <li><a href="feedback.html" style="color: var(--accent2); font-weight: 800;">Feedback</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
@@ -1165,6 +1163,7 @@
     <a href="printed.html">Printed</a>
     <a href="hoodie.html">Hoodies</a>
     <a href="shirt.html">Shirts</a>
+    <a href="crop.html">Ladies</a>
     <a href="feedback.html" style="color: var(--accent2);">Feedback</a>
     <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
     <a href="tel:9405074832">📞 Order Now</a>
@@ -1211,6 +1210,7 @@
       <span>Bold Prints</span>
       <span>Oversized Fits</span>
       <span>🔥 UNSEEN Series Tee — Live Now</span>
+      <span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
       <span>Premium GSM Fabric</span>
       <span>Streetwear</span>
       <span>Arambh</span>
@@ -1218,6 +1218,7 @@
       <span>Bold Prints</span>
       <span>Oversized Fits</span>
       <span>🔥 UNSEEN Series Tee — Live Now</span>
+      <span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
     </div>
   </div>
 
@@ -1271,7 +1272,7 @@
     <div class="section-header reveal">
       <span class="section-label">Our Collections</span>
       <h2 class="section-title">SHOP THE DROPS</h2>
-      <p class="section-desc">Five distinct collections. One unmistakable identity.</p>
+      <p class="section-desc">Six distinct collections. One unmistakable identity.</p>
     </div>
 
     <div class="collections-grid">
@@ -1316,7 +1317,7 @@
       </a>
 
       <!-- HOODIE -->
-      <a href="hoodie.html" class="collection-card reveal reveal-delay-3">
+      <a href="hoodie.html" class="collection-card reveal reveal-delay-1">
         <img src="hoodie1.jpg" alt="Hoodie Collection" loading="lazy">
         <div class="card-overlay"></div>
         <span class="card-tag">Premium</span>
@@ -1329,7 +1330,7 @@
       </a>
 
       <!-- SHIRTS -->
-      <a href="shirt.html" class="collection-card reveal">
+      <a href="shirt.html" class="collection-card reveal reveal-delay-2">
         <img src="red_boxy.jpeg" alt="Shirt Collection" loading="lazy">
         <div class="card-overlay"></div>
         <span class="card-tag">New Drop</span>
@@ -1337,6 +1338,19 @@
         <div class="card-info">
           <h2>Shirts</h2>
           <p>Boxy fit, bold colour. Red, Blue and Pink, live now.</p>
+          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- LADIES CROP TOPS -->
+      <a href="crop.html" class="collection-card reveal reveal-delay-3">
+        <img src="crop_selflove_black_f.png" alt="Ladies Crop Tops Collection" loading="lazy">
+        <div class="card-overlay"></div>
+        <span class="card-tag" id="cropTag">New Drop</span>
+        <span class="card-tap">Tap to shop</span>
+        <div class="card-info">
+          <h2>Ladies Crop Tops</h2>
+          <p>Printed crop tops for women. Cropped fit, soft stretch cotton. Just ₹349.</p>
           <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
         </div>
       </a>
@@ -1432,7 +1446,7 @@
         <div class="stat-label">Happy Customers</div>
       </div>
       <div class="stat-item reveal reveal-delay-1">
-        <div class="stat-num">5</div>
+        <div class="stat-num">6</div>
         <div class="stat-label">Signature Collections</div>
       </div>
       <div class="stat-item reveal reveal-delay-2">
@@ -1497,6 +1511,7 @@
             <li><a href="printed.html">Printed Collection</a></li>
             <li><a href="hoodie.html">Hoodies</a></li>
             <li><a href="shirt.html">Shirts</a></li>
+            <li><a href="crop.html">Ladies Crop Tops</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -1577,6 +1592,15 @@
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     });
 
+    /* LADIES CROP TOPS: set the SAME launch time as in crop.html (null = already live).
+       Before launch the card and ticker say "Coming Soon" and the random pick skips crop tops. */
+    const CROP_LAUNCH_TIME = null; // e.g. "2026-10-15T18:00:00+05:30"
+    const cropLive = !CROP_LAUNCH_TIME || Date.now() >= new Date(CROP_LAUNCH_TIME).getTime();
+    if (!cropLive) {
+      document.getElementById('cropTag').textContent = 'Coming Soon';
+      document.querySelectorAll('.crop-ticker').forEach(el => { el.textContent = '💗 Ladies Crop Tops — Coming Soon'; });
+    }
+
     /* RANDOM PRODUCT RECOMMENDATION */
     const recommendedProducts = [
       { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
@@ -1586,6 +1610,9 @@
       { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' },
       { name:'Red Boxy Shirt', type:'Shirt Collection', price:'₹699', image:'red_boxy.jpeg', link:'shirt.html' }
     ];
+    if (cropLive) {
+      recommendedProducts.push({ name:'Self Love Crop Top', type:'Ladies Crop Top', price:'₹349', image:'crop_selflove_black_f.png', link:'crop.html' });
+    }
     const suggestedImage = document.getElementById('suggestedImage');
     const suggestedName = document.getElementById('suggestedName');
     const suggestedType = document.getElementById('suggestedType');

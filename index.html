@@ -1145,7 +1145,7 @@
       <li><a href="printed.html">Printed</a></li>
       <li><a href="hoodie.html">Hoodies</a></li>
       <li><a href="shirt.html">Shirts</a></li>
-      <li><a href="crop.html">Ladies</a></li>
+      <li><a href="croptop.html">Ladies</a></li>
       <li><a href="feedback.html" style="color: var(--accent2); font-weight: 800;">Feedback</a></li>
       <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
@@ -1343,8 +1343,8 @@
       </a>
 
       <!-- LADIES CROP TOPS -->
-      <a href="crop.html" class="collection-card reveal reveal-delay-3">
-        <img src="crop_selflove_black_f.png" alt="Ladies Crop Tops Collection" loading="lazy">
+      <a href="croptop.html" class="collection-card reveal reveal-delay-3">
+        <img src="Self Love Black Crop Top-front.jpeg" alt="Ladies Crop Tops Collection" loading="lazy">
         <div class="card-overlay"></div>
         <span class="card-tag" id="cropTag">New Drop</span>
         <span class="card-tap">Tap to shop</span>
@@ -1511,7 +1511,7 @@
             <li><a href="printed.html">Printed Collection</a></li>
             <li><a href="hoodie.html">Hoodies</a></li>
             <li><a href="shirt.html">Shirts</a></li>
-            <li><a href="crop.html">Ladies Crop Tops</a></li>
+            <li><a href="croptop.html">Ladies Crop Tops</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -1592,7 +1592,7 @@
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     });
 
-    /* LADIES CROP TOPS: set the SAME launch time as in crop.html (null = already live).
+    /* LADIES CROP TOPS: set the SAME launch time as in croptop.html (null = already live).
        Before launch the card and ticker say "Coming Soon" and the random pick skips crop tops. */
     const CROP_LAUNCH_TIME = null; // e.g. "2026-10-15T18:00:00+05:30"
     const cropLive = !CROP_LAUNCH_TIME || Date.now() >= new Date(CROP_LAUNCH_TIME).getTime();
@@ -1611,7 +1611,7 @@
       { name:'Red Boxy Shirt', type:'Shirt Collection', price:'₹699', image:'red_boxy.jpeg', link:'shirt.html' }
     ];
     if (cropLive) {
-      recommendedProducts.push({ name:'Self Love Crop Top', type:'Ladies Crop Top', price:'₹349', image:'crop_selflove_black_f.png', link:'crop.html' });
+      recommendedProducts.push({ name:'Self Love Crop Top', type:'Ladies Crop Top', price:'₹349', image:'Self Love Black Crop Top-front.jpeg', link:'croptop.html' });
     }
     const suggestedImage = document.getElementById('suggestedImage');
     const suggestedName = document.getElementById('suggestedName');

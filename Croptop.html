@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ladies Printed Crop Tops | AARAMBH</title>
+<meta name="description" content="Original printed crop tops for women by AARAMBH, premium Indian streetwear.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Syne:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--card:#12121c;--line:#26263a;--cream:#F5F1E8;--mute:#9a97a3;--red:#A90E02;--org:#E94E2C;--amb:#FFB238}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--cream);font-family:'DM Sans',sans-serif;line-height:1.5}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--amb);outline-offset:2px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 5vw;border-bottom:1px solid var(--line)}
+.logo{font-family:'Bebas Neue';font-size:30px;letter-spacing:3px}
+nav a{margin-left:20px;color:var(--mute);font-size:14px}
+nav a:hover,nav a.on{color:var(--cream)}
+.hero{padding:64px 5vw 36px;max-width:1200px;margin:auto}
+.hero h1{font-family:'Bebas Neue';font-size:clamp(54px,11vw,128px);line-height:.9;letter-spacing:2px;background:linear-gradient(90deg,var(--org),var(--amb));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:46ch;color:var(--mute);margin-top:14px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;max-width:1200px;margin:auto;padding:0 5vw 20px}
+.link-btn{background:none;border:1px solid var(--line);color:var(--cream);padding:9px 16px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer}
+.link-btn:hover{border-color:var(--org)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;max-width:1200px;margin:auto;padding:0 5vw 70px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.img{position:relative;aspect-ratio:4/5;background:#0b0b13;display:flex;align-items:flex-end}
+.img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px}
+.img span.ph{font-family:'Syne';font-weight:800;color:#3a3a52;padding:16px;font-size:14px}
+.views{z-index:2;position:absolute;top:10px;right:10px;display:flex;gap:6px}
+.views button{background:rgba(8,8,16,.75);color:var(--cream);border:1px solid var(--line);border-radius:6px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+.views button.on{border-color:var(--amb);color:var(--amb)}
+.info{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.info h3{font-family:'Syne';font-weight:800;font-size:18px}
+.price{font-family:'Bebas Neue';font-size:26px;letter-spacing:1px;color:var(--amb)}
+.sizes{display:flex;gap:8px;flex-wrap:wrap}
+.sizes button{min-width:42px;padding:7px 10px;background:none;border:1px solid var(--line);border-radius:6px;color:var(--cream);font:inherit;font-size:13px;cursor:pointer}
+.sizes button.on{background:var(--cream);color:var(--bg);border-color:var(--cream)}
+.acts{display:flex;gap:8px;margin-top:auto}
+.btn{flex:1;text-align:center;padding:12px;border-radius:8px;border:0;font:inherit;font-weight:700;cursor:pointer;font-size:14px}
+.buy{background:linear-gradient(90deg,var(--red),var(--org));color:#fff}
+.wa{background:none;border:1px solid var(--line);color:var(--cream)}
+.sw{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.sw button{width:26px;height:26px;border-radius:50%;border:2px solid #4a4a64;cursor:pointer;padding:0}
+.sw button.on{border-color:var(--amb);box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--amb)}
+.fab{color:var(--mute);font-size:12px}
+.cart{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;margin-left:20px;color:var(--cream)}
+.cart b{background:var(--red);border-radius:50%;min-width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,8px);background:var(--card);border:1px solid var(--org);border-radius:10px;padding:12px 16px;opacity:0;pointer-events:none;transition:.25s;z-index:60;font-size:14px}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.msg{color:var(--org);font-size:12px;min-height:16px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal.open{display:flex}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;max-width:520px;width:100%;max-height:90vh;overflow:auto}
+.box h2{font-family:'Bebas Neue';font-size:30px;letter-spacing:1px;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px;border-bottom:1px solid var(--line);text-align:center}
+th{color:var(--amb)}
+.note{color:var(--mute);font-size:12px;margin:10px 0 14px}
+#launch{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+#launch h2{font-family:'Bebas Neue';font-size:clamp(40px,9vw,90px);letter-spacing:2px}
+#cd{font-family:'Bebas Neue';font-size:clamp(34px,8vw,72px);color:var(--amb);letter-spacing:3px;margin:14px 0}
+footer{border-top:1px solid var(--line);padding:24px 5vw;color:var(--mute);font-size:13px;text-align:center}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- Launch countdown overlay: set LAUNCH_TIME below, or null to disable -->
+<div id="launch">
+  <h2>Ladies crop tops drop soon</h2>
+  <div id="cd">--:--:--</div>
+  <p style="color:var(--mute)">Follow @aarambh.official__ on Instagram for the drop.</p>
+</div>
+
+<header>
+  <a href="index.html" class="logo">AARAMBH</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="oversized.html">Oversized</a>
+    <a href="shirt.html">Shirts</a>
+    <a href="crop.html" class="on">Ladies</a>
+    <a class="cart" href="order.html?cart=1" aria-label="Open cart">Cart <b id="cartCount">0</b></a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Crop Tops</h1>
+  <p>Original printed crop tops for women, made only by AARAMBH. 220 GSM fabric, 95% cotton and 5% lycra for a soft, stretchy fit.</p>
+</section>
+
+<div class="bar">
+  <button class="link-btn" id="openChart">Size chart</button>
+  <span style="color:var(--mute);font-size:13px">Delivery ₹30 Goa/Karnataka, ₹50 elsewhere</span>
+</div>
+
+<main class="grid" id="grid"></main>
+
+<div class="modal" id="chart" role="dialog" aria-modal="true" aria-label="Size chart">
+  <div class="box">
+    <h2>Crop top size chart</h2>
+    <img id="chartImg" src="CropTopSizeChart.jpeg" alt="Crop top size chart" style="width:100%;border-radius:8px" onerror="this.style.display='none';document.getElementById('chartTable').style.display='block'">
+    <div id="chartTable" style="display:none"><table>
+      <tr><th>Size</th><th>Bust (in)</th><th>Length (in)</th><th>Shoulder (in)</th></tr>
+      <tr><td>XS</td><td>32</td><td>16</td><td>13.5</td></tr>
+      <tr><td>S</td><td>34</td><td>16.5</td><td>14</td></tr>
+      <tr><td>M</td><td>36</td><td>17</td><td>14.5</td></tr>
+      <tr><td>L</td><td>38</td><td>17.5</td><td>15</td></tr>
+      <tr><td>XL</td><td>40</td><td>18</td><td>15.5</td></tr>
+    </table></div>
+    <p class="note">Measurements are of the garment, in inches. Add CropTopSizeChart.jpeg next to this file to show your own chart image.</p>
+    <button class="btn buy" id="closeChart">Close</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>© 2025 AARAMBH · arambhofficial2025@gmail.com · Instagram @aarambh.official__</footer>
+
+<script>
+// ===== EDIT THIS SECTION =====
+var LAUNCH_TIME = null; // set before upload, e.g. "2026-10-15T18:00:00+05:30" (IST). Page stays locked until then.
+var SIZES = ["S","M","L","XL"]; // order.html offers S to XXL
+var C = {
+  red:{name:"Red",hex:"#D0201A"}, white:{name:"White",hex:"#FFFFFF"}, yellow:{name:"Yellow",hex:"#FFD21F"},
+  black:{name:"Black",hex:"#141414"}, pink:{name:"Baby Pink",hex:"#F4B6C8"}
+};
+var PRODUCTS = [
+  {id:"dream", name:"Live Your Dream", price:349, colors:["red","white","yellow"]},
+  {id:"selflove", name:"Self Love", price:349, colors:["black","red"]},
+  {id:"bloom", name:"Bloom and Shine", price:349, colors:["black","pink","red"]},
+  {id:"butterfly", name:"Glorious Butterfly", price:349, colors:["white","black","red","yellow"]}
+];
+// Images go in the site root like your other products: crop_<id>_<color>_f.png and crop_<id>_<color>_b.png
+// e.g. crop_dream_red_f.png. .jpg and .jpeg also work.
+function imgName(p, color, view){ return "crop_" + p.id + "_" + color + "_" + view + ".png"; }
+// ==============================
+
+var TYPE = "Printed Crop Top", FIT = "Cropped", CART_KEY = "arambhCart";
+var state = {};
+var grid = document.getElementById("grid");
+
+function getCart(){ try { var r = JSON.parse(localStorage.getItem(CART_KEY)); return Array.isArray(r) ? r : []; } catch(e){ return []; } }
+function updateCount(){ document.getElementById("cartCount").textContent = getCart().reduce(function(n,i){return n + (Number(i.qty)||0);},0); }
+function toast(t){ var el = document.getElementById("toast"); el.textContent = t; el.classList.add("show"); setTimeout(function(){el.classList.remove("show");},1800); }
+
+// tries .png, .jpg, .jpeg for the same name, then hides the picture
+function setImg(el, name){
+  var base = name.replace(/\.(png|jpe?g)$/i, ""), exts = ["png","jpg","jpeg"], i = 0;
+  el.style.display = "";
+  el.onerror = function(){ i++; if(i < exts.length) el.src = base + "." + exts[i]; else { el.onerror = null; el.style.display = "none"; } };
+  el.src = base + "." + exts[0];
+}
+function srcOf(el, fallbackName){ return (el && el.style.display !== "none" && el.getAttribute("src")) || fallbackName; }
+
+PRODUCTS.forEach(function(p){
+  state[p.id] = {size:null, color:p.colors[0], view:"f"};
+  var c = document.createElement("article");
+  c.className = "card";
+  c.innerHTML =
+    '<div class="img"><span class="ph">AARAMBH</span><img id="img-' + p.id + '" alt="' + p.name + ' crop top">' +
+      '<div class="views"><button class="on" data-v="f">Front</button><button data-v="b">Back</button></div></div>' +
+    '<div class="info"><h3>' + p.name + '</h3><div class="price">₹' + p.price + '</div>' +
+      '<div class="fab">220 GSM, 95% cotton, 5% lycra</div>' +
+      '<div class="sw" role="group" aria-label="Select color">' +
+        p.colors.map(function(k,i){return '<button data-c="' + k + '" aria-label="' + C[k].name + '" title="' + C[k].name + '" style="background:' + C[k].hex + '"' + (i===0?' class="on"':'') + '></button>';}).join("") +
+        '<span id="cn-' + p.id + '">' + C[p.colors[0]].name + '</span></div>' +
+      '<div class="sizes" role="group" aria-label="Select size">' +
+        SIZES.map(function(s){return '<button data-s="' + s + '">' + s + '</button>';}).join("") +
+      '</div><div class="msg" id="msg-' + p.id + '"></div>' +
+      '<div class="acts"><button class="btn wa" data-act="cart">Add to cart</button>' +
+      '<button class="btn buy" data-act="buy">Buy now</button></div></div>';
+
+  var imgEl = c.querySelector(".img img");
+  function show(){ var st = state[p.id]; setImg(imgEl, imgName(p, st.color, st.view)); }
+  show();
+  c.querySelectorAll(".views button").forEach(function(b){
+    b.onclick = function(){
+      state[p.id].view = b.dataset.v;
+      c.querySelectorAll(".views button").forEach(function(x){x.classList.toggle("on", x===b);});
+      show();
+    };
+  });
+  c.querySelectorAll(".sw button").forEach(function(b){
+    b.onclick = function(){
+      state[p.id].color = b.dataset.c;
+      document.getElementById("cn-" + p.id).textContent = C[b.dataset.c].name;
+      c.querySelectorAll(".sw button").forEach(function(x){x.classList.toggle("on", x===b);});
+      show();
+    };
+  });
+  c.querySelectorAll(".sizes button").forEach(function(b){
+    b.onclick = function(){
+      state[p.id].size = b.dataset.s;
+      document.getElementById("msg-" + p.id).textContent = "";
+      c.querySelectorAll(".sizes button").forEach(function(x){x.classList.toggle("on", x===b);});
+    };
+  });
+  c.querySelectorAll("[data-act]").forEach(function(b){
+    b.onclick = function(){
+      var st = state[p.id];
+      if(!st.size){ document.getElementById("msg-" + p.id).textContent = "Select a size first."; return; }
+      var col = C[st.color].name;
+      // front and back photos of the chosen color (the card only shows one at a time)
+      var front = (st.view === "f") ? srcOf(imgEl, imgName(p, st.color, "f")) : imgName(p, st.color, "f");
+      var back = (st.view === "b") ? srcOf(imgEl, imgName(p, st.color, "b")) : imgName(p, st.color, "b");
+      if(b.dataset.act === "buy"){
+        location.href = "order.html?" + new URLSearchParams({
+          product: p.name, type: TYPE, color: col, fit: FIT, size: st.size, qty: "1",
+          price: String(p.price), image: front, image2: back
+        }).toString();
+      } else {
+        var cart = getCart(), id = p.name + "|" + col + "|" + FIT + "|" + st.size;
+        var ex = cart.find(function(i){return i.id === id;});
+        if(ex) ex.qty = Math.min(10, (Number(ex.qty)||0) + 1);
+        else cart.push({id:id, product:p.name, type:TYPE, color:col, fit:FIT, price:p.price, image:front, image2:back, size:st.size, qty:1});
+        try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch(e){}
+        updateCount();
+        toast(p.name + " (" + col + ", " + st.size + ") added to cart");
+      }
+    };
+  });
+  grid.appendChild(c);
+});
+updateCount();
+
+// Size chart modal
+var chart = document.getElementById("chart");
+document.getElementById("openChart").onclick = function(){chart.classList.add("open");};
+document.getElementById("closeChart").onclick = function(){chart.classList.remove("open");};
+chart.onclick = function(e){if(e.target === chart) chart.classList.remove("open");};
+document.addEventListener("keydown", function(e){if(e.key === "Escape") chart.classList.remove("open");});
+
+// Launch countdown
+(function(){
+  if(!LAUNCH_TIME) return;
+  var end = new Date(LAUNCH_TIME).getTime();
+  var box = document.getElementById("launch"), cd = document.getElementById("cd");
+  function pad(n){return String(n).padStart(2,"0");}
+  function tick(){
+    var d = end - Date.now();
+    if(d <= 0){ box.style.display = "none"; return; }
+    box.style.display = "flex";
+    var days = Math.floor(d/864e5), h = Math.floor(d%864e5/36e5), m = Math.floor(d%36e5/6e4), s = Math.floor(d%6e4/1e3);
+    cd.textContent = (days ? days + "d " : "") + pad(h) + ":" + pad(m) + ":" + pad(s);
+    setTimeout(tick, 1000);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>

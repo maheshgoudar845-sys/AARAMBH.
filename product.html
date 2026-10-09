@@ -321,13 +321,13 @@
   /* ===== Ladies crop tops: set the SAME launch time as in croptop.html (null = already live) =====
      Before this time, crop tops are hidden from search and "You may also like",
      and a direct crop product link sends visitors back to croptop.html. */
-  const CROP_LAUNCH_TIME = null; // e.g. "2026-10-15T18:00:00+05:30"
+  const CROP_LAUNCH_TIME = "2026-10-12T10:00:00+05:30"; // must match LAUNCH_TIME in croptop.html
   const cropLive = !CROP_LAUNCH_TIME || Date.now() >= new Date(CROP_LAUNCH_TIME).getTime();
 
   /* ===== Product data ===== */
   const qs = new URLSearchParams(location.search);
   const productData = {
-    product: qs.get('product') || 'ARAMBH Product',
+    product: qs.get('product') || 'AARAMBH Product',
     type: qs.get('type') || 'Apparel',
     color: qs.get('color') || 'Default',
     price: Number(qs.get('price')) || 0,

@@ -100,6 +100,9 @@
     /* Back image: shown on hover */
     .product-image-wrap img.alt-img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s, transform 0.6s; }
     .product-card:hover .product-image-wrap img.alt-img { opacity: 1; }
+    .product-image-wrap > a { display: block; width: 100%; height: 100%; }
+    .product-name a { color: inherit; text-decoration: none; }
+    .product-name a:hover { color: var(--accent2); }
     .product-badge {
       position: absolute; top: 14px; left: 14px; z-index: 2;
       background: var(--accent); color: var(--accent2); padding: 5px 12px; border-radius: 100px;
@@ -306,16 +309,17 @@
     </div>
 
     <div class="product-grid">
-
       <article class="product-card">
         <div class="product-image-wrap">
           <span class="product-badge">New</span>
-          <img src="Boxy Red Shirt-front.jpeg" alt="AARAMBH Red Boxy Shirt front">
-          <img class="alt-img" src="Boxy Red Shirt-back.jpeg" alt="AARAMBH Red Boxy Shirt back">
+          <a href="product.html?product=Red%20Boxy%20Shirt&type=Boxy%20Shirt&color=Red&price=649&image=Boxy%20Red%20Shirt-front.jpeg&image2=Boxy%20Red%20Shirt-back.jpeg">
+            <img src="Boxy Red Shirt-front.jpeg" alt="AARAMBH Red Boxy Shirt front">
+            <img class="alt-img" src="Boxy Red Shirt-back.jpeg" alt="AARAMBH Red Boxy Shirt back">
+          </a>
         </div>
         <div class="product-content">
           <span class="product-type">Boxy Shirt</span>
-          <h3 class="product-name">Red Boxy Shirt</h3>
+          <h3 class="product-name"><a href="product.html?product=Red%20Boxy%20Shirt&type=Boxy%20Shirt&color=Red&price=649&image=Boxy%20Red%20Shirt-front.jpeg&image2=Boxy%20Red%20Shirt-back.jpeg">Red Boxy Shirt</a></h3>
           <div class="product-price">₹649</div>
           <div class="size-row" data-sizes>
             <button class="size-btn" type="button">S</button>
@@ -335,12 +339,14 @@
       <article class="product-card">
         <div class="product-image-wrap">
           <span class="product-badge">New</span>
-          <img src="Boxy Blue Shirt-front.jpeg" alt="AARAMBH Blue Boxy Shirt front">
-          <img class="alt-img" src="Boxy Blue Shirt-back.jpeg" alt="AARAMBH Blue Boxy Shirt back">
+          <a href="product.html?product=Blue%20Boxy%20Shirt&type=Boxy%20Shirt&color=Blue&price=649&image=Boxy%20Blue%20Shirt-front.jpeg&image2=Boxy%20Blue%20Shirt-back.jpeg">
+            <img src="Boxy Blue Shirt-front.jpeg" alt="AARAMBH Blue Boxy Shirt front">
+            <img class="alt-img" src="Boxy Blue Shirt-back.jpeg" alt="AARAMBH Blue Boxy Shirt back">
+          </a>
         </div>
         <div class="product-content">
           <span class="product-type">Boxy Shirt</span>
-          <h3 class="product-name">Blue Boxy Shirt</h3>
+          <h3 class="product-name"><a href="product.html?product=Blue%20Boxy%20Shirt&type=Boxy%20Shirt&color=Blue&price=649&image=Boxy%20Blue%20Shirt-front.jpeg&image2=Boxy%20Blue%20Shirt-back.jpeg">Blue Boxy Shirt</a></h3>
           <div class="product-price">₹649</div>
           <div class="size-row" data-sizes>
             <button class="size-btn" type="button">S</button>
@@ -360,12 +366,14 @@
       <article class="product-card">
         <div class="product-image-wrap">
           <span class="product-badge">New</span>
-          <img src="Boxy Pink Shirt-front.jpeg" alt="AARAMBH Pink Boxy Shirt front">
-          <img class="alt-img" src="Boxy Pink Shirt-back.jpeg" alt="AARAMBH Pink Boxy Shirt back">
+          <a href="product.html?product=Pink%20Boxy%20Shirt&type=Boxy%20Shirt&color=Pink&price=649&image=Boxy%20Pink%20Shirt-front.jpeg&image2=Boxy%20Pink%20Shirt-back.jpeg">
+            <img src="Boxy Pink Shirt-front.jpeg" alt="AARAMBH Pink Boxy Shirt front">
+            <img class="alt-img" src="Boxy Pink Shirt-back.jpeg" alt="AARAMBH Pink Boxy Shirt back">
+          </a>
         </div>
         <div class="product-content">
           <span class="product-type">Boxy Shirt</span>
-          <h3 class="product-name">Pink Boxy Shirt</h3>
+          <h3 class="product-name"><a href="product.html?product=Pink%20Boxy%20Shirt&type=Boxy%20Shirt&color=Pink&price=649&image=Boxy%20Pink%20Shirt-front.jpeg&image2=Boxy%20Pink%20Shirt-back.jpeg">Pink Boxy Shirt</a></h3>
           <div class="product-price">₹649</div>
           <div class="size-row" data-sizes>
             <button class="size-btn" type="button">S</button>

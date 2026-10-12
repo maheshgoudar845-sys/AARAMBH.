@@ -10,7 +10,7 @@
   :root{--bg:#080810;--card:#101018;--accent:#E8452C;--accent2:#FF7A45;--text:#F5F3EE;--muted:#9A96A8;--line:#232130;--ease:cubic-bezier(.2,.7,.2,1);}
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;padding-bottom:90px;animation:pageIn .5s var(--ease) both;transition:opacity .22s ease,transform .22s ease;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;padding-bottom:30px;animation:pageIn .5s var(--ease) both;transition:opacity .22s ease,transform .22s ease;}
   body.leaving{opacity:0;transform:translateY(-8px);pointer-events:none;}
   @keyframes pageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   h1,h2,.display{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
@@ -68,7 +68,7 @@
   .size-btn{padding:10px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans';font-weight:500;min-width:48px;text-align:center;transition:.2s var(--ease);}
   .size-btn:hover{border-color:var(--accent2);transform:translateY(-2px);}
   .size-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .buy-row{display:flex;gap:12px;margin-top:8px;}
+  .buy-row{display:flex;gap:12px;margin:0 0 18px;}
   .qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
   .qty button{background:var(--card);color:var(--text);border:none;width:40px;height:48px;font-size:1.1rem;cursor:pointer;}
   .qty span{width:40px;text-align:center;font-weight:600;}
@@ -113,12 +113,13 @@
   @keyframes bump{30%{transform:scale(1.15)}60%{transform:scale(.95)}}
   @media(max-width:480px){.brand-mark{font-size:1.4rem;}.cart-link{padding:0 13px;}.cart-text{display:none;}}
   .cart-count{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;background:var(--accent);border-radius:50%;font-size:.7rem;}
-  .cart-toast{position:fixed;bottom:96px;left:50%;z-index:80;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px 16px;opacity:0;transform:translate(-50%,8px);pointer-events:none;transition:.25s;}
+  .cart-toast{position:fixed;bottom:30px;left:50%;z-index:80;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px 16px;opacity:0;transform:translate(-50%,8px);pointer-events:none;transition:.25s;}
   .cart-toast.show{opacity:1;transform:translate(-50%,0);}
 
   /* ---- Sticky mobile bar ---- */
   .sticky-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px;display:none;align-items:center;gap:12px;z-index:50;}
-  @media(max-width:860px){.sticky-bar{display:flex;}.buy-row{display:none;}}
+  .sticky-bar{display:none !important;}
+  @media(max-width:480px){.buy-row{flex-wrap:wrap;}.qty{width:100%;}.qty span{flex:1;}.add-cart,.buy-now{height:48px;flex:1 1 40%;}}
   .sticky-qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-shrink:0;}
   .sticky-qty button{background:var(--card);color:var(--text);border:none;width:34px;height:48px;font-size:1.05rem;cursor:pointer;}
   .sticky-qty span{width:30px;text-align:center;font-weight:700;font-size:.9rem;}
@@ -136,7 +137,7 @@
   .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
   .modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;}
 
-  .size-note{margin:-14px 0 22px;color:var(--accent2);font-size:.82rem;line-height:1.5;}
+  .size-note{margin:0 0 14px;color:var(--accent2);font-size:.82rem;line-height:1.5;}
   .details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 22px;}
   .detail-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;}
   .detail-card small{display:block;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;}
@@ -229,14 +230,14 @@
       <div class="size-btn" data-size="XL">XL</div>
       <div class="size-btn" data-size="2XL">2XL</div>
     </div>
-    <p class="size-note">Please review the size chart carefully before placing your order.</p>
-    <div class="policy-note"><strong>Return policy:</strong> Returns are accepted only for print-related issues, and the issue must be reported within 3 days of receiving the delivery.</div>
-
     <div class="buy-row">
       <div class="qty"><button id="qtyMinus">−</button><span id="qtyVal">1</span><button id="qtyPlus">+</button></div>
       <button class="add-cart" id="addCartDesktop">ADD TO CART</button>
       <button class="buy-now" id="buyNowDesktop">BUY NOW</button>
     </div>
+    <p class="size-note">Please review the size chart carefully before placing your order.</p>
+    <div class="policy-note"><strong>Return policy:</strong> Returns are accepted only for print-related issues, and the issue must be reported within 3 days of receiving the delivery.</div>
+
   </div>
 </div>
 

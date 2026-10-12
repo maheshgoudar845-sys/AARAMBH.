@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oversized Collection — Aarambh</title>
+  <title>Oversized Collection — AARAMBH</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -184,49 +184,15 @@
     .products-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
     .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; margin-bottom: 60px; }
 
-    /* BUNDLE OFFER BANNER */
-    .bundle-offer {
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 22px;
-      background: linear-gradient(120deg, rgba(169,14,2,0.22), rgba(255,250,205,0.05));
-      border: 1px solid rgba(255,250,205,0.22);
-      border-radius: 22px;
-      padding: 30px 36px;
-      margin-bottom: 44px;
-      position: relative;
-      overflow: hidden;
-    }
-    .bundle-offer::before {
-      content: '';
-      position: absolute; top: -40%; right: -10%;
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(255,250,205,0.12), transparent 70%);
-      pointer-events: none;
-    }
-    .bundle-offer-left { position: relative; z-index: 1; }
-    .bundle-tag {
-      display: inline-block; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
-      letter-spacing: 2px; text-transform: uppercase; background: var(--accent2); color: #2e2400;
-      padding: 5px 13px; border-radius: 100px; margin-bottom: 10px;
-    }
-    .bundle-offer-left h3 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(26px, 3.4vw, 38px); letter-spacing: 1px; line-height: 1.05; }
-    .bundle-offer-left p { color: var(--muted); font-size: 13.5px; margin-top: 6px; }
-    .bundle-offer-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; position: relative; z-index: 1; }
-    .bundle-strike { font-family: 'Syne', sans-serif; font-size: 15px; color: var(--muted); text-decoration: line-through; }
-    .bundle-price { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--accent2); letter-spacing: 1px; }
-    .bundle-btn {
-      display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px;
-      background: var(--accent2); color: #2e2400; text-decoration: none;
-      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      border-radius: 100px; transition: transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 8px 24px rgba(255,250,205,0.2);
-    }
-    .bundle-btn:hover { transform: scale(1.04); }
-
-    @media (max-width: 600px) {
-      .bundle-offer { flex-direction: column; align-items: flex-start; padding: 26px 22px; }
-      .bundle-offer-right { width: 100%; justify-content: space-between; }
-      .bundle-btn { width: 100%; justify-content: center; }
-    }
+    /* PROMO MOTION BAR */
+    .promo-bar { overflow: hidden; white-space: nowrap; cursor: pointer; margin-bottom: 44px; padding: 14px 0; border: 1px solid rgba(255,250,205,0.22); border-radius: 100px; background: linear-gradient(120deg, rgba(169,14,2,0.28), rgba(255,250,205,0.06)); }
+    .promo-track { display: inline-flex; animation: promo-scroll 22s linear infinite; }
+    .promo-bar:hover .promo-track { animation-play-state: paused; }
+    .promo-item { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 0 34px; color: var(--accent2); }
+    .promo-item::after { content: '✦'; margin-left: 34px; opacity: 0.6; }
+    .promo-item .code { background: var(--accent2); color: #2e2400; padding: 4px 12px; border-radius: 100px; margin-left: 6px; }
+    @keyframes promo-scroll { to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .promo-track { animation: none; } }
 
     .product-card { background: linear-gradient(160deg, var(--surface), var(--surface2)); border-radius: 22px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease; position: relative; }
     .product-card:hover { transform: translateY(-10px); box-shadow: 0 44px 80px rgba(0,0,0,0.7); border-color: rgba(169,14,2,0.3); }
@@ -348,7 +314,7 @@
   <div class="announce-bar">🔥 Oversized Fits — Drop Shoulder, Heavy Fabric, Street Ready</div>
 
   <nav id="navbar">
-    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
+    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="AARAMBH"></a>
     <ul class="nav-links">
       <li><a href="polo.html">Polos</a></li>
       <li><a href="oversized.html" class="active">Oversized</a></li>
@@ -398,9 +364,9 @@
 
   <div class="ticker-wrap">
     <div class="ticker">
-      <span>Drop Shoulder</span><span>Oversized Fit</span><span>Arambh</span>
+      <span>Drop Shoulder</span><span>Oversized Fit</span><span>AARAMBH</span>
       <span>Street Power</span><span>Heavy Fabric</span><span>Wear Your Vibe</span>
-      <span>Drop Shoulder</span><span>Oversized Fit</span><span>Arambh</span>
+      <span>Drop Shoulder</span><span>Oversized Fit</span><span>AARAMBH</span>
       <span>Street Power</span><span>Heavy Fabric</span><span>Wear Your Vibe</span>
     </div>
   </div>
@@ -410,16 +376,12 @@
     <h2 class="section-title reveal">OVERSIZED TEES</h2>
     <p class="section-sub reveal">Drop-shoulder silhouettes cut from heavy fabric — relaxed, bold, and built to hold its shape.</p>
 
-    <div class="bundle-offer reveal">
-      <div class="bundle-offer-left">
-        <span class="bundle-tag">Bundle Deal</span>
-        <h3>PICK ANY 3 OVERSIZED TEES</h3>
-        <p>Mix &amp; match any colours — save on every set of 3</p>
-      </div>
-      <div class="bundle-offer-right">
-        <span class="bundle-strike">₹1,197</span>
-        <span class="bundle-price">₹1,099</span>
-        <a href="https://wa.me/919637748622?text=Hi!%20I%20want%20to%20order%20the%203%20Oversized%20Tees%20for%20%E2%82%B91099%20bundle." class="bundle-btn">💬 Claim Deal</a>
+    <div class="promo-bar reveal" id="promoBar" title="Tap to copy code">
+      <div class="promo-track" id="promoTrack">
+        <span class="promo-item">🔥 10% OFF on 3 Oversized Tees</span>
+        <span class="promo-item">Use code <span class="code">TRIO10</span> at checkout</span>
+        <span class="promo-item">Mix &amp; match any colours</span>
+        <span class="promo-item promo-copy">Tap to copy code</span>
       </div>
     </div>
 
@@ -486,7 +448,8 @@
           <a href="order.html?product=Black+Oversized+Tee&type=Oversized&color=Black&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
-       <div class="product-card reveal">
+
+      <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
           <img class="front-img" src="Army_green.png" alt="Army Green Oversized — front" loading="lazy">
@@ -498,7 +461,8 @@
           <a href="order.html?product=Army+Green+Oversized+Tee&type=Oversized&color=Army+Green&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
-             <div class="product-card reveal">
+
+      <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
           <img class="front-img" src="Lavender .png" alt="Lavender Oversized — front" loading="lazy">
@@ -510,7 +474,8 @@
           <a href="order.html?product=Lavender+Oversized+Tee&type=Oversized&color=Lavender&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
-             <div class="product-card reveal">
+
+      <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
           <img class="front-img" src="Red.jpg" alt="Red Oversized — front" loading="lazy">
@@ -522,7 +487,8 @@
           <a href="order.html?product=Red+Oversized+Tee&type=Oversized&color=Red&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
-             <div class="product-card reveal">
+
+      <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
           <img class="front-img" src="Pink.png" alt="Pink Oversized — front" loading="lazy">
@@ -534,7 +500,6 @@
           <a href="order.html?product=Pink+Oversized+Tee&type=Oversized&color=Pink&price=399" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
-      
 
     </div>
 
@@ -543,7 +508,7 @@
   <div class="size-section reveal">
     <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>
     <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit.</p>
-    <img src="oversized_chart.png" alt="Size Chart" loading="lazy">
+    <img src="oversized_chart.png" alt="AARAMBH Oversized Size Chart" loading="lazy">
     <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering</div>
   </div>
 
@@ -557,7 +522,7 @@
   </div>
 
   <footer>
-    <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+    <p>© 2025 AARAMBH — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
   </footer>
 
   <script>
@@ -587,7 +552,16 @@
     const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
-  
+
+    // Promo bar: duplicate items for a seamless loop + tap to copy code
+    const promoTrack = document.getElementById('promoTrack');
+    promoTrack.innerHTML += promoTrack.innerHTML;
+    document.getElementById('promoBar').addEventListener('click', () => {
+      try { if (navigator.clipboard) navigator.clipboard.writeText('TRIO10'); } catch (e) {}
+      const notes = promoTrack.querySelectorAll('.promo-copy');
+      notes.forEach(n => n.textContent = 'Code TRIO10 copied!');
+      setTimeout(() => notes.forEach(n => n.textContent = 'Tap to copy code'), 1800);
+    });
 
     // Open the shared product detail page before checkout.
     document.querySelectorAll('a.buy-now-btn').forEach(button => {
@@ -614,7 +588,6 @@
         window.location.href = 'product.html?' + params.toString();
       });
     });
-
 
     // Product image/media click -> same product-details page as Buy Now.
     // On touch devices, the FIRST tap flips to the back-view image instead of

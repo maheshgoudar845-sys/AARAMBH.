@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Place Your Order — Aarambh</title>
+  <title>Place Your Order — AARAMBH</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -416,7 +416,7 @@
 <body>
 
   <nav>
-    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
+    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="AARAMBH"></a>
     <a href="javascript:history.back()" class="nav-back">← Back to Shop</a>
   </nav>
 
@@ -617,7 +617,7 @@
       <div class="card">
         <h3>Need Help Ordering?</h3>
         <p>Prefer to order directly, or have a sizing question before you buy? Message us — a real person replies, not a bot.</p>
-        <a href="https://wa.me/919405074832?text=Hi%20ARAMBH%2C%20I%20want%20to%20place%20an%20order" class="wa-btn">💬 Order on WhatsApp</a>
+        <a href="https://wa.me/919405074832?text=Hi%20AARAMBH%2C%20I%20want%20to%20place%20an%20order" class="wa-btn">💬 Order on WhatsApp</a>
         <a href="tel:9405074832" class="call-btn">📞 Call 9405074832</a>
 
         <div class="side-divider"></div>
@@ -634,7 +634,7 @@
   </div>
 
   <footer>
-    <p>© 2025 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9405074832">9405074832</a></p>
+    <p>© 2025 AARAMBH — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9405074832">9405074832</a></p>
   </footer>
 
   <script>
@@ -710,7 +710,7 @@
       }
     }
 
-    document.title = (orderItems.length === 1 ? orderItems[0].product + ' — ' : '') + 'Place Your Order — Arambh';
+    document.title = (orderItems.length === 1 ? orderItems[0].product + ' — ' : '') + 'Place Your Order — AARAMBH';
 
     // ---------- Render order summary ----------
     const cartItemsList = document.getElementById('cartItemsList');
@@ -816,7 +816,7 @@
     let appliedCoupon = '';
 
     // ---------- Totals ----------
-    const upiNote = encodeURIComponent('Arambh Order - ' + (orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} items`));
+    const upiNote = encodeURIComponent('AARAMBH Order - ' + (orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} items`));
 
     function getLineTotal() {
       return orderItems.reduce((sum, item) => sum + item.price * item.qty, 0);
@@ -824,24 +824,26 @@
     function getOversizedQty() {
       return orderItems.reduce((sum, item) => sum + (/oversized/i.test(item.type) ? item.qty : 0), 0);
     }
+    function getOversizedTotal() {
+      return orderItems.reduce((s, i) => s + (/oversized/i.test(i.type) ? i.price * i.qty : 0), 0);
+    }
 
     // ---------- Discount logic ----------
     function computeDiscount(lineTotal) {
       const candidates = [];
-      if (getOversizedQty() >= 3) {
-        candidates.push({ label: 'Oversized 3+ (8% off)', percent: 8 });
+      if (appliedCoupon === 'TRIO10' && getOversizedQty() >= 3) {
+        candidates.push({ label: 'Coupon TRIO10 (10% off oversized tees)', percent: 10, base: getOversizedTotal() });
       }
       if (appliedCoupon === 'NITG10') {
-        candidates.push({ label: 'Coupon NITG10 (10% off)', percent: 10 });
+        candidates.push({ label: 'Coupon NITG10 (10% off)', percent: 10, base: lineTotal });
       }
       if (appliedCoupon === 'FIRSTDROP10') {
-        candidates.push({ label: 'Coupon FIRSTDROP10 (10% off)', percent: 10 });
+        candidates.push({ label: 'Coupon FIRSTDROP10 (10% off)', percent: 10, base: lineTotal });
       }
       if (!candidates.length) return { label: '', percent: 0, amount: 0 };
       candidates.sort((a, b) => b.percent - a.percent);
       const best = candidates[0];
-      const amount = Math.round(lineTotal * best.percent / 100);
-      return { label: best.label, percent: best.percent, amount };
+      return { label: best.label, percent: best.percent, amount: Math.round(best.base * best.percent / 100) };
     }
 
     // ---------- UPI deep links (amount formatted, app-specific schemes) ----------
@@ -850,7 +852,7 @@
       const discount = computeDiscount(lineTotal);
       const payable = lineTotal - discount.amount + currentDeliveryCharge;
       const amount = payable.toFixed(2);
-      const q = `pa=${UPI_ID}&pn=${encodeURIComponent('Arambh')}&am=${amount}&cu=INR&tn=${upiNote}`;
+      const q = `pa=${UPI_ID}&pn=${encodeURIComponent('AARAMBH')}&am=${amount}&cu=INR&tn=${upiNote}`;
       document.getElementById('gpayLink').href = `gpay://upi/pay?${q}`;
       document.getElementById('phonepeLink').href = `phonepe://pay?${q}`;
       document.getElementById('paytmLink').href = `paytmmp://pay?${q}`;
@@ -1024,7 +1026,7 @@
     const applyCouponBtn = document.getElementById('applyCouponBtn');
     const couponStatus = document.getElementById('couponStatus');
     const couponStatusText = document.getElementById('couponStatusText');
-    const VALID_COUPONS = ['NITG10', 'FIRSTDROP10'];
+    const VALID_COUPONS = ['NITG10', 'FIRSTDROP10', 'TRIO10'];
     const FIRST_ORDER_KEY = 'arambhFirstOrderDone';
     function hasOrderedBefore() {
       try { return localStorage.getItem(FIRST_ORDER_KEY) === '1'; } catch (e) { return false; }
@@ -1041,6 +1043,10 @@
         appliedCoupon = '';
         couponStatus.className = 'pincode-status show error';
         couponStatusText.textContent = 'FIRSTDROP10 is only for first-time buyers.';
+      } else if (code === 'TRIO10' && getOversizedQty() < 3) {
+        appliedCoupon = '';
+        couponStatus.className = 'pincode-status show error';
+        couponStatusText.textContent = 'TRIO10 needs 3 or more oversized tees in your order.';
       } else if (VALID_COUPONS.includes(code)) {
         appliedCoupon = code;
         couponCodeInput.value = code;
@@ -1049,7 +1055,7 @@
       } else {
         appliedCoupon = '';
         couponStatus.className = 'pincode-status show error';
-        couponStatusText.textContent = 'That code isn\'t valid.';
+        couponStatusText.textContent = "That code isn't valid.";
       }
       updateOrderTotal();
     });
@@ -1391,7 +1397,7 @@
 
       Promise.allSettled([ownerEmailPromise, customerEmailPromise, pdfBillPromise, formspreePromise]).finally(() => {
         const waMessage = encodeURIComponent(
-          `Hi ARAMBH, I just placed an order (${data.orderId}):\n\n` +
+          `Hi AARAMBH, I just placed an order (${data.orderId}):\n\n` +
           `${data.itemsSummary}\n\n` +
           (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
           `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +

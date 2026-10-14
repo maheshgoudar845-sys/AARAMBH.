@@ -330,14 +330,28 @@
       black:{name:"Black",hex:"#141414"}, pink:{name:"Baby Pink",hex:"#F4B6C8"}
     };
     var PRODUCTS = [
-      {id:"selflove", name:"Self Love", price:349, colors:["black","red"], tint:"150,25,40", blurb:"Printed stretch-cotton crop top. Front & back designs included."},
-      {id:"bloom", name:"Bloom and Shine", price:349, colors:["black","pink","red"], tint:"244,182,200", blurb:"Printed stretch-cotton crop top. Front & back designs included."},
-      {id:"butterfly", name:"Glorious Butterfly", price:349, colors:["white","black","yellow"], tint:"255,210,31", blurb:"Printed stretch-cotton crop top. Front & back designs included."},
-      {id:"staycool", name:"Stay Cool", price:349, colors:["black","pink"], tint:"244,182,200", blurb:"Printed stretch-cotton crop top. Front & back designs included."},
-      {id:"vintage", name:"Vintage", price:349, colors:["white","red","yellow"], tint:"230,160,60", blurb:"Printed stretch-cotton crop top. Front & back designs included."}
+      {id:"selflove", name:"Self Love", price:349, colors:["black","red"], tint:"150,25,40", blurb:"Printed stretch-cotton crop top. Front & back designs included.", imgs:{
+        black:["Self Love Black Crop Top-front.jpeg","Self Love Black Crop Top-back.jpeg"],
+        red:["Self Love Red Crop Top-front.jpeg","Self Love Red Crop Top-back.jpeg"]}},
+      {id:"bloom", name:"Bloom and Shine", price:349, colors:["black","pink","red"], tint:"244,182,200", blurb:"Printed stretch-cotton crop top. Front & back designs included.", imgs:{
+        black:["Bloom Black Crop Top-front.jpeg","Bloom Black Crop Top-back.jpeg"],
+        pink:["Bloom baby pink Crop Top-front.jpeg","Bloom baby pink Crop Top-back.jpeg"],
+        red:["Bloom Red Crop Top-front.jpeg","Bloom Red Crop Top-back.jpeg"]}},
+      {id:"butterfly", name:"Glorious Butterfly", price:349, colors:["white","black","yellow"], tint:"255,210,31", blurb:"Printed stretch-cotton crop top. Front & back designs included.", imgs:{
+        white:["Glorious Butterfly White Crop Top-front.jpeg","Glorious Butterfly White Crop Top-back.jpeg"],
+        black:["Glorious Butterfly Black Crop Top-front.jpeg","Glorious Butterfly Black Crop Top-back.jpeg"],
+        yellow:["Glorious Butterfly Yellow Crop Top-front.jpeg","Glorious Butterfly Yellow Crop Top-back.jpeg"]}},
+      {id:"staycool", name:"Stay Cool", price:349, colors:["black","pink","red"], tint:"244,182,200", blurb:"Printed stretch-cotton crop top. Front & back designs included.", imgs:{
+        black:["Stay Cool Black Crop Top-front.jpeg","Bloom Black Crop Top-back.jpeg"],
+        pink:["Stay Cool Pink Crop Top-front.jpeg","Bloom Pink Crop Top-front.jpeg"],
+        red:["Stay Cool Red Crop Top-front.jpeg","Self Love Red Crop Top-back.jpeg"]}},
+      {id:"vintage", name:"Vintage", price:349, colors:["white","red","black"], tint:"230,160,60", blurb:"Printed stretch-cotton crop top. Front & back designs included.", imgs:{
+        white:["Vintage White Crop Top-front.jpeg","Glorious Butterfly White Crop Top-back.jpeg"],
+        red:["Vintage Red Crop Top-front.jpeg","Self Love Red Crop Top-back.jpeg"],
+        black:["Vintage Black Crop Top-front.jpeg","Self love Black Crop Top-back.jpeg"]}}
     ];
-    // images live in the site root, named like: Self Love Red Crop Top-front.jpeg and Self Love Red Crop Top-back.jpeg
-    function imgName(p, k, v){ return p.name + " " + C[k].name + " Crop Top-" + (v === "f" ? "front" : "back") + ".jpeg"; }
+    // exact photo names (same as the crop top lines in product.html): [front, back] for each colour
+    function imgName(p, k, v){ return p.imgs[k][v === "f" ? 0 : 1]; }
     // =============================
 
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

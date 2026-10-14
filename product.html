@@ -224,6 +224,7 @@
       <button class="size-chart-link" id="openChart">Size Chart</button>
     </div>
     <div class="sizes">
+      <div class="size-btn" data-size="XS" style="display:none">XS</div>
       <div class="size-btn" data-size="S">S</div>
       <div class="size-btn active" data-size="M">M</div>
       <div class="size-btn" data-size="L">L</div>
@@ -430,10 +431,15 @@
     $('gsmDetail').textContent = s.gsm;
     $('fitDetail').textContent = s.fit;
     $('productCategory').textContent = isShirt ? 'Boxy Shirt' : isCrop ? 'Printed Crop Top' : (isPrinted ? `Printed ${selectedFit} T-Shirt` : `${productData.type} Collection`);
-    if(isCrop || isShirt){
-      /* Crop tops and boxy shirts are sold in S to XL */
-      const b = document.querySelector('.size-btn[data-size="2XL"]');
-      if(b) b.style.display = 'none';
+    const xsBtn = document.querySelector('.size-btn[data-size="XS"]');
+    const xxlBtn = document.querySelector('.size-btn[data-size="2XL"]');
+    if(isCrop){
+      /* Crop tops are sold in XS to 2XL */
+      if(xsBtn) xsBtn.style.display = '';
+      $('sizesDetail').textContent = 'XS to 2XL';
+    } else if(isShirt){
+      /* Boxy shirts are sold in S to XL */
+      if(xxlBtn) xxlBtn.style.display = 'none';
       $('sizesDetail').textContent = 'S to XL';
     }
     updateSizeChart();

@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AARAMBH / FEEDBACK FORM</title>
+<title>AARAMBH | Feedback</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -13,368 +15,372 @@
     --hazard:#E8352C;
     --gold:#F4B41A;
     --blue:#2C6E8E;
-    --grey:#8A8782;
+    --grey:#9A978F;
     --line:#2A2A28;
     --card:#141412;
+    --card-focus:#1C1C19;
   }
   *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;color-scheme:dark;}
   body{
     margin:0;
     background:var(--paper);
     color:var(--ink);
     font-family:'Space Mono', monospace;
     -webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top, 0px);
   }
-  .hazard-strip{
-    height:8px;
-    width:100%;
+
+  /* Progress bar (sticky) */
+  .progress{
+    position:sticky;
+    top:0;
+    z-index:20;
+    height:6px;
+    background:var(--line);
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
     background:linear-gradient(90deg, var(--hazard) 0 33.3%, var(--blue) 33.3% 66.6%, var(--gold) 66.6% 100%);
+    background-size:100vw 100%;
+    transition:width .35s ease;
   }
+
   header{
-    padding:48px 24px 32px;
+    padding:56px 24px 32px;
     max-width:760px;
     margin:0 auto;
-    text-align:center;
   }
-  .logo-wrap{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    margin-bottom:32px;
-  }
-  .logo-wrap img{
-    height:96px;
-    width:auto;
-    display:block;
-  }
-  .logo-wrap .brandname{
+  .brandname{
     font-family:'Archivo Black', sans-serif;
-    font-size:18px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-  }
-  .eyebrow{
-    font-size:12px;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    color:var(--grey);
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:18px;
+    font-size:20px;
+    letter-spacing:.14em;
+    display:block;
+    margin-bottom:36px;
   }
   h1{
     font-family:'Archivo Black', sans-serif;
-    font-size:clamp(38px, 8vw, 64px);
-    line-height:0.95;
+    font-size:clamp(40px, 9vw, 68px);
+    line-height:.95;
     text-transform:uppercase;
-    margin:0 0 16px;
-    letter-spacing:-0.01em;
+    margin:0 0 18px;
+    letter-spacing:-.01em;
   }
   h1 span{ color:var(--hazard); }
   header p{
     font-size:14px;
     color:#B8B5AF;
     max-width:46ch;
-    line-height:1.6;
+    line-height:1.65;
     margin:0;
   }
+
   form{
     max-width:760px;
     margin:0 auto;
-    padding:0 24px 80px;
+    padding:0 24px 96px;
   }
   .section{
     border-top:1px solid var(--line);
     padding:36px 0;
   }
-  .section:last-of-type{
-    border-bottom:1px solid var(--line);
-  }
-  .section-head{
-    display:flex;
-    align-items:baseline;
-    gap:14px;
-    margin-bottom:22px;
-  }
-  .tag{
-    font-family:'Archivo Black', sans-serif;
-    background:var(--ink);
-    color:var(--paper);
-    font-size:11px;
-    padding:4px 8px;
-    letter-spacing:.05em;
-  }
   .section-title{
     font-family:'Archivo Black', sans-serif;
-    text-transform:uppercase;
-    font-size:20px;
-    letter-spacing:.01em;
+    font-size:22px;
+    margin:0 0 6px;
   }
-  label.field{
+  .section-sub{
+    font-size:13px;
+    color:var(--grey);
+    margin:0 0 26px;
+    line-height:1.5;
+  }
+  .field{
     display:block;
-    margin-bottom:24px;
+    margin-bottom:26px;
+    border:0;
+    padding:0;
+    min-width:0;
   }
-  label.field:last-child{ margin-bottom:0; }
+  .field:last-child{ margin-bottom:0; }
   .field-label{
     display:block;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.1em;
+    font-size:13px;
     color:var(--grey);
-    margin-bottom:8px;
+    margin-bottom:10px;
+    line-height:1.4;
+    padding:0;
   }
+  .opt{ color:var(--grey); opacity:.8; }
+
   input[type="text"],
   input[type="email"],
   textarea,
   select{
     width:100%;
     background:var(--card);
-    border:1px solid var(--line);
+    border:1px solid #3A3A36;
     border-radius:0;
-    padding:12px 14px;
+    padding:14px;
     font-family:'Space Mono', monospace;
-    font-size:15px;
+    font-size:16px; /* 16px stops iOS zoom on focus */
     color:var(--ink);
+    caret-color:var(--gold);
     outline:none;
     transition:border-color .15s ease, background .15s ease;
+    appearance:none;
+    -webkit-appearance:none;
   }
+  input::placeholder, textarea::placeholder{ color:#6B6862; }
   input[type="text"]:focus,
   input[type="email"]:focus,
   textarea:focus,
   select:focus{
     border-color:var(--ink);
-    background:#fff;
+    background:var(--card-focus);
+    color:var(--ink);
   }
-  textarea{
-    resize:vertical;
-    min-height:100px;
+  input:-webkit-autofill{
+    -webkit-text-fill-color:var(--ink);
+    box-shadow:0 0 0 1000px var(--card) inset;
+  }
+  select{
+    background-image:linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+    background-position:calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+    background-size:6px 6px;
+    background-repeat:no-repeat;
+    padding-right:40px;
+  }
+  select option{ background:var(--card); color:var(--ink); }
+  textarea{ resize:vertical; min-height:110px; line-height:1.5; }
+  .count{
+    display:block;
+    text-align:right;
+    font-size:11px;
+    color:var(--grey);
+    margin-top:6px;
   }
 
-  .rate-row{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
+  /* Visually hidden but keyboard accessible radios */
+  .rate-row input, .pill-group input, .star-row input{
+    position:absolute;
+    opacity:0;
+    width:1px;
+    height:1px;
+    pointer-events:none;
   }
-  .rate-row input{ display:none; }
+
+  .rate-row{ display:flex; gap:8px; flex-wrap:wrap; }
   .rate-row label{
-    border:1px solid var(--ink);
-    min-width:44px;
-    height:44px;
+    border:1px solid #3A3A36;
+    min-width:52px;
+    height:52px;
     display:flex;
     align-items:center;
     justify-content:center;
     font-family:'Archivo Black', sans-serif;
-    font-size:15px;
+    font-size:16px;
     cursor:pointer;
     background:var(--card);
-    transition:background .12s ease, color .12s ease, transform .08s ease;
+    transition:background .12s ease, color .12s ease, border-color .12s ease;
   }
-  .rate-row label:hover{ transform:translateY(-2px); }
+  .rate-row label:hover{ border-color:var(--ink); }
   .rate-row input:checked + label{
     background:var(--hazard);
     color:var(--paper);
     border-color:var(--hazard);
   }
-  .rate-scale-caption{
+  .scale-caption{
     display:flex;
     justify-content:space-between;
+    gap:12px;
     font-size:11px;
     color:var(--grey);
-    text-transform:uppercase;
-    margin-top:8px;
-    max-width:280px;
+    margin-top:10px;
+    max-width:320px;
   }
 
-  .pill-group{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-  }
-  .pill-group input{ display:none; }
+  .pill-group{ display:flex; flex-wrap:wrap; gap:10px; }
   .pill-group label{
-    border:1px solid var(--ink);
-    padding:9px 16px;
+    border:1px solid #3A3A36;
+    padding:12px 18px;
     font-size:13px;
-    text-transform:uppercase;
-    letter-spacing:.04em;
     cursor:pointer;
     background:var(--card);
-    transition:background .12s ease, color .12s ease;
+    transition:background .12s ease, color .12s ease, border-color .12s ease;
   }
+  .pill-group label:hover{ border-color:var(--ink); }
   .pill-group input:checked + label{
     background:var(--ink);
     color:var(--paper);
+    border-color:var(--ink);
   }
 
   .star-row{
     display:flex;
+    flex-direction:row-reverse;
+    justify-content:flex-end;
     gap:6px;
-    direction:ltr;
   }
-  .star-row input{ display:none; }
   .star-row label{
-    font-size:34px;
+    font-size:40px;
     line-height:1;
     cursor:pointer;
-    color:var(--line);
-    transition:color .12s ease, transform .08s ease;
+    color:#34332F;
+    transition:color .12s ease, transform .1s ease;
     user-select:none;
   }
   .star-row label:hover{ transform:scale(1.1); }
   .star-row input:checked ~ label,
-  .star-row:hover label:hover ~ label{
-    color:var(--line);
-  }
-  .star-row{ flex-direction:row-reverse; justify-content:flex-end; }
-  .star-row input:checked ~ label,
   .star-row label:hover,
-  .star-row label:hover ~ label{
-    color:var(--gold);
-  }
-  .star-scale-caption{
-    display:flex;
-    justify-content:space-between;
-    font-size:11px;
-    color:var(--grey);
-    text-transform:uppercase;
-    margin-top:8px;
-    max-width:320px;
-  }
+  .star-row label:hover ~ label{ color:var(--gold); }
 
-  .grid-2{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-  }
-  @media (max-width:560px){
-    .grid-2{ grid-template-columns:1fr; }
-  }
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .grid-2 .field{ margin-bottom:26px; }
+  @media (max-width:560px){ .grid-2{ grid-template-columns:1fr; gap:0; } }
 
   .consent{
     display:flex;
     align-items:flex-start;
-    gap:10px;
-    font-size:12px;
+    gap:12px;
+    font-size:13px;
     color:var(--grey);
     margin-top:28px;
+    cursor:pointer;
+    line-height:1.5;
   }
-  .consent input{ margin-top:3px; }
+  .consent input{
+    appearance:none;
+    -webkit-appearance:none;
+    flex:none;
+    width:22px;
+    height:22px;
+    margin:0;
+    border:1px solid #3A3A36;
+    background:var(--card);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+  }
+  .consent input:checked{ background:var(--hazard); border-color:var(--hazard); }
+  .consent input:checked::after{ content:"\2713"; color:var(--paper); font-size:14px; font-weight:700; }
 
   .submit-row{
     margin-top:40px;
     display:flex;
     align-items:center;
     gap:20px;
+    flex-wrap:wrap;
   }
   button[type="submit"]{
     font-family:'Archivo Black', sans-serif;
-    text-transform:uppercase;
-    letter-spacing:.05em;
+    letter-spacing:.04em;
     background:var(--ink);
     color:var(--paper);
     border:none;
-    padding:16px 34px;
-    font-size:14px;
+    padding:18px 38px;
+    font-size:15px;
     cursor:pointer;
-    transition:background .15s ease;
+    transition:background .15s ease, color .15s ease;
+    min-width:170px;
   }
-  button[type="submit"]:hover{ background:var(--hazard); }
-  button[type="submit"]:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-  }
-  button[type="submit"]:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible,
-  .rate-row label:has(input:focus-visible),
-  .pill-group label:has(input:focus-visible),
-  .star-row label:has(input:focus-visible){
-    outline:2px solid var(--hazard);
-    outline-offset:2px;
-  }
-  .submit-note{
-    font-size:11px;
-    color:var(--grey);
-  }
+  button[type="submit"]:hover:not(:disabled){ background:var(--hazard); color:var(--ink); }
+  button[type="submit"]:disabled{ opacity:.7; cursor:progress; }
+  .submit-note{ font-size:12px; color:var(--grey); }
+
   .error-note{
-    font-size:12px;
-    color:var(--hazard);
-    margin-top:14px;
+    font-size:13px;
+    color:#FF6B61;
+    border-left:3px solid var(--hazard);
+    padding:10px 14px;
+    margin-top:20px;
     display:none;
+    line-height:1.5;
   }
   .error-note.show{ display:block; }
+  .field.invalid input,
+  .field.invalid select{ border-color:var(--hazard); }
 
   .confirm{
     display:none;
     max-width:760px;
     margin:0 auto;
     padding:120px 24px;
-    text-align:center;
   }
-  .confirm.show{ display:block; }
+  .confirm.show{ display:block; animation:rise .4s ease both; }
   form.hide{ display:none; }
-  .confirm .tag{ margin-bottom:20px; display:inline-block; }
   .confirm h2{
     font-family:'Archivo Black', sans-serif;
-    text-transform:uppercase;
-    font-size:32px;
-    margin:0 0 12px;
+    font-size:clamp(36px, 8vw, 56px);
+    margin:0 0 14px;
+    line-height:1;
   }
-  .confirm p{ color:#B8B5AF; font-size:14px; }
+  .confirm p{ color:#B8B5AF; font-size:14px; line-height:1.65; max-width:44ch; margin:0 0 28px; }
+  .confirm a{
+    display:inline-block;
+    color:var(--ink);
+    border:1px solid var(--ink);
+    padding:14px 22px;
+    text-decoration:none;
+    font-size:13px;
+  }
+  .confirm a:hover{ background:var(--ink); color:var(--paper); }
+  @keyframes rise{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
 
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible,
+  .rate-row label:has(input:focus-visible),
+  .pill-group input:focus-visible + label,
+  .rate-row input:focus-visible + label,
+  .star-row input:focus-visible + label{
+    outline:2px solid var(--gold);
+    outline-offset:2px;
+  }
   @media (prefers-reduced-motion: reduce){
-    *{ transition:none !important; }
+    *{ transition:none !important; animation:none !important; scroll-behavior:auto !important; }
   }
 </style>
 </head>
 <body>
 
-<div class="hazard-strip"></div>
+<div class="progress" role="progressbar" aria-label="Form progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress">
+  <div class="progress-fill" id="progressFill"></div>
+</div>
 
 <header>
-  <div class="logo-wrap">
-    <span class="brandname">Aarambh</span>
-  </div>
-  <div class="eyebrow"><span>FORM NO. 003</span><span>STOCK FEEDBACK</span></div>
-  <h1>TELL US<br>WHAT<br><span>FITS.</span></h1>
-  <p>Three minutes, straight talk. Covers the product, the site, and the whole run — no filler questions, no fluff.</p>
+  <span class="brandname">AARAMBH</span>
+  <h1>Tell us<br>what<br><span>fits.</span></h1>
+  <p>Takes about three minutes. Tell us about the piece, the site and the delivery. Only name and email are required.</p>
 </header>
 
-<form id="feedbackForm">
+<form id="feedbackForm" novalidate>
 
-  <div class="section">
-    <div class="section-head">
-      <span class="tag">01</span>
-      <span class="section-title">Who's talking</span>
-    </div>
+  <div class="section" data-step>
+    <h2 class="section-title">Who's talking</h2>
+    <p class="section-sub">So we can reply if needed.</p>
     <div class="grid-2">
       <label class="field">
         <span class="field-label">Name</span>
-        <input type="text" name="name" placeholder="First and last" required>
+        <input type="text" name="name" placeholder="First and last" autocomplete="name" required>
       </label>
       <label class="field">
         <span class="field-label">Email</span>
-        <input type="email" name="email" placeholder="you@domain.com" required>
+        <input type="email" name="email" placeholder="you@domain.com" autocomplete="email" inputmode="email" required>
       </label>
     </div>
     <label class="field">
-      <span class="field-label">Order number <span style="color:var(--grey);text-transform:none;">(optional)</span></span>
-      <input type="text" name="order" placeholder="e.g. 10492">
+      <span class="field-label">Order number <span class="opt">(optional)</span></span>
+      <input type="text" name="order" placeholder="e.g. 10492" inputmode="numeric">
     </label>
   </div>
 
-  <div class="section">
-    <div class="section-head">
-      <span class="tag">02</span>
-      <span class="section-title">The product</span>
-    </div>
+  <div class="section" data-step>
+    <h2 class="section-title">The product</h2>
+    <p class="section-sub">Skip anything that doesn't apply.</p>
 
     <label class="field">
-      <span class="field-label">Which type of tee (or piece) is this about?</span>
-      <select name="productType" required>
+      <span class="field-label">Which piece is this about?</span>
+      <select name="productType">
         <option value="" disabled selected>Select one</option>
         <option value="printed">Printed Tee</option>
         <option value="polo">Polo</option>
@@ -386,91 +392,89 @@
       </select>
     </label>
 
-    <label class="field">
-      <span class="field-label">How's the fit running?</span>
+    <fieldset class="field">
+      <legend class="field-label">How is the fit?</legend>
       <div class="pill-group">
         <input type="radio" id="fit-small" name="fit" value="runs-small"><label for="fit-small">Runs small</label>
         <input type="radio" id="fit-true" name="fit" value="true-to-size"><label for="fit-true">True to size</label>
         <input type="radio" id="fit-large" name="fit" value="runs-large"><label for="fit-large">Runs large</label>
       </div>
-    </label>
+    </fieldset>
 
-    <label class="field">
-      <span class="field-label">Fabric &amp; build quality</span>
-      <div class="rate-row" role="radiogroup" aria-label="Fabric and build quality rating">
+    <fieldset class="field">
+      <legend class="field-label">Fabric and build quality</legend>
+      <div class="rate-row">
         <input type="radio" id="q1" name="quality" value="1"><label for="q1">1</label>
         <input type="radio" id="q2" name="quality" value="2"><label for="q2">2</label>
         <input type="radio" id="q3" name="quality" value="3"><label for="q3">3</label>
         <input type="radio" id="q4" name="quality" value="4"><label for="q4">4</label>
         <input type="radio" id="q5" name="quality" value="5"><label for="q5">5</label>
       </div>
-      <div class="rate-scale-caption"><span>Falling apart</span><span>Built like a tank</span></div>
-    </label>
+      <div class="scale-caption"><span>Falling apart</span><span>Built like a tank</span></div>
+    </fieldset>
 
     <label class="field">
-      <span class="field-label">Anything about the piece itself — stitching, colour, wash, hardware</span>
-      <textarea name="productNotes" placeholder="Give it to us straight"></textarea>
+      <span class="field-label">Stitching, colour, wash, print: anything about the piece</span>
+      <textarea name="productNotes" maxlength="600" placeholder="Give it to us straight"></textarea>
+      <span class="count"><span data-count>0</span>/600</span>
     </label>
   </div>
 
-  <div class="section">
-    <div class="section-head">
-      <span class="tag">03</span>
-      <span class="section-title">The site &amp; checkout</span>
-    </div>
+  <div class="section" data-step>
+    <h2 class="section-title">Site and delivery</h2>
+    <p class="section-sub">How was buying it?</p>
 
-    <label class="field">
-      <span class="field-label">How easy was it to find and buy?</span>
-      <div class="rate-row" role="radiogroup" aria-label="Site experience rating">
+    <fieldset class="field">
+      <legend class="field-label">How easy was it to find and buy?</legend>
+      <div class="rate-row">
         <input type="radio" id="e1" name="experience" value="1"><label for="e1">1</label>
         <input type="radio" id="e2" name="experience" value="2"><label for="e2">2</label>
         <input type="radio" id="e3" name="experience" value="3"><label for="e3">3</label>
         <input type="radio" id="e4" name="experience" value="4"><label for="e4">4</label>
         <input type="radio" id="e5" name="experience" value="5"><label for="e5">5</label>
       </div>
-      <div class="rate-scale-caption"><span>Fought me the whole way</span><span>Zero friction</span></div>
-    </label>
+      <div class="scale-caption"><span>Fought me the whole way</span><span>Zero friction</span></div>
+    </fieldset>
 
-    <label class="field">
-      <span class="field-label">Where did it get shipped</span>
+    <fieldset class="field">
+      <legend class="field-label">How was delivery?</legend>
       <div class="pill-group">
-        <input type="radio" id="ship-fast" name="shipping" value="early"><label for="ship-fast">Early / on time</label>
+        <input type="radio" id="ship-fast" name="shipping" value="early"><label for="ship-fast">Early or on time</label>
         <input type="radio" id="ship-late" name="shipping" value="late"><label for="ship-late">Late</label>
-        <input type="radio" id="ship-issue" name="shipping" value="issue"><label for="ship-issue">Never showed</label>
+        <input type="radio" id="ship-issue" name="shipping" value="issue"><label for="ship-issue">Never arrived</label>
       </div>
-    </label>
+    </fieldset>
   </div>
 
-  <div class="section">
-    <div class="section-head">
-      <span class="tag">04</span>
-      <span class="section-title">Overall</span>
-    </div>
+  <div class="section" data-step>
+    <h2 class="section-title">Overall</h2>
+    <p class="section-sub">The last bit.</p>
 
-    <label class="field">
-      <span class="field-label">Overall rating</span>
-      <div class="star-row" role="radiogroup" aria-label="Overall star rating">
-        <input type="radio" id="star5" name="overallRating" value="5"><label for="star5" title="5 stars">★</label>
-        <input type="radio" id="star4" name="overallRating" value="4"><label for="star4" title="4 stars">★</label>
-        <input type="radio" id="star3" name="overallRating" value="3"><label for="star3" title="3 stars">★</label>
-        <input type="radio" id="star2" name="overallRating" value="2"><label for="star2" title="2 stars">★</label>
-        <input type="radio" id="star1" name="overallRating" value="1"><label for="star1" title="1 star">★</label>
+    <fieldset class="field">
+      <legend class="field-label">Overall rating</legend>
+      <div class="star-row">
+        <input type="radio" id="star5" name="overallRating" value="5"><label for="star5" title="5 stars" aria-label="5 stars">&#9733;</label>
+        <input type="radio" id="star4" name="overallRating" value="4"><label for="star4" title="4 stars" aria-label="4 stars">&#9733;</label>
+        <input type="radio" id="star3" name="overallRating" value="3"><label for="star3" title="3 stars" aria-label="3 stars">&#9733;</label>
+        <input type="radio" id="star2" name="overallRating" value="2"><label for="star2" title="2 stars" aria-label="2 stars">&#9733;</label>
+        <input type="radio" id="star1" name="overallRating" value="1"><label for="star1" title="1 star" aria-label="1 star">&#9733;</label>
       </div>
-      <div class="star-scale-caption"><span>Not it</span><span>Cop again in every colour</span></div>
-    </label>
+      <div class="scale-caption"><span>Not it</span><span>Cop again in every colour</span></div>
+    </fieldset>
 
-    <label class="field">
-      <span class="field-label">Would you cop again?</span>
+    <fieldset class="field">
+      <legend class="field-label">Would you buy from AARAMBH again?</legend>
       <div class="pill-group">
         <input type="radio" id="again-yes" name="repeat" value="yes"><label for="again-yes">Yes</label>
         <input type="radio" id="again-maybe" name="repeat" value="maybe"><label for="again-maybe">Maybe</label>
         <input type="radio" id="again-no" name="repeat" value="no"><label for="again-no">No</label>
       </div>
-    </label>
+    </fieldset>
 
     <label class="field">
-      <span class="field-label">Anything we should build, drop, or fix next</span>
-      <textarea name="general" placeholder="Wishlist, complaints, requests — all fair game"></textarea>
+      <span class="field-label">What should we build, drop or fix next?</span>
+      <textarea name="general" maxlength="800" placeholder="Wishlist, complaints, requests. All fair game."></textarea>
+      <span class="count"><span data-count>0</span>/800</span>
     </label>
   </div>
 
@@ -480,22 +484,21 @@
   </label>
 
   <div class="submit-row">
-    <button type="submit" id="submitBtn">Send it</button>
-    <span class="submit-note">Takes under a minute to log</span>
+    <button type="submit" id="submitBtn">Send feedback</button>
+    <span class="submit-note">Takes a few seconds to send</span>
   </div>
-  <div class="error-note" id="errorNote">Something went wrong sending that — check your connection and try again.</div>
+  <div class="error-note" id="errorNote" role="alert"></div>
 </form>
 
-<div class="confirm" id="confirmScreen">
-  <span class="tag">RECEIVED</span>
-  <h2>Logged.</h2>
-  <p>That's on file — thanks for putting in the work. We read every line.</p>
+<div class="confirm" id="confirmScreen" aria-live="polite">
+  <h2>Feedback sent.</h2>
+  <p>Thanks for taking the time. We read every response, and it shapes what AARAMBH makes next.</p>
+  <a href="index.html">Back to AARAMBH</a>
 </div>
 
-<!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp }
+  import { initializeFirestore, collection, addDoc, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   // TODO: paste your real Firebase project config here
@@ -509,49 +512,114 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // Auto long-polling fixes slow or hanging writes on networks that block WebChannel streaming
+  const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
 
   const form = document.getElementById('feedbackForm');
   const confirmScreen = document.getElementById('confirmScreen');
   const submitBtn = document.getElementById('submitBtn');
   const errorNote = document.getElementById('errorNote');
+  const progress = document.getElementById('progress');
+  const progressFill = document.getElementById('progressFill');
+  const requiredInputs = [...form.querySelectorAll('[required]')];
 
+  /* ---------- Progress bar ---------- */
+  function updateProgress(){
+    const steps = [
+      () => form.name.value.trim() && form.email.value.trim(),
+      () => form.productType.value || form.fit.value || form.quality.value || form.productNotes.value.trim(),
+      () => form.experience.value || form.shipping.value,
+      () => form.overallRating.value || form.repeat.value || form.general.value.trim()
+    ];
+    const done = steps.filter(fn => fn()).length;
+    const pct = Math.round((done / steps.length) * 100);
+    progressFill.style.width = pct + '%';
+    progress.setAttribute('aria-valuenow', pct);
+  }
+  form.addEventListener('input', updateProgress);
+  form.addEventListener('change', updateProgress);
+
+  /* ---------- Character counters ---------- */
+  form.querySelectorAll('textarea').forEach(t => {
+    const counter = t.parentElement.querySelector('[data-count]');
+    t.addEventListener('input', () => { counter.textContent = t.value.length; });
+  });
+
+  /* ---------- Clear error state as the user fixes fields ---------- */
+  requiredInputs.forEach(el => el.addEventListener('input', () => {
+    el.closest('.field').classList.remove('invalid');
+  }));
+
+  function showError(msg){
+    errorNote.textContent = msg;
+    errorNote.classList.add('show');
+  }
+
+  function showConfirmation(){
+    form.classList.add('hide');
+    confirmScreen.classList.add('show');
+    progress.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ---------- Submit ---------- */
   form.addEventListener('submit', async function(e){
     e.preventDefault();
     errorNote.classList.remove('show');
+
+    // Validate required fields
+    const firstBad = requiredInputs.find(el => !el.checkValidity());
+    requiredInputs.forEach(el => el.closest('.field').classList.toggle('invalid', !el.checkValidity()));
+    if (firstBad){
+      showError(firstBad.type === 'email' && firstBad.value
+        ? 'That email address looks incomplete. Check it and try again.'
+        : 'Add your name and email so we can reply.');
+      firstBad.focus();
+      return;
+    }
+
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sending...';
 
     const data = new FormData(form);
-    const rating = parseInt(data.get('overallRating'), 10) || 0;
-
     const feedbackDoc = {
-      name: data.get('name') || '',
-      email: data.get('email') || '',
-      order: data.get('order') || '',
+      name: (data.get('name') || '').trim(),
+      email: (data.get('email') || '').trim(),
+      order: (data.get('order') || '').trim(),
       productType: data.get('productType') || '',
       fit: data.get('fit') || '',
       quality: data.get('quality') || '',
-      productNotes: data.get('productNotes') || '',
+      productNotes: (data.get('productNotes') || '').trim(),
       experience: data.get('experience') || '',
       shipping: data.get('shipping') || '',
-      rating: rating,
-      comment: data.get('general') || '',
+      rating: parseInt(data.get('overallRating'), 10) || 0,
+      comment: (data.get('general') || '').trim(),
       repeat: data.get('repeat') || '',
       followup: data.get('followup') === 'on',
       timestamp: serverTimestamp()
     };
 
+    // Start the write. Firestore keeps retrying in the background even if the
+    // server is slow to answer, so we don't make the user wait on it forever.
+    const write = addDoc(collection(db, "feedbacks"), feedbackDoc);
+    const slow = new Promise(resolve => setTimeout(() => resolve('slow'), 3500));
+
     try {
-      await addDoc(collection(db, "feedbacks"), feedbackDoc);
-      form.classList.add('hide');
-      confirmScreen.classList.add('show');
+      const result = await Promise.race([write, slow]);
+      if (result === 'slow'){
+        // Still sending in the background; confirm now.
+        write.catch(err => console.error('Firestore write failed after timeout:', err));
+      }
+      showConfirmation();
     } catch (err) {
       console.error('Firestore write failed:', err);
-      errorNote.textContent = 'Something went wrong sending that — check your connection and try again.';
-      errorNote.classList.add('show');
+      showError(
+        err && err.code === 'permission-denied'
+          ? 'Feedback could not be saved because of a server setting. Please email us instead.'
+          : 'Could not send your feedback. Check your connection and try again.'
+      );
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Send it';
+      submitBtn.textContent = 'Send feedback';
     }
   });
 </script>

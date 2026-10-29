@@ -7,8 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
+  <!-- jsPDF is only needed if you set USE_WORKER_PDF = true below:
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  -->
 
   <style>
     :root {
@@ -446,21 +448,24 @@
         </div>
 
         <form id="orderForm" novalidate>
+          <!-- Honeypot: real users never see or fill this; bots do -->
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+
           <div class="form-group" id="group-name">
             <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" name="fullName" placeholder="Your full name" required>
+            <input type="text" id="fullName" name="fullName" placeholder="Your full name" maxlength="80" required>
             <div class="field-error">Please enter your name</div>
           </div>
 
           <div class="form-row">
             <div class="form-group" id="group-phone">
               <label for="phone">Phone Number</label>
-              <input type="tel" id="phone" name="phone" placeholder="9876543210" required>
+              <input type="tel" id="phone" name="phone" placeholder="9876543210" maxlength="10" required>
               <div class="field-error">Enter a valid 10-digit number</div>
             </div>
             <div class="form-group" id="group-email">
               <label for="email">Email (for your bill)</label>
-              <input type="email" id="email" name="email" placeholder="you@example.com" required>
+              <input type="email" id="email" name="email" placeholder="you@example.com" maxlength="120" required>
               <div class="field-error">Enter a valid email — we send your bill here</div>
             </div>
           </div>
@@ -486,7 +491,7 @@
 
           <div class="form-group" id="group-address">
             <label for="address">Delivery Address</label>
-            <textarea id="address" name="address" placeholder="House no, street, area, city, state" required></textarea>
+            <textarea id="address" name="address" placeholder="House no, street, area, city, state" maxlength="300" required></textarea>
             <div class="field-error">Please enter your delivery address</div>
           </div>
 
@@ -516,7 +521,7 @@
           <div class="form-group" id="group-coupon">
             <label for="couponCode">Discount Code (optional)</label>
             <div style="display:flex; gap:10px;">
-              <input type="text" id="couponCode" name="couponCode" placeholder="Have a code?" style="text-transform:uppercase;">
+              <input type="text" id="couponCode" name="couponCode" placeholder="Have a code?" maxlength="20" style="text-transform:uppercase;">
               <button type="button" class="copy-btn" id="applyCouponBtn" style="flex-shrink:0; padding:0 18px;">Apply</button>
             </div>
             <div class="pincode-status show" id="couponStatus" style="display:none;">
@@ -553,7 +558,7 @@
 
           <div class="form-group">
             <label for="notes">Order Notes (optional)</label>
-            <textarea id="notes" name="notes" placeholder="Any special instructions"></textarea>
+            <textarea id="notes" name="notes" placeholder="Any special instructions" maxlength="300"></textarea>
           </div>
 
           <div class="form-group">
@@ -642,15 +647,15 @@
     //  CONFIG — edit these in one place
     // =====================================================================
     const EMAILJS_PUBLIC_KEY = 'ZXVO8aPvZTkk1NLI6';
-    const EMAILJS_SERVICE_ID = 'service_gnkbabo';           // new service
+    const EMAILJS_SERVICE_ID = 'service_gnkbabo';
     // ONE template is used for both emails. In EmailJS set: To Email = {{to_email}},
     // Reply To = {{reply_to}}, Subject = {{subject}}, body (HTML source) = {{{bill_html}}}
     const OWNER_TEMPLATE_ID = 'template_j3gxuwf';
     const CUSTOMER_TEMPLATE_ID = 'template_j3gxuwf';
-    const OWNER_EMAIL = 'arambhofficial2025@gmail.com';   // where YOUR order alerts go
+    const OWNER_EMAIL = 'arambhofficial2025@gmail.com';
 
-    // Optional: PDF bill via Cloudflare Worker + Resend. Resend only delivers to
-    // customers once you verify a domain. Set to false to rely on EmailJS only.
+    // Optional: PDF bill via Cloudflare Worker + Resend. If you enable this,
+    // also un-comment the jsPDF <script> tag in <head>.
     const USE_WORKER_PDF = false;
     const ORDER_WORKER_URL = 'https://aarambh.arambhofficial2025.workers.dev';
 
@@ -658,6 +663,11 @@
     const SHOP_INSTAGRAM = 'aarambh.official';
     const SHOP_PHONE = '9405074832';
     const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
+
+    // Optional: add your real prices so URL/localStorage prices are ignored.
+    // Example: 'Oversized Tee': { price: 799 }
+    // Key must match the product name exactly as sent by your shop page.
+    const CATALOG = {};
 
     // ---------- Init EmailJS ----------
     (function () {
@@ -685,28 +695,45 @@
       try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
     }
 
+    // Clamp / clean every item so bad URL or localStorage values can't break totals.
+    function sanitizeItem(item) {
+      const product = String(item.product || 'Product').slice(0, 80);
+      let price = Number(item.price);
+      if (!isFinite(price) || price < 0) price = 0;
+      if (CATALOG[product] && Number(CATALOG[product].price) >= 0) price = Number(CATALOG[product].price);
+      let qty = parseInt(item.qty, 10);
+      if (!isFinite(qty) || qty < 1) qty = 1;
+      qty = Math.min(qty, 10);
+      let image = String(item.image || 'logo.webp');
+      if (/^(https?:|\/\/|data:|javascript:)/i.test(image)) image = 'logo.webp';
+      return {
+        id: item.id,
+        product,
+        type: String(item.type || '—').slice(0, 40),
+        color: String(item.color || '—').slice(0, 40),
+        price: Math.round(price),
+        qty,
+        image,
+        size: String(item.size || '').toUpperCase().slice(0, 4)
+      };
+    }
+
     let orderItems = [];
     if (cartMode) {
-      orderItems = readCart().map(item => ({
-        id: item.id,
-        product: item.product || 'Product',
-        type: item.type || '—',
-        color: item.color || '—',
-        price: Number(item.price) || 0,
-        qty: Number(item.qty) || 1,
-        image: item.image || 'logo.webp',
-        size: item.size || ''
-      }));
+      orderItems = readCart().slice(0, 20).map(sanitizeItem);
     } else {
       const product = params.get('product') || '';
-      const type = params.get('type') || '';
-      const color = params.get('color') || '';
-      const price = Number(params.get('price')) || 0;
-      const image = params.get('image') || 'logo.webp';
-      const sizeParam = (params.get('size') || '').toUpperCase();
-      const qtyParam = Math.max(1, Math.min(10, parseInt(params.get('qty'), 10) || 1));
       if (product) {
-        orderItems = [{ id: 'single', product, type, color, price, qty: qtyParam, image, size: sizeParam }];
+        orderItems = [sanitizeItem({
+          id: 'single',
+          product,
+          type: params.get('type') || '',
+          color: params.get('color') || '',
+          price: params.get('price'),
+          qty: params.get('qty'),
+          image: params.get('image') || 'logo.webp',
+          size: params.get('size') || ''
+        })];
       }
     }
 
@@ -1060,6 +1087,11 @@
       updateOrderTotal();
     });
 
+    // Pressing Enter in the coupon box applies the code instead of submitting the order
+    couponCodeInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); applyCouponBtn.click(); }
+    });
+
     updateOrderTotal();
 
     // ================= BILL / INVOICE GENERATION =================
@@ -1084,7 +1116,7 @@
       });
     }
 
-    // Builds the PDF bill and returns base64 (no "data:" prefix).
+    // Builds the PDF bill and returns base64 (no "data:" prefix). Needs jsPDF script enabled.
     async function buildBillPdfBase64(data) {
       if (!window.jspdf) return null;
       const { jsPDF } = window.jspdf;
@@ -1221,7 +1253,7 @@
           <b>Name:</b> ${esc(data.fullName)}<br>
           <b>Phone:</b> ${esc(data.phone)}<br>
           <b>Email:</b> ${esc(data.email)}<br>
-          <b>Payment:</b> ${esc(data.paymentMethod)}<br>
+          <b>Payment:</b> ${esc(data.paymentStatus)}<br>
           <b>Coupon:</b> ${esc(data.couponCode)}<br>
           ${data.notes ? '<b>Notes:</b> ' + esc(data.notes) + '<br>' : ''}
         </p>
@@ -1265,9 +1297,15 @@
       return ok;
     }
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      if (document.getElementById('website').value) return; // honeypot: bots only
+      if (!orderItems.length) {
+        alert('Your order is empty. Please go back to the shop and pick a product.');
+        return;
+      }
       if (!validateForm()) return;
+      if (!cartMode && orderItems[0]) orderItems[0].size = document.getElementById('size').value;
 
       const lineTotalNow = getLineTotal();
       const discountNow = computeDiscount(lineTotalNow);
@@ -1285,17 +1323,18 @@
         itemsSummary: itemsSummary || 'No items',
         price: lineTotalNow,
         lineTotal: lineTotalNow,
-        fullName: document.getElementById('fullName').value.trim(),
+        fullName: document.getElementById('fullName').value.trim().slice(0, 80),
         phone: document.getElementById('phone').value.trim(),
-        email: document.getElementById('email').value.trim(),
+        email: document.getElementById('email').value.trim().slice(0, 120),
         size: cartMode ? '—' : document.getElementById('size').value,
-        address: document.getElementById('address').value.trim(),
+        address: document.getElementById('address').value.trim().slice(0, 300),
         pincode: document.getElementById('pincode').value.trim(),
         city: cityInput.value || 'Not detected',
         state: stateInput.value || 'Not detected',
         quantity: cartMode ? orderItems.reduce((s, i) => s + i.qty, 0) : (document.getElementById('quantity').value || '1'),
-        notes: document.getElementById('notes').value.trim(),
+        notes: document.getElementById('notes').value.trim().slice(0, 300),
         paymentMethod: selectedMethod,
+        paymentStatus: selectedMethod === 'UPI' ? 'UPI - VERIFY PAYMENT BEFORE DISPATCH' : 'COD',
         deliveryCharge: currentDeliveryCharge,
         deliveryZone: currentZoneLabel || 'Unconfirmed — please advise',
         couponCode: appliedCoupon || 'None',
@@ -1331,28 +1370,26 @@
       submitBtn.disabled = true;
       submitBtnText.textContent = 'Placing Order...';
 
-      // 1) Owner notification email
-      const ownerEmailPromise = (window.emailjs)
+      // 1) Owner notification email (resolves true/false, never rejects)
+      const ownerEmailPromise = window.emailjs
         ? emailjs.send(EMAILJS_SERVICE_ID, OWNER_TEMPLATE_ID, {
             product: data.product, type: data.type, color: data.color, price: data.price,
             items: data.itemsSummary,
             name: data.fullName, phone: data.phone, email: data.email, size: data.size, address: data.address,
             pincode: data.pincode, city: data.city, state: data.state,
-            quantity: data.quantity, notes: data.notes, payment: data.paymentMethod,
+            quantity: data.quantity, notes: data.notes, payment: data.paymentStatus,
             deliveryCharge: data.deliveryCharge, deliveryZone: data.deliveryZone,
             couponCode: data.couponCode, discountLabel: data.discountLabel, discountAmount: data.discountAmount,
             orderTotal: data.orderTotal, orderId: data.orderId,
             customerBillLink: data.customerBillLink,
             to_email: OWNER_EMAIL,
             reply_to: data.email,
-            subject: `New order ${data.orderId} — ₹${data.orderTotal} (${data.paymentMethod})`,
+            subject: `New order ${data.orderId} — ₹${data.orderTotal} (${data.paymentStatus})`,
             bill_html: data.ownerHtml
-          }).catch(err => console.error('EmailJS owner error:', err))
-        : Promise.resolve();
+          }).then(() => true).catch(err => { console.error('EmailJS owner error:', err); return false; })
+        : Promise.resolve(false);
 
       // 2) Customer bill email (HTML bill) via EmailJS
-      //    Template setup: To Email = {{to_email}}, Subject = Your AARAMBH order {{order_id}},
-      //    body (HTML source) = {{{bill_html}}}
       const customerEmailPromise = (window.emailjs && CUSTOMER_TEMPLATE_ID && !CUSTOMER_TEMPLATE_ID.startsWith('YOUR_'))
         ? emailjs.send(EMAILJS_SERVICE_ID, CUSTOMER_TEMPLATE_ID, {
             to_email: data.email,
@@ -1362,8 +1399,8 @@
             order_id: data.orderId,
             order_total: data.orderTotal,
             bill_html: data.billHtml
-          }).catch(err => console.error('EmailJS customer error:', err))
-        : (console.warn('Customer email not sent: set CUSTOMER_TEMPLATE_ID'), Promise.resolve());
+          }).then(() => true).catch(err => { console.error('EmailJS customer error:', err); return false; })
+        : Promise.resolve(false);
 
       // 3) Optional PDF bill via Worker (Resend)
       const pdfBillPromise = USE_WORKER_PDF
@@ -1393,32 +1430,43 @@
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-      }).catch(err => console.error('Formspree error:', err));
+      }).then(r => r.ok).catch(err => { console.error('Formspree error:', err); return false; });
 
-      Promise.allSettled([ownerEmailPromise, customerEmailPromise, pdfBillPromise, formspreePromise]).finally(() => {
-        const waMessage = encodeURIComponent(
-          `Hi AARAMBH, I just placed an order (${data.orderId}):\n\n` +
-          `${data.itemsSummary}\n\n` +
-          (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
-          `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
-          `Order Total: ₹${data.orderTotal}\n` +
-          `Payment: ${data.paymentMethod}\n\n` +
-          `Name: ${data.fullName}\n` +
-          `Phone: ${data.phone}\n` +
-          `Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}` +
-          (data.notes ? `\nNotes: ${data.notes}` : '')
-        );
-        document.getElementById('successWhatsapp').href = `https://wa.me/919405074832?text=${waMessage}`;
+      const [ownerOk, , , formOk] = await Promise.all([
+        ownerEmailPromise, customerEmailPromise, pdfBillPromise, formspreePromise
+      ]);
 
-        if (cartMode) {
-          try { localStorage.removeItem(CART_KEY); } catch (e) {}
-        }
-        try { localStorage.setItem(FIRST_ORDER_KEY, '1'); } catch (e) {}
-
-        form.style.display = 'none';
-        document.getElementById('successOverlay').classList.add('show');
+      // If neither copy reached you, do NOT show success — the order would be lost.
+      if (!ownerOk && !formOk) {
         submitBtn.classList.remove('loading');
-      });
+        submitBtn.disabled = false;
+        submitBtnText.textContent = '🛒 Confirm Order';
+        alert('We could not send your order right now. Please check your internet and try again, or order directly on WhatsApp (9405074832).');
+        return;
+      }
+
+      const waMessage = encodeURIComponent(
+        `Hi AARAMBH, I just placed an order (${data.orderId}):\n\n` +
+        `${data.itemsSummary}\n\n` +
+        (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
+        `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
+        `Order Total: ₹${data.orderTotal}\n` +
+        `Payment: ${data.paymentMethod}\n\n` +
+        `Name: ${data.fullName}\n` +
+        `Phone: ${data.phone}\n` +
+        `Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}` +
+        (data.notes ? `\nNotes: ${data.notes}` : '')
+      );
+      document.getElementById('successWhatsapp').href = `https://wa.me/919405074832?text=${waMessage}`;
+
+      if (cartMode) {
+        try { localStorage.removeItem(CART_KEY); } catch (err) {}
+      }
+      try { localStorage.setItem(FIRST_ORDER_KEY, '1'); } catch (err) {}
+
+      form.style.display = 'none';
+      document.getElementById('successOverlay').classList.add('show');
+      submitBtn.classList.remove('loading');
     });
   </script>
 

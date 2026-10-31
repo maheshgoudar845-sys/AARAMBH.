@@ -1133,6 +1133,7 @@
     }
 
   </style>
+  <script src="prices.js"></script>
 </head>
 <body>
 
@@ -1230,7 +1231,7 @@
     <div class="section-header reveal">
       <span class="unseen-promo-badge"><span class="dot"></span>Just Dropped</span>
       <h2 class="section-title">UNSEEN. VEILED BLOOM.</h2>
-      <p class="section-desc">Two stories, one drop. Grab yours before the run sells out — ₹549 each.</p>
+      <p class="section-desc">Two stories, one drop. Grab yours before the run sells out.</p>
     </div>
 
     <div class="unseen-promo-grid">
@@ -1245,7 +1246,7 @@
           <h3>UNSEEN</h3>
           <p>"Covered, but not contained." Bold back graphic, White / Royal Blue / Black.</p>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-            <span class="unseen-promo-price">₹549</span>
+            <span class="unseen-promo-price" data-price="unseen">₹549</span>
             <span class="unseen-promo-cta">Shop Now <span style="display:inline-block;width:16px;height:16px;background:var(--accent);border-radius:50%;text-align:center;line-height:16px;font-size:9px;">→</span></span>
           </div>
         </div>
@@ -1262,7 +1263,7 @@
           <h3>VEILED BLOOM</h3>
           <p>"Elegance in silence." Delicate floral artwork, Royal Blue / White.</p>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-            <span class="unseen-promo-price">₹549</span>
+            <span class="unseen-promo-price" data-price="veiled">₹549</span>
             <span class="unseen-promo-cta">Shop Now <span style="display:inline-block;width:16px;height:16px;background:var(--accent);border-radius:50%;text-align:center;line-height:16px;font-size:9px;">→</span></span>
           </div>
         </div>
@@ -1353,7 +1354,7 @@
         <span class="card-tap">Tap to shop</span>
         <div class="card-info">
           <h2>Ladies Crop Tops</h2>
-          <p>Printed crop tops for women. Cropped fit, soft stretch cotton. Just ₹349.</p>
+          <p>Printed crop tops for women. Cropped fit, soft stretch cotton. Just <span data-price="crop_self_love">₹349</span>.</p>
           <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
         </div>
       </a>
@@ -1371,15 +1372,15 @@
     <div class="product-grid">
       <article class="product-card reveal">
         <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="un_white_f.png" alt="Unseen" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Unseen</h3><div class="product-row"><span class="product-price">₹549</span><a class="product-link" href="printed.html#unseenDrop">Shop Now →</a></div></div>
+        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Unseen</h3><div class="product-row"><span class="product-price" data-price="unseen">₹549</span><a class="product-link" href="printed.html#unseenDrop">Shop Now →</a></div></div>
       </article>
       <article class="product-card reveal reveal-delay-1">
         <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="veiled_blue_b.png" alt="Veiled Bloom" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Veiled Bloom</h3><div class="product-row"><span class="product-price">₹549</span><a class="product-link" href="printed.html#veiledBloom">Shop Now →</a></div></div>
+        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Veiled Bloom</h3><div class="product-row"><span class="product-price" data-price="veiled">₹549</span><a class="product-link" href="printed.html#veiledBloom">Shop Now →</a></div></div>
       </article>
       <article class="product-card reveal reveal-delay-2">
         <div class="product-image-wrap"><span class="product-badge">Bestseller</span><img src="Blue_front.png" alt="AARAMBH polo T-shirt" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Polo Collection</span><h3 class="product-name">Classic Polo</h3><div class="product-row"><span class="product-price">₹399</span><a class="product-link" href="polo.html">Shop Now →</a></div></div>
+        <div class="product-content"><span class="product-type">Polo Collection</span><h3 class="product-name">Classic Polo</h3><div class="product-row"><span class="product-price" data-price="polo">₹399</span><a class="product-link" href="polo.html">Shop Now →</a></div></div>
       </article>
     </div>
   </section>
@@ -1394,7 +1395,7 @@
         <p class="pick-copy">Not sure where to begin? We selected a random piece from the collection. Tap again until one matches your vibe.</p>
         <div class="pick-product">
           <h3 id="suggestedName">Royal Blue Oversized</h3>
-          <div class="pick-meta"><span id="suggestedType">Plain Oversized</span><strong id="suggestedPrice">₹349</strong></div>
+          <div class="pick-meta"><span id="suggestedType">Plain Oversized</span><strong id="suggestedPrice" data-price="oversized_royal_blue">₹399</strong></div>
           <div class="pick-actions"><a id="suggestedLink" class="pick-shop" href="oversized.html">Shop This Pick →</a><button class="pick-again" id="showAnother" type="button">Show Another</button></div>
         </div>
       </div>
@@ -1607,16 +1608,18 @@
     }
 
     /* RANDOM PRODUCT RECOMMENDATION */
+    /* Safe price lookup: falls back to typed prices if prices.js fails to load */
+    const fp = (key, fallback) => (typeof formatPrice === 'function' && window.PRICES && window.PRICES[key] != null) ? formatPrice(key) : fallback;
     const recommendedProducts = [
-      { name:'Royal Blue Oversized', type:'Plain Oversized', price:'₹349', image:'Royal_blue.jpg', link:'oversized.html' },
-      { name:'Unseen', type:'Printed Oversized', price:'₹549', image:'un_white_f.png', link:'printed.html#unseenDrop' },
-      { name:'Veiled Bloom', type:'Printed Oversized', price:'₹549', image:'veiled_blue_b.png', link:'printed.html#veiledBloom' },
-      { name:'Classic Polo', type:'Polo Collection', price:'₹399', image:'polo1.jpg', link:'polo.html' },
+      { name:'Royal Blue Oversized', type:'Plain Oversized', price: fp('oversized_royal_blue','₹399'), image:'Royal_blue.jpg', link:'oversized.html' },
+      { name:'Unseen', type:'Printed Oversized', price: fp('unseen','₹549'), image:'un_white_f.png', link:'printed.html#unseenDrop' },
+      { name:'Veiled Bloom', type:'Printed Oversized', price: fp('veiled','₹549'), image:'veiled_blue_b.png', link:'printed.html#veiledBloom' },
+      { name:'Classic Polo', type:'Polo Collection', price: fp('polo','₹399'), image:'polo1.jpg', link:'polo.html' },
       { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' },
-      { name:'Red Boxy Shirt', type:'Shirt Collection', price:'₹699', image:'red_boxy.jpeg', link:'shirt.html' }
+      { name:'Red Boxy Shirt', type:'Shirt Collection', price: fp('shirt_red_boxy','₹649'), image:'red_boxy.jpeg', link:'shirt.html' }
     ];
     if (cropLive) {
-      recommendedProducts.push({ name:'Self Love Crop Top', type:'Ladies Crop Top', price:'₹349', image:'Self Love Black Crop Top-front.jpeg', link:'croptop.html' });
+      recommendedProducts.push({ name:'Self Love Crop Top', type:'Ladies Crop Top', price: fp('crop_self_love','₹349'), image:'Self Love Black Crop Top-front.jpeg', link:'croptop.html' });
     }
     const suggestedImage = document.getElementById('suggestedImage');
     const suggestedName = document.getElementById('suggestedName');

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed | AARAMBH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#080810; --cream:#F5F1E8; --accent:#E94E2C; --gold:#FFB238; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'DM Sans', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card { max-width: 480px; text-align: center; }
+    .logo {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 48px;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #A90E02, var(--accent), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tick {
+      width: 72px; height: 72px; margin: 28px auto 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px; color: var(--bg); font-weight: 700;
+    }
+    h1 { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 36px; letter-spacing: 2px; margin-bottom: 12px; }
+    p { color: #bbb; line-height: 1.6; margin-bottom: 10px; }
+    .order-id { color: var(--gold); font-weight: 500; word-break: break-all; }
+    .btn {
+      display: inline-block; margin-top: 24px; padding: 14px 28px;
+      background: var(--accent); color: var(--cream);
+      text-decoration: none; border-radius: 4px; font-weight: 500;
+    }
+    .btn:hover { background: #A90E02; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">AARAMBH</div>
+    <div class="tick">✓</div>
+    <h1>Order Confirmed</h1>
+    <p>Thank you for your order. Your bill has been sent to your email.</p>
+    <p>Order reference: <span class="order-id" id="orderId"></span></p>
+    <a class="btn" href="index.html">Continue Shopping</a>
+  </div>
+  <script>
+    const id = new URLSearchParams(location.search).get('order');
+    if (id) document.getElementById('orderId').textContent = id;
+  </script>
+</body>
+</html>

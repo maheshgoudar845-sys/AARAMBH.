@@ -57,6 +57,7 @@
   <script>
     const id = new URLSearchParams(location.search).get('order');
     if (id) document.getElementById('orderId').textContent = id;
+    localStorage.removeItem('arambhCart');
   </script>
 </body>
 </html>

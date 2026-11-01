@@ -8,276 +8,101 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
-  <script src="api.js"></script>
 
   <style>
-    :root {
-      --bg: #080810;
-      --surface: #0f0f1a;
-      --surface2: #15151f;
-      --accent: #A90E02;
-      --accent2: #FFFACD;
-      --text: #f0f0f0;
-      --muted: #888;
-      --border: rgba(255,255,255,0.08);
-      --accent-rgb: 169,14,2;
-      --accent2-rgb: 255,250,205;
-      --good: #25D366;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 40px;
-      background: rgba(8,8,16,0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo img { height: 42px; }
-    .nav-back {
-      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--muted); text-decoration: none;
-      display: flex; align-items: center; gap: 8px;
-      transition: color 0.25s;
-    }
-    .nav-back:hover { color: var(--accent2); }
-
-    .page-wrap {
-      max-width: 1100px; margin: 0 auto;
-      padding: 50px 24px 100px;
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 34px;
-      align-items: start;
-    }
-    .page-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(38px, 5vw, 58px);
-      letter-spacing: 1px; line-height: 1;
-      margin-bottom: 8px;
-    }
-    .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 30px; }
-
-    .card {
-      background: linear-gradient(160deg, var(--surface), var(--surface2));
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 30px;
-      position: relative; overflow: hidden;
-    }
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
-      background-size: 200% 100%; animation: ob-shine-line 3.5s linear infinite;
-    }
-    @keyframes ob-shine-line { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
-
-    .summary-block {
-      padding-bottom: 24px; margin-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-    }
-    .summary-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .summary-heading h2 {
-      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
-    }
-    .cart-item-row { display: flex; gap: 14px; align-items: center; padding: 10px 0; }
-    .cart-item-row + .cart-item-row { border-top: 1px dashed var(--border); }
-    .cart-item-row img {
-      width: 64px; height: 64px; object-fit: contain;
-      background: #0a0a14; border-radius: 12px; border: 1px solid var(--border);
-      padding: 6px; flex-shrink: 0;
-    }
-    .cart-item-info { flex: 1; min-width: 0; }
-    .cart-item-info h4 {
-      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .cart-item-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
-    .cart-item-tags span {
-      font-family: 'Syne', sans-serif; font-size: 9.5px; font-weight: 700;
-      letter-spacing: 0.5px; text-transform: uppercase;
-      border: 1px solid var(--border); color: var(--muted);
-      padding: 3px 8px; border-radius: 100px;
-    }
-    .cart-item-qtyprice { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .cart-item-qtyprice .price {
-      font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent2); white-space: nowrap;
-    }
-    .cart-item-remove {
-      background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: 13px; padding: 4px 6px; line-height: 1; transition: color 0.2s;
-    }
-    .cart-item-remove:hover { color: #ff6b6b; }
-    .empty-cart { text-align: center; padding: 20px 0; color: var(--muted); font-size: 13.5px; line-height: 1.7; }
-    .empty-cart a { color: var(--accent2); }
-
-    .form-group { margin-bottom: 18px; }
-    .form-group label {
-      display: block; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
-    }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    input, select, textarea {
-      width: 100%;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 13px 15px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      transition: border-color 0.25s, background 0.25s, box-shadow .25s;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none; border-color: rgba(var(--accent-rgb),0.5);
-      background: rgba(255,255,255,0.05);
-      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.12);
-    }
-    textarea { resize: vertical; min-height: 70px; }
-    select { cursor: pointer; }
-    .field-error { color: #ff6b6b; font-size: 12px; margin-top: 6px; display: none; }
-    .form-group.invalid input, .form-group.invalid select, .form-group.invalid textarea { border-color: #ff6b6b; }
-    .form-group.invalid .field-error { display: block; }
-
-    .pincode-status {
-      font-size: 12px; margin-top: 8px; display: none;
-      align-items: center; gap: 8px;
-      font-family: 'Syne', sans-serif; font-weight: 600; letter-spacing: 0.3px;
-    }
-    .pincode-status.show { display: flex; }
-    .pincode-status.loading { color: var(--muted); }
-    .pincode-status.found { color: #9be6b4; }
-    .pincode-status.error { color: #ff6b6b; }
-    .pincode-spinner {
-      width: 12px; height: 12px; border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.25); border-top-color: var(--muted);
-      animation: spin 0.7s linear infinite;
-    }
-
-    .delivery-box {
-      margin-top: 14px;
-      background: rgba(var(--accent2-rgb),0.05);
-      border: 1px solid rgba(var(--accent2-rgb),0.2);
-      border-radius: 14px;
-      padding: 14px 18px;
-    }
-    .delivery-row { display: flex; align-items: center; justify-content: space-between; font-family: 'Syne', sans-serif; font-size: 12.5px; }
-    .delivery-row + .delivery-row { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
-    .delivery-row .label { color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; font-size: 11px; }
-    .delivery-row .value { color: var(--text); font-weight: 700; }
-    .delivery-row.total .value { color: var(--accent2); font-family: 'Bebas Neue', sans-serif; font-size: 20px; }
-    .delivery-zone-tag {
-      font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-      padding: 3px 9px; border-radius: 100px; margin-left: 8px;
-    }
-    .delivery-zone-tag.near { background: rgba(155,230,180,0.15); color: #9be6b4; }
-    .delivery-zone-tag.far { background: rgba(255,250,205,0.12); color: var(--accent2); }
-
-    .payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
-    .pay-option {
-      border: 1px solid var(--border); border-radius: 14px;
-      padding: 16px; cursor: pointer; text-align: center;
-      transition: border-color 0.25s, background 0.25s;
-      font-family: 'Syne', sans-serif; position: relative;
-    }
-    .pay-option.active { border-color: var(--accent); background: rgba(var(--accent-rgb),0.1); }
-    .pay-option .pay-icon { font-size: 22px; margin-bottom: 6px; display: inline-block; transition: transform .25s; }
-    .pay-option.active .pay-icon { transform: scale(1.15); }
-    .pay-option .pay-name { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-    .pay-option .pay-desc { font-size: 10.5px; color: var(--muted); margin-top: 4px; }
-
-    .submit-btn {
-      width: 100%; padding: 16px 20px;
-      background: var(--accent); color: white; border: none;
-      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800;
-      letter-spacing: 2px; text-transform: uppercase;
-      border-radius: 100px; cursor: pointer;
-      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-      box-shadow: 0 10px 30px rgba(var(--accent-rgb),0.3);
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      position: relative; overflow: hidden;
-    }
-    .submit-btn:hover { background: #8a0b02; transform: translateY(-2px); }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .spinner {
-      width: 16px; height: 16px; border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.35); border-top-color: white;
-      animation: spin 0.7s linear infinite; display: none;
-    }
-    .submit-btn.loading .spinner { display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .trust-row {
-      display: flex; justify-content: center; gap: 22px; flex-wrap: wrap;
-      margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);
-    }
-    .trust-row span {
-      font-family: 'Syne', sans-serif; font-size: 10.5px; font-weight: 700;
-      letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted);
-    }
-
-    .side-card { position: sticky; top: 90px; }
-    .side-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 10px; }
-    .side-card p { color: var(--muted); font-size: 13.5px; line-height: 1.7; margin-bottom: 20px; }
-    .wa-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 15px 20px;
-      background: var(--good); color: #07120b; text-decoration: none;
-      font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
-      letter-spacing: 1.5px; text-transform: uppercase;
-      border-radius: 100px; transition: transform 0.2s; margin-bottom: 12px;
-    }
-    .wa-btn:hover { transform: translateY(-2px); }
-    .call-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 15px 20px;
-      background: transparent; color: white; text-decoration: none;
-      font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
-      letter-spacing: 1.5px; text-transform: uppercase;
-      border-radius: 100px; border: 1px solid var(--border); transition: border-color 0.2s;
-    }
-    .call-btn:hover { border-color: var(--accent2); }
-    .side-divider { margin: 24px 0; border-top: 1px dashed var(--border); }
-    .side-list { list-style: none; }
-    .side-list li { font-size: 13px; color: var(--muted); margin-bottom: 10px; display: flex; gap: 10px; line-height: 1.5; }
-    .side-list li b { color: var(--text); }
-
-    .success-overlay { display: none; text-align: center; padding: 30px 10px 10px; }
-    .success-overlay.show { display: block; }
-    .success-icon { font-size: 46px; margin-bottom: 14px; }
-    .success-overlay h3 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; margin-bottom: 10px; }
-    .success-overlay p { color: var(--muted); font-size: 14px; margin-bottom: 24px; line-height: 1.7; }
-
-    footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--border); }
-    footer p { color: var(--muted); font-size: 12.5px; }
-    footer a { color: var(--accent2); text-decoration: none; }
-
-    .copy-btn {
-      background: var(--accent2); color: #2e2400; border: none;
-      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800;
-      letter-spacing: 1px; text-transform: uppercase;
-      padding: 6px 12px; border-radius: 100px; cursor: pointer;
-    }
-
-    @media (max-width: 860px) {
-      .page-wrap { grid-template-columns: 1fr; }
-      .side-card { position: static; }
-    }
-    @media (max-width: 480px) {
-      nav { padding: 14px 20px; }
-      .page-wrap { padding: 30px 16px 70px; }
-      .card { padding: 22px; }
-      .form-row { grid-template-columns: 1fr; }
-    }
-    @keyframes spin-unused { }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.001ms !important; }
-    }
+    :root{--bg:#080810;--surface:#0f0f1a;--surface2:#15151f;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,0.08);--accent-rgb:169,14,2;--accent2-rgb:255,250,205;--good:#25D366;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(8,8,16,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+    .nav-logo img{height:42px;}
+    .nav-back{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .25s;}
+    .nav-back:hover{color:var(--accent2);}
+    .page-wrap{max-width:1100px;margin:0 auto;padding:50px 24px 100px;display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:start;}
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,5vw,58px);letter-spacing:1px;line-height:1;margin-bottom:8px;}
+    .page-sub{color:var(--muted);font-size:14px;margin-bottom:30px;}
+    .card{background:linear-gradient(160deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:22px;padding:30px;position:relative;overflow:hidden;}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));background-size:200% 100%;animation:ob-shine-line 3.5s linear infinite;}
+    @keyframes ob-shine-line{0%{background-position:0% 0;}100%{background-position:200% 0;}}
+    .summary-block{padding-bottom:24px;margin-bottom:24px;border-bottom:1px solid var(--border);}
+    .summary-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .summary-heading h2{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+    .cart-item-row{display:flex;gap:14px;align-items:center;padding:10px 0;}
+    .cart-item-row+.cart-item-row{border-top:1px dashed var(--border);}
+    .cart-item-row img{width:64px;height:64px;object-fit:contain;background:#0a0a14;border-radius:12px;border:1px solid var(--border);padding:6px;flex-shrink:0;}
+    .cart-item-info{flex:1;min-width:0;}
+    .cart-item-info h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .cart-item-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
+    .cart-item-tags span{font-family:'Syne',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:100px;}
+    .cart-item-qtyprice{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+    .cart-item-qtyprice .price{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent2);white-space:nowrap;}
+    .cart-item-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px 6px;line-height:1;transition:color .2s;}
+    .cart-item-remove:hover{color:#ff6b6b;}
+    .empty-cart{text-align:center;padding:20px 0;color:var(--muted);font-size:13.5px;line-height:1.7;}
+    .empty-cart a{color:var(--accent2);}
+    .form-group{margin-bottom:18px;}
+    .form-group label{display:block;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    input,select,textarea{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:13px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .25s,background .25s,box-shadow .25s;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(var(--accent-rgb),0.5);background:rgba(255,255,255,0.05);box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.12);}
+    textarea{resize:vertical;min-height:70px;}
+    select{cursor:pointer;}
+    .field-error{color:#ff6b6b;font-size:12px;margin-top:6px;display:none;}
+    .form-group.invalid input,.form-group.invalid select,.form-group.invalid textarea{border-color:#ff6b6b;}
+    .form-group.invalid .field-error{display:block;}
+    .pincode-status{font-size:12px;margin-top:8px;display:none;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-weight:600;letter-spacing:.3px;}
+    .pincode-status.show{display:flex;}
+    .pincode-status.loading{color:var(--muted);}
+    .pincode-status.found{color:#9be6b4;}
+    .pincode-status.error{color:#ff6b6b;}
+    .pincode-spinner{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);border-top-color:var(--muted);animation:spin .7s linear infinite;}
+    .delivery-box{margin-top:14px;background:rgba(var(--accent2-rgb),0.05);border:1px solid rgba(var(--accent2-rgb),0.2);border-radius:14px;padding:14px 18px;}
+    .delivery-row{display:flex;align-items:center;justify-content:space-between;font-family:'Syne',sans-serif;font-size:12.5px;}
+    .delivery-row+.delivery-row{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);}
+    .delivery-row .label{color:var(--muted);letter-spacing:.5px;text-transform:uppercase;font-size:11px;}
+    .delivery-row .value{color:var(--text);font-weight:700;}
+    .delivery-row.total .value{color:var(--accent2);font-family:'Bebas Neue',sans-serif;font-size:20px;}
+    .delivery-zone-tag{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:100px;margin-left:8px;}
+    .delivery-zone-tag.near{background:rgba(155,230,180,0.15);color:#9be6b4;}
+    .delivery-zone-tag.far{background:rgba(255,250,205,0.12);color:var(--accent2);}
+    .payment-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+    .pay-option{border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;text-align:center;transition:border-color .25s,background .25s;font-family:'Syne',sans-serif;position:relative;}
+    .pay-option.active{border-color:var(--accent);background:rgba(var(--accent-rgb),0.1);}
+    .pay-option .pay-icon{font-size:22px;margin-bottom:6px;display:inline-block;transition:transform .25s;}
+    .pay-option.active .pay-icon{transform:scale(1.15);}
+    .pay-option .pay-name{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+    .pay-option .pay-desc{font-size:10.5px;color:var(--muted);margin-top:4px;}
+    .submit-btn{width:100%;padding:16px 20px;background:var(--accent);color:#fff;border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;border-radius:100px;cursor:pointer;transition:background .3s,transform .2s,box-shadow .3s;box-shadow:0 10px 30px rgba(var(--accent-rgb),0.3);display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;}
+    .submit-btn:hover{background:#8a0b02;transform:translateY(-2px);}
+    .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+    .spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;animation:spin .7s linear infinite;display:none;}
+    .submit-btn.loading .spinner{display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .trust-row{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--border);}
+    .trust-row span{font-family:'Syne',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+    .side-card{position:sticky;top:90px;}
+    .side-card h3{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:10px;}
+    .side-card p{color:var(--muted);font-size:13.5px;line-height:1.7;margin-bottom:20px;}
+    .wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px 20px;background:var(--good);color:#07120b;text-decoration:none;font-family:'Syne',sans-serif;font-size:12.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:100px;transition:transform .2s;margin-bottom:12px;}
+    .wa-btn:hover{transform:translateY(-2px);}
+    .call-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px 20px;background:transparent;color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-size:12.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;border-radius:100px;border:1px solid var(--border);transition:border-color .2s;}
+    .call-btn:hover{border-color:var(--accent2);}
+    .side-divider{margin:24px 0;border-top:1px dashed var(--border);}
+    .side-list{list-style:none;}
+    .side-list li{font-size:13px;color:var(--muted);margin-bottom:10px;display:flex;gap:10px;line-height:1.5;}
+    .side-list li b{color:var(--text);}
+    .success-overlay{display:none;text-align:center;padding:30px 10px 10px;}
+    .success-overlay.show{display:block;}
+    .success-icon{font-size:46px;margin-bottom:14px;}
+    .success-overlay h3{font-family:'Bebas Neue',sans-serif;font-size:30px;margin-bottom:10px;}
+    .success-overlay p{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.7;}
+    footer{text-align:center;padding:30px 20px;border-top:1px solid var(--border);}
+    footer p{color:var(--muted);font-size:12.5px;}
+    footer a{color:var(--accent2);text-decoration:none;}
+    .copy-btn{background:var(--accent2);color:#2e2400;border:none;font-family:'Syne',sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:100px;cursor:pointer;}
+    @media(max-width:860px){.page-wrap{grid-template-columns:1fr;}.side-card{position:static;}}
+    @media(max-width:480px){nav{padding:14px 20px;}.page-wrap{padding:30px 16px 70px;}.card{padding:22px;}.form-row{grid-template-columns:1fr;}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms !important;}}
   </style>
 </head>
 <body>
@@ -288,17 +113,13 @@
   </nav>
 
   <div class="page-wrap">
-
     <div>
       <h1 class="page-title">Place Your Order</h1>
       <p class="page-sub">Fill in your details below. Pay on delivery, or pay online securely.</p>
 
       <div class="card">
-
         <div class="summary-block">
-          <div class="summary-heading">
-            <h2 id="summaryHeading">Your Order</h2>
-          </div>
+          <div class="summary-heading"><h2 id="summaryHeading">Your Order</h2></div>
           <div id="cartItemsList"></div>
         </div>
 
@@ -354,9 +175,7 @@
               <label for="pincode">Pincode</label>
               <input type="text" id="pincode" name="pincode" placeholder="560001" maxlength="6" inputmode="numeric" required>
               <div class="field-error">Enter a valid 6-digit pincode</div>
-              <div class="pincode-status" id="pincodeStatus">
-                <span class="pincode-spinner"></span><span id="pincodeStatusText">Detecting location…</span>
-              </div>
+              <div class="pincode-status" id="pincodeStatus"><span class="pincode-spinner"></span><span id="pincodeStatusText">Detecting location…</span></div>
             </div>
             <div class="form-group">
               <label for="city">City</label>
@@ -378,32 +197,15 @@
               <input type="text" id="couponCode" name="couponCode" placeholder="Have a code?" maxlength="20" style="text-transform:uppercase;">
               <button type="button" class="copy-btn" id="applyCouponBtn" style="flex-shrink:0; padding:0 18px;">Apply</button>
             </div>
-            <div class="pincode-status" id="couponStatus">
-              <span id="couponStatusText"></span>
-            </div>
+            <div class="pincode-status" id="couponStatus"><span id="couponStatusText"></span></div>
           </div>
 
           <div class="delivery-box" id="deliveryBox">
-            <div class="delivery-row">
-              <span class="label" id="productLineLabel">Product</span>
-              <span class="value" id="productLineValue">—</span>
-            </div>
-            <div class="delivery-row" id="discountRow" style="display:none;">
-              <span class="label" id="discountLabel">Discount</span>
-              <span class="value" id="discountValue" style="color:#9be6b4;">−₹0</span>
-            </div>
-            <div class="delivery-row">
-              <span class="label">Delivery Zone</span>
-              <span class="value" id="deliveryZoneValue">Enter pincode to calculate<span class="delivery-zone-tag" id="deliveryZoneTag" style="display:none;"></span></span>
-            </div>
-            <div class="delivery-row">
-              <span class="label">Delivery Charge</span>
-              <span class="value" id="deliveryChargeValue">₹0</span>
-            </div>
-            <div class="delivery-row total">
-              <span class="label">Final Payable Amount</span>
-              <span class="value" id="orderTotalValue">Enter pincode above</span>
-            </div>
+            <div class="delivery-row"><span class="label" id="productLineLabel">Product</span><span class="value" id="productLineValue">—</span></div>
+            <div class="delivery-row" id="discountRow" style="display:none;"><span class="label" id="discountLabel">Discount</span><span class="value" id="discountValue" style="color:#9be6b4;">−₹0</span></div>
+            <div class="delivery-row"><span class="label">Delivery Zone</span><span class="value" id="deliveryZoneValue">Enter pincode to calculate</span></div>
+            <div class="delivery-row"><span class="label">Delivery Charge</span><span class="value" id="deliveryChargeValue">₹0</span></div>
+            <div class="delivery-row total"><span class="label">Final Payable Amount</span><span class="value" id="orderTotalValue">Enter pincode above</span></div>
           </div>
 
           <div class="field-error" id="pincodeRequiredNotice" style="display:block; margin-top:12px; margin-bottom:18px; color:var(--muted); font-size:12px;">
@@ -452,7 +254,6 @@
           <p>Thanks for your order. We've got your details and we're sending your bill to your email (check spam if you don't see it in a few minutes).</p>
           <a href="#" id="successWhatsapp" class="wa-btn">💬 Confirm on WhatsApp</a>
         </div>
-
       </div>
     </div>
 
@@ -462,9 +263,7 @@
         <p>Prefer to order directly, or have a sizing question before you buy? Message us. A real person replies, not a bot.</p>
         <a href="https://wa.me/919405074832?text=Hi%20AARAMBH%2C%20I%20want%20to%20place%20an%20order" class="wa-btn">💬 Order on WhatsApp</a>
         <a href="tel:9405074832" class="call-btn">📞 Call 9405074832</a>
-
         <div class="side-divider"></div>
-
         <h3 style="font-size:20px;">How It Works</h3>
         <ul class="side-list">
           <li>1️⃣ <span><b>Fill the form</b> with your size, address and payment choice.</span></li>
@@ -473,7 +272,6 @@
         </ul>
       </div>
     </div>
-
   </div>
 
   <footer>
@@ -493,7 +291,6 @@
     const SHOP_PHONE = '9405074832';
     const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
 
-    // ---------- Init EmailJS ----------
     if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
     function esc(v) {
@@ -558,7 +355,6 @@
 
     document.title = (orderItems.length === 1 ? orderItems[0].product + ' — ' : '') + 'Place Your Order — AARAMBH';
 
-    // ---------- Order summary ----------
     const cartItemsList = document.getElementById('cartItemsList');
     const summaryHeading = document.getElementById('summaryHeading');
     const quantityGroup = document.getElementById('group-qty');
@@ -614,16 +410,9 @@
       sizeGroup.style.display = 'none';
       quantityInput.removeAttribute('required');
       sizeSelect.removeAttribute('required');
-    } else if (orderItems.length) {
-      quantityInput.value = orderItems[0].qty;
-      const sizeParam = orderItems[0].size;
-      if (sizeParam) {
-        const match = Array.from(sizeSelect.options).find(opt => opt.value.toUpperCase() === sizeParam);
-        if (match) sizeSelect.value = match.value;
-      }
     }
     quantityInput.addEventListener('input', () => {
-      if (!cartMode && orderItems.length) {
+      if (!cartMode && orderItems.length === 1) {
         orderItems[0].qty = Math.max(1, Math.min(10, parseInt(quantityInput.value, 10) || 1));
         renderSummary();
       }
@@ -640,4 +429,269 @@
     let selectedMethod = 'COD';
 
     function selectMethod(method) {
-      selectedMethod =
+      selectedMethod = method;
+      payCOD.classList.toggle('active', method === 'COD');
+      payOnline.classList.toggle('active', method === 'ONLINE');
+      submitBtnText.textContent = method === 'ONLINE' ? '💳 Pay Securely' : '🛒 Confirm Order';
+    }
+
+    // ================= BACKEND: the only line you must edit =================
+    const BACKEND_URL = 'https://YOUR-RENDER-URL.onrender.com';
+
+    const $ = (id) => document.getElementById(id);
+    const COUPONS = { NITG10: 0.10, FIRSTDROP10: 0.10 };
+    let appliedCoupon = '';
+    let pincodeConfirmed = false;
+    let isNearZone = false;
+    let lookupToken = 0;
+
+    // Restore items after a failed online payment (order.html?retry=1)
+    if (params.get('retry') === '1') {
+      try {
+        const r = JSON.parse(localStorage.getItem('arambhRetry'));
+        if (r && Array.isArray(r.items) && r.items.length) orderItems = r.items.slice(0, 20).map(sanitizeItem);
+      } catch (e) {}
+    }
+    const multi = cartMode || orderItems.length > 1;
+
+    ['XS', '2XL'].forEach((v) => {
+      if (!Array.from(sizeSelect.options).some((o) => o.value === v)) sizeSelect.add(new Option(v, v));
+    });
+    if (multi) {
+      quantityGroup.style.display = 'none';
+      sizeGroup.style.display = 'none';
+    } else if (orderItems[0]) {
+      quantityInput.value = orderItems[0].qty;
+      if (orderItems[0].size) sizeSelect.value = orderItems[0].size;
+    }
+    sizeSelect.addEventListener('change', () => {
+      if (!multi && orderItems[0]) { orderItems[0].size = sizeSelect.value; renderSummary(); }
+    });
+    renderSummary();
+
+    // ---------- Pricing (mirrors the server rules) ----------
+    function calcPricing() {
+      const subtotal = orderItems.reduce((s, i) => s + i.price * i.qty, 0);
+      const bundleQty = orderItems
+        .filter((i) => /(oversized|printed)/i.test(i.type) && !/crop/i.test(i.type))
+        .reduce((s, i) => s + i.qty, 0);
+      let discount = 0;
+      if (bundleQty >= 3) discount += Math.round(subtotal * 0.08);
+      if (appliedCoupon) discount += Math.round(subtotal * COUPONS[appliedCoupon]);
+      const delivery = pincodeConfirmed ? (isNearZone ? 30 : 50) : 0;
+      return { subtotal, discount, delivery, total: subtotal - discount + delivery };
+    }
+
+    function updateOrderTotal() {
+      const p = calcPricing();
+      $('productLineLabel').textContent = orderItems.length > 1 ? 'Items (' + orderItems.reduce((s, i) => s + i.qty, 0) + ')' : 'Product';
+      $('productLineValue').textContent = orderItems.length ? '₹' + p.subtotal : '—';
+      $('discountRow').style.display = p.discount ? '' : 'none';
+      $('discountValue').textContent = '−₹' + p.discount;
+      $('deliveryChargeValue').textContent = '₹' + p.delivery;
+      $('deliveryZoneValue').innerHTML = pincodeConfirmed
+        ? esc($('state').value) + '<span class="delivery-zone-tag ' + (isNearZone ? 'near' : 'far') + '">' + (isNearZone ? 'Nearby' : 'Standard') + '</span>'
+        : 'Enter pincode to calculate';
+      $('orderTotalValue').textContent = orderItems.length && pincodeConfirmed ? '₹' + p.total : 'Enter pincode above';
+      $('pincodeRequiredNotice').style.display = pincodeConfirmed ? 'none' : 'block';
+    }
+
+    // ---------- Pincode ----------
+    function setPinStatus(type, text) {
+      const s = $('pincodeStatus');
+      s.className = 'pincode-status show ' + type;
+      s.querySelector('.pincode-spinner').style.display = type === 'loading' ? '' : 'none';
+      $('pincodeStatusText').textContent = text;
+    }
+    async function lookupPincode(pin) {
+      const mine = ++lookupToken;
+      setPinStatus('loading', 'Detecting location…');
+      try {
+        const r = await fetch('https://api.postalpincode.in/pincode/' + pin);
+        const d = await r.json();
+        if (mine !== lookupToken) return;
+        const po = d && d[0] && d[0].Status === 'Success' && d[0].PostOffice && d[0].PostOffice[0];
+        if (!po) throw new Error('not found');
+        $('city').value = po.District || po.Block || '';
+        $('state').value = po.State || '';
+        isNearZone = /^(goa|karnataka)$/i.test($('state').value.trim());
+        pincodeConfirmed = true;
+        setPinStatus('found', $('city').value + ', ' + $('state').value);
+      } catch (e) {
+        if (mine !== lookupToken) return;
+        pincodeConfirmed = false;
+        setPinStatus('error', 'Could not verify this pincode. Please check it.');
+      }
+      updateOrderTotal();
+    }
+    $('pincode').addEventListener('input', () => {
+      const el = $('pincode');
+      el.value = el.value.replace(/\D/g, '').slice(0, 6);
+      pincodeConfirmed = false;
+      $('city').value = '';
+      $('state').value = '';
+      updateOrderTotal();
+      if (el.value.length === 6) lookupPincode(el.value);
+      else { lookupToken++; $('pincodeStatus').className = 'pincode-status'; }
+    });
+    $('phone').addEventListener('input', () => { $('phone').value = $('phone').value.replace(/\D/g, '').slice(0, 10); });
+
+    // ---------- Coupon ----------
+    $('applyCouponBtn').addEventListener('click', () => {
+      const code = $('couponCode').value.trim().toUpperCase();
+      const st = $('couponStatus');
+      if (!code) { appliedCoupon = ''; st.className = 'pincode-status'; }
+      else if (COUPONS[code]) {
+        appliedCoupon = code;
+        st.className = 'pincode-status show found';
+        $('couponStatusText').textContent = code + ' applied: ' + Math.round(COUPONS[code] * 100) + '% off';
+      } else {
+        appliedCoupon = '';
+        st.className = 'pincode-status show error';
+        $('couponStatusText').textContent = 'This code is not valid';
+      }
+      updateOrderTotal();
+    });
+
+    // ---------- Payment method ----------
+    payCOD.addEventListener('click', () => selectMethod('COD'));
+    payOnline.addEventListener('click', () => selectMethod('ONLINE'));
+
+    // ---------- Validation ----------
+    function setInvalid(id, bad) { const g = $(id); if (g) g.classList.toggle('invalid', bad); return bad; }
+    function validateForm() {
+      let bad = false;
+      bad = setInvalid('group-name', !$('fullName').value.trim()) || bad;
+      bad = setInvalid('group-phone', !/^[6-9]\d{9}$/.test($('phone').value)) || bad;
+      bad = setInvalid('group-email', !/^\S+@\S+\.\S+$/.test($('email').value.trim())) || bad;
+      bad = setInvalid('group-address', $('address').value.trim().length < 8) || bad;
+      bad = setInvalid('group-pincode', !pincodeConfirmed) || bad;
+      if (!multi) bad = setInvalid('group-size', !sizeSelect.value) || bad;
+      if (multi && orderItems.some((i) => !i.size)) {
+        alert('An item in your order has no size. Please go back, remove it and add it again with a size.');
+        bad = true;
+      }
+      $('payGuardNotice').style.display = bad ? 'block' : 'none';
+      return !bad;
+    }
+
+    function setLoading(on, text) {
+      submitBtn.disabled = on;
+      submitBtn.classList.toggle('loading', on);
+      submitBtnText.textContent = on ? (text || 'Please wait…') : (selectedMethod === 'ONLINE' ? '💳 Pay Securely' : '🛒 Confirm Order');
+    }
+    window.addEventListener('pageshow', () => setLoading(false));
+
+    function collect() {
+      if (!multi && orderItems[0]) orderItems[0].size = sizeSelect.value.toUpperCase();
+      return Object.assign({
+        name: $('fullName').value.trim(),
+        phone: $('phone').value,
+        email: $('email').value.trim().toLowerCase(),
+        address: $('address').value.trim(),
+        pincode: $('pincode').value,
+        city: $('city').value,
+        state: $('state').value,
+        notes: $('notes').value.trim(),
+        coupon: appliedCoupon
+      }, calcPricing());
+    }
+
+    // ---------- Online payment (PayU through the backend) ----------
+    async function startPayment(d) {
+      if (/YOUR-RENDER-URL/.test(BACKEND_URL)) throw new Error('Online payment is not available yet. Please choose Cash on Delivery or message us on WhatsApp.');
+      setLoading(true, 'Starting secure payment…');
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 75000);
+      let out;
+      try {
+        const res = await fetch(BACKEND_URL + '/api/orders/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: ctrl.signal,
+          body: JSON.stringify({
+            items: orderItems.map((i) => ({ id: i.id, product: i.product, size: i.size, qty: i.qty })),
+            address: { name: d.name, phone: d.phone, email: d.email, line1: d.address, city: d.city, state: d.state, pincode: d.pincode },
+            coupon: d.coupon,
+            notes: d.notes
+          })
+        });
+        out = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(out.error || 'Could not start the payment. Please try again.');
+      } catch (e) {
+        throw new Error(e.name === 'AbortError' ? 'The payment server took too long to respond. Please try again.' : e.message);
+      } finally { clearTimeout(timer); }
+
+      if (out.breakup && out.breakup.total !== d.total) {
+        if (!confirm('Your final payable amount is ₹' + out.breakup.total + '. Continue to payment?')) throw new Error('Payment cancelled.');
+      }
+      try { localStorage.setItem('arambhRetry', JSON.stringify({ items: orderItems })); } catch (e) {}
+
+      const f = document.createElement('form');
+      f.method = 'POST';
+      f.action = out.action;
+      Object.keys(out.fields).forEach((k) => {
+        const inp = document.createElement('input');
+        inp.type = 'hidden'; inp.name = k; inp.value = out.fields[k];
+        f.appendChild(inp);
+      });
+      document.body.appendChild(f);
+      f.submit();
+    }
+
+    // ---------- Cash on Delivery ----------
+    async function placeCod(d) {
+      setLoading(true, 'Placing your order…');
+      const orderId = 'AAR' + Date.now().toString(36).toUpperCase();
+      const itemsText = orderItems.map((i) => i.product + ' (' + i.color + ', size ' + i.size + ') x' + i.qty + ' = ₹' + i.price * i.qty).join('\n');
+      const base = {
+        order_id: orderId, customer_name: d.name, name: d.name, phone: d.phone, email: d.email, customer_email: d.email,
+        address: d.address, city: d.city, state: d.state, pincode: d.pincode,
+        order_items: itemsText, order_details: itemsText,
+        subtotal: d.subtotal, discount: d.discount, delivery_charge: d.delivery, total: d.total,
+        payment_method: 'Cash on Delivery', coupon: d.coupon || 'None', notes: d.notes || 'None',
+        shop_instagram: SHOP_INSTAGRAM, shop_phone: SHOP_PHONE, logo_url: LOGO_URL
+      };
+      const send = (to) => window.emailjs
+        ? emailjs.send(EMAILJS_SERVICE_ID, to === OWNER_EMAIL ? OWNER_TEMPLATE_ID : CUSTOMER_TEMPLATE_ID, Object.assign({}, base, { to_email: to }))
+        : Promise.reject(new Error('EmailJS not loaded'));
+      const [form, owner, cust] = await Promise.allSettled([
+        fetch(FORMSPREE_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(base) })
+          .then((r) => { if (!r.ok) throw new Error('Formspree ' + r.status); }),
+        send(OWNER_EMAIL),
+        send(d.email)
+      ]);
+      if (form.status !== 'fulfilled' && owner.status !== 'fulfilled') {
+        throw new Error('We could not place your order right now. Please message us on WhatsApp: ' + SHOP_PHONE);
+      }
+      if (cust.status !== 'fulfilled') console.warn('Customer bill email failed', cust.reason);
+
+      const msg = 'Hi AARAMBH, I placed order ' + orderId + ' (Cash on Delivery).\n' + itemsText + '\nTotal: ₹' + d.total + '\nName: ' + d.name + '\nPhone: ' + d.phone;
+      $('successWhatsapp').href = 'https://wa.me/91' + SHOP_PHONE + '?text=' + encodeURIComponent(msg);
+      $('orderForm').style.display = 'none';
+      $('successOverlay').classList.add('show');
+      if (cartMode) saveCart([]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ---------- Submit ----------
+    $('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if ($('website').value) return; // honeypot
+      if (!orderItems.length) { alert('Your order is empty. Please pick a product first.'); return; }
+      if (!validateForm()) return;
+      const d = collect();
+      try {
+        if (selectedMethod === 'ONLINE') await startPayment(d);
+        else await placeCod(d);
+      } catch (err) {
+        alert(err.message || 'Something went wrong. Please try again.');
+        setLoading(false);
+      }
+    });
+
+    selectMethod('COD');
+    updateOrderTotal();
+  </script>
+</body>
+</html>

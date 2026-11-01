@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
+  <script src="site-config.js"></script>
+
   <style>
     :root{--bg:#080810;--surface:#0f0f1a;--surface2:#15151f;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,0.08);--accent-rgb:169,14,2;--accent2-rgb:255,250,205;--good:#25D366;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -425,8 +427,8 @@
       submitBtnText.textContent = method === 'ONLINE' ? '💳 Pay Securely' : '🛒 Confirm Order';
     }
 
-    // ================= BACKEND: the only line you must edit =================
-    const BACKEND_URL = 'https://YOUR-RENDER-URL.onrender.com';
+    // Backend address comes from site-config.js
+    const BACKEND_URL = window.AARAMBH_BACKEND_URL || 'https://YOUR-RENDER-URL.onrender.com';
 
     const $ = (id) => document.getElementById(id);
     const COUPONS = { NITG10: 0.10, FIRSTDROP10: 0.10 };
@@ -587,6 +589,12 @@
       }, calcPricing());
     }
 
+    function authHeaders() {
+      const hd = { 'Content-Type': 'application/json' };
+      try { const t = localStorage.getItem('arambhToken'); if (t) hd.Authorization = 'Bearer ' + t; } catch (e) {}
+      return hd;
+    }
+
     // ---------- Talk to the backend (Resend emails are sent by the server) ----------
     async function callBackend(path, d, loadingText) {
       if (/YOUR-RENDER-URL/.test(BACKEND_URL)) throw new Error('Ordering is not available yet. Please message us on WhatsApp: ' + SHOP_PHONE);
@@ -596,7 +604,7 @@
       try {
         const res = await fetch(BACKEND_URL + path, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           signal: ctrl.signal,
           body: JSON.stringify({
             items: orderItems.map((i) => ({ id: i.id, product: i.product, size: i.size, qty: i.qty })),
@@ -665,6 +673,30 @@
         setLoading(false);
       }
     });
+
+    // ---------- Logged-in customers: account link + autofill ----------
+    (function accountBits() {
+      let token = null;
+      try { token = localStorage.getItem('arambhToken'); } catch (e) {}
+      const nextUrl = encodeURIComponent('order.html' + location.search);
+      document.querySelector('.page-sub').insertAdjacentHTML('beforeend', token
+        ? '<br><a href="account.html" style="color:var(--accent2)">My account and orders</a>'
+        : '<br>Have an account? <a href="login.html?next=' + nextUrl + '" style="color:var(--accent2)">Log in</a> to autofill your details.');
+      if (!token || /YOUR-RENDER-URL/.test(BACKEND_URL)) return;
+      fetch(BACKEND_URL + '/api/auth/me', { headers: authHeaders() })
+        .then((r) => { if (r.status === 401) { try { localStorage.removeItem('arambhToken'); } catch (e) {} } return r.ok ? r.json() : null; })
+        .then((d) => {
+          if (!d || !d.user) return;
+          const put = (id, v) => { if (v && !$(id).value) $(id).value = v; };
+          put('fullName', d.user.name); put('email', d.user.email); put('phone', d.user.phone);
+          const a = d.lastAddress;
+          if (a) {
+            put('address', a.line1);
+            if (a.pincode && !$('pincode').value) { $('pincode').value = a.pincode; $('pincode').dispatchEvent(new Event('input')); }
+          }
+        })
+        .catch(() => {});
+    })();
 
     selectMethod('COD');
     updateOrderTotal();

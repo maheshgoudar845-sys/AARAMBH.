@@ -8,9 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
-  <!-- jsPDF is only needed if you set USE_WORKER_PDF = true below:
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  -->
+  <script src="api.js"></script>
 
   <style>
     :root {
@@ -56,7 +54,6 @@
       gap: 34px;
       align-items: start;
     }
-
     .page-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(38px, 5vw, 58px);
@@ -70,25 +67,25 @@
       border: 1px solid var(--border);
       border-radius: 22px;
       padding: 30px;
+      position: relative; overflow: hidden;
     }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background-size: 200% 100%; animation: ob-shine-line 3.5s linear infinite;
+    }
+    @keyframes ob-shine-line { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
 
-    /* ---- Order summary (single item or multi-item cart) ---- */
     .summary-block {
       padding-bottom: 24px; margin-bottom: 24px;
       border-bottom: 1px solid var(--border);
     }
-    .summary-heading {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 14px;
-    }
+    .summary-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .summary-heading h2 {
       font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
       letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
     }
-    .cart-item-row {
-      display: flex; gap: 14px; align-items: center;
-      padding: 10px 0;
-    }
+    .cart-item-row { display: flex; gap: 14px; align-items: center; padding: 10px 0; }
     .cart-item-row + .cart-item-row { border-top: 1px dashed var(--border); }
     .cart-item-row img {
       width: 64px; height: 64px; object-fit: contain;
@@ -107,29 +104,22 @@
       border: 1px solid var(--border); color: var(--muted);
       padding: 3px 8px; border-radius: 100px;
     }
-    .cart-item-qtyprice {
-      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
-    }
+    .cart-item-qtyprice { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .cart-item-qtyprice .price {
-      font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent2);
-      white-space: nowrap;
+      font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent2); white-space: nowrap;
     }
     .cart-item-remove {
       background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: 13px; padding: 4px 6px; line-height: 1;
-      transition: color 0.2s;
+      font-size: 13px; padding: 4px 6px; line-height: 1; transition: color 0.2s;
     }
     .cart-item-remove:hover { color: #ff6b6b; }
-    .empty-cart {
-      text-align: center; padding: 20px 0; color: var(--muted); font-size: 13.5px; line-height: 1.7;
-    }
+    .empty-cart { text-align: center; padding: 20px 0; color: var(--muted); font-size: 13.5px; line-height: 1.7; }
     .empty-cart a { color: var(--accent2); }
 
     .form-group { margin-bottom: 18px; }
     .form-group label {
       display: block; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
-      margin-bottom: 8px;
+      letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
     }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     input, select, textarea {
@@ -141,18 +131,18 @@
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       font-size: 14px;
-      transition: border-color 0.25s, background 0.25s;
+      transition: border-color 0.25s, background 0.25s, box-shadow .25s;
     }
     input:focus, select:focus, textarea:focus {
       outline: none; border-color: rgba(var(--accent-rgb),0.5);
       background: rgba(255,255,255,0.05);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.12);
     }
     textarea { resize: vertical; min-height: 70px; }
     select { cursor: pointer; }
     .field-error { color: #ff6b6b; font-size: 12px; margin-top: 6px; display: none; }
-    .form-group.invalid input, .form-group.invalid select, .form-group.invalid textarea {
-      border-color: #ff6b6b;
-    }
+    .form-group.invalid input, .form-group.invalid select, .form-group.invalid textarea { border-color: #ff6b6b; }
+    .form-group.invalid .field-error { display: block; }
 
     .pincode-status {
       font-size: 12px; margin-top: 8px; display: none;
@@ -170,18 +160,13 @@
     }
 
     .delivery-box {
-      display: none;
       margin-top: 14px;
       background: rgba(var(--accent2-rgb),0.05);
       border: 1px solid rgba(var(--accent2-rgb),0.2);
       border-radius: 14px;
       padding: 14px 18px;
     }
-    .delivery-box.show { display: block; }
-    .delivery-row {
-      display: flex; align-items: center; justify-content: space-between;
-      font-family: 'Syne', sans-serif; font-size: 12.5px;
-    }
+    .delivery-row { display: flex; align-items: center; justify-content: space-between; font-family: 'Syne', sans-serif; font-size: 12.5px; }
     .delivery-row + .delivery-row { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
     .delivery-row .label { color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; font-size: 11px; }
     .delivery-row .value { color: var(--text); font-weight: 700; }
@@ -192,65 +177,19 @@
     }
     .delivery-zone-tag.near { background: rgba(155,230,180,0.15); color: #9be6b4; }
     .delivery-zone-tag.far { background: rgba(255,250,205,0.12); color: var(--accent2); }
-    .form-group.invalid .field-error { display: block; }
 
-    .payment-options {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-      margin-bottom: 18px;
-    }
+    .payment-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
     .pay-option {
       border: 1px solid var(--border); border-radius: 14px;
       padding: 16px; cursor: pointer; text-align: center;
       transition: border-color 0.25s, background 0.25s;
-      font-family: 'Syne', sans-serif;
+      font-family: 'Syne', sans-serif; position: relative;
     }
-    .pay-option.active {
-      border-color: var(--accent); background: rgba(var(--accent-rgb),0.1);
-    }
-    .pay-option .pay-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+    .pay-option.active { border-color: var(--accent); background: rgba(var(--accent-rgb),0.1); }
+    .pay-option .pay-icon { font-size: 22px; margin-bottom: 6px; display: inline-block; transition: transform .25s; }
+    .pay-option.active .pay-icon { transform: scale(1.15); }
     .pay-option .pay-name { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
     .pay-option .pay-desc { font-size: 10.5px; color: var(--muted); margin-top: 4px; }
-
-    .upi-panel {
-      display: none;
-      background: rgba(var(--accent2-rgb),0.05);
-      border: 1px solid rgba(var(--accent2-rgb),0.2);
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 18px;
-      text-align: center;
-    }
-    .upi-panel.show { display: block; }
-    .upi-id-row {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
-      color: var(--accent2);
-      background: rgba(0,0,0,0.3);
-      border-radius: 100px; padding: 10px 18px;
-      margin: 10px auto; max-width: 320px;
-    }
-    .copy-btn {
-      background: var(--accent2); color: #2e2400; border: none;
-      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800;
-      letter-spacing: 1px; text-transform: uppercase;
-      padding: 6px 12px; border-radius: 100px; cursor: pointer;
-    }
-    .upi-amount {
-      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-top: 4px;
-    }
-    .upi-amount b { color: var(--accent2); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.5px; }
-    .upi-deeplinks { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
-    .upi-deeplinks a {
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
-      text-decoration: none; color: white;
-      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
-      padding: 9px 16px; border-radius: 100px;
-      transition: background 0.25s;
-    }
-    .upi-deeplinks a:hover { background: rgba(255,255,255,0.14); }
-    .upi-note { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
-    .upi-warn { font-size: 12px; color: var(--accent2); margin-top: 10px; line-height: 1.6; display: none; }
-    .upi-warn.show { display: block; }
 
     .submit-btn {
       width: 100%; padding: 16px 20px;
@@ -261,6 +200,7 @@
       transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
       box-shadow: 0 10px 30px rgba(var(--accent-rgb),0.3);
       display: flex; align-items: center; justify-content: center; gap: 10px;
+      position: relative; overflow: hidden;
     }
     .submit-btn:hover { background: #8a0b02; transform: translateY(-2px); }
     .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
@@ -279,13 +219,10 @@
     .trust-row span {
       font-family: 'Syne', sans-serif; font-size: 10.5px; font-weight: 700;
       letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted);
-      display: flex; align-items: center; gap: 6px;
     }
 
     .side-card { position: sticky; top: 90px; }
-    .side-card h3 {
-      font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 10px;
-    }
+    .side-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; margin-bottom: 10px; }
     .side-card p { color: var(--muted); font-size: 13.5px; line-height: 1.7; margin-bottom: 20px; }
     .wa-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -293,9 +230,7 @@
       background: var(--good); color: #07120b; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
       letter-spacing: 1.5px; text-transform: uppercase;
-      border-radius: 100px;
-      transition: transform 0.2s;
-      margin-bottom: 12px;
+      border-radius: 100px; transition: transform 0.2s; margin-bottom: 12px;
     }
     .wa-btn:hover { transform: translateY(-2px); }
     .call-btn {
@@ -304,23 +239,15 @@
       background: transparent; color: white; text-decoration: none;
       font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
       letter-spacing: 1.5px; text-transform: uppercase;
-      border-radius: 100px; border: 1px solid var(--border);
-      transition: border-color 0.2s;
+      border-radius: 100px; border: 1px solid var(--border); transition: border-color 0.2s;
     }
     .call-btn:hover { border-color: var(--accent2); }
     .side-divider { margin: 24px 0; border-top: 1px dashed var(--border); }
     .side-list { list-style: none; }
-    .side-list li {
-      font-size: 13px; color: var(--muted); margin-bottom: 10px;
-      display: flex; gap: 10px; line-height: 1.5;
-    }
+    .side-list li { font-size: 13px; color: var(--muted); margin-bottom: 10px; display: flex; gap: 10px; line-height: 1.5; }
     .side-list li b { color: var(--text); }
 
-    .success-overlay {
-      display: none;
-      text-align: center;
-      padding: 30px 10px 10px;
-    }
+    .success-overlay { display: none; text-align: center; padding: 30px 10px 10px; }
     .success-overlay.show { display: block; }
     .success-icon { font-size: 46px; margin-bottom: 14px; }
     .success-overlay h3 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; margin-bottom: 10px; }
@@ -329,6 +256,13 @@
     footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--border); }
     footer p { color: var(--muted); font-size: 12.5px; }
     footer a { color: var(--accent2); text-decoration: none; }
+
+    .copy-btn {
+      background: var(--accent2); color: #2e2400; border: none;
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 100px; cursor: pointer;
+    }
 
     @media (max-width: 860px) {
       .page-wrap { grid-template-columns: 1fr; }
@@ -339,77 +273,8 @@
       .page-wrap { padding: 30px 16px 70px; }
       .card { padding: 22px; }
       .form-row { grid-template-columns: 1fr; }
-      .payment-options { grid-template-columns: 1fr 1fr; }
     }
-
-    /* ===== BEAUTIFICATION LAYER (purely visual) ===== */
-    @keyframes ob-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes ob-glow { 0%,100% { box-shadow: 0 0 0 rgba(var(--accent-rgb),0); } 50% { box-shadow: 0 0 26px rgba(var(--accent-rgb),.18); } }
-    @keyframes ob-pulse-once { 0% { transform: scale(1); } 35% { transform: scale(1.06); color: #9be6b4; } 100% { transform: scale(1); } }
-    @keyframes ob-shine { from { transform: translateX(-120%) skewX(-15deg); } to { transform: translateX(220%) skewX(-15deg); } }
-    @keyframes ob-check-pop { 0% { transform: scale(0.3) rotate(-15deg); opacity:0; } 60% { transform: scale(1.15) rotate(4deg); opacity:1; } 100% { transform: scale(1) rotate(0); } }
-    @keyframes ob-ring { 0% { transform: scale(0.8); opacity: .7; } 100% { transform: scale(1.7); opacity: 0; } }
-
-    .page-wrap > div, .side-card { animation: ob-fade-up .6s cubic-bezier(.22,1,.36,1) both; }
-    .side-card { animation-delay: .08s; }
-
-    .card { position: relative; overflow: hidden; }
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
-      background-size: 200% 100%; animation: ob-shine-line 3.5s linear infinite;
-    }
-    @keyframes ob-shine-line { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
-
-    .ob-steps { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
-    .ob-step { display: flex; align-items: center; gap: 8px; }
-    .ob-step-num {
-      width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted);
-      transition: background .3s, border-color .3s, color .3s;
-    }
-    .ob-step.done .ob-step-num { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .ob-step-label { font-family: 'Syne', sans-serif; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
-    .ob-step.done .ob-step-label { color: var(--text); }
-    .ob-step-line { flex: 1; height: 1px; background: var(--border); min-width: 16px; }
-
-    input, select, textarea { transition: border-color 0.25s, background 0.25s, box-shadow .25s; }
-    input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.12); }
-
-    .pay-option { position: relative; }
-    .pay-option.active { animation: ob-glow 2.2s ease-in-out infinite; }
-    .pay-option.active .pay-icon { transform: scale(1.15); }
-    .pay-option .pay-icon { display: inline-block; transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
-
-    .submit-btn { position: relative; overflow: hidden; }
-    .submit-btn::after {
-      content: ''; position: absolute; top: 0; left: 0; width: 40%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.28), transparent);
-      animation: ob-shine 3s ease-in-out infinite;
-    }
-
-    #orderTotalValue.ob-pulse { animation: ob-pulse-once .5s ease; }
-
-    .cart-item-row { animation: ob-fade-up .4s ease both; }
-
-    .success-overlay.show .success-icon { display: inline-block; animation: ob-check-pop .5s cubic-bezier(.34,1.56,.64,1) both; position: relative; }
-    .success-overlay.show .success-icon::after {
-      content: ''; position: absolute; inset: -10px; border: 2px solid rgba(155,230,180,0.5); border-radius: 50%;
-      animation: ob-ring 1s ease-out .3s;
-    }
-    .success-overlay.show h3, .success-overlay.show p, .success-overlay.show .wa-btn {
-      animation: ob-fade-up .5s ease both;
-    }
-    .success-overlay.show p { animation-delay: .08s; }
-    .success-overlay.show .wa-btn { animation-delay: .16s; }
-
-    .trust-row span { transition: color .25s, transform .25s; }
-    .trust-row span:hover { color: var(--accent2); transform: translateY(-2px); }
-
-    .side-card .card { transition: border-color .3s, box-shadow .3s; }
-    .side-card .card:hover { border-color: rgba(var(--accent-rgb),.3); box-shadow: 0 30px 80px rgba(0,0,0,.35); }
-
+    @keyframes spin-unused { }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.001ms !important; }
     }
@@ -426,21 +291,11 @@
 
     <div>
       <h1 class="page-title">Place Your Order</h1>
-      <p class="page-sub">Fill in your details below — we'll confirm your order on WhatsApp.</p>
+      <p class="page-sub">Fill in your details below. Pay on delivery, or pay online securely.</p>
 
       <div class="card">
 
-        <div class="ob-steps" id="obSteps">
-          <div class="ob-step done"><span class="ob-step-num">1</span><span class="ob-step-label">Cart</span></div>
-          <div class="ob-step-line"></div>
-          <div class="ob-step" id="obStepDetails"><span class="ob-step-num">2</span><span class="ob-step-label">Details</span></div>
-          <div class="ob-step-line"></div>
-          <div class="ob-step" id="obStepPay"><span class="ob-step-num">3</span><span class="ob-step-label">Payment</span></div>
-          <div class="ob-step-line"></div>
-          <div class="ob-step" id="obStepConfirm"><span class="ob-step-num">4</span><span class="ob-step-label">Confirm</span></div>
-        </div>
-
-        <div class="summary-block" id="summaryBlock">
+        <div class="summary-block">
           <div class="summary-heading">
             <h2 id="summaryHeading">Your Order</h2>
           </div>
@@ -448,7 +303,6 @@
         </div>
 
         <form id="orderForm" novalidate>
-          <!-- Honeypot: real users never see or fill this; bots do -->
           <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
 
           <div class="form-group" id="group-name">
@@ -466,7 +320,7 @@
             <div class="form-group" id="group-email">
               <label for="email">Email (for your bill)</label>
               <input type="email" id="email" name="email" placeholder="you@example.com" maxlength="120" required>
-              <div class="field-error">Enter a valid email — we send your bill here</div>
+              <div class="field-error">Enter a valid email. We send your bill here</div>
             </div>
           </div>
 
@@ -524,12 +378,12 @@
               <input type="text" id="couponCode" name="couponCode" placeholder="Have a code?" maxlength="20" style="text-transform:uppercase;">
               <button type="button" class="copy-btn" id="applyCouponBtn" style="flex-shrink:0; padding:0 18px;">Apply</button>
             </div>
-            <div class="pincode-status show" id="couponStatus" style="display:none;">
+            <div class="pincode-status" id="couponStatus">
               <span id="couponStatusText"></span>
             </div>
           </div>
 
-          <div class="delivery-box show" id="deliveryBox">
+          <div class="delivery-box" id="deliveryBox">
             <div class="delivery-row">
               <span class="label" id="productLineLabel">Product</span>
               <span class="value" id="productLineValue">—</span>
@@ -552,8 +406,8 @@
             </div>
           </div>
 
-          <div class="field-error" id="pincodeRequiredNotice" style="display:block; margin-top:-4px; margin-bottom:18px; color:var(--muted); font-size:12px;">
-            A valid pincode is required before you can place your order — it's how delivery charges get added to your total.
+          <div class="field-error" id="pincodeRequiredNotice" style="display:block; margin-top:12px; margin-bottom:18px; color:var(--muted); font-size:12px;">
+            A valid pincode is required before you can place your order. It's how delivery charges get added to your total.
           </div>
 
           <div class="form-group">
@@ -563,36 +417,20 @@
 
           <div class="form-group">
             <label>Payment Method</label>
-            <div class="field-error" id="upiGuardNotice" style="display:none; margin-bottom:14px;">
-              Please fill in your name, phone, email, size, address and a valid pincode first — we need these before you can pay.
-            </div>
             <div class="payment-options">
               <div class="pay-option active" data-method="COD" id="payCOD">
                 <span class="pay-icon">💵</span>
                 <div class="pay-name">Cash on Delivery</div>
                 <div class="pay-desc">Pay when it arrives</div>
               </div>
-              <div class="pay-option" data-method="UPI" id="payUPI">
-                <span class="pay-icon">📲</span>
-                <div class="pay-name">UPI</div>
-                <div class="pay-desc">Pay now, ship faster</div>
+              <div class="pay-option" data-method="ONLINE" id="payOnline">
+                <span class="pay-icon">💳</span>
+                <div class="pay-name">Pay Online</div>
+                <div class="pay-desc">UPI, Cards, Netbanking</div>
               </div>
             </div>
-
-            <div class="upi-panel" id="upiPanel">
-              <p style="font-family:'Syne',sans-serif; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted);">Pay to our UPI ID</p>
-              <div class="upi-id-row">
-                <span id="upiIdText">maheshgoudar076@pingpay</span>
-                <button type="button" class="copy-btn" id="copyUpiBtn">Copy</button>
-              </div>
-              <p class="upi-amount">Amount to pay: <b id="upiAmountText">—</b></p>
-              <div class="upi-deeplinks">
-                <a id="gpayLink" href="#" rel="noopener">Pay with GPay</a>
-                <a id="phonepeLink" href="#" rel="noopener">Pay with PhonePe</a>
-                <a id="paytmLink" href="#" rel="noopener">Pay with Paytm</a>
-              </div>
-              <p class="upi-warn" id="upiInAppWarn">Opening this page from Instagram or another in-app browser? UPI apps may not open from here. Tap ⋯ and choose “Open in browser”, or copy the UPI ID above and pay manually.</p>
-              <p class="upi-note">The buttons above only work on a phone with the app installed. If a button shows an error or does nothing, copy the UPI ID above, open any UPI app, and pay the amount shown. <b>After paying, tap “Confirm Order” below</b>, then send the payment screenshot on WhatsApp — we'll confirm and dispatch your order.</p>
+            <div class="field-error" id="payGuardNotice" style="display:none; margin-bottom:14px;">
+              Please fill in your name, phone, email, size, address and a valid pincode first.
             </div>
           </div>
 
@@ -611,7 +449,7 @@
         <div class="success-overlay" id="successOverlay">
           <div class="success-icon">✅</div>
           <h3>Order Received!</h3>
-          <p>Thanks for your order — we've got your details and we're sending your bill to your email (check spam if you don't see it in a few minutes). Tap below to confirm instantly on WhatsApp so we can start processing it right away.</p>
+          <p>Thanks for your order. We've got your details and we're sending your bill to your email (check spam if you don't see it in a few minutes).</p>
           <a href="#" id="successWhatsapp" class="wa-btn">💬 Confirm on WhatsApp</a>
         </div>
 
@@ -621,7 +459,7 @@
     <div class="side-card">
       <div class="card">
         <h3>Need Help Ordering?</h3>
-        <p>Prefer to order directly, or have a sizing question before you buy? Message us — a real person replies, not a bot.</p>
+        <p>Prefer to order directly, or have a sizing question before you buy? Message us. A real person replies, not a bot.</p>
         <a href="https://wa.me/919405074832?text=Hi%20AARAMBH%2C%20I%20want%20to%20place%20an%20order" class="wa-btn">💬 Order on WhatsApp</a>
         <a href="tel:9405074832" class="call-btn">📞 Call 9405074832</a>
 
@@ -631,7 +469,7 @@
         <ul class="side-list">
           <li>1️⃣ <span><b>Fill the form</b> with your size, address and payment choice.</span></li>
           <li>2️⃣ <span><b>We confirm</b> your order on WhatsApp within a few hours.</span></li>
-          <li>3️⃣ <span><b>Your order ships</b> — pay on delivery, or upfront via UPI.</span></li>
+          <li>3️⃣ <span><b>Your order ships.</b> Pay on delivery, or pay online securely.</span></li>
         </ul>
       </div>
     </div>
@@ -643,38 +481,21 @@
   </footer>
 
   <script>
-    // =====================================================================
-    //  CONFIG — edit these in one place
-    // =====================================================================
+    // ================= CONFIG =================
     const EMAILJS_PUBLIC_KEY = 'ZXVO8aPvZTkk1NLI6';
     const EMAILJS_SERVICE_ID = 'service_gnkbabo';
-    // ONE template is used for both emails. In EmailJS set: To Email = {{to_email}},
-    // Reply To = {{reply_to}}, Subject = {{subject}}, body (HTML source) = {{{bill_html}}}
     const OWNER_TEMPLATE_ID = 'template_j3gxuwf';
     const CUSTOMER_TEMPLATE_ID = 'template_j3gxuwf';
     const OWNER_EMAIL = 'arambhofficial2025@gmail.com';
+    const FORMSPREE_URL = 'https://formspree.io/f/xqejgjzw';
 
-    // Optional: PDF bill via Cloudflare Worker + Resend. If you enable this,
-    // also un-comment the jsPDF <script> tag in <head>.
-    const USE_WORKER_PDF = false;
-    const ORDER_WORKER_URL = 'https://aarambh.arambhofficial2025.workers.dev';
-
-    const UPI_ID = 'maheshgoudar076@pingpay';
     const SHOP_INSTAGRAM = 'aarambh.official';
     const SHOP_PHONE = '9405074832';
     const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
 
-    // Optional: add your real prices so URL/localStorage prices are ignored.
-    // Example: 'Oversized Tee': { price: 799 }
-    // Key must match the product name exactly as sent by your shop page.
-    const CATALOG = {};
-
     // ---------- Init EmailJS ----------
-    (function () {
-      if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-    })();
+    if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
-    // Escape anything coming from the URL or the customer before it goes into HTML.
     function esc(v) {
       return String(v == null ? '' : v)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -695,19 +516,17 @@
       try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
     }
 
-    // Clamp / clean every item so bad URL or localStorage values can't break totals.
     function sanitizeItem(item) {
       const product = String(item.product || 'Product').slice(0, 80);
       let price = Number(item.price);
       if (!isFinite(price) || price < 0) price = 0;
-      if (CATALOG[product] && Number(CATALOG[product].price) >= 0) price = Number(CATALOG[product].price);
       let qty = parseInt(item.qty, 10);
       if (!isFinite(qty) || qty < 1) qty = 1;
       qty = Math.min(qty, 10);
       let image = String(item.image || 'logo.webp');
       if (/^(https?:|\/\/|data:|javascript:)/i.test(image)) image = 'logo.webp';
       return {
-        id: item.id,
+        id: String(item.id || ''),
         product,
         type: String(item.type || '—').slice(0, 40),
         color: String(item.color || '—').slice(0, 40),
@@ -725,7 +544,7 @@
       const product = params.get('product') || '';
       if (product) {
         orderItems = [sanitizeItem({
-          id: 'single',
+          id: params.get('id') || 'single',
           product,
           type: params.get('type') || '',
           color: params.get('color') || '',
@@ -739,7 +558,7 @@
 
     document.title = (orderItems.length === 1 ? orderItems[0].product + ' — ' : '') + 'Place Your Order — AARAMBH';
 
-    // ---------- Render order summary ----------
+    // ---------- Order summary ----------
     const cartItemsList = document.getElementById('cartItemsList');
     const summaryHeading = document.getElementById('summaryHeading');
     const quantityGroup = document.getElementById('group-qty');
@@ -752,8 +571,8 @@
         summaryHeading.textContent = cartMode ? 'Your Cart' : 'Your Order';
         cartItemsList.innerHTML = `<div class="empty-cart">${
           cartMode
-            ? "Your cart is empty. <a href=\"index.html\">Head back to the shop</a> to add something first."
-            : "No product selected. <a href=\"index.html\">Head back to the shop</a> to pick something."
+            ? 'Your cart is empty. <a href="index.html">Head back to the shop</a> to add something first.'
+            : 'No product selected. <a href="index.html">Head back to the shop</a> to pick something.'
         }</div>`;
         return;
       }
@@ -783,7 +602,6 @@
       if (cartMode) saveCart(orderItems);
       renderSummary();
       updateOrderTotal();
-      refreshUpiLinks();
     }
     cartItemsList.addEventListener('click', (e) => {
       const btn = e.target.closest('.cart-item-remove');
@@ -810,709 +628,16 @@
         renderSummary();
       }
       updateOrderTotal();
-      refreshUpiLinks();
     });
 
     renderSummary();
 
-    // ---------- Payment method toggle ----------
+    // ---------- Payment method ----------
     const payCOD = document.getElementById('payCOD');
-    const payUPI = document.getElementById('payUPI');
-    const upiPanel = document.getElementById('upiPanel');
+    const payOnline = document.getElementById('payOnline');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
     let selectedMethod = 'COD';
 
     function selectMethod(method) {
-      selectedMethod = method;
-      payCOD.classList.toggle('active', method === 'COD');
-      payUPI.classList.toggle('active', method === 'UPI');
-      upiPanel.classList.toggle('show', method === 'UPI');
-    }
-    payCOD.addEventListener('click', () => selectMethod('COD'));
-    payUPI.addEventListener('click', () => selectMethod('UPI'));
-
-    // Warn customers inside Instagram / Facebook / etc. in-app browsers
-    if (/Instagram|FBAN|FBAV|FB_IAB|Line\/|Snapchat/i.test(navigator.userAgent)) {
-      document.getElementById('upiInAppWarn').classList.add('show');
-    }
-
-    // ---------- State needed before any function that reads it runs ----------
-    let currentDeliveryCharge = 0;
-    let currentZoneLabel = '';
-    let pincodeLookupToken = 0;
-    let pincodeConfirmed = false;
-    let appliedCoupon = '';
-
-    // ---------- Totals ----------
-    const upiNote = encodeURIComponent('AARAMBH Order - ' + (orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} items`));
-
-    function getLineTotal() {
-      return orderItems.reduce((sum, item) => sum + item.price * item.qty, 0);
-    }
-    function getOversizedQty() {
-      return orderItems.reduce((sum, item) => sum + (/oversized/i.test(item.type) ? item.qty : 0), 0);
-    }
-    function getOversizedTotal() {
-      return orderItems.reduce((s, i) => s + (/oversized/i.test(i.type) ? i.price * i.qty : 0), 0);
-    }
-
-    // ---------- Discount logic ----------
-    function computeDiscount(lineTotal) {
-      const candidates = [];
-      if (appliedCoupon === 'TRIO10' && getOversizedQty() >= 3) {
-        candidates.push({ label: 'Coupon TRIO10 (10% off oversized tees)', percent: 10, base: getOversizedTotal() });
-      }
-      if (appliedCoupon === 'NITG10') {
-        candidates.push({ label: 'Coupon NITG10 (10% off)', percent: 10, base: lineTotal });
-      }
-      if (appliedCoupon === 'FIRSTDROP10') {
-        candidates.push({ label: 'Coupon FIRSTDROP10 (10% off)', percent: 10, base: lineTotal });
-      }
-      if (!candidates.length) return { label: '', percent: 0, amount: 0 };
-      candidates.sort((a, b) => b.percent - a.percent);
-      const best = candidates[0];
-      return { label: best.label, percent: best.percent, amount: Math.round(best.base * best.percent / 100) };
-    }
-
-    // ---------- UPI deep links (amount formatted, app-specific schemes) ----------
-    function refreshUpiLinks() {
-      const lineTotal = getLineTotal();
-      const discount = computeDiscount(lineTotal);
-      const payable = lineTotal - discount.amount + currentDeliveryCharge;
-      const amount = payable.toFixed(2);
-      const q = `pa=${UPI_ID}&pn=${encodeURIComponent('AARAMBH')}&am=${amount}&cu=INR&tn=${upiNote}`;
-      document.getElementById('gpayLink').href = `gpay://upi/pay?${q}`;
-      document.getElementById('phonepeLink').href = `phonepe://pay?${q}`;
-      document.getElementById('paytmLink').href = `paytmmp://pay?${q}`;
-      const amtEl = document.getElementById('upiAmountText');
-      if (amtEl) amtEl.textContent = (pincodeConfirmed && orderItems.length) ? '₹' + payable : 'enter pincode first';
-    }
-    refreshUpiLinks();
-
-    document.getElementById('copyUpiBtn').addEventListener('click', () => {
-      const btn = document.getElementById('copyUpiBtn');
-      const done = () => {
-        const original = 'Copy';
-        btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = original; }, 1800);
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(UPI_ID).then(done).catch(() => { btn.textContent = UPI_ID; });
-      } else {
-        btn.textContent = UPI_ID;
-      }
-    });
-
-    // ---------- Require all details before payment can proceed ----------
-    function guardUpiPayment(e) {
-      if (!validateForm()) {
-        e.preventDefault();
-        document.getElementById('upiGuardNotice').style.display = 'block';
-        const firstInvalid = document.querySelector('.form-group.invalid');
-        if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-        document.getElementById('upiGuardNotice').style.display = 'none';
-      }
-    }
-    ['gpayLink', 'phonepeLink', 'paytmLink'].forEach(id => {
-      document.getElementById(id).addEventListener('click', guardUpiPayment);
-    });
-
-    // ---------- Pincode auto-detect + delivery zone pricing ----------
-    const NEAR_ZONE_CHARGE = 30;
-    const FAR_ZONE_CHARGE = 50;
-
-    const pincodeInput = document.getElementById('pincode');
-    const pincodeStatus = document.getElementById('pincodeStatus');
-    const pincodeStatusText = document.getElementById('pincodeStatusText');
-    const cityInput = document.getElementById('city');
-    const stateInput = document.getElementById('state');
-    const deliveryZoneValue = document.getElementById('deliveryZoneValue');
-    const deliveryZoneTag = document.getElementById('deliveryZoneTag');
-    const deliveryChargeValue = document.getElementById('deliveryChargeValue');
-    const orderTotalValue = document.getElementById('orderTotalValue');
-
-    function getZoneForState(stateName) {
-      const s = (stateName || '').toLowerCase();
-      if (s.includes('goa') || s.includes('karnataka')) {
-        return { charge: NEAR_ZONE_CHARGE, label: 'Near Zone (Goa / Karnataka)', tag: 'near', tagText: 'Near' };
-      }
-      return { charge: FAR_ZONE_CHARGE, label: 'Standard Zone (Rest of India)', tag: 'far', tagText: 'Standard' };
-    }
-
-    function updateOrderTotal() {
-      const lineTotal = getLineTotal();
-      const discount = computeDiscount(lineTotal);
-      const itemCount = orderItems.reduce((sum, item) => sum + item.qty, 0);
-
-      const productLineLabel = document.getElementById('productLineLabel');
-      const productLineValue = document.getElementById('productLineValue');
-      if (productLineLabel) {
-        productLineLabel.textContent = orderItems.length === 1
-          ? (orderItems[0].product) + (orderItems[0].qty > 1 ? ` × ${orderItems[0].qty}` : '')
-          : `${orderItems.length} product${orderItems.length !== 1 ? 's' : ''} (${itemCount} item${itemCount !== 1 ? 's' : ''})`;
-      }
-      if (productLineValue) productLineValue.textContent = '₹' + lineTotal;
-
-      const discountRow = document.getElementById('discountRow');
-      const discountLabel = document.getElementById('discountLabel');
-      const discountValue = document.getElementById('discountValue');
-      if (discount.amount > 0) {
-        discountRow.style.display = 'flex';
-        discountLabel.textContent = discount.label;
-        discountValue.textContent = '−₹' + discount.amount;
-      } else {
-        discountRow.style.display = 'none';
-      }
-
-      if (pincodeConfirmed && orderItems.length) {
-        const total = lineTotal - discount.amount + currentDeliveryCharge;
-        orderTotalValue.textContent = '₹' + total;
-        orderTotalValue.style.color = '';
-        document.getElementById('pincodeRequiredNotice').style.display = 'none';
-      } else {
-        orderTotalValue.textContent = 'Enter pincode above';
-        orderTotalValue.style.color = 'var(--muted)';
-        document.getElementById('pincodeRequiredNotice').style.display = orderItems.length ? 'block' : 'none';
-      }
-      refreshUpiLinks();
-    }
-
-    async function lookupPincode(pin) {
-      const token = ++pincodeLookupToken;
-      pincodeStatus.className = 'pincode-status show loading';
-      pincodeStatusText.textContent = 'Detecting location…';
-
-      try {
-        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-        const json = await res.json();
-        if (token !== pincodeLookupToken) return;
-
-        const record = Array.isArray(json) ? json[0] : null;
-        if (!record || record.Status !== 'Success' || !record.PostOffice || !record.PostOffice.length) {
-          throw new Error('Not found');
-        }
-
-        const po = record.PostOffice[0];
-        const city = po.District || po.Block || po.Name || '';
-        const state = po.State || '';
-
-        cityInput.value = city;
-        stateInput.value = state;
-
-        pincodeStatus.className = 'pincode-status show found';
-        pincodeStatusText.textContent = `${city}, ${state}`;
-
-        const zone = getZoneForState(state);
-        currentDeliveryCharge = zone.charge;
-        currentZoneLabel = zone.label;
-        pincodeConfirmed = true;
-
-        deliveryZoneValue.childNodes[0].textContent = zone.label + ' ';
-        deliveryZoneTag.textContent = zone.tagText;
-        deliveryZoneTag.className = 'delivery-zone-tag ' + zone.tag;
-        deliveryZoneTag.style.display = 'inline-block';
-        deliveryChargeValue.textContent = '₹' + zone.charge;
-        updateOrderTotal();
-      } catch (err) {
-        if (token !== pincodeLookupToken) return;
-        cityInput.value = '';
-        stateInput.value = '';
-        pincodeStatus.className = 'pincode-status show error';
-        pincodeStatusText.textContent = "Couldn't detect this pincode — please double-check it. We can't calculate your delivery charge without a valid pincode.";
-        currentDeliveryCharge = 0;
-        currentZoneLabel = '';
-        pincodeConfirmed = false;
-        deliveryZoneValue.childNodes[0].textContent = 'Enter a valid pincode ';
-        deliveryZoneTag.style.display = 'none';
-        deliveryChargeValue.textContent = 'To be confirmed';
-        updateOrderTotal();
-      }
-    }
-
-    pincodeInput.addEventListener('input', () => {
-      const pin = pincodeInput.value.trim();
-      if (/^\d{6}$/.test(pin)) {
-        lookupPincode(pin);
-      } else {
-        pincodeLookupToken++;
-        pincodeStatus.classList.remove('show');
-        cityInput.value = '';
-        stateInput.value = '';
-        currentDeliveryCharge = 0;
-        currentZoneLabel = '';
-        pincodeConfirmed = false;
-        deliveryZoneValue.childNodes[0].textContent = 'Enter pincode to calculate ';
-        deliveryZoneTag.style.display = 'none';
-        deliveryChargeValue.textContent = '₹0';
-        updateOrderTotal();
-      }
-    });
-
-    // ---------- Coupon code ----------
-    const couponCodeInput = document.getElementById('couponCode');
-    const applyCouponBtn = document.getElementById('applyCouponBtn');
-    const couponStatus = document.getElementById('couponStatus');
-    const couponStatusText = document.getElementById('couponStatusText');
-    const VALID_COUPONS = ['NITG10', 'FIRSTDROP10', 'TRIO10'];
-    const FIRST_ORDER_KEY = 'arambhFirstOrderDone';
-    function hasOrderedBefore() {
-      try { return localStorage.getItem(FIRST_ORDER_KEY) === '1'; } catch (e) { return false; }
-    }
-
-    applyCouponBtn.addEventListener('click', () => {
-      const code = couponCodeInput.value.trim().toUpperCase();
-      couponStatus.style.display = 'flex';
-      if (!code) {
-        appliedCoupon = '';
-        couponStatus.className = 'pincode-status show error';
-        couponStatusText.textContent = 'Enter a code first.';
-      } else if (code === 'FIRSTDROP10' && hasOrderedBefore()) {
-        appliedCoupon = '';
-        couponStatus.className = 'pincode-status show error';
-        couponStatusText.textContent = 'FIRSTDROP10 is only for first-time buyers.';
-      } else if (code === 'TRIO10' && getOversizedQty() < 3) {
-        appliedCoupon = '';
-        couponStatus.className = 'pincode-status show error';
-        couponStatusText.textContent = 'TRIO10 needs 3 or more oversized tees in your order.';
-      } else if (VALID_COUPONS.includes(code)) {
-        appliedCoupon = code;
-        couponCodeInput.value = code;
-        couponStatus.className = 'pincode-status show found';
-        couponStatusText.textContent = `Code ${code} applied.`;
-      } else {
-        appliedCoupon = '';
-        couponStatus.className = 'pincode-status show error';
-        couponStatusText.textContent = "That code isn't valid.";
-      }
-      updateOrderTotal();
-    });
-
-    // Pressing Enter in the coupon box applies the code instead of submitting the order
-    couponCodeInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); applyCouponBtn.click(); }
-    });
-
-    updateOrderTotal();
-
-    // ================= BILL / INVOICE GENERATION =================
-
-    // jsPDF can't read .webp directly — convert to a small PNG via canvas.
-    function loadLogoAsPngDataUrl() {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          try {
-            const w = 300;
-            const h = Math.round(w * img.height / img.width) || w;
-            const canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            resolve({ url: canvas.toDataURL('image/png'), w, h });
-          } catch (e) { resolve(null); }
-        };
-        img.onerror = () => resolve(null);
-        img.src = LOGO_URL;
-      });
-    }
-
-    // Builds the PDF bill and returns base64 (no "data:" prefix). Needs jsPDF script enabled.
-    async function buildBillPdfBase64(data) {
-      if (!window.jspdf) return null;
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-      const logo = await loadLogoAsPngDataUrl();
-
-      let y = 40;
-      if (logo) {
-        try {
-          const lw = 90, lh = Math.round(90 * logo.h / logo.w);
-          doc.addImage(logo.url, 'PNG', 250, y, lw, lh);
-          y += lh + 10;
-        } catch (e) { console.warn('Logo skipped in PDF:', e); }
-      }
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(18);
-      doc.text('AARAMBH - Order Bill', 297, y, { align: 'center' }); y += 20;
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(100);
-      doc.text(`Order ID: ${data.orderId}   |   ${data.orderDate}`, 297, y, { align: 'center' }); y += 30;
-
-      doc.setTextColor(0); doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Item', 50, y); doc.text('Qty', 380, y); doc.text('Amount', 500, y, { align: 'right' });
-      y += 8; doc.setLineWidth(1); doc.line(50, y, 545, y); y += 16;
-      doc.setFont('helvetica', 'normal');
-      data.items.forEach(item => {
-        const label = `${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''})`;
-        doc.text(label, 50, y, { maxWidth: 300 });
-        doc.text(String(item.qty), 380, y);
-        doc.text(`Rs.${item.price * item.qty}`, 500, y, { align: 'right' });
-        y += 20;
-      });
-      y += 10; doc.setLineWidth(0.5); doc.line(350, y, 545, y); y += 18;
-
-      doc.text('Subtotal', 380, y); doc.text(`Rs.${data.lineTotal}`, 500, y, { align: 'right' }); y += 16;
-      if (data.discountAmount > 0) {
-        doc.text(data.discountLabel, 380, y); doc.text(`-Rs.${data.discountAmount}`, 500, y, { align: 'right' }); y += 16;
-      }
-      doc.text(`Delivery (${data.deliveryZone})`, 380, y); doc.text(`Rs.${data.deliveryCharge}`, 500, y, { align: 'right' }); y += 16;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
-      doc.text('Total', 380, y); doc.text(`Rs.${data.orderTotal}`, 500, y, { align: 'right' }); y += 30;
-
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5);
-      doc.text(`Billed To: ${data.fullName}`, 50, y); y += 16;
-      doc.text(`Phone: ${data.phone}`, 50, y); y += 16;
-      doc.text(`Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}`, 50, y, { maxWidth: 495 }); y += 32;
-      doc.text(`Payment Method: ${data.paymentMethod}`, 50, y); y += 16;
-      if (data.notes) { doc.text(`Notes: ${data.notes}`, 50, y, { maxWidth: 495 }); y += 24; }
-
-      y += 20; doc.setDrawColor(200); doc.line(50, y, 545, y); y += 20;
-      doc.setFontSize(10); doc.setTextColor(120);
-      doc.text('Thank you for shopping with AARAMBH!', 297, y, { align: 'center' }); y += 14;
-      doc.text(`Instagram: @${data.instagram}   |   Phone: ${data.phone2}`, 297, y, { align: 'center' });
-
-      return doc.output('datauristring').split(',')[1];
-    }
-
-    function generateOrderId() {
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const rand = Math.floor(1000 + Math.random() * 9000);
-      return `AARAMBH-${y}${m}${day}-${rand}`;
-    }
-
-    function buildItemLines(items) {
-      return items.map(item =>
-        `${item.product} (${item.type}/${item.color}${item.size ? ', Size ' + item.size : ''}) x${item.qty} — ₹${item.price * item.qty}`
-      ).join('\n');
-    }
-
-    function buildItemsHtml(items) {
-      return items.map(item => `
-        <tr>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;">${esc(item.product)} (${esc(item.type)}/${esc(item.color)}${item.size ? ', Size ' + esc(item.size) : ''})</td>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:center;">${esc(item.qty)}</td>
-          <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;">₹${item.price * item.qty}</td>
-        </tr>
-      `).join('');
-    }
-
-    // Self-contained invoice HTML — sent as {{{bill_html}}} to the customer EmailJS template.
-    function buildBillHtml(data) {
-      return `
-      <div style="max-width:560px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
-        <div style="text-align:center;padding:20px 0;">
-          <img src="${LOGO_URL}" alt="AARAMBH" style="height:64px;">
-        </div>
-        <h2 style="text-align:center;margin:0 0 4px;font-size:20px;">Order Bill</h2>
-        <p style="text-align:center;color:#777;margin:0 0 20px;font-size:13px;">Order ID: <b>${esc(data.orderId)}</b> &nbsp;•&nbsp; ${esc(data.orderDate)}</p>
-
-        <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px;">
-          <thead>
-            <tr>
-              <th style="text-align:left;border-bottom:2px solid #A90E02;padding-bottom:6px;">Item</th>
-              <th style="text-align:center;border-bottom:2px solid #A90E02;padding-bottom:6px;">Qty</th>
-              <th style="text-align:right;border-bottom:2px solid #A90E02;padding-bottom:6px;">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${buildItemsHtml(data.items)}
-          </tbody>
-        </table>
-
-        <table style="width:100%;font-size:14px;margin-bottom:20px;">
-          <tr><td style="padding:4px 0;color:#555;">Subtotal</td><td style="text-align:right;padding:4px 0;">₹${data.lineTotal}</td></tr>
-          ${data.discountAmount > 0 ? `<tr><td style="padding:4px 0;color:#2e7d32;">${esc(data.discountLabel)}</td><td style="text-align:right;padding:4px 0;color:#2e7d32;">−₹${data.discountAmount}</td></tr>` : ''}
-          <tr><td style="padding:4px 0;color:#555;">Delivery (${esc(data.deliveryZone)})</td><td style="text-align:right;padding:4px 0;">₹${data.deliveryCharge}</td></tr>
-          <tr><td style="padding:10px 0 4px;font-weight:bold;border-top:1px solid #ddd;">Total Paid / Payable</td><td style="text-align:right;padding:10px 0 4px;font-weight:bold;border-top:1px solid #ddd;">₹${data.orderTotal}</td></tr>
-        </table>
-
-        <table style="width:100%;font-size:13px;color:#555;margin-bottom:20px;">
-          <tr><td style="padding:2px 0;">Billed To</td><td style="text-align:right;">${esc(data.fullName)}</td></tr>
-          <tr><td style="padding:2px 0;">Phone</td><td style="text-align:right;">${esc(data.phone)}</td></tr>
-          <tr><td style="padding:2px 0;">Delivery Address</td><td style="text-align:right;">${esc(data.address)}, ${esc(data.city)}, ${esc(data.state)} - ${esc(data.pincode)}</td></tr>
-          <tr><td style="padding:2px 0;">Payment Method</td><td style="text-align:right;">${esc(data.paymentMethod)}</td></tr>
-          ${data.notes ? `<tr><td style="padding:2px 0;">Notes</td><td style="text-align:right;">${esc(data.notes)}</td></tr>` : ''}
-        </table>
-
-        <div style="text-align:center;padding-top:16px;border-top:1px dashed #ccc;color:#777;font-size:12.5px;line-height:1.7;">
-          Thank you for shopping with AARAMBH!<br>
-          Exchanges/returns: message us within 3 days of delivery.<br>
-          Instagram: <b>@${esc(data.instagram)}</b> &nbsp;•&nbsp; Phone: <b>${esc(data.phone2)}</b>
-        </div>
-      </div>`;
-    }
-
-    // Order alert for the shop owner: customer details + WhatsApp button + the bill.
-    function buildOwnerHtml(data) {
-      return `
-      <div style="max-width:560px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;">
-        <h2 style="color:#A90E02;margin:0 0 12px;">New order ${esc(data.orderId)}</h2>
-        <p style="font-size:14px;line-height:1.7;margin:0 0 14px;">
-          <b>Name:</b> ${esc(data.fullName)}<br>
-          <b>Phone:</b> ${esc(data.phone)}<br>
-          <b>Email:</b> ${esc(data.email)}<br>
-          <b>Payment:</b> ${esc(data.paymentStatus)}<br>
-          <b>Coupon:</b> ${esc(data.couponCode)}<br>
-          ${data.notes ? '<b>Notes:</b> ' + esc(data.notes) + '<br>' : ''}
-        </p>
-        <p style="margin:0 0 18px;"><a href="${data.customerBillLink}" style="background:#25D366;color:#07120b;padding:10px 18px;border-radius:24px;text-decoration:none;font-weight:bold;font-size:13px;">Send bill to customer on WhatsApp</a></p>
-        <hr style="border:none;border-top:1px dashed #ccc;margin:0 0 18px;">
-        ${data.billHtml}
-      </div>`;
-    }
-
-    // ---------- Form validation + submit ----------
-    const form = document.getElementById('orderForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const submitBtnText = document.getElementById('submitBtnText');
-
-    function validateField(id, isValid) {
-      const group = document.getElementById('group-' + id);
-      if (group) group.classList.toggle('invalid', !isValid);
-      return isValid;
-    }
-
-    function validateForm() {
-      const name = document.getElementById('fullName').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const size = document.getElementById('size').value;
-      const address = document.getElementById('address').value.trim();
-      const pincode = document.getElementById('pincode').value.trim();
-
-      let ok = true;
-      ok = orderItems.length > 0 && ok;
-      ok = validateField('name', name.length >= 2) && ok;
-      ok = validateField('phone', /^[6-9]\d{9}$/.test(phone)) && ok;
-      ok = validateField('email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
-      if (!cartMode) ok = validateField('size', size !== '') && ok;
-      ok = validateField('address', address.length >= 8) && ok;
-      ok = validateField('pincode', /^\d{6}$/.test(pincode) && pincodeConfirmed) && ok;
-      if (!pincodeConfirmed) {
-        document.getElementById('pincodeRequiredNotice').style.color = '#ff6b6b';
-        document.getElementById('pincode').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      return ok;
-    }
-
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      if (document.getElementById('website').value) return; // honeypot: bots only
-      if (!orderItems.length) {
-        alert('Your order is empty. Please go back to the shop and pick a product.');
-        return;
-      }
-      if (!validateForm()) return;
-      if (!cartMode && orderItems[0]) orderItems[0].size = document.getElementById('size').value;
-
-      const lineTotalNow = getLineTotal();
-      const discountNow = computeDiscount(lineTotalNow);
-      const itemsSummary = buildItemLines(orderItems);
-      const orderId = generateOrderId();
-      const orderDate = new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
-
-      const data = {
-        orderId,
-        orderDate,
-        product: orderItems.length === 1 ? orderItems[0].product : `${orderItems.length} products`,
-        type: orderItems.length === 1 ? orderItems[0].type : '—',
-        color: orderItems.length === 1 ? orderItems[0].color : '—',
-        items: orderItems,
-        itemsSummary: itemsSummary || 'No items',
-        price: lineTotalNow,
-        lineTotal: lineTotalNow,
-        fullName: document.getElementById('fullName').value.trim().slice(0, 80),
-        phone: document.getElementById('phone').value.trim(),
-        email: document.getElementById('email').value.trim().slice(0, 120),
-        size: cartMode ? '—' : document.getElementById('size').value,
-        address: document.getElementById('address').value.trim().slice(0, 300),
-        pincode: document.getElementById('pincode').value.trim(),
-        city: cityInput.value || 'Not detected',
-        state: stateInput.value || 'Not detected',
-        quantity: cartMode ? orderItems.reduce((s, i) => s + i.qty, 0) : (document.getElementById('quantity').value || '1'),
-        notes: document.getElementById('notes').value.trim().slice(0, 300),
-        paymentMethod: selectedMethod,
-        paymentStatus: selectedMethod === 'UPI' ? 'UPI - VERIFY PAYMENT BEFORE DISPATCH' : 'COD',
-        deliveryCharge: currentDeliveryCharge,
-        deliveryZone: currentZoneLabel || 'Unconfirmed — please advise',
-        couponCode: appliedCoupon || 'None',
-        discountLabel: discountNow.label || 'None',
-        discountAmount: discountNow.amount,
-        orderTotal: lineTotalNow - discountNow.amount + currentDeliveryCharge,
-        instagram: SHOP_INSTAGRAM,
-        phone2: SHOP_PHONE
-      };
-
-      const billText =
-        `AARAMBH — ORDER BILL\n` +
-        `Order ID: ${data.orderId}\n` +
-        `Date: ${data.orderDate}\n\n` +
-        `${data.itemsSummary}\n\n` +
-        `Subtotal: ₹${data.lineTotal}\n` +
-        (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
-        `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
-        `Total: ₹${data.orderTotal}\n` +
-        `Payment: ${data.paymentMethod}\n\n` +
-        `Billed to: ${data.fullName}\n` +
-        `Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}` +
-        (data.notes ? `\nNotes: ${data.notes}` : '') + `\n\n` +
-        `Thank you for shopping with AARAMBH!\n` +
-        `Instagram: @${data.instagram} | Phone: ${data.phone2}`;
-
-      // One-tap WhatsApp link to the CUSTOMER with the bill pre-filled (goes to you in the owner email).
-      data.customerBillLink = `https://wa.me/91${data.phone}?text=${encodeURIComponent(billText)}`;
-      data.billHtml = buildBillHtml(data);
-      data.ownerHtml = buildOwnerHtml(data);
-
-      submitBtn.classList.add('loading');
-      submitBtn.disabled = true;
-      submitBtnText.textContent = 'Placing Order...';
-
-      // 1) Owner notification email (resolves true/false, never rejects)
-      const ownerEmailPromise = window.emailjs
-        ? emailjs.send(EMAILJS_SERVICE_ID, OWNER_TEMPLATE_ID, {
-            product: data.product, type: data.type, color: data.color, price: data.price,
-            items: data.itemsSummary,
-            name: data.fullName, phone: data.phone, email: data.email, size: data.size, address: data.address,
-            pincode: data.pincode, city: data.city, state: data.state,
-            quantity: data.quantity, notes: data.notes, payment: data.paymentStatus,
-            deliveryCharge: data.deliveryCharge, deliveryZone: data.deliveryZone,
-            couponCode: data.couponCode, discountLabel: data.discountLabel, discountAmount: data.discountAmount,
-            orderTotal: data.orderTotal, orderId: data.orderId,
-            customerBillLink: data.customerBillLink,
-            to_email: OWNER_EMAIL,
-            reply_to: data.email,
-            subject: `New order ${data.orderId} — ₹${data.orderTotal} (${data.paymentStatus})`,
-            bill_html: data.ownerHtml
-          }).then(() => true).catch(err => { console.error('EmailJS owner error:', err); return false; })
-        : Promise.resolve(false);
-
-      // 2) Customer bill email (HTML bill) via EmailJS
-      const customerEmailPromise = (window.emailjs && CUSTOMER_TEMPLATE_ID && !CUSTOMER_TEMPLATE_ID.startsWith('YOUR_'))
-        ? emailjs.send(EMAILJS_SERVICE_ID, CUSTOMER_TEMPLATE_ID, {
-            to_email: data.email,
-            reply_to: OWNER_EMAIL,
-            subject: `Your AARAMBH order ${data.orderId}`,
-            customer_name: data.fullName,
-            order_id: data.orderId,
-            order_total: data.orderTotal,
-            bill_html: data.billHtml
-          }).then(() => true).catch(err => { console.error('EmailJS customer error:', err); return false; })
-        : Promise.resolve(false);
-
-      // 3) Optional PDF bill via Worker (Resend)
-      const pdfBillPromise = USE_WORKER_PDF
-        ? buildBillPdfBase64(data)
-            .then(pdfBase64 => {
-              if (!pdfBase64) return;
-              return fetch(ORDER_WORKER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  to_email: data.email,
-                  customer_name: data.fullName,
-                  order_id: data.orderId,
-                  order_total: data.orderTotal,
-                  bill_html: data.billHtml,
-                  pdf_base64: pdfBase64
-                })
-              }).then(async res => {
-                if (!res.ok) console.error('PDF bill email failed:', res.status, await res.text());
-              });
-            })
-            .catch(err => console.error('PDF bill send error:', err))
-        : Promise.resolve();
-
-      // 4) Formspree backup copy
-      const formspreePromise = fetch('https://formspree.io/f/xqejgjzw', {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      }).then(r => r.ok).catch(err => { console.error('Formspree error:', err); return false; });
-
-      const [ownerOk, , , formOk] = await Promise.all([
-        ownerEmailPromise, customerEmailPromise, pdfBillPromise, formspreePromise
-      ]);
-
-      // If neither copy reached you, do NOT show success — the order would be lost.
-      if (!ownerOk && !formOk) {
-        submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
-        submitBtnText.textContent = '🛒 Confirm Order';
-        alert('We could not send your order right now. Please check your internet and try again, or order directly on WhatsApp (9405074832).');
-        return;
-      }
-
-      const waMessage = encodeURIComponent(
-        `Hi AARAMBH, I just placed an order (${data.orderId}):\n\n` +
-        `${data.itemsSummary}\n\n` +
-        (data.discountAmount > 0 ? `Discount (${data.discountLabel}): −₹${data.discountAmount}\n` : '') +
-        `Delivery (${data.deliveryZone}): ₹${data.deliveryCharge}\n` +
-        `Order Total: ₹${data.orderTotal}\n` +
-        `Payment: ${data.paymentMethod}\n\n` +
-        `Name: ${data.fullName}\n` +
-        `Phone: ${data.phone}\n` +
-        `Address: ${data.address}, ${data.city}, ${data.state} - ${data.pincode}` +
-        (data.notes ? `\nNotes: ${data.notes}` : '')
-      );
-      document.getElementById('successWhatsapp').href = `https://wa.me/919405074832?text=${waMessage}`;
-
-      if (cartMode) {
-        try { localStorage.removeItem(CART_KEY); } catch (err) {}
-      }
-      try { localStorage.setItem(FIRST_ORDER_KEY, '1'); } catch (err) {}
-
-      form.style.display = 'none';
-      document.getElementById('successOverlay').classList.add('show');
-      submitBtn.classList.remove('loading');
-    });
-  </script>
-
-  <script>
-    /* ===== BEAUTIFICATION-ONLY SCRIPT ===== */
-    (function () {
-      const totalEl = document.getElementById('orderTotalValue');
-      if (totalEl) {
-        let lastText = totalEl.textContent;
-        new MutationObserver(() => {
-          if (totalEl.textContent !== lastText) {
-            lastText = totalEl.textContent;
-            totalEl.classList.remove('ob-pulse');
-            void totalEl.offsetWidth;
-            totalEl.classList.add('ob-pulse');
-          }
-        }).observe(totalEl, { childList: true, characterData: true, subtree: true });
-      }
-
-      const stepDetails = document.getElementById('obStepDetails');
-      const stepPay = document.getElementById('obStepPay');
-      const stepConfirm = document.getElementById('obStepConfirm');
-      const fieldIds = ['fullName', 'phone', 'address', 'pincode'];
-      function refreshSteps() {
-        const filled = fieldIds.every(id => {
-          const el = document.getElementById(id);
-          return el && el.value.trim().length > 0;
-        });
-        if (stepDetails) stepDetails.classList.toggle('done', filled);
-        if (stepPay) stepPay.classList.toggle('done', filled);
-        if (stepConfirm) stepConfirm.classList.toggle('done', document.getElementById('successOverlay').classList.contains('show'));
-      }
-      fieldIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', refreshSteps);
-      });
-      ['payCOD', 'payUPI'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('click', refreshSteps);
-      });
-      const successOverlay = document.getElementById('successOverlay');
-      if (successOverlay) {
-        new MutationObserver(refreshSteps).observe(successOverlay, { attributes: true, attributeFilter: ['class'] });
-      }
-      refreshSteps();
-    })();
-  </script>
-</body>
-</html>
+      selectedMethod =

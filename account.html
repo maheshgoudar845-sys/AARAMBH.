@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — AARAMBH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <script src="site-config.js"></script>
+  <style>
+    :root{--bg:#080810;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,.08);}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    nav{display:flex;justify-content:space-between;align-items:center;padding:16px 40px;border-bottom:1px solid var(--border);}
+    nav img{height:42px;}
+    nav a,nav button{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;background:none;border:none;cursor:pointer;}
+    .wrap{max-width:720px;margin:40px auto;padding:0 20px 80px;}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:1px;}
+    .sub{color:var(--muted);font-size:14px;margin:6px 0 28px;}
+    h2{font-family:'Syne',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+    .o{background:linear-gradient(160deg,#0f0f1a,#15151f);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:14px;}
+    .oh,.of{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .oh b{font-family:'Syne',sans-serif;letter-spacing:1px;} .oh span{color:var(--muted);font-size:13px;}
+    ul{list-style:none;margin:12px 0;font-size:14px;line-height:1.8;color:#ddd;}
+    .tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:rgba(255,250,205,.12);color:var(--accent2);}
+    .of b{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent2);}
+    .empty,.err{color:var(--muted);font-size:14px;line-height:1.7;}
+    .err{color:#ff6b6b;}
+    .btn{display:inline-block;margin-top:14px;padding:13px 26px;background:var(--accent);color:#fff;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;}
+  </style>
+</head>
+<body>
+  <nav><a href="index.html"><img src="logo.webp" alt="AARAMBH"></a><div><a href="index.html">Shop</a> &nbsp; <button id="logout">Log out</button></div></nav>
+  <div class="wrap">
+    <h1 id="hello">My Account</h1>
+    <p class="sub" id="who">Loading…</p>
+    <h2>My orders</h2>
+    <div id="orders"><p class="empty">Loading your orders… (the first load can take up to a minute)</p></div>
+    <a class="btn" href="index.html">Continue shopping</a>
+  </div>
+  <script>
+    const API = window.AARAMBH_BACKEND_URL || '';
+    const $ = (id) => document.getElementById(id);
+    const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const token = localStorage.getItem('arambhToken');
+    if (!token) location.replace('login.html?next=account.html');
+
+    $('logout').onclick = () => { localStorage.removeItem('arambhToken'); localStorage.removeItem('arambhUser'); location.href = 'index.html'; };
+
+    async function get(path) {
+      const res = await fetch(API + path, { headers: { Authorization: 'Bearer ' + token } });
+      if (res.status === 401) { localStorage.removeItem('arambhToken'); location.replace('login.html?next=account.html'); throw new Error('login'); }
+      if (!res.ok) throw new Error('Could not load your account.');
+      return res.json();
+    }
+
+    (async () => {
+      if (!API || /YOUR-RENDER-URL/.test(API)) { $('orders').innerHTML = '<p class="err">Accounts are not available yet.</p>'; $('who').textContent = ''; return; }
+      try {
+        const [me, mine] = await Promise.all([get('/api/auth/me'), get('/api/orders/mine')]);
+        const u = me.user || {};
+        $('hello').textContent = 'Hi, ' + (u.name || 'there').split(' ')[0];
+        $('who').textContent = u.email || '';
+        const orders = mine.orders || [];
+        $('orders').innerHTML = orders.length ? orders.map((o) => `
+          <div class="o">
+            <div class="oh"><b>${esc(String(o._id).slice(-8).toUpperCase())}</b><span>${new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
+            <ul>${(o.items || []).map((i) => `<li>${esc(i.name)}${i.size ? ' (' + esc(i.size) + ')' : ''} × ${esc(i.qty)}</li>`).join('')}</ul>
+            <div class="of"><span class="tag">${o.status === 'paid' ? 'Paid online' : 'Cash on Delivery'}</span><b>₹${esc(o.total)}</b></div>
+          </div>`).join('') : '<p class="empty">No orders yet. Orders you place while logged in will show up here.</p>';
+      } catch (e) {
+        if (e.message !== 'login') $('orders').innerHTML = '<p class="err">' + esc(e.message || 'Something went wrong.') + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>

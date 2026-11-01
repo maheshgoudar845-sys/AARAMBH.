@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Failed | AARAMBH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#080810; --cream:#F5F1E8; --accent:#E94E2C; --gold:#FFB238; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'DM Sans', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card { max-width: 480px; text-align: center; }
+    .logo {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 48px;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #A90E02, var(--accent), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    h1 { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 36px; letter-spacing: 2px; margin: 28px 0 12px; color: var(--accent); }
+    p { color: #bbb; line-height: 1.6; margin-bottom: 10px; }
+    .btn {
+      display: inline-block; margin-top: 24px; padding: 14px 28px;
+      background: var(--accent); color: var(--cream);
+      text-decoration: none; border-radius: 4px; font-weight: 500;
+    }
+    .btn:hover { background: #A90E02; }
+    .btn-alt { background: transparent; border: 1px solid var(--accent); margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">AARAMBH</div>
+    <h1>Payment Not Completed</h1>
+    <p id="message">Your payment did not go through, so no money was taken and no order was placed.</p>
+    <p>If the amount was deducted, it will be refunded by your bank within a few days.</p>
+    <a class="btn" href="order.html">Try Again</a>
+    <a class="btn btn-alt" href="mailto:arambhofficial2025@gmail.com">Contact Us</a>
+  </div>
+  <script>
+    const reason = new URLSearchParams(location.search).get('reason');
+    if (reason === 'verification' || reason === 'server' || reason === 'amount') {
+      document.getElementById('message').textContent =
+        'We could not verify your payment. Please contact us before trying again so we can check it.';
+    }
+  </script>
+</body>
+</html>

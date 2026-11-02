@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
   <script src="site-config.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
     :root{--bg:#080810;--surface:#0f0f1a;--surface2:#15151f;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,0.08);--accent-rgb:169,14,2;--accent2-rgb:255,250,205;--good:#25D366;}
@@ -624,24 +625,48 @@
       } finally { clearTimeout(timer); }
     }
 
-    // ---------- Online payment (PayU) ----------
+    // ---------- Online payment (Razorpay) ----------
     async function startPayment(d) {
       const out = await callBackend('/api/orders/create', d, 'Starting secure payment…');
       if (out.breakup && out.breakup.total !== d.total) {
         if (!confirm('Your final payable amount is ₹' + out.breakup.total + '. Continue to payment?')) throw new Error('Payment cancelled.');
       }
-      try { localStorage.setItem('arambhRetry', JSON.stringify({ items: orderItems })); } catch (e) {}
+      if (!window.Razorpay) throw new Error('The payment window could not load. Please check your internet and try again.');
 
-      const f = document.createElement('form');
-      f.method = 'POST';
-      f.action = out.action;
-      Object.keys(out.fields).forEach((k) => {
-        const inp = document.createElement('input');
-        inp.type = 'hidden'; inp.name = k; inp.value = out.fields[k];
-        f.appendChild(inp);
+      return new Promise((resolve, reject) => {
+        const rzp = new Razorpay({
+          key: out.keyId,
+          amount: out.amount,
+          currency: out.currency,
+          order_id: out.rzpOrderId,
+          name: 'AARAMBH',
+          description: 'Order payment',
+          prefill: { name: d.name, email: d.email, contact: d.phone },
+          theme: { color: '#A90E02' },
+          modal: { ondismiss: () => reject(new Error('Payment not completed. You can try again whenever you are ready.')) },
+          handler: async (resp) => {
+            setLoading(true, 'Confirming your payment…');
+            try {
+              const res = await fetch(BACKEND_URL + '/api/orders/verify', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({
+                  orderId: out.orderId,
+                  razorpay_order_id: resp.razorpay_order_id,
+                  razorpay_payment_id: resp.razorpay_payment_id,
+                  razorpay_signature: resp.razorpay_signature
+                })
+              });
+              const v = await res.json().catch(() => ({}));
+              if (!res.ok) throw new Error(v.error || 'verify failed');
+              location.href = 'order-success.html?order=' + encodeURIComponent(v.orderId);
+            } catch (e) {
+              reject(new Error('Your payment went through, but we could not confirm it on screen. Please do not pay again. Message us on WhatsApp ' + SHOP_PHONE + ' with payment ID ' + resp.razorpay_payment_id + '.'));
+            }
+          }
+        });
+        rzp.open();
       });
-      document.body.appendChild(f);
-      f.submit();
     }
 
     // ---------- Cash on Delivery ----------

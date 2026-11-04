@@ -16,57 +16,220 @@
     .wrap{max-width:720px;margin:40px auto;padding:0 20px 80px;}
     h1{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:1px;}
     .sub{color:var(--muted);font-size:14px;margin:6px 0 28px;}
-    h2{font-family:'Syne',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+    h2{font-family:'Syne',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:28px 0 14px;}
     .o{background:linear-gradient(160deg,#0f0f1a,#15151f);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:14px;}
-    .oh,.of{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .oh,.of{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
     .oh b{font-family:'Syne',sans-serif;letter-spacing:1px;} .oh span{color:var(--muted);font-size:13px;}
     ul{list-style:none;margin:12px 0;font-size:14px;line-height:1.8;color:#ddd;}
     .tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:rgba(255,250,205,.12);color:var(--accent2);}
+    .tag.red{background:rgba(255,107,107,.15);color:#ff8f8f;}
+    .tag.green{background:rgba(155,230,180,.15);color:#9be6b4;}
     .of b{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent2);}
     .empty,.err{color:var(--muted);font-size:14px;line-height:1.7;}
     .err{color:#ff6b6b;}
-    .btn{display:inline-block;margin-top:14px;padding:13px 26px;background:var(--accent);color:#fff;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;}
+    .ok{color:#9be6b4;font-size:14px;line-height:1.7;}
+    .btn{display:inline-block;margin-top:14px;padding:13px 26px;background:var(--accent);color:#fff;border:none;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;cursor:pointer;}
+    .btn:disabled{opacity:.6;cursor:not-allowed;}
+    .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+
+    /* track box */
+    .box{background:linear-gradient(160deg,#0f0f1a,#15151f);border:1px solid var(--border);border-radius:16px;padding:20px;}
+    .row{display:flex;gap:10px;flex-wrap:wrap;}
+    .row .f{flex:1;min-width:180px;}
+    label{display:block;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+    input,select,textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:14px;}
+    select option{background:#15151f;color:#f0f0f0;}
+    textarea{resize:vertical;min-height:70px;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(169,14,2,.6);box-shadow:0 0 0 3px rgba(169,14,2,.15);}
+    #trackMsg{font-size:13px;margin-top:10px;min-height:18px;}
+    #trackOut{margin-top:16px;}
+
+    /* timeline */
+    .tl{display:flex;justify-content:space-between;margin:18px 0 8px;position:relative;}
+    .tl::before{content:'';position:absolute;top:7px;left:8%;right:8%;height:2px;background:var(--border);}
+    .st{flex:1;text-align:center;position:relative;font-size:10px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;font-family:'Syne',sans-serif;font-weight:700;}
+    .st i{display:block;width:16px;height:16px;border-radius:50%;background:#1d1d2b;border:2px solid #2c2c3d;margin:0 auto 8px;position:relative;}
+    .st.done{color:var(--accent2);}
+    .st.done i{background:var(--accent);border-color:var(--accent);}
+
+    /* exchange */
+    .ex{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);font-size:13px;color:var(--muted);line-height:1.7;}
+    .ex form{margin-top:12px;display:flex;flex-direction:column;gap:12px;}
+    .exmsg{font-size:13px;min-height:16px;}
+    .hide{display:none;}
+    @media(max-width:520px){nav{padding:14px 18px;}.st{font-size:9px;}}
   </style>
 </head>
 <body>
-  <nav><a href="index.html"><img src="logo.webp" alt="AARAMBH"></a><div><a href="index.html">Shop</a> &nbsp; <button id="logout">Log out</button></div></nav>
+  <nav>
+    <a href="index.html"><img src="logo.webp" alt="AARAMBH"></a>
+    <div><a href="index.html">Shop</a> &nbsp; <button id="logout" class="hide">Log out</button><a id="loginLink" class="hide" href="login.html?next=account.html">Log in</a></div>
+  </nav>
   <div class="wrap">
     <h1 id="hello">My Account</h1>
-    <p class="sub" id="who">Loading…</p>
-    <h2>My orders</h2>
-    <div id="orders"><p class="empty">Loading your orders… (the first load can take up to a minute)</p></div>
+    <p class="sub" id="who">Track your AARAMBH orders and request exchanges.</p>
+
+    <h2>Track your order</h2>
+    <div class="box">
+      <form id="trackForm" novalidate>
+        <div class="row">
+          <div class="f"><label for="tRef">Reference ID</label><input id="tRef" maxlength="24" placeholder="e.g. 5F3A9C21" autocomplete="off"></div>
+          <div class="f"><label for="tEmail">Order email</label><input id="tEmail" type="email" maxlength="120" placeholder="you@example.com" autocomplete="email"></div>
+        </div>
+        <button class="btn" id="tGo" type="submit">Track order</button>
+        <div id="trackMsg"></div>
+      </form>
+      <div id="trackOut"></div>
+    </div>
+
+    <div id="mineWrap" class="hide">
+      <h2>My orders</h2>
+      <div id="orders"><p class="empty">Loading your orders… (the first load can take up to a minute)</p></div>
+    </div>
+    <div id="guestNote" class="hide">
+      <h2>My orders</h2>
+      <p class="empty">Log in to see all your orders in one place. <a style="color:var(--accent2)" href="login.html?next=account.html">Log in or create an account</a></p>
+    </div>
+
     <a class="btn" href="index.html">Continue shopping</a>
   </div>
+
   <script>
     const API = window.AARAMBH_BACKEND_URL || '';
     const $ = (id) => document.getElementById(id);
     const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const token = localStorage.getItem('arambhToken');
-    if (!token) location.replace('login.html?next=account.html');
+    const DAY = 86400000;
+    const EXCHANGE_DAYS = 3;
+    const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    const STEPS = [['placed', 'Placed'], ['confirmed', 'Confirmed'], ['shipped', 'Shipped'], ['out_for_delivery', 'Out for delivery'], ['delivered', 'Delivered']];
+    const backendReady = () => API && !/YOUR-RENDER-URL/.test(API);
+    const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    const refOf = (o) => (o.ref || String(o._id).slice(-8)).toUpperCase();
+
+    let userEmail = '';
+    try { userEmail = (JSON.parse(localStorage.getItem('arambhUser') || '{}').email) || ''; } catch (e) {}
+
+    if (token) { $('logout').classList.remove('hide'); $('mineWrap').classList.remove('hide'); }
+    else { $('loginLink').classList.remove('hide'); $('guestNote').classList.remove('hide'); }
+    if (userEmail) $('tEmail').value = userEmail;
 
     $('logout').onclick = () => { localStorage.removeItem('arambhToken'); localStorage.removeItem('arambhUser'); location.href = 'index.html'; };
 
-    async function get(path) {
-      const res = await fetch(API + path, { headers: { Authorization: 'Bearer ' + token } });
-      if (res.status === 401) { localStorage.removeItem('arambhToken'); location.replace('login.html?next=account.html'); throw new Error('login'); }
-      if (!res.ok) throw new Error('Could not load your account.');
-      return res.json();
+    async function api(path, opts = {}) {
+      const headers = Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {});
+      const res = await fetch(API + path, Object.assign({}, opts, { headers }));
+      if (res.status === 401 && token && path.startsWith('/api/auth')) { localStorage.removeItem('arambhToken'); location.replace('login.html?next=account.html'); throw new Error('login'); }
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(out.error || 'Something went wrong. Please try again.');
+      return out;
     }
 
-    (async () => {
-      if (!API || /YOUR-RENDER-URL/.test(API)) { $('orders').innerHTML = '<p class="err">Accounts are not available yet.</p>'; $('who').textContent = ''; return; }
+    function exchangeHTML(o, email) {
+      const status = o.orderStatus || 'placed';
+      if (o.exchange && o.exchange.status) {
+        const s = o.exchange.status;
+        const cls = s === 'rejected' ? 'red' : s === 'approved' || s === 'completed' ? 'green' : '';
+        return `<div class="ex">Exchange request: <span class="tag ${cls}">${esc(s)}</span> — new size <b>${esc(o.exchange.newSize || '')}</b>. We will contact you with the next steps.</div>`;
+      }
+      if (status === 'cancelled') return '';
+      if (status !== 'delivered' || !o.deliveredAt) {
+        return `<div class="ex">Exchange is available for ${EXCHANGE_DAYS} days after delivery.</div>`;
+      }
+      const deadline = new Date(o.deliveredAt).getTime() + EXCHANGE_DAYS * DAY;
+      if (Date.now() > deadline) {
+        return `<div class="ex">The ${EXCHANGE_DAYS}-day exchange window for this order closed on ${fmtDate(deadline)}.</div>`;
+      }
+      const items = o.items || [];
+      return `<div class="ex">
+        Delivered on ${fmtDate(o.deliveredAt)} — you can request an exchange until <b style="color:var(--accent2)">${fmtDate(deadline)}</b>.
+        <button type="button" class="btn ghost ex-open" style="margin-top:10px;display:block">Request exchange</button>
+        <form class="exform hide" data-ref="${esc(refOf(o))}" data-email="${esc(email)}">
+          <div><label>Item to exchange</label>
+            <select name="item">${items.map((i, n) => `<option value="${n}">${esc(i.name)}${i.size ? ' (' + esc(i.size) + ')' : ''}</option>`).join('')}</select></div>
+          <div><label>New size</label>
+            <select name="size">${SIZES.map((s) => `<option>${s}</option>`).join('')}</select></div>
+          <div><label>Reason</label><textarea name="reason" maxlength="300" placeholder="Wrong size, fit issue…"></textarea></div>
+          <button type="submit" class="btn" style="margin-top:0">Submit exchange request</button>
+          <div class="exmsg"></div>
+        </form>
+      </div>`;
+    }
+
+    function orderHTML(o, email) {
+      const status = o.orderStatus || 'placed';
+      const idx = STEPS.findIndex((s) => s[0] === status);
+      const timeline = status === 'cancelled'
+        ? '<div style="margin:14px 0"><span class="tag red">Cancelled</span></div>'
+        : `<div class="tl">${STEPS.map((s, n) => `<div class="st ${n <= idx ? 'done' : ''}"><i></i>${s[1]}</div>`).join('')}</div>`;
+      return `<div class="o">
+        <div class="oh"><b>Ref: ${esc(refOf(o))}</b><span>${fmtDate(o.createdAt)}</span></div>
+        ${timeline}
+        <ul>${(o.items || []).map((i) => `<li>${esc(i.name)}${i.size ? ' (' + esc(i.size) + ')' : ''} × ${esc(i.qty)}</li>`).join('')}</ul>
+        <div class="of"><span class="tag">${o.status === 'paid' ? 'Paid online' : 'Cash on Delivery'}</span><b>₹${esc(o.total)}</b></div>
+        ${exchangeHTML(o, email)}
+      </div>`;
+    }
+
+    // ---- Track by reference ID ----
+    $('trackForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const ref = $('tRef').value.replace(/[^a-z0-9]/gi, '').toUpperCase();
+      const email = $('tEmail').value.trim();
+      const msg = $('trackMsg');
+      msg.className = 'err'; $('trackOut').innerHTML = '';
+      if (!backendReady()) { msg.textContent = 'Tracking is not available yet.'; return; }
+      if (!ref) { msg.textContent = 'Please enter your reference ID.'; return; }
+      if (!/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'Please enter the email used for the order.'; return; }
+      $('tGo').disabled = true;
+      msg.className = 'empty'; msg.textContent = 'Looking up your order… (the first request can take up to a minute)';
       try {
-        const [me, mine] = await Promise.all([get('/api/auth/me'), get('/api/orders/mine')]);
+        const out = await api('/api/orders/track?ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
+        msg.textContent = '';
+        $('trackOut').innerHTML = orderHTML(out.order, email);
+      } catch (err) {
+        msg.className = 'err'; msg.textContent = err.message === 'login' ? '' : err.message;
+      } finally { $('tGo').disabled = false; }
+    });
+
+    // ---- Exchange (works for tracked and listed orders) ----
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('.ex-open');
+      if (!b) return;
+      b.nextElementSibling.classList.toggle('hide');
+    });
+    document.addEventListener('submit', async (e) => {
+      const f = e.target.closest('.exform');
+      if (!f) return;
+      e.preventDefault();
+      const m = f.querySelector('.exmsg'), btn = f.querySelector('button[type=submit]');
+      m.className = 'exmsg empty'; m.textContent = 'Submitting…'; btn.disabled = true;
+      try {
+        await api('/api/orders/exchange', { method: 'POST', body: JSON.stringify({
+          ref: f.dataset.ref, email: f.dataset.email,
+          itemIndex: Number(f.item.value), newSize: f.size.value, reason: f.reason.value.trim()
+        }) });
+        f.innerHTML = '<div class="ok">Exchange request submitted. We will contact you shortly with the next steps.</div>';
+      } catch (err) {
+        m.className = 'exmsg err'; m.textContent = err.message; btn.disabled = false;
+      }
+    });
+
+    // ---- Logged-in: my orders ----
+    (async () => {
+      if (!token) return;
+      if (!backendReady()) { $('orders').innerHTML = '<p class="err">Accounts are not available yet.</p>'; return; }
+      try {
+        const [me, mine] = await Promise.all([api('/api/auth/me'), api('/api/orders/mine')]);
         const u = me.user || {};
+        userEmail = u.email || userEmail;
+        if (userEmail && !$('tEmail').value) $('tEmail').value = userEmail;
         $('hello').textContent = 'Hi, ' + (u.name || 'there').split(' ')[0];
         $('who').textContent = u.email || '';
         const orders = mine.orders || [];
-        $('orders').innerHTML = orders.length ? orders.map((o) => `
-          <div class="o">
-            <div class="oh"><b>${esc(String(o._id).slice(-8).toUpperCase())}</b><span>${new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span></div>
-            <ul>${(o.items || []).map((i) => `<li>${esc(i.name)}${i.size ? ' (' + esc(i.size) + ')' : ''} × ${esc(i.qty)}</li>`).join('')}</ul>
-            <div class="of"><span class="tag">${o.status === 'paid' ? 'Paid online' : 'Cash on Delivery'}</span><b>₹${esc(o.total)}</b></div>
-          </div>`).join('') : '<p class="empty">No orders yet. Orders you place while logged in will show up here.</p>';
+        $('orders').innerHTML = orders.length
+          ? orders.map((o) => orderHTML(o, o.email || userEmail)).join('')
+          : '<p class="empty">No orders yet. Orders you place while logged in will show up here.</p>';
       } catch (e) {
         if (e.message !== 'login') $('orders').innerHTML = '<p class="err">' + esc(e.message || 'Something went wrong.') + '</p>';
       }

@@ -306,9 +306,25 @@
       try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch (e) {}
     }
 
+    /* Current prices by product name (keep in sync with server.js PRODUCTS).
+       Used so old carts and old links always show the right price. The server still has the final say. */
+    const PRICE_BY_NAME = {
+      'royal blue oversized tee': 399, 'aqua/sky blue oversized tee': 389, 'beige oversized tee': 385,
+      'white oversized tee': 380, 'black oversized tee': 399, 'army green oversized tee': 392,
+      'lavender oversized tee': 385, 'red oversized tee': 389, 'pink oversized tee': 380,
+      'explore space acid wash': 679, 'calm acid wash': 659, 'conquer acid wash': 649, 'spider acid wash': 669,
+      'deadpool': 599, 'grace': 599, 'anime': 579, 'naruto': 569, 'one piece': 579, 'tanjiro': 559,
+      'luffy': 549, 'justice': 559, 'porsche': 569, 'unseen': 549, 'veiled bloom': 559,
+      'self love': 449, 'bloom and shine': 459, 'glorious butterfly': 439, 'stay cool': 429, 'vintage': 449,
+      'polo t-shirt': 379,
+      'red boxy shirt': 649, 'blue boxy shirt': 649, 'pink boxy shirt': 649,
+      'beige hoodie': 599, 'black hoodie': 599
+    };
+
     function sanitizeItem(item) {
       const product = String(item.product || 'Product').slice(0, 80);
-      let price = Number(item.price);
+      const known = PRICE_BY_NAME[product.trim().toLowerCase()];
+      let price = known != null ? known : Number(item.price);
       if (!isFinite(price) || price < 0) price = 0;
       let qty = parseInt(item.qty, 10);
       if (!isFinite(qty) || qty < 1) qty = 1;
@@ -433,6 +449,7 @@
 
     const $ = (id) => document.getElementById(id);
     const COUPONS = { NITG10: 0.10, FIRSTDROP10: 0.10 };
+    const BUNDLE_COUPONS = { TRIO10: { rate: 0.10, minQty: 3 } };
     let appliedCoupon = '';
     let pincodeConfirmed = false;
     let isNearZone = false;
@@ -463,16 +480,53 @@
     renderSummary();
 
     // ---------- Pricing (mirrors the server rules) ----------
+    function isBundleItem(i) {
+      return /(oversized|printed)/i.test(i.type) && !/crop/i.test(i.type);
+    }
+
     function calcPricing() {
       const subtotal = orderItems.reduce((s, i) => s + i.price * i.qty, 0);
-      const bundleQty = orderItems
-        .filter((i) => /(oversized|printed)/i.test(i.type) && !/crop/i.test(i.type))
-        .reduce((s, i) => s + i.qty, 0);
+      const bundleItems = orderItems.filter(isBundleItem);
+      const bundleQty = bundleItems.reduce((s, i) => s + i.qty, 0);
+      const bundleSubtotal = bundleItems.reduce((s, i) => s + i.price * i.qty, 0);
+
       let discount = 0;
-      if (bundleQty >= 3) discount += Math.round(subtotal * 0.08);
-      if (appliedCoupon) discount += Math.round(subtotal * COUPONS[appliedCoupon]);
+      let coupon = '';
+      const bundle = BUNDLE_COUPONS[appliedCoupon];
+      if (bundle) {
+        // TRIO10: 10% on the qualifying tees, replaces the automatic 3-tee discount
+        if (bundleQty >= bundle.minQty) {
+          discount = Math.round(bundleSubtotal * bundle.rate);
+          coupon = appliedCoupon;
+        }
+      } else {
+        if (bundleQty >= 3) discount += Math.round(subtotal * 0.08);
+        if (appliedCoupon && COUPONS[appliedCoupon]) {
+          discount += Math.round(subtotal * COUPONS[appliedCoupon]);
+          coupon = appliedCoupon;
+        }
+      }
+
       const delivery = pincodeConfirmed ? (isNearZone ? 30 : 50) : 0;
-      return { subtotal, discount, delivery, total: subtotal - discount + delivery };
+      return { subtotal, discount, delivery, total: subtotal - discount + delivery, coupon, bundleQty };
+    }
+
+    function refreshCouponStatus() {
+      if (!appliedCoupon) return;
+      const st = $('couponStatus'), txt = $('couponStatusText');
+      const bundle = BUNDLE_COUPONS[appliedCoupon];
+      if (bundle) {
+        if (calcPricing().bundleQty >= bundle.minQty) {
+          st.className = 'pincode-status show found';
+          txt.textContent = appliedCoupon + ' applied: ' + Math.round(bundle.rate * 100) + '% off your oversized and printed tees';
+        } else {
+          st.className = 'pincode-status show error';
+          txt.textContent = appliedCoupon + ' needs at least ' + bundle.minQty + ' oversized or printed tees in your order';
+        }
+      } else {
+        st.className = 'pincode-status show found';
+        txt.textContent = appliedCoupon + ' applied: ' + Math.round(COUPONS[appliedCoupon] * 100) + '% off';
+      }
     }
 
     function updateOrderTotal() {
@@ -487,6 +541,7 @@
         : 'Enter pincode to calculate';
       $('orderTotalValue').textContent = orderItems.length && pincodeConfirmed ? '₹' + p.total : 'Enter pincode above';
       $('pincodeRequiredNotice').style.display = pincodeConfirmed ? 'none' : 'block';
+      refreshCouponStatus();
     }
 
     // ---------- Pincode ----------
@@ -533,11 +588,11 @@
     $('applyCouponBtn').addEventListener('click', () => {
       const code = $('couponCode').value.trim().toUpperCase();
       const st = $('couponStatus');
-      if (!code) { appliedCoupon = ''; st.className = 'pincode-status'; }
-      else if (COUPONS[code]) {
+      if (!code) {
+        appliedCoupon = '';
+        st.className = 'pincode-status';
+      } else if (COUPONS[code] || BUNDLE_COUPONS[code]) {
         appliedCoupon = code;
-        st.className = 'pincode-status show found';
-        $('couponStatusText').textContent = code + ' applied: ' + Math.round(COUPONS[code] * 100) + '% off';
       } else {
         appliedCoupon = '';
         st.className = 'pincode-status show error';

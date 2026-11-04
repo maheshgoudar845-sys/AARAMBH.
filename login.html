@@ -17,10 +17,13 @@
     .card{background:linear-gradient(160deg,#0f0f1a,#15151f);border:1px solid var(--border);border-radius:22px;padding:30px;}
     h1{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:1px;margin-bottom:6px;}
     .sub{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.6;}
-    .g{margin-bottom:16px;}
+    .g{margin-bottom:16px;position:relative;}
     label{display:block;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
     input{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:13px 15px;color:var(--text);font-family:inherit;font-size:14px;}
     input:focus{outline:none;border-color:rgba(169,14,2,.6);box-shadow:0 0 0 3px rgba(169,14,2,.15);}
+    .pwbox{position:relative;}
+    .pwbox input{padding-right:62px;}
+    .eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:6px;}
     #msg{font-size:13px;margin:4px 0 14px;min-height:18px;line-height:1.5;}
     #msg.err{color:#ff6b6b;} #msg.ok{color:#9be6b4;}
     .btn{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:100px;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
@@ -38,8 +41,15 @@
     <form id="f" novalidate>
       <div class="g" data-m="register"><label for="name">Full Name</label><input id="name" autocomplete="name" maxlength="80"></div>
       <div class="g" data-m="login register forgot"><label for="email">Email</label><input id="email" type="email" autocomplete="email" maxlength="120"></div>
-      <div class="g" data-m="register"><label for="phone">Phone (optional)</label><input id="phone" type="tel" inputmode="numeric" maxlength="10"></div>
-      <div class="g" data-m="login register reset"><label for="pw" id="pwLabel">Password</label><input id="pw" type="password" maxlength="100"></div>
+      <div class="g" data-m="register"><label for="phone">Phone (optional)</label><input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number"></div>
+      <div class="g" data-m="login register reset">
+        <label for="pw" id="pwLabel">Password</label>
+        <div class="pwbox"><input id="pw" type="password" maxlength="100"><button type="button" class="eye" id="eye1">Show</button></div>
+      </div>
+      <div class="g" data-m="register reset">
+        <label for="pw2">Confirm password</label>
+        <div class="pwbox"><input id="pw2" type="password" maxlength="100" autocomplete="new-password"></div>
+      </div>
       <div id="msg"></div>
       <button class="btn" id="go" type="submit"></button>
     </form>
@@ -57,10 +67,10 @@
     if (mode !== 'reset' && localStorage.getItem('arambhToken')) location.replace(next);
 
     const TEXT = {
-      login:    { t: 'Log in',          s: 'Welcome back. Log in to see your orders and autofill checkout.', b: 'Log in' },
-      register: { t: 'Create account',  s: 'Save your details for faster checkout and track your orders.',   b: 'Create account' },
-      forgot:   { t: 'Forgot password', s: 'Enter your email and we will send you a link to reset it.',      b: 'Send reset link' },
-      reset:    { t: 'New password',    s: 'Choose a new password of at least 8 characters.',                b: 'Save password' }
+      login:    { t: 'Log in',          s: 'Welcome back. Log in to see your orders, track them and request exchanges.', b: 'Log in' },
+      register: { t: 'Create account',  s: 'Save your details for faster checkout and track your orders.',               b: 'Create account' },
+      forgot:   { t: 'Forgot password', s: 'Enter your email and we will send you a link to reset it.',                  b: 'Send reset link' },
+      reset:    { t: 'New password',    s: 'Choose a new password of at least 8 characters.',                            b: 'Save password' }
     };
     function show(m) {
       mode = m;
@@ -72,9 +82,10 @@
       $('pw').autocomplete = m === 'login' ? 'current-password' : 'new-password';
       $('pwLabel').textContent = m === 'reset' ? 'New password' : 'Password';
       $('msg').textContent = ''; $('msg').className = '';
+      const track = '<a href="account.html">Track an order with your reference ID</a>';
       const L = {
-        login: '<a data-go="register">New here? Create an account</a><a data-go="forgot">Forgot your password?</a>',
-        register: '<a data-go="login">Already have an account? Log in</a>',
+        login: '<a data-go="register">New here? Create an account</a><a data-go="forgot">Forgot your password?</a>' + track,
+        register: '<a data-go="login">Already have an account? Log in</a>' + track,
         forgot: '<a data-go="login">Back to log in</a>',
         reset: ''
       };
@@ -82,6 +93,11 @@
     }
     $('links').addEventListener('click', (e) => { const a = e.target.closest('[data-go]'); if (a) show(a.dataset.go); });
     $('phone').addEventListener('input', () => { $('phone').value = $('phone').value.replace(/\D/g, '').slice(0, 10); });
+    $('eye1').addEventListener('click', () => {
+      const showing = $('pw').type === 'text';
+      $('pw').type = showing ? 'password' : 'text';
+      $('eye1').textContent = showing ? 'Show' : 'Hide';
+    });
 
     function say(text, ok) { $('msg').textContent = text; $('msg').className = ok ? 'ok' : 'err'; }
 
@@ -92,6 +108,8 @@
       if (mode !== 'reset' && !/^\S+@\S+\.\S+$/.test(email)) return say('Please enter a valid email.');
       if (mode !== 'forgot' && pw.length < (mode === 'login' ? 1 : 8)) return say(mode === 'login' ? 'Please enter your password.' : 'Password must be at least 8 characters.');
       if (mode === 'register' && !$('name').value.trim()) return say('Please enter your name.');
+      if (mode === 'register' && $('phone').value && $('phone').value.length !== 10) return say('Phone number must be 10 digits.');
+      if ((mode === 'register' || mode === 'reset') && pw !== $('pw2').value) return say('Passwords do not match.');
 
       const path = { login: '/api/auth/login', register: '/api/auth/register', forgot: '/api/auth/forgot', reset: '/api/auth/reset' }[mode];
       const body = {

@@ -2,6 +2,9 @@
    Change a number below and every page that loads this file follows.
    Add this line before </head> on each page:  <script src="prices.js"></script>
 
+   KEEP IN SYNC WITH server.js (PRODUCTS). The server charges its own prices,
+   so any number here that differs from server.js will show customers the wrong price.
+
    Lookup order for any product:
    1. designColors  ('Design|Colour')   most specific
    2. designs       (design / product name)
@@ -19,23 +22,37 @@
     },
     oversized: {
       base: 399,
-      colors: { /* 'Red': 419, 'Lavender': 429 */ }
+      colors: {
+        'Royal Blue': 399,
+        'Aqua/Sky Blue': 389,
+        'Beige': 385,
+        'White': 380,
+        'Black': 399,
+        'Army Green': 392,
+        'Lavender': 385,
+        'Red': 389,
+        'Pink': 380
+      }
     },
     shirt: {
-      base: 649,
-      colors: { /* 'Pink': 679 */ }
+      base: 689,
+      colors: {
+        'Red': 689,
+        'Blue': 699,
+        'Pink': 689
+      }
     },
     hoodie: {
       base: 599,
       colors: { /* 'Black': 649 */ }
     },
     crop: {
-      base: 349,
+      base: 449,
       designs: {
         'Self Love': 449,
         'Bloom and Shine': 459,
         'Glorious Butterfly': 439,
-        'Stay Cool': 429,
+        'Stay Cool': 439,
         'Vintage': 449
       },
       designColors: { /* 'Vintage|Red': 369 */ }
@@ -44,20 +61,20 @@
       base: 549,
       designs: {
         'Unseen': 549,
-        'Veiled Bloom': 549,
+        'Veiled Bloom': 559,
         'Luffy': 549,
-        'Justice': 549,
-        'Porsche': 549,
+        'Justice': 559,
+        'Porsche': 569,
         'Grace': 599,
-        'Anime': 599,
-        'Naruto': 599,
-        'One Piece': 599,
-        'Tanjiro': 599,
+        'Anime': 579,
+        'Naruto': 569,
+        'One Piece': 579,
+        'Tanjiro': 559,
         'Deadpool': 599,
-        'Calm Acid Wash': 649,
+        'Calm Acid Wash': 659,
         'Conquer Acid Wash': 649,
-        'Spider Acid Wash': 649,
-        'Explore Space Acid Wash': 699
+        'Spider Acid Wash': 669,
+        'Explore Space Acid Wash': 679
       },
       designColors: { /* 'Unseen|Black': 579, 'Grace|White': 619 */ }
     }

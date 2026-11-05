@@ -14,7 +14,7 @@
   /* ================= EDIT PRICES HERE ================= */
   var PRICE_TABLE = {
     polo: {
-      base: 399,
+      base: 389,
       colors: { /* 'Black': 429, 'Maroon': 419 */ }
     },
     oversized: {
@@ -32,11 +32,11 @@
     crop: {
       base: 349,
       designs: {
-        'Self Love': 349,
-        'Bloom and Shine': 349,
-        'Glorious Butterfly': 349,
-        'Stay Cool': 349,
-        'Vintage': 349
+        'Self Love': 449,
+        'Bloom and Shine': 459,
+        'Glorious Butterfly': 439,
+        'Stay Cool': 429,
+        'Vintage': 449
       },
       designColors: { /* 'Vintage|Red': 369 */ }
     },

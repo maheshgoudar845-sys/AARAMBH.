@@ -2,1871 +2,298 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-   <meta name="google-site-verification" content="google32b0e884023597a4.html" />
-  <title>AARAMBH — Premium Streetwear</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+  <title>Log in — AARAMBH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <script src="site-config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <style>
-    :root {
-      --bg: #080810;
-      --surface: #0f0f1a;
-      --surface2: #13131f;
-      --accent: #A90E02;
-      --accent2: #FFFACD;
-      --gold: #c9a84c;
-      --text: #f0f0f0;
-      --muted: #888;
-      --border: rgba(255,255,255,0.06);
-      --accent-rgb: 169,14,2;
-      --accent2-rgb: 255,250,205;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-      cursor: none;
-    }
-
-    /* CUSTOM CURSOR */
-    .cursor {
-      position: fixed;
-      width: 12px;
-      height: 12px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
-      mix-blend-mode: difference;
-    }
-    .cursor-ring {
-      position: fixed;
-      width: 40px;
-      height: 40px;
-      border: 1px solid rgba(var(--accent-rgb),0.5);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: transform 0.15s ease, width 0.3s, height 0.3s, opacity 0.3s;
-    }
-    body:hover .cursor { opacity: 1; }
-
-    @media (hover: none), (pointer: coarse) {
-      body { cursor: auto; }
-      .cursor, .cursor-ring { display: none; }
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9997;
-      opacity: 0.5;
-    }
-
-    /* NAV */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 40px;
-      background: rgba(8,8,16,0.7);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      transition: padding 0.3s;
-    }
-    nav.scrolled { padding: 12px 40px; }
-
-    .nav-logo img {
-      height: 58px;
-      filter: brightness(1.1);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 30px;
-      list-style: none;
-    }
-    .nav-links a {
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      position: relative;
-      transition: color 0.3s;
-    }
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px; left: 0;
-      width: 0; height: 1px;
-      background: var(--accent);
-      transition: width 0.3s;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a:hover::after { width: 100%; }
-
-    .nav-cta {
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: white;
-      background: var(--accent);
-      padding: 10px 24px;
-      border-radius: 100px;
-      text-decoration: none;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 4px 20px rgba(var(--accent-rgb),0.3);
-    }
-    .nav-cta:hover { background: #8a0b02; transform: scale(1.04); }
-
-    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
-    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
-    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .hamburger.open span:nth-child(2) { opacity: 0; }
-    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    .mobile-menu {
-      position: fixed; top: 0; right: 0; height: 100vh; width: min(78vw, 320px);
-      background: #0c0c16; border-left: 1px solid var(--border);
-      z-index: 150; padding: 100px 32px 40px;
-      transform: translateX(100%); transition: transform 0.4s ease;
-      display: flex; flex-direction: column; gap: 26px;
-    }
-    .mobile-menu.open { transform: translateX(0); }
-    .mobile-menu a { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text); text-decoration: none; }
-    .mobile-menu a.active { color: var(--accent); }
-    .menu-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-      z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
-    .menu-backdrop.open { opacity: 1; pointer-events: auto; }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 120px 40px 80px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Full-bleed squad photo behind the headline */
-    .hero-bg-photo {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('promo-squad-aarambh.jpg');
-      background-size: cover;
-      background-position: center 20%;
-      z-index: 0;
-      opacity: 0.55;
-    }
-    .hero-video-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(8,8,16,0.55) 0%, rgba(8,8,16,0.82) 60%, var(--bg) 100%);
-      z-index: 1;
-    }
-    .hero > *:not(.hero-bg-photo):not(.hero-video-overlay) {
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      width: 800px; height: 800px;
-      background: radial-gradient(circle, rgba(var(--accent-rgb),0.12) 0%, transparent 70%);
-      top: -200px; left: 50%;
-      transform: translateX(-50%);
-      animation: pulse-glow 6s ease-in-out infinite;
-      z-index: 1;
-    }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
-      50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
-    }
-
-    .hero-badge {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--accent2);
-      border: 1px solid rgba(var(--accent-rgb),0.3);
-      padding: 8px 20px;
-      border-radius: 100px;
-      margin-bottom: 30px;
-      background: rgba(var(--accent-rgb),0.07);
-      animation: fade-down 0.8s ease both;
-    }
-
-    .hero-heading {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(72px, 12vw, 160px);
-      line-height: 0.9;
-      letter-spacing: 2px;
-      text-align: center;
-      position: relative;
-      text-shadow: 0 8px 40px rgba(0,0,0,0.6);
-      animation: fade-up 0.9s 0.1s ease both;
-    }
-    .hero-heading span {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 17px;
-      font-weight: 300;
-      color: var(--muted);
-      letter-spacing: 1px;
-      margin-top: 24px;
-      text-align: center;
-      animation: fade-up 0.9s 0.2s ease both;
-    }
-
-    /* Hero image strip — now just the two enlarged product shots */
-    .hero-strip {
-      width: 100%;
-      max-width: 1100px;
-      margin-top: 50px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 60px 120px rgba(0,0,0,0.8);
-      animation: fade-up 1s 0.3s ease both;
-    }
-
-    .hero-strip img {
-      width: 100%;
-      height: 560px;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.6s ease;
-    }
-    .hero-strip img:hover { transform: scale(1.03); }
-
-    .hero-strip .strip-item { position: relative; overflow: hidden; border-radius: 18px; }
-    .hero-strip .strip-tag {
-      position: absolute;
-      bottom: 14px; left: 14px;
-      font-family: 'Syne', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #fff;
-      background: rgba(8,8,16,0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 6px 14px;
-      border-radius: 100px;
-      z-index: 2;
-    }
-
-    .hero-scroll {
-      margin-top: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 11px;
-      font-family: 'Syne', sans-serif;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      animation: fade-up 1s 0.5s ease both;
-    }
-    .scroll-line {
-      width: 1px;
-      height: 50px;
-      background: linear-gradient(to bottom, var(--accent), transparent);
-      animation: scroll-pulse 2s ease-in-out infinite;
-    }
-    @keyframes scroll-pulse {
-      0%, 100% { opacity: 0.4; transform: scaleY(1); }
-      50% { opacity: 1; transform: scaleY(1.2); }
-    }
-
-    /* TICKER */
-    .ticker-wrap {
-      background: var(--accent);
-      padding: 14px 0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    .ticker {
-      display: inline-flex;
-      animation: ticker 20s linear infinite;
-    }
-    .ticker span {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 4px;
-      padding: 0 40px;
-      color: var(--accent2);
-    }
-    .ticker span::after {
-      content: '✦';
-      margin-left: 40px;
-      opacity: 0.6;
-    }
-    @keyframes ticker {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-    .section-label {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 14px;
-    }
-    .section-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(48px, 6vw, 80px);
-      letter-spacing: 2px;
-      line-height: 1;
-    }
-    .section-desc {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 16px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* UNSEEN x VEILED PROMO */
-    .unseen-promo-section { padding: 20px 40px 100px; max-width: 1400px; margin: auto; }
-    .unseen-promo-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
-      color: var(--accent2); background: rgba(var(--accent-rgb),0.1); border: 1px solid rgba(var(--accent-rgb),0.35);
-      padding: 8px 18px; border-radius: 100px; margin-bottom: 20px;
-    }
-    .unseen-promo-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); animation: teaser-pulse 1.4s ease-in-out infinite; }
-    @keyframes teaser-pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.35;transform:scale(1.4);} }
-    .unseen-promo-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-    }
-    .unseen-promo-card {
-      position: relative; border-radius: 24px; overflow: hidden; text-decoration: none; color: inherit;
-      background: var(--surface); border: 1px solid var(--border); display: block;
-      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
-    }
-    .unseen-promo-card:hover { transform: translateY(-8px); box-shadow: 0 40px 90px rgba(0,0,0,0.8); border-color: rgba(var(--accent-rgb),0.3); }
-    .unseen-promo-media { display: flex; height: 560px; background: #0a0a14; }
-    .unseen-promo-media img { width: 50%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-    .unseen-promo-card:hover .unseen-promo-media img { transform: scale(1.05); }
-    .unseen-promo-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(4,4,10,0.95) 0%, rgba(4,4,10,0.25) 45%, transparent 70%);
-      pointer-events: none;
-    }
-    .unseen-promo-tag {
-      position: absolute; top: 18px; left: 18px; z-index: 3;
-      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
-      color: var(--accent2); background: var(--accent); padding: 6px 14px; border-radius: 100px;
-    }
-    .unseen-promo-info { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; padding: 28px 26px 30px; }
-    .unseen-promo-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 1px; line-height: 1; color: #fff; margin-bottom: 8px; }
-    .unseen-promo-info p { color: rgba(255,255,255,0.65); font-size: 13px; line-height: 1.6; margin-bottom: 18px; max-width: 340px; }
-    .unseen-promo-cta {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-      color: white; border: 1px solid rgba(255,255,255,0.25); padding: 10px 18px 10px 16px; border-radius: 100px;
-      transition: background 0.3s, border-color 0.3s;
-    }
-    .unseen-promo-card:hover .unseen-promo-cta { background: var(--accent); border-color: var(--accent); }
-    .unseen-promo-price { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent2); }
-    @media (max-width: 900px) {
-      .unseen-promo-grid { grid-template-columns: 1fr; }
-      .unseen-promo-media { height: 440px; }
-      .unseen-promo-info h3 { font-size: 36px; }
-    }
-    @media (max-width: 540px) {
-      .unseen-promo-section { padding: 10px 20px 70px; }
-      .unseen-promo-media { height: 380px; }
-    }
-
-    /* COLLECTIONS */
-    .collections-section {
-      padding: 120px 40px;
-      max-width: 1500px;
-      margin: auto;
-    }
-
-    /* six collections: 3 x 2 on desktop, 2 columns on tablets, 1 on phones */
-    .collections-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .collection-card {
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s;
-    }
-    .collection-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-      border-color: rgba(var(--accent-rgb),0.25);
-    }
-
-    .collection-card img,
-    .collection-card video {
-      width: 100%;
-      height: 480px;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.6s ease;
-    }
-    .collection-card:hover img,
-    .collection-card:hover video {
-      transform: scale(1.07);
-    }
-
-    .collection-card .card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to top,
-        rgba(4,4,10,0.95) 0%,
-        rgba(4,4,10,0.4) 45%,
-        transparent 75%
-      );
-      transition: background 0.4s ease;
-      pointer-events: none;
-    }
-    .collection-card:hover .card-overlay {
-      background: linear-gradient(
-        to top,
-        rgba(4,4,10,0.98) 0%,
-        rgba(4,4,10,0.55) 50%,
-        rgba(var(--accent-rgb),0.08) 100%
-      );
-    }
-
-    .card-tag {
-      position: absolute;
-      top: 16px; left: 16px;
-      font-family: 'Syne', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      background: var(--accent);
-      color: var(--accent2);
-      padding: 5px 13px;
-      border-radius: 100px;
-      z-index: 3;
-    }
-
-    .card-tap {
-      position: absolute;
-      top: 16px; right: 16px;
-      font-family: 'Syne', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 5px 13px;
-      border-radius: 100px;
-      z-index: 3;
-      opacity: 0;
-      transform: translateY(-6px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .collection-card:hover .card-tap {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .card-info {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 24px 22px 26px;
-      z-index: 3;
-    }
-    .card-info h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 32px;
-      letter-spacing: 1.5px;
-      line-height: 1;
-      color: #fff;
-      margin-bottom: 6px;
-      transition: color 0.3s;
-    }
-    .collection-card:hover .card-info h2 { color: #fff; }
-    .card-info p {
-      color: rgba(255,255,255,0.55);
-      font-size: 12px;
-      line-height: 1.5;
-      margin-bottom: 14px;
-      transition: color 0.3s;
-    }
-    .collection-card:hover .card-info p { color: rgba(255,255,255,0.75); }
-
-    .card-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding: 8px 16px 8px 14px;
-      border-radius: 100px;
-      transition: background 0.3s, border-color 0.3s;
-    }
-    .collection-card:hover .card-cta {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-    .card-cta .cta-arrow {
-      width: 18px; height: 18px;
-      background: var(--accent);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px;
-      transition: transform 0.3s, background 0.3s;
-    }
-    .collection-card:hover .card-cta .cta-arrow {
-      background: var(--accent2);
-      color: var(--accent);
-      transform: translateX(3px);
-    }
-
-
-    /* CONVERSION SECTIONS */
-    .hero-actions { display:flex; gap:14px; margin-top:30px; flex-wrap:wrap; justify-content:center; animation:fade-up .9s .25s ease both; }
-    .hero-primary-btn, .hero-secondary-btn { font-family:'Syne',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.7px; text-transform:uppercase; text-decoration:none; border-radius:999px; padding:15px 26px; transition:transform .25s, background .25s, border-color .25s; }
-    .hero-primary-btn { color:var(--accent2); background:var(--accent); box-shadow:0 12px 38px rgba(var(--accent-rgb),.38); }
-    .hero-secondary-btn { color:#fff; border:1px solid rgba(255,255,255,.3); background:rgba(8,8,16,.38); backdrop-filter:blur(10px); }
-    .hero-primary-btn:hover, .hero-secondary-btn:hover { transform:translateY(-3px); }
-    .hero-secondary-btn:hover { border-color:var(--accent2); background:rgba(255,255,255,.08); }
-
-    .drop-section, .pick-section, .conversion-section { padding:110px 40px; max-width:1400px; margin:auto; }
-    .product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-    .product-card { background:var(--surface); border:1px solid var(--border); border-radius:22px; overflow:hidden; position:relative; transition:transform .35s, border-color .35s, box-shadow .35s; }
-    .product-card:hover { transform:translateY(-8px); border-color:rgba(var(--accent-rgb),.35); box-shadow:0 30px 80px rgba(0,0,0,.45); }
-    .product-image-wrap { height:430px; overflow:hidden; position:relative; background:#111; }
-    .product-image-wrap img { width:100%; height:100%; object-fit:cover; transition:transform .6s; }
-    .product-card:hover img { transform:scale(1.055); }
-    .product-badge { position:absolute; top:15px; left:15px; z-index:2; background:var(--accent); color:var(--accent2); padding:6px 12px; border-radius:999px; font:800 9px 'Syne',sans-serif; letter-spacing:1.8px; text-transform:uppercase; }
-    .product-content { padding:22px; }
-    .product-type { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:1.7px; }
-    .product-name { font:700 20px 'Syne',sans-serif; margin:8px 0 10px; }
-    .product-row { display:flex; justify-content:space-between; align-items:center; gap:14px; }
-    .product-price { font:700 21px 'Syne',sans-serif; }
-    .product-link { color:#fff; text-decoration:none; background:var(--accent); padding:10px 15px; border-radius:999px; font:800 10px 'Syne',sans-serif; letter-spacing:1.2px; text-transform:uppercase; }
-
-    .pick-shell { display:grid; grid-template-columns:1.05fr .95fr; min-height:540px; border:1px solid var(--border); border-radius:28px; overflow:hidden; background:linear-gradient(145deg,var(--surface),var(--surface2)); box-shadow:0 35px 100px rgba(0,0,0,.35); }
-    .pick-image { position:relative; min-height:520px; overflow:hidden; }
-    .pick-image img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; transition:opacity .25s, transform .6s; }
-    .pick-image:hover img { transform:scale(1.035); }
-    .pick-panel { padding:58px; display:flex; flex-direction:column; justify-content:center; }
-    .pick-kicker { color:var(--accent); font:800 11px 'Syne',sans-serif; letter-spacing:3px; text-transform:uppercase; }
-    .pick-title { font:400 clamp(44px,5vw,72px) 'Bebas Neue',sans-serif; line-height:.98; margin:14px 0; }
-    .pick-copy { color:var(--muted); line-height:1.75; max-width:500px; }
-    .pick-product { border-top:1px solid var(--border); margin-top:30px; padding-top:26px; }
-    .pick-product h3 { font:700 24px 'Syne',sans-serif; }
-    .pick-meta { display:flex; gap:16px; flex-wrap:wrap; margin:10px 0 24px; color:#bbb; font-size:13px; }
-    .pick-actions { display:flex; gap:12px; flex-wrap:wrap; }
-    .pick-shop, .pick-again { border-radius:999px; padding:13px 20px; font:800 11px 'Syne',sans-serif; text-transform:uppercase; letter-spacing:1.4px; cursor:pointer; }
-    .pick-shop { text-decoration:none; color:var(--accent2); background:var(--accent); border:1px solid var(--accent); }
-    .pick-again { color:#fff; background:transparent; border:1px solid rgba(255,255,255,.2); }
-    .pick-again:hover { border-color:var(--accent2); }
-
-    .conversion-banner { background:linear-gradient(135deg,rgba(var(--accent-rgb),.18),rgba(var(--accent2-rgb),.04)); border:1px solid rgba(var(--accent-rgb),.22); border-radius:28px; padding:48px; display:flex; justify-content:space-between; align-items:center; gap:30px; }
-    .conversion-banner h2 { font:400 clamp(38px,5vw,64px) 'Bebas Neue',sans-serif; line-height:1; }
-    .conversion-banner p { color:var(--muted); margin-top:10px; max-width:650px; line-height:1.7; }
-    .conversion-actions { display:flex; gap:12px; flex-wrap:wrap; flex-shrink:0; }
-    .conversion-actions a { text-decoration:none; border-radius:999px; padding:14px 22px; font:800 11px 'Syne',sans-serif; text-transform:uppercase; letter-spacing:1.4px; }
-    .conversion-actions a:first-child { background:var(--accent); color:var(--accent2); }
-    .conversion-actions a:last-child { border:1px solid rgba(255,255,255,.2); color:#fff; }
-
-    .floating-whatsapp { position:fixed; right:20px; bottom:20px; z-index:120; display:flex; align-items:center; gap:9px; background:#25D366; color:#07120b; text-decoration:none; font:800 11px 'Syne',sans-serif; letter-spacing:1px; text-transform:uppercase; padding:13px 18px; border-radius:999px; box-shadow:0 15px 45px rgba(0,0,0,.45); transition:transform .25s; }
-    .floating-whatsapp:hover { transform:translateY(-4px); }
-
-    /* WHY US */
-    .why-section {
-      padding: 100px 40px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .why-inner {
-      max-width: 1240px;
-      margin: auto;
-    }
-    .why-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-      margin-top: 60px;
-    }
-    .why-item {
-      padding: 40px 30px;
-      border-right: 1px solid var(--border);
-      transition: background 0.3s;
-    }
-    .why-item:last-child { border-right: none; }
-    .why-item:hover { background: rgba(var(--accent-rgb),0.04); }
-    .why-icon {
-      font-size: 30px;
-      margin-bottom: 20px;
-      display: block;
-    }
-    .why-item h3 {
-      font-family: 'Syne', sans-serif;
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .why-item p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    /* STATS */
-    .stats-section {
-      padding: 80px 40px;
-      max-width: 1240px;
-      margin: auto;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-    }
-    .stat-item {
-      text-align: center;
-      padding: 50px 20px;
-      border-right: 1px solid var(--border);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 80px;
-      line-height: 1;
-      background: linear-gradient(135deg, #fff, var(--muted));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .stat-label {
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 8px;
-    }
-
-    /* COMING SOON TEASER */
-    .teaser-section {
-      padding: 90px 40px;
-      max-width: 1400px;
-      margin: auto;
-    }
-    .teaser-box {
-      position: relative;
-      overflow: hidden;
-      border-radius: 28px;
-      border: 1px solid rgba(var(--accent-rgb),.35);
-      background: linear-gradient(135deg, rgba(var(--accent-rgb),.22), rgba(15,15,26,.9) 55%, rgba(var(--accent2-rgb),.06));
-      padding: 60px 50px;
-      text-align: center;
-      isolation: isolate;
-    }
-    .teaser-box::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      background: conic-gradient(from 0deg, var(--accent), transparent 30%, var(--accent2), transparent 70%, var(--accent));
-      z-index: -2;
-      animation: teaser-spin 8s linear infinite;
-      opacity: .5;
-    }
-    .teaser-box::after {
-      content: '';
-      position: absolute;
-      inset: 2px;
-      border-radius: 26px;
-      background: linear-gradient(135deg, rgba(8,8,16,.96), rgba(15,15,26,.92));
-      z-index: -1;
-    }
-    @keyframes teaser-spin { to { transform: rotate(360deg); } }
-    .teaser-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--accent2);
-      background: rgba(var(--accent-rgb),.14);
-      border: 1px solid rgba(var(--accent-rgb),.4);
-      padding: 8px 18px;
-      border-radius: 100px;
-      margin-bottom: 22px;
-    }
-    .teaser-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--accent2);
-      animation: teaser-pulse 1.4s ease-in-out infinite;
-    }
-    @keyframes teaser-pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: .35; transform: scale(1.4); }
-    }
-    .teaser-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(38px, 6vw, 72px);
-      line-height: 1.02;
-      letter-spacing: 1px;
-    }
-    .teaser-title span {
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .teaser-copy {
-      color: var(--muted);
-      max-width: 560px;
-      margin: 18px auto 32px;
-      line-height: 1.75;
-      font-size: 15px;
-    }
-    .teaser-actions {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .teaser-btn {
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1.7px;
-      text-transform: uppercase;
-      text-decoration: none;
-      border-radius: 999px;
-      padding: 15px 28px;
-      transition: transform .25s, background .25s, border-color .25s;
-    }
-    .teaser-btn-primary {
-      color: #080810;
-      background: var(--accent2);
-      box-shadow: 0 12px 38px rgba(var(--accent2-rgb),.28);
-    }
-    .teaser-btn-secondary {
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.3);
-      background: rgba(8,8,16,.38);
-    }
-    .teaser-btn-primary:hover, .teaser-btn-secondary:hover { transform: translateY(-3px); }
-    @media (max-width: 540px) {
-      .teaser-section { padding: 60px 20px; }
-      .teaser-box { padding: 44px 24px; }
-      .teaser-btn, .teaser-actions a { width: 100%; text-align: center; }
-    }
-
-    /* RANDOM PRODUCT RECOMMENDATION (script lives in <script> below, not here) */
-    #suggestedImage { transition: opacity 0.18s ease; }
-
-    /* CUSTOMER REVIEWS */
-    .reviews-section {
-      padding: 110px 0 100px;
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(180deg, var(--bg), #0b0b14 55%, var(--bg));
-      border-top: 1px solid var(--border);
-    }
-    .reviews-section::before {
-      content: '';
-      position: absolute;
-      width: 680px; height: 680px;
-      right: -260px; top: -260px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(var(--accent-rgb),.10), transparent 68%);
-      pointer-events: none;
-    }
-    .reviews-inner { max-width: 1240px; margin: auto; padding: 0 40px; position: relative; z-index: 1; }
-    .reviews-topline {
-      display: flex; align-items: end; justify-content: space-between; gap: 24px;
-      margin-bottom: 38px;
-    }
-    .reviews-copy .section-label { margin-bottom: 10px; }
-    .reviews-copy .section-title { text-align: left; }
-    .reviews-copy p { color: var(--muted); margin-top: 12px; max-width: 560px; line-height: 1.7; }
-    .reviews-nav { display: flex; gap: 10px; flex-shrink: 0; }
-    .review-arrow {
-      width: 48px; height: 48px; border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.04);
-      color: var(--text); font-size: 20px; cursor: pointer;
-      transition: transform .2s, background .25s, border-color .25s;
-    }
-    .review-arrow:hover { transform: translateY(-2px); background: var(--accent); border-color: var(--accent); }
-    .reviews-viewport {
-      overflow-x: auto;
-      scrollbar-width: none;
-      scroll-snap-type: x mandatory;
-      overscroll-behavior-inline: contain;
-      touch-action: pan-y pinch-zoom;
-      cursor: grab;
-    }
-    .reviews-viewport::-webkit-scrollbar { display: none; }
-    .reviews-viewport.dragging { cursor: grabbing; scroll-snap-type: none; }
-    .reviews-track { display: flex; gap: 18px; width: max-content; padding: 6px 2px 18px; }
-    .review-card {
-      width: min(410px, calc(100vw - 54px));
-      min-height: 325px;
-      flex: 0 0 auto;
-      scroll-snap-align: start;
-      background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 24px;
-      padding: 28px;
-      display: flex; flex-direction: column;
-      box-shadow: 0 24px 80px rgba(0,0,0,.28);
-      transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
-    }
-    .review-card:hover { transform: translateY(-7px); border-color: rgba(var(--accent-rgb),.36); box-shadow: 0 34px 90px rgba(0,0,0,.45); }
-    .review-card-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .review-stars { color: #f4b41a; letter-spacing: 3px; font-size: 18px; line-height: 1; }
-    .verified-badge {
-      font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 800;
-      letter-spacing: 1.5px; text-transform: uppercase; color: #9be6b4;
-      border: 1px solid rgba(91,208,132,.28); background: rgba(91,208,132,.08);
-      padding: 6px 9px; border-radius: 999px;
-    }
-    .review-quote {
-      font-family: 'Syne', sans-serif;
-      font-size: 19px; font-weight: 600; line-height: 1.55;
-      color: #f6f6f7; margin: 26px 0 22px;
-      flex-grow: 1;
-    }
-    .review-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-    .review-tag {
-      font-size: 10px; color: #bbb; letter-spacing: .7px; text-transform: uppercase;
-      border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.035);
-      padding: 6px 9px; border-radius: 999px;
-    }
-    .review-author { display: flex; align-items: center; gap: 12px; padding-top: 20px; border-top: 1px solid var(--border); }
-    .review-avatar {
-      width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
-      font-family: 'Bebas Neue', sans-serif; font-size: 21px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #080810;
-    }
-    .review-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .7px; }
-    .review-product { color: var(--muted); font-size: 11px; margin-top: 4px; }
-    .reviews-bottom { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 20px; }
-    .review-dots { display: flex; gap: 7px; flex-wrap: wrap; }
-    .review-dot { width: 7px; height: 7px; border: 0; border-radius: 50%; background: #3c3c46; padding: 0; cursor: pointer; transition: width .25s, background .25s; }
-    .review-dot.active { width: 24px; border-radius: 10px; background: var(--accent); }
-    .swipe-hint { color: var(--muted); font-family: 'Syne', sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; }
-    .reviews-note { color: #666; font-size: 11px; margin-top: 12px; line-height: 1.5; }
-
-    /* FEEDBACK CTA */
-    .feedback-cta-section {
-      padding: 110px 40px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-    .feedback-cta-section::before {
-      content: '';
-      position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(var(--accent-rgb),0.1) 0%, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .feedback-cta-inner {
-      max-width: 700px;
-      margin: auto;
-      text-align: center;
-      position: relative;
-      z-index: 2;
-    }
-    .feedback-cta-heading {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(36px, 5.5vw, 58px);
-      line-height: 1.05;
-      letter-spacing: 1px;
-      margin: 16px 0 34px;
-    }
-    .feedback-cta-heading span {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .feedback-cta-btn {
-      display: inline-block;
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent2);
-      background: var(--accent);
-      padding: 18px 44px;
-      border-radius: 100px;
-      text-decoration: none;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 10px 40px rgba(var(--accent-rgb),0.4);
-    }
-    .feedback-cta-btn:hover {
-      background: #8a0b02;
-      transform: scale(1.05);
-    }
-
-    /* Keeps the contact section clear of the fixed navbar when jumped to */
-    #contact { scroll-margin-top: 140px; }
-
-    /* FOOTER */
-    footer {
-      background: #04040a;
-      border-top: 1px solid var(--border);
-      padding: 80px 40px 40px;
-    }
-    .footer-inner {
-      max-width: 1240px;
-      margin: auto;
-    }
-    .footer-top {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 60px;
-      padding-bottom: 60px;
-      border-bottom: 1px solid var(--border);
-    }
-    .footer-brand img { height: 62px; margin-bottom: 20px; }
-    .footer-brand p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.8;
-      max-width: 300px;
-    }
-    .footer-col h4 {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-    .footer-col ul { list-style: none; }
-    .footer-col ul li { margin-bottom: 12px; }
-    .footer-col ul li a {
-      color: var(--text);
-      text-decoration: none;
-      font-size: 15px;
-      transition: color 0.3s;
-    }
-    .footer-col ul li a:hover { color: var(--accent2); }
-    .footer-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 30px;
-    }
-    .footer-bottom p {
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .footer-bottom a { color: var(--accent2); text-decoration: none; }
-    .social-links { display: flex; gap: 16px; }
-    .social-link {
-      width: 36px; height: 36px;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 14px;
-      transition: border-color 0.3s, color 0.3s, background 0.3s;
-    }
-    .social-link:hover {
-      border-color: var(--accent);
-      color: var(--accent2);
-      background: rgba(var(--accent-rgb),0.08);
-    }
-
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fade-down {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(50px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    .reveal.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
-
-    @media (max-width: 900px) {
-      nav { padding: 16px 20px; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .nav-logo img { height: 48px; }
-      .hero { padding: 100px 20px 60px; }
-      .hero-strip { grid-template-columns: 1fr; }
-      .hero-strip img { height: 340px; }
-      .collections-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .product-grid { grid-template-columns:repeat(2,1fr); }
-      .pick-shell { grid-template-columns:1fr; }
-      .pick-image { min-height:420px; }
-      .pick-panel { padding:40px; }
-      .conversion-banner { align-items:flex-start; flex-direction:column; }
-
-      .collection-card img, .collection-card video { height: 340px; }
-      .why-grid { grid-template-columns: 1fr 1fr; gap: 0; }
-      .why-item { border-bottom: 1px solid var(--border); }
-      .stats-grid { grid-template-columns: 1fr; }
-      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
-      .footer-top { grid-template-columns: 1fr; gap: 40px; }
-      .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
-      .collections-section { padding: 80px 20px; }
-      .feedback-form { padding: 30px 22px; }
-    }
-
-    @media (max-width: 540px) {
-      .collections-grid { grid-template-columns: 1fr; }
-      .hero-actions { width:100%; }
-      .hero-primary-btn, .hero-secondary-btn { width:100%; text-align:center; }
-      .drop-section, .pick-section, .conversion-section { padding:78px 20px; }
-      .product-grid { grid-template-columns:1fr; }
-      .product-image-wrap { height:360px; }
-      .pick-image { min-height:350px; }
-      .pick-panel { padding:30px 24px; }
-      .conversion-banner { padding:30px 24px; }
-      .conversion-actions, .conversion-actions a { width:100%; text-align:center; }
-      .floating-whatsapp { right:12px; bottom:12px; padding:12px 15px; }
-
-      .collection-card img, .collection-card video { height: 300px; }
-      .nav-logo img { height: 40px; }
-      .nav-cta { padding: 8px 16px; font-size: 11px; }
-      .hero-badge { font-size: 10px; padding: 7px 16px; }
-      .hero-sub { font-size: 15px; }
-      .ticker span { font-size: 16px; padding: 0 20px; }
-      .ticker span::after { margin-left: 20px; }
-      .why-grid { grid-template-columns: 1fr; }
-      .stat-num { font-size: 56px; }
-    }
-
-    /* LOGIN BUTTON */
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .nav-login {
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text);
-      text-decoration: none;
-      padding: 9px 20px;
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 100px;
-      transition: border-color 0.3s, color 0.3s, background 0.3s, transform 0.2s;
-    }
-    .nav-login:hover {
-      border-color: var(--accent2);
-      color: var(--accent2);
-      background: rgba(var(--accent2-rgb),0.06);
-      transform: scale(1.04);
-    }
-    @media (max-width: 1180px) {
-      .nav-links { gap: 16px; }
-      .nav-links a { letter-spacing: 1px; }
-    }
-    @media (max-width: 540px) {
-      .nav-right .nav-cta { display: none; } /* Order Now stays in the mobile menu */
-      .nav-login { padding: 8px 16px; font-size: 11px; }
-    }
-
+    :root{--bg:#080810;--card:#0f0f1a;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#8a8a96;--border:rgba(255,255,255,.1);}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+    nav{padding:16px 40px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+    nav img{height:42px;}
+    nav a{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;}
+    main{flex:1;display:grid;place-items:center;padding:36px 18px 60px;}
+    .card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:34px 30px;}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:46px;letter-spacing:1px;line-height:1;}
+    .sub{color:var(--muted);font-size:14px;line-height:1.6;margin:8px 0 24px;}
+    label{display:block;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);margin:14px 0 6px;}
+    input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:13px 14px;color:var(--text);font:inherit;font-size:15px;}
+    input:focus{outline:2px solid rgba(169,14,2,.7);outline-offset:1px;}
+    .otp{letter-spacing:10px;font-size:22px;text-align:center;}
+    .phone{display:flex;gap:8px;}
+    .phone span{display:grid;place-items:center;padding:0 14px;border:1px solid var(--border);border-radius:12px;color:var(--muted);}
+    .btn{width:100%;margin-top:18px;padding:14px;border-radius:100px;border:1px solid transparent;background:var(--accent);color:var(--accent2);font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;}
+    .btn:disabled{opacity:.55;cursor:wait;}
+    .btn.alt{background:transparent;border-color:var(--border);color:var(--text);}
+    .btn.alt:hover:not(:disabled){border-color:var(--accent2);}
+    .btn svg{width:18px;height:18px;vertical-align:-4px;margin-right:10px;}
+    .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:18px 0 2px;}
+    .or::before,.or::after{content:'';flex:1;height:1px;background:var(--border);}
+    .link{background:none;border:none;color:var(--accent2);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;padding:0;}
+    .row{display:flex;justify-content:space-between;gap:10px;margin-top:16px;font-size:13px;color:var(--muted);flex-wrap:wrap;}
+    #msg{min-height:20px;margin-top:16px;font-size:13px;line-height:1.5;color:#ff8f8f;}
+    #msg.ok{color:#9be6b4;}
+    .hide{display:none!important;}
+    @media(max-width:520px){nav{padding:14px 18px;}.card{padding:28px 22px;}}
+    @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
   </style>
-  <script src="prices.js"></script>
 </head>
 <body>
+  <nav><a href="index.html"><img src="logo.webp" alt="AARAMBH"></a><a href="index.html">Back to shop</a></nav>
+  <main>
+    <div class="card">
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+      <!-- Choose a method -->
+      <section data-view="main">
+        <h1>Log in or sign up</h1>
+        <p class="sub">New here? Any method below creates your account automatically.</p>
+        <button class="btn alt" id="googleBtn" type="button" style="margin-top:0">
+          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2.1 1.4-4.7 2.3-7.7 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>Continue with Google
+        </button>
+        <button class="btn alt" id="toPhone" type="button">Use mobile number</button>
+        <div class="or">or</div>
+        <button class="btn alt" id="toLogin" type="button" style="margin-top:12px">Use email and password</button>
+      </section>
 
-  <!-- NAV -->
-  <nav id="navbar">
-    <a href="#" class="nav-logo"><img src="logo.webp" alt="AARAMBH"></a>
-    <ul class="nav-links">
-      <li><a href="polo.html">Polos</a></li>
-      <li><a href="oversized.html">Oversized</a></li>
-      <li><a href="printed.html">Printed</a></li>
-      <li><a href="hoodie.html">Hoodies</a></li>
-      <li><a href="shirt.html">Shirts</a></li>
-      <li><a href="croptop.html">Ladies</a></li>
-      <li><a href="account.html">Track Order</a></li>
-      <li><a href="feedback.html" style="color: var(--accent2); font-weight: 800;">Feedback</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <div class="nav-right">
-      <a href="login.html" class="nav-login js-auth-link">Log in</a>
-      <a href="tel:9405074832" class="nav-cta">📞 Order Now</a>
+      <!-- Mobile: number -->
+      <section data-view="phone" class="hide">
+        <h1>Mobile number</h1>
+        <p class="sub">We will text you a 6-digit code.</p>
+        <label for="pName">Your name (new customers)</label>
+        <input id="pName" maxlength="80" autocomplete="name">
+        <label for="pNum">Mobile number</label>
+        <div class="phone"><span>+91</span><input id="pNum" inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="10-digit number"></div>
+        <button class="btn" id="pSend" type="button">Send code</button>
+        <div class="row"><button class="link" data-go="main" type="button">Other options</button></div>
+      </section>
+
+      <!-- Mobile: code -->
+      <section data-view="phoneotp" class="hide">
+        <h1>Enter code</h1>
+        <p class="sub" id="pSub"></p>
+        <label for="pCode">6-digit code</label>
+        <input id="pCode" class="otp" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+        <button class="btn" id="pVerify" type="button">Verify and continue</button>
+        <div class="row"><button class="link" data-go="phone" type="button">Change number</button></div>
+      </section>
+
+      <!-- Email: log in -->
+      <section data-view="login" class="hide">
+        <h1>Log in</h1>
+        <p class="sub">Use the email and password you signed up with.</p>
+        <label for="lEmail">Email</label>
+        <input id="lEmail" type="email" maxlength="120" autocomplete="email">
+        <label for="lPass">Password</label>
+        <input id="lPass" type="password" maxlength="100" autocomplete="current-password">
+        <button class="btn" id="lGo" type="button">Log in</button>
+        <div class="row"><button class="link" data-go="forgot" type="button">Forgot password?</button><button class="link" data-go="register" type="button">Create account</button></div>
+        <div class="row"><button class="link" data-go="main" type="button">Other options</button></div>
+      </section>
+
+      <!-- Email: sign up -->
+      <section data-view="register" class="hide">
+        <h1>Create account</h1>
+        <p class="sub">Already have an account? <button class="link" data-go="login" type="button">Log in</button></p>
+        <label for="rName">Name</label>
+        <input id="rName" maxlength="80" autocomplete="name">
+        <label for="rEmail">Email</label>
+        <input id="rEmail" type="email" maxlength="120" autocomplete="email">
+        <label for="rPhone">Mobile number (optional)</label>
+        <input id="rPhone" inputmode="numeric" maxlength="10" autocomplete="tel-national">
+        <label for="rPass">Password (8+ characters)</label>
+        <input id="rPass" type="password" maxlength="100" autocomplete="new-password">
+        <button class="btn" id="rGo" type="button">Create account</button>
+        <div class="row"><button class="link" data-go="main" type="button">Other options</button></div>
+      </section>
+
+      <!-- Email: login code -->
+      <section data-view="emailotp" class="hide">
+        <h1>Check your email</h1>
+        <p class="sub" id="eSub"></p>
+        <label for="eCode">6-digit code</label>
+        <input id="eCode" class="otp" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+        <button class="btn" id="eVerify" type="button">Verify and log in</button>
+        <div class="row"><button class="link" id="eResend" type="button">Resend code</button><button class="link" data-go="login" type="button">Back</button></div>
+      </section>
+
+      <!-- Forgot password -->
+      <section data-view="forgot" class="hide">
+        <h1>Reset password</h1>
+        <p class="sub">We will email you a reset link.</p>
+        <label for="fEmail">Email</label>
+        <input id="fEmail" type="email" maxlength="120" autocomplete="email">
+        <button class="btn" id="fGo" type="button">Send reset link</button>
+        <div class="row"><button class="link" data-go="login" type="button">Back to log in</button></div>
+      </section>
+
+      <!-- New password (from the email link) -->
+      <section data-view="reset" class="hide">
+        <h1>New password</h1>
+        <p class="sub">Choose a password of 8+ characters.</p>
+        <label for="nPass">New password</label>
+        <input id="nPass" type="password" maxlength="100" autocomplete="new-password">
+        <button class="btn" id="nGo" type="button">Save and log in</button>
+      </section>
+
+      <div id="msg" role="status" aria-live="polite"></div>
+      <div id="recaptcha"></div>
     </div>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
-
-  <div class="menu-backdrop" id="menuBackdrop"></div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#" class="active">Home</a>
-    <a href="polo.html">Polos</a>
-    <a href="oversized.html">Oversized</a>
-    <a href="printed.html">Printed</a>
-    <a href="hoodie.html">Hoodies</a>
-    <a href="shirt.html">Shirts</a>
-    <a href="croptop.html">Ladies</a>
-    <a href="login.html" class="js-auth-link">Log in</a>
-    <a href="account.html">Track Order</a>
-    <a href="feedback.html" style="color: var(--accent2);">Feedback</a>
-    <a href="#contact">Contact</a>
-    <a href="tel:9405074832">📞 Order Now</a>
-  </div>
-
-  <!-- HERO -->
-  <section class="hero">
-    <!-- Squad photo now sits full-bleed behind the headline -->
-    <div class="hero-bg-photo"></div>
-    <div class="hero-video-overlay"></div>
-
-    <div class="hero-badge">Just Dropped — UNSEEN Series Tee</div>
-    <h1 class="hero-heading">WEAR YOUR<br><span>VIBE</span></h1>
-    <p class="hero-sub">Premium streetwear. Built different. Designed for the bold.</p>
-    <div class="hero-actions">
-      <a href="#unseenDrop" class="hero-primary-btn">Shop UNSEEN Drop →</a>
-      <a href="#yourPick" class="hero-secondary-btn">Find My Pick</a>
-    </div>
-
-    <div class="hero-strip">
-      <div class="strip-item">
-        <img src="un_white_f.png" alt="Unseen Tee Front">
-        <span class="strip-tag">UNSEEN — Just Dropped</span>
-      </div>
-      <div class="strip-item">
-        <img src="un_white_b.png" alt="Unseen Tee Back">
-        <span class="strip-tag">Covered, But Not Contained</span>
-      </div>
-    </div>
-
-    <div class="hero-scroll">
-      <div class="scroll-line"></div>
-      <span>Scroll</span>
-    </div>
-  </section>
-
-  <!-- TICKER -->
-  <div class="ticker-wrap">
-    <div class="ticker">
-      <span>Premium GSM Fabric</span>
-      <span>Streetwear</span>
-      <span>AARAMBH</span>
-      <span>Wear Your Vibe</span>
-      <span>Bold Prints</span>
-      <span>Oversized Fits</span>
-      <span>🔥 UNSEEN Series Tee — Live Now</span>
-      <span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
-      <span>Premium GSM Fabric</span>
-      <span>Streetwear</span>
-      <span>AARAMBH</span>
-      <span>Wear Your Vibe</span>
-      <span>Bold Prints</span>
-      <span>Oversized Fits</span>
-      <span>🔥 UNSEEN Series Tee — Live Now</span>
-      <span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
-    </div>
-  </div>
-
-  <!-- UNSEEN x VEILED PROMO -->
-  <section class="unseen-promo-section" id="unseenDrop">
-    <div class="section-header reveal">
-      <span class="unseen-promo-badge"><span class="dot"></span>Just Dropped</span>
-      <h2 class="section-title">UNSEEN. VEILED BLOOM.</h2>
-      <p class="section-desc">Two stories, one drop. Grab yours before the run sells out.</p>
-    </div>
-
-    <div class="unseen-promo-grid">
-      <a href="printed.html#unseenDrop" class="unseen-promo-card reveal">
-        <div class="unseen-promo-media">
-          <img src="un_white_f.png" alt="Unseen Front" loading="lazy">
-          <img src="un_white_b.png" alt="Unseen Back" loading="lazy">
-        </div>
-        <div class="unseen-promo-overlay"></div>
-        <span class="unseen-promo-tag">New Drop</span>
-        <div class="unseen-promo-info">
-          <h3>UNSEEN</h3>
-          <p>"Covered, but not contained." Bold back graphic, White / Royal Blue / Black.</p>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-            <span class="unseen-promo-price" data-price="unseen">₹549</span>
-            <span class="unseen-promo-cta">Shop Now <span style="display:inline-block;width:16px;height:16px;background:var(--accent);border-radius:50%;text-align:center;line-height:16px;font-size:9px;">→</span></span>
-          </div>
-        </div>
-      </a>
-
-      <a href="printed.html#veiledBloom" class="unseen-promo-card reveal reveal-delay-1">
-        <div class="unseen-promo-media">
-          <img src="veiled_blue_f.png" alt="Veiled Bloom Front" loading="lazy">
-          <img src="veiled_blue_b.png" alt="Veiled Bloom Back" loading="lazy">
-        </div>
-        <div class="unseen-promo-overlay"></div>
-        <span class="unseen-promo-tag">New Drop</span>
-        <div class="unseen-promo-info">
-          <h3>VEILED BLOOM</h3>
-          <p>"Elegance in silence." Delicate floral artwork, Royal Blue / White.</p>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-            <span class="unseen-promo-price" data-price="veiled">₹549</span>
-            <span class="unseen-promo-cta">Shop Now <span style="display:inline-block;width:16px;height:16px;background:var(--accent);border-radius:50%;text-align:center;line-height:16px;font-size:9px;">→</span></span>
-          </div>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- COLLECTIONS -->
-  <section class="collections-section">
-    <div class="section-header reveal">
-      <span class="section-label">Our Collections</span>
-      <h2 class="section-title">SHOP THE DROPS</h2>
-      <p class="section-desc">Six distinct collections. One unmistakable identity.</p>
-    </div>
-
-    <div class="collections-grid">
-
-      <!-- POLO -->
-      <a href="polo.html" class="collection-card reveal">
-        <img src="Black_back.png" alt="Polo Collection" loading="lazy">
-        <div class="card-overlay"></div>
-        <span class="card-tag">Bestseller</span>
-        <span class="card-tap">Tap to shop</span>
-        <div class="card-info">
-          <h2>Polo Collection</h2>
-          <p>Sharp silhouettes. Premium GSM cotton. Collars that command.</p>
-          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- OVERSIZED -->
-      <a href="oversized.html" class="collection-card reveal reveal-delay-1">
-        <img src="Royal_blue.jpg" alt="Oversized Collection" loading="lazy">
-        <div class="card-overlay"></div>
-        <span class="card-tag">New Drop</span>
-        <span class="card-tap">Tap to shop</span>
-        <div class="card-info">
-          <h2>Oversized</h2>
-          <p>Relaxed fits with bold presence. Drop shoulders, heavy fabric.</p>
-          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- PRINTED -->
-      <a href="printed.html" class="collection-card reveal reveal-delay-2">
-        <img src="un_white_f.png" alt="Printed Collection" loading="lazy">
-        <div class="card-overlay"></div>
-        <span class="card-tag">New Drop</span>
-        <span class="card-tap">Tap to shop</span>
-        <div class="card-info">
-          <h2>Printed Tees</h2>
-          <p>Graphics that speak before you do. Bold art, sharp prints.</p>
-          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- HOODIE -->
-      <a href="hoodie.html" class="collection-card reveal reveal-delay-1">
-        <img src="hoodie1.jpg" alt="Hoodie Collection" loading="lazy">
-        <div class="card-overlay"></div>
-        <span class="card-tag">Premium</span>
-        <span class="card-tap">Tap to shop</span>
-        <div class="card-info">
-          <h2>Hoodies</h2>
-          <p>Heavy-weight comfort. Street-ready silhouettes. Made to last.</p>
-          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- SHIRTS -->
-      <a href="shirt.html" class="collection-card reveal reveal-delay-2">
-        <img src="red_boxy.jpeg" alt="Shirt Collection" loading="lazy">
-        <div class="card-overlay"></div>
-        <span class="card-tag">New Drop</span>
-        <span class="card-tap">Tap to shop</span>
-        <div class="card-info">
-          <h2>Shirts</h2>
-          <p>Boxy fit, bold colour. Red, Blue and Pink, live now.</p>
-          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-      <!-- LADIES CROP TOPS -->
-      <a href="croptop.html" class="collection-card reveal reveal-delay-3">
-        <img src="Self Love Black Crop Top-front.jpeg" alt="Ladies Crop Tops Collection" loading="lazy">
-        <div class="card-overlay"></div>
-        <span class="card-tag" id="cropTag">New Drop</span>
-        <span class="card-tap">Tap to shop</span>
-        <div class="card-info">
-          <h2>Ladies Crop Tops</h2>
-          <p>Printed crop tops for women. Cropped fit, soft stretch cotton. Just <span data-price="crop_self_love">₹349</span>.</p>
-          <span class="card-cta">Shop Now <span class="cta-arrow">→</span></span>
-        </div>
-      </a>
-
-    </div>
-  </section>
-
-  <!-- NEW DROPS -->
-  <section class="drop-section" id="newDrops">
-    <div class="section-header reveal">
-      <span class="section-label">Fresh from AARAMBH</span>
-      <h2 class="section-title">NEW DROPS</h2>
-      <p class="section-desc">The latest pieces, placed upfront so you never miss what just landed.</p>
-    </div>
-    <div class="product-grid">
-      <article class="product-card reveal">
-        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="un_white_f.png" alt="Unseen" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Unseen</h3><div class="product-row"><span class="product-price" data-price="unseen">₹549</span><a class="product-link" href="printed.html#unseenDrop">Shop Now →</a></div></div>
-      </article>
-      <article class="product-card reveal reveal-delay-1">
-        <div class="product-image-wrap"><span class="product-badge">Just Dropped</span><img src="veiled_blue_b.png" alt="Veiled Bloom" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Printed Oversized</span><h3 class="product-name">Veiled Bloom</h3><div class="product-row"><span class="product-price" data-price="veiled">₹549</span><a class="product-link" href="printed.html#veiledBloom">Shop Now →</a></div></div>
-      </article>
-      <article class="product-card reveal reveal-delay-2">
-        <div class="product-image-wrap"><span class="product-badge">Bestseller</span><img src="Blue_front.png" alt="AARAMBH polo T-shirt" loading="lazy"></div>
-        <div class="product-content"><span class="product-type">Polo Collection</span><h3 class="product-name">Classic Polo</h3><div class="product-row"><span class="product-price" data-price="polo">₹389</span><a class="product-link" href="polo.html">Shop Now →</a></div></div>
-      </article>
-    </div>
-  </section>
-
-  <!-- RANDOM RECOMMENDATION -->
-  <section class="pick-section" id="yourPick">
-    <div class="pick-shell reveal">
-      <div class="pick-image"><img id="suggestedImage" src="Gray_front.png" alt="Recommended AARAMBH product"></div>
-      <div class="pick-panel">
-        <span class="pick-kicker">Picked for you</span>
-        <h2 class="pick-title">YOUR AARAMBH PICK</h2>
-        <p class="pick-copy">Not sure where to begin? We selected a random piece from the collection. Tap again until one matches your vibe.</p>
-        <div class="pick-product">
-          <h3 id="suggestedName">Royal Blue Oversized</h3>
-          <div class="pick-meta"><span id="suggestedType">Plain Oversized</span><strong id="suggestedPrice" data-price="oversized_royal_blue">₹399</strong></div>
-          <div class="pick-actions"><a id="suggestedLink" class="pick-shop" href="oversized.html">Shop This Pick →</a><button class="pick-again" id="showAnother" type="button">Show Another</button></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINAL BUYING PROMPT -->
-  <section class="conversion-section">
-    <div class="conversion-banner reveal">
-      <div><span class="section-label">Need help choosing?</span><h2>YOUR NEXT FIT STARTS HERE.</h2><p>Browse the bestsellers or message AARAMBH directly for size, colour and customisation help.</p></div>
-      <div class="conversion-actions"><a href="printed.html">Shop Bestsellers</a><a href="https://wa.me/919405074832?text=Hi%20AARAMBH%2C%20help%20me%20choose%20a%20T-shirt">Get Style Help</a></div>
-    </div>
-  </section>
-
-  <!-- WHY AARAMBH -->
-  <section class="why-section">
-    <div class="why-inner">
-      <div class="section-header reveal">
-        <span class="section-label">Why AARAMBH</span>
-        <h2 class="section-title">BUILT DIFFERENT</h2>
-      </div>
-      <div class="why-grid">
-        <div class="why-item reveal">
-          <span class="why-icon">🧵</span>
-          <h3>Premium GSM Fabric</h3>
-          <p>Every piece is crafted with high-grade cotton that looks good and holds its shape wash after wash.</p>
-        </div>
-        <div class="why-item reveal reveal-delay-1">
-          <span class="why-icon">🎨</span>
-          <h3>Original Designs</h3>
-          <p>Prints and cuts designed in-house. No copy-paste aesthetics — every drop is distinct.</p>
-        </div>
-        <div class="why-item reveal reveal-delay-2">
-          <span class="why-icon">📦</span>
-          <h3>Fast Delivery</h3>
-          <p>From drop to doorstep. Quick turnaround so you're never waiting on your fit.</p>
-        </div>
-        <div class="why-item reveal reveal-delay-3">
-          <span class="why-icon">💬</span>
-          <h3>Real Support</h3>
-          <p>Talk directly to the owner. No bots, no tickets — just straight answers and solutions.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STATS -->
-  <section class="stats-section">
-    <div class="stats-grid">
-      <div class="stat-item reveal">
-        <div class="stat-num">100+</div>
-        <div class="stat-label">Happy Customers</div>
-      </div>
-      <div class="stat-item reveal reveal-delay-1">
-        <div class="stat-num">6</div>
-        <div class="stat-label">Signature Collections</div>
-      </div>
-      <div class="stat-item reveal reveal-delay-2">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">Original Designs</div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- CUSTOMER FEEDBACK SHOWCASE -->
-  <section class="reviews-section" id="customerReviews" aria-labelledby="reviewsTitle">
-    <div class="reviews-inner">
-      <div class="reviews-topline reveal">
-        <div class="reviews-copy">
-          <span class="section-label">Worn. Rated. Repeated.</span>
-          <h2 class="section-title" id="reviewsTitle">VOICES OF AARAMBH</h2>
-          <p>Real feedback on the fit, fabric, print and overall experience. Swipe through what the community has to say.</p>
-        </div>
-        <div class="reviews-nav" aria-label="Review controls">
-          <button class="review-arrow" id="reviewPrev" type="button" aria-label="Previous review">←</button>
-          <button class="review-arrow" id="reviewNext" type="button" aria-label="Next review">→</button>
-        </div>
-      </div>
-
-      <div class="reviews-viewport reveal" id="reviewsViewport" tabindex="0" aria-label="Customer reviews. Swipe or use arrow keys to browse.">
-        <div class="reviews-track" id="reviewsTrack"></div>
-      </div>
-
-      <div class="reviews-bottom reveal">
-        <div class="review-dots" id="reviewDots" aria-label="Choose a review"></div>
-        <span class="swipe-hint">Swipe / drag to explore ↔</span>
-      </div>
-      <p class="reviews-note">Only feedback approved for public display should be added. Email addresses and order numbers are never shown.</p>
-    </div>
-  </section>
-
-  <!-- FEEDBACK CTA -->
-  <section class="feedback-cta-section">
-    <div class="feedback-cta-inner reveal">
-      <span class="section-label">Already Copped?</span>
-      <h2 class="feedback-cta-heading">GOT A MINUTE? <span>TELL US HOW IT FITS.</span></h2>
-      <a href="feedback.html" class="feedback-cta-btn">Leave Feedback →</a>
-    </div>
-  </section>
-
-  <a class="floating-whatsapp" href="https://wa.me/919405074832?text=Hi%20AARAMBH%2C%20I%20want%20to%20place%20an%20order" aria-label="Chat with AARAMBH on WhatsApp">💬 WhatsApp</a>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <img src="logo.webp" alt="AARAMBH">
-          <p>Premium streetwear crafted for the bold. AARAMBH is more than a brand — it's a beginning of your own story.</p>
-        </div>
-        <div class="footer-col">
-          <h4>Collections</h4>
-          <ul>
-            <li><a href="polo.html">Polo Collection</a></li>
-            <li><a href="oversized.html">Oversized Collection</a></li>
-            <li><a href="printed.html">Printed Collection</a></li>
-            <li><a href="hoodie.html">Hoodies</a></li>
-            <li><a href="shirt.html">Shirts</a></li>
-            <li><a href="croptop.html">Ladies Crop Tops</a></li>
-          </ul>
-        </div>
-        <div class="footer-col" id="contact">
-          <h4>Contact</h4>
-          <ul>
-            <li><a href="#contact" style="pointer-events:none;">Legal Name: Mahesh Goudar</a></li>
-            <li><a href="tel:9405074832">📞 9405074832</a></li>
-            <li><a href="https://wa.me/919405074832?text=Hi%20AARAMBH%2C%20I%20need%20help" target="_blank" rel="noopener">💬 WhatsApp Us</a></li>
-            <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=arambhofficial2025@gmail.com&su=AARAMBH%20Enquiry" target="_blank" rel="noopener">✉️ Email Us</a></li>
-            <li><a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>© 2025 AARAMBH. All rights reserved.</p>
-        <div class="social-links">
-          <a href="https://wa.me/919405074832" class="social-link" title="WhatsApp">WA</a>
-          <a href="mailto:arambhofficial2025@gmail.com" class="social-link" title="Email">@</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  </main>
 
   <script>
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const menuBackdrop = document.getElementById('menuBackdrop');
-    function closeMenu() { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
-    hamburger.addEventListener('click', () => {
-      const isOpen = mobileMenu.classList.toggle('open');
-      hamburger.classList.toggle('open', isOpen);
-      menuBackdrop.classList.toggle('open', isOpen);
+    /* PASTE your Firebase web config here (Firebase console > Project settings > Your apps > Web app) */
+    const firebaseConfig = {
+      apiKey: 'PASTE_API_KEY',
+      authDomain: 'PASTE_PROJECT.firebaseapp.com',
+      projectId: 'PASTE_PROJECT_ID',
+      appId: 'PASTE_APP_ID'
+    };
+
+    const API = window.AARAMBH_BACKEND_URL || '';
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    const WAKE = 'Please wait… (the first request can take up to a minute)';
+    const fbReady = !/PASTE/.test(firebaseConfig.apiKey);
+    if (fbReady) firebase.initializeApp(firebaseConfig);
+
+    // Only allow redirects to pages on this site, e.g. account.html
+    const nextPage = /^[\w-]+\.html(\?[\w=&-]*)?$/i.test(params.get('next') || '') ? params.get('next') : 'index.html';
+
+    // Already logged in? Go straight on.
+    try { if (localStorage.getItem('arambhToken')) location.replace(nextPage); } catch (e) {}
+
+    function msg(text, ok) { const m = $('msg'); m.textContent = text || ''; m.className = ok ? 'ok' : ''; }
+    function show(view) {
+      document.querySelectorAll('[data-view]').forEach((s) => s.classList.toggle('hide', s.dataset.view !== view));
+      msg('');
+    }
+    document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => show(b.dataset.go)));
+    $('toPhone').onclick = () => show('phone');
+    $('toLogin').onclick = () => show('login');
+
+    async function post(path, body) {
+      const res = await fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(out.error || 'Something went wrong. Please try again.');
+      return out;
+    }
+
+    // Runs fn while the button is disabled and shows errors in the message line
+    async function run(btn, fn, wait) {
+      btn.disabled = true;
+      if (wait) msg(WAKE, true);
+      try { await fn(); } catch (e) { msg(e.message || 'Something went wrong. Please try again.'); }
+      btn.disabled = false;
+    }
+
+    function finish(out) {
+      try {
+        localStorage.setItem('arambhToken', out.token);
+        localStorage.setItem('arambhUser', JSON.stringify(out.user || {}));
+      } catch (e) { msg('Your browser is blocking storage. Allow it and try again.'); return; }
+      location.replace(nextPage);
+    }
+
+    /* ---- Email + password, then email code ---- */
+    let pendingEmail = '';
+    let resendTimer;
+    function startCooldown() {
+      let s = 60; const b = $('eResend'); b.disabled = true; clearInterval(resendTimer);
+      resendTimer = setInterval(() => { s--; b.textContent = s > 0 ? 'Resend in ' + s + 's' : 'Resend code'; if (s <= 0) { b.disabled = false; clearInterval(resendTimer); } }, 1000);
+      b.textContent = 'Resend in 60s';
+    }
+    $('lGo').onclick = () => run($('lGo'), async () => {
+      const email = $('lEmail').value.trim().toLowerCase(), password = $('lPass').value;
+      if (!/^\S+@\S+\.\S+$/.test(email) || !password) throw new Error('Enter your email and password.');
+      const out = await post('/api/auth/login', { email, password });
+      if (out.token) return finish(out);
+      pendingEmail = email;
+      $('eSub').textContent = 'We sent a code to ' + email + '. It expires in 10 minutes.';
+      $('eCode').value = ''; show('emailotp'); startCooldown();
+    }, true);
+    $('eVerify').onclick = () => run($('eVerify'), async () => {
+      const otp = $('eCode').value.replace(/\D/g, '');
+      if (otp.length !== 6) throw new Error('Enter the 6-digit code.');
+      finish(await post('/api/auth/verify-otp', { email: pendingEmail, otp }));
     });
-    menuBackdrop.addEventListener('click', closeMenu);
-    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-
-    const cursor = document.getElementById('cursor');
-    const cursorRing = document.getElementById('cursorRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-      cursor.style.left = mx + 'px';
-      cursor.style.top = my + 'px';
+    $('eResend').onclick = () => run($('eResend'), async () => {
+      await post('/api/auth/resend-otp', { email: pendingEmail });
+      msg('A new code is on its way.', true); startCooldown();
+    });
+    $('rGo').onclick = () => run($('rGo'), async () => {
+      const name = $('rName').value.trim(), email = $('rEmail').value.trim().toLowerCase();
+      const phone = $('rPhone').value.replace(/\D/g, ''), password = $('rPass').value;
+      if (!name) throw new Error('Enter your name.');
+      if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Enter a valid email.');
+      if (phone && !/^[6-9]\d{9}$/.test(phone)) throw new Error('Enter a valid 10-digit mobile number or leave it empty.');
+      if (password.length < 8) throw new Error('Password must be 8+ characters.');
+      finish(await post('/api/auth/register', { name, email, phone, password }));
+    }, true);
+    $('fGo').onclick = () => run($('fGo'), async () => {
+      const email = $('fEmail').value.trim().toLowerCase();
+      if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Enter a valid email.');
+      await post('/api/auth/forgot', { email });
+      msg('If that email has an account, a reset link is on its way.', true);
+    }, true);
+    $('nGo').onclick = () => run($('nGo'), async () => {
+      finish(await post('/api/auth/reset', { token: params.get('reset'), password: $('nPass').value }));
     });
 
-    function animateRing() {
-      rx += (mx - rx) * 0.12;
-      ry += (my - ry) * 0.12;
-      cursorRing.style.left = rx + 'px';
-      cursorRing.style.top = ry + 'px';
-      requestAnimationFrame(animateRing);
-    }
-    animateRing();
+    /* ---- Google and mobile (Firebase) ---- */
+    const needFirebase = () => { if (!fbReady) throw new Error('Google and mobile login are not set up yet.'); };
+    const sendToServer = async (user, name) => finish(await post('/api/auth/firebase', { idToken: await user.getIdToken(), name }));
 
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        cursor.style.width = '20px';
-        cursor.style.height = '20px';
-        cursorRing.style.width = '60px';
-        cursorRing.style.height = '60px';
-      });
-      el.addEventListener('mouseleave', () => {
-        cursor.style.width = '12px';
-        cursor.style.height = '12px';
-        cursorRing.style.width = '40px';
-        cursorRing.style.height = '40px';
-      });
-    });
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('active');
-      });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 60);
-    });
-
-    /* LADIES CROP TOPS: set the SAME launch time as in croptop.html (null = already live).
-       Before launch the card and ticker say "Coming Soon" and the random pick skips crop tops. */
-    const CROP_LAUNCH_TIME = "2026-10-12T10:00:00+05:30"; // must match LAUNCH_TIME in croptop.html
-    const cropLive = !CROP_LAUNCH_TIME || Date.now() >= new Date(CROP_LAUNCH_TIME).getTime();
-    if (!cropLive) {
-      document.getElementById('cropTag').textContent = 'Coming Soon';
-      document.querySelectorAll('.crop-ticker').forEach(el => { el.textContent = '💗 Ladies Crop Tops — Coming Soon'; });
-    }
-
-    /* RANDOM PRODUCT RECOMMENDATION */
-    /* Safe price lookup: falls back to typed prices if prices.js fails to load */
-    const fp = (key, fallback) => (typeof formatPrice === 'function' && window.PRICES && window.PRICES[key] != null) ? formatPrice(key) : fallback;
-    const recommendedProducts = [
-      { name:'Royal Blue Oversized', type:'Plain Oversized', price: fp('oversized_royal_blue','₹399'), image:'Royal_blue.jpg', link:'oversized.html' },
-      { name:'Unseen', type:'Printed Oversized', price: fp('unseen','₹549'), image:'un_white_f.png', link:'printed.html#unseenDrop' },
-      { name:'Veiled Bloom', type:'Printed Oversized', price: fp('veiled','₹549'), image:'veiled_blue_b.png', link:'printed.html#veiledBloom' },
-      { name:'Classic Polo', type:'Polo Collection', price: fp('polo','₹389'), image:'polo1.jpg', link:'polo.html' },
-      { name:'Premium Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie1.jpg', link:'hoodie.html' },
-      { name:'Red Boxy Shirt', type:'Shirt Collection', price: fp('shirt_red_boxy','₹649'), image:'red_boxy.jpeg', link:'shirt.html' }
-    ];
-    if (cropLive) {
-      recommendedProducts.push({ name:'Self Love Crop Top', type:'Ladies Crop Top', price: fp('crop_self_love','₹349'), image:'Self Love Black Crop Top-front.jpeg', link:'croptop.html' });
-    }
-    const suggestedImage = document.getElementById('suggestedImage');
-    const suggestedName = document.getElementById('suggestedName');
-    const suggestedType = document.getElementById('suggestedType');
-    const suggestedPrice = document.getElementById('suggestedPrice');
-    const suggestedLink = document.getElementById('suggestedLink');
-    const showAnother = document.getElementById('showAnother');
-    let lastSuggestedIndex = -1;
-
-    function showRandomProduct() {
-      if (!recommendedProducts.length) return;
-      let index;
-      do { index = Math.floor(Math.random() * recommendedProducts.length); }
-      while (recommendedProducts.length > 1 && index === lastSuggestedIndex);
-      lastSuggestedIndex = index;
-      const product = recommendedProducts[index];
-      suggestedImage.style.opacity = '0';
-      setTimeout(() => {
-        suggestedImage.src = product.image;
-        suggestedImage.alt = product.name;
-        suggestedName.textContent = product.name;
-        suggestedType.textContent = product.type;
-        suggestedPrice.textContent = product.price;
-        suggestedLink.href = product.link;
-        suggestedImage.style.opacity = '1';
-      }, 180);
-    }
-    showAnother.addEventListener('click', showRandomProduct);
-    showRandomProduct();
-
-    /* CUSTOMER REVIEWS
-       Add a new object below whenever you receive approved feedback.
-       Keep private fields such as email and order number out of this list. */
-    const customerReviews = [
-      {
-        name: 'Siri',
-        rating: 4,
-        product: 'Printed T-Shirt',
-        quote: 'Out of two pieces that I have ordered, one was perfect. The second one was pretty good except for the size of the print. Rest all is good, just felt that it is a bit pricey tho.',
-        tags: ['Quality 4/5', 'True to size', 'On-time delivery'],
-        verified: true
-      },
-      {
-        name: 'Souresh',
-        rating: 5,
-        product: 'Oversized T-Shirt',
-        quote: 'Loved the dress! The quality is great, the fabric feels comfortable, and the design looks exactly as expected. Very happy with the purchase....',
-        tags: ['Premium fabric','Would buy again'],
-        verified: true
-      },
-      {
-        name: 'Rohan',
-        rating: 4,
-        product: 'Polo Collection',
-        quote: 'Good quality product. Worth buying it. Very comfortable.',
-        tags: ['Quality 4/5', 'Comfortable fit', 'Good experience'],
-        verified: true
-      },
-      {
-        name: 'Suresh',
-        rating: 4,
-        product: 'Oversized',
-        quote: 'Got what I wanted , a good quality t shirt. Thank you.',
-        tags: ['Quality 4/5', 'Comfortable fit', 'Good experience'],
-        verified: true
-      },
-      {
-        name: 'Siddhi Naik',
-        rating: 5,
-        product: 'Printed T-Shirt',
-        quote: 'Tshirt design and quality is good.Happy after buying it.',
-        tags: ['Quality 5/5', 'True to size', 'Early'],
-        verified: true
-      },
-      {
-        name: 'Jashwant Mandala',
-        rating: 5,
-        product: 'Printed T-Shirt',
-        quote: 'The product is really good. The fabric feels premium and comfortable, the oversized fit looks great, and the printing design and overall finish are excellent. Definitely worth the price.',
-        tags: ['Quality 5/5', 'True to size', 'Bit Late'],
-        verified: true
-      },
-    ];
-
-    const reviewsViewport = document.getElementById('reviewsViewport');
-    const reviewsTrack = document.getElementById('reviewsTrack');
-    const reviewDots = document.getElementById('reviewDots');
-    const reviewPrev = document.getElementById('reviewPrev');
-    const reviewNext = document.getElementById('reviewNext');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let activeReview = 0;
-    let reviewTimer;
-
-    const escapeReviewText = (value = '') => String(value).replace(/[&<>'"]/g, char => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-    })[char]);
-
-    function renderReviews() {
-      reviewsTrack.innerHTML = customerReviews.map((review, index) => {
-        const safeName = escapeReviewText(review.name);
-        const initials = safeName.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'A';
-        const rating = Math.max(1, Math.min(5, Number(review.rating) || 5));
-        const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-        const tags = (review.tags || []).map(tag => `<span class="review-tag">${escapeReviewText(tag)}</span>`).join('');
-        return `
-          <article class="review-card" aria-label="Review ${index + 1} of ${customerReviews.length}">
-            <div class="review-card-head">
-              <div class="review-stars" aria-label="${rating} out of 5 stars">${stars}</div>
-              ${review.verified ? '<span class="verified-badge">✓ Verified Buyer</span>' : ''}
-            </div>
-            <blockquote class="review-quote">“${escapeReviewText(review.quote)}”</blockquote>
-            <div class="review-tags">${tags}</div>
-            <div class="review-author">
-              <div class="review-avatar" aria-hidden="true">${initials}</div>
-              <div>
-                <div class="review-name">${safeName}</div>
-                <div class="review-product">${escapeReviewText(review.product)}</div>
-              </div>
-            </div>
-          </article>`;
-      }).join('');
-
-      reviewDots.innerHTML = customerReviews.map((_, index) =>
-        `<button class="review-dot${index === 0 ? ' active' : ''}" type="button" aria-label="Go to review ${index + 1}" data-index="${index}"></button>`
-      ).join('');
-    }
-
-    function cardStep() {
-      const card = reviewsTrack.querySelector('.review-card');
-      if (!card) return 0;
-      return card.getBoundingClientRect().width + 18;
-    }
-
-    function goToReview(index, userInitiated = false) {
-      if (!customerReviews.length) return;
-      activeReview = (index + customerReviews.length) % customerReviews.length;
-      reviewsViewport.scrollTo({ left: activeReview * cardStep(), behavior: reduceMotion ? 'auto' : 'smooth' });
-      reviewDots.querySelectorAll('.review-dot').forEach((dot, i) => dot.classList.toggle('active', i === activeReview));
-      if (userInitiated) restartReviewAutoplay();
-    }
-
-    function nearestReview() {
-      const step = cardStep();
-      if (!step) return;
-      const index = Math.max(0, Math.min(customerReviews.length - 1, Math.round(reviewsViewport.scrollLeft / step)));
-      if (index !== activeReview) {
-        activeReview = index;
-        reviewDots.querySelectorAll('.review-dot').forEach((dot, i) => dot.classList.toggle('active', i === activeReview));
+    $('googleBtn').onclick = () => run($('googleBtn'), async () => {
+      needFirebase();
+      try {
+        const r = await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        msg(WAKE, true);
+        await sendToServer(r.user, r.user.displayName || '');
+      } catch (e) {
+        if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return;
+        if (e.code === 'auth/popup-blocked') throw new Error('Your browser blocked the Google window. Allow pop-ups and try again.');
+        throw e;
       }
+    });
+
+    let verifier, confirmation, phoneName = '';
+    function freshVerifier() {
+      try { if (verifier) verifier.clear(); } catch (e) {}
+      $('recaptcha').innerHTML = '';
+      verifier = new firebase.auth.RecaptchaVerifier('recaptcha', { size: 'invisible' });
     }
-
-    function startReviewAutoplay() {
-      if (reduceMotion || customerReviews.length < 2) return;
-      clearInterval(reviewTimer);
-      reviewTimer = setInterval(() => goToReview(activeReview + 1), 4500);
-    }
-    function restartReviewAutoplay() { clearInterval(reviewTimer); startReviewAutoplay(); }
-
-    renderReviews();
-    reviewPrev.addEventListener('click', () => goToReview(activeReview - 1, true));
-    reviewNext.addEventListener('click', () => goToReview(activeReview + 1, true));
-    reviewDots.addEventListener('click', event => {
-      const dot = event.target.closest('.review-dot');
-      if (dot) goToReview(Number(dot.dataset.index), true);
+    $('pSend').onclick = () => run($('pSend'), async () => {
+      needFirebase();
+      const num = $('pNum').value.replace(/\D/g, '');
+      if (!/^[6-9]\d{9}$/.test(num)) throw new Error('Enter a valid 10-digit mobile number.');
+      phoneName = $('pName').value.trim();
+      freshVerifier();
+      try {
+        confirmation = await firebase.auth().signInWithPhoneNumber('+91' + num, verifier);
+      } catch (e) {
+        freshVerifier();
+        if (e.code === 'auth/too-many-requests') throw new Error('Too many attempts. Try again later.');
+        if (e.code === 'auth/invalid-phone-number') throw new Error('That mobile number is not valid.');
+        throw new Error('Could not send the code. Please try again.');
+      }
+      $('pSub').textContent = 'We sent a code to +91 ' + num + '.';
+      $('pCode').value = ''; show('phoneotp');
     });
-    reviewsViewport.addEventListener('scroll', () => requestAnimationFrame(nearestReview), { passive: true });
-    reviewsViewport.addEventListener('mouseenter', () => clearInterval(reviewTimer));
-    reviewsViewport.addEventListener('mouseleave', startReviewAutoplay);
-    reviewsViewport.addEventListener('focusin', () => clearInterval(reviewTimer));
-    reviewsViewport.addEventListener('focusout', startReviewAutoplay);
-    reviewsViewport.addEventListener('keydown', event => {
-      if (event.key === 'ArrowRight') { event.preventDefault(); goToReview(activeReview + 1, true); }
-      if (event.key === 'ArrowLeft') { event.preventDefault(); goToReview(activeReview - 1, true); }
+    $('pVerify').onclick = () => run($('pVerify'), async () => {
+      const code = $('pCode').value.replace(/\D/g, '');
+      if (code.length !== 6) throw new Error('Enter the 6-digit code.');
+      let cred;
+      try { cred = await confirmation.confirm(code); }
+      catch (e) { throw new Error(e.code === 'auth/code-expired' ? 'That code has expired. Request a new one.' : 'Incorrect code. Please try again.'); }
+      msg(WAKE, true);
+      await sendToServer(cred.user, phoneName);
     });
 
-    let reviewDragging = false, reviewStartX = 0, reviewStartScroll = 0;
-    reviewsViewport.addEventListener('pointerdown', event => {
-      if (event.pointerType === 'touch') return;
-      reviewDragging = true;
-      reviewStartX = event.clientX;
-      reviewStartScroll = reviewsViewport.scrollLeft;
-      reviewsViewport.classList.add('dragging');
-      reviewsViewport.setPointerCapture(event.pointerId);
-      clearInterval(reviewTimer);
-    });
-    reviewsViewport.addEventListener('pointermove', event => {
-      if (reviewDragging) reviewsViewport.scrollLeft = reviewStartScroll - (event.clientX - reviewStartX);
-    });
-    function endReviewDrag() {
-      if (!reviewDragging) return;
-      reviewDragging = false;
-      reviewsViewport.classList.remove('dragging');
-      goToReview(Math.round(reviewsViewport.scrollLeft / cardStep()), true);
-    }
-    reviewsViewport.addEventListener('pointerup', endReviewDrag);
-    reviewsViewport.addEventListener('pointercancel', endReviewDrag);
-    window.addEventListener('resize', () => goToReview(activeReview));
-    document.addEventListener('visibilitychange', () => document.hidden ? clearInterval(reviewTimer) : startReviewAutoplay());
-    startReviewAutoplay();
-
-    /* LOGIN BUTTON: shows "My Account" once a customer is logged in */
-    (function () {
-      let loggedIn = false;
-      try { loggedIn = !!localStorage.getItem('arambhToken'); } catch (e) {}
-      if (!loggedIn) return;
-      document.querySelectorAll('.js-auth-link').forEach(function (a) {
-        a.textContent = 'My Account';
-        a.setAttribute('href', 'account.html');
-      });
-    })();
-
+    // Reset link from email: login.html?reset=TOKEN
+    if (params.get('reset')) show('reset');
   </script>
 </body>
 </html>

@@ -8,13 +8,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
+  <script src="site-config.js"></script>
+
   <style>
     :root {
       --bg: #080810;
       --surface: #0f0f1a;
-      --accent: #FAAE62;
-      --accent2: #3E0856;
-      --text: #f0f0f0;
+      --accent: #F4772E;
+      --accent2: #A90E02;
+      --amber: #FFB238;
+      --cream: #F5F1E8;
+      --text: #F5F1E8;
       --muted: #888;
       --border: rgba(255,255,255,0.06);
     }
@@ -23,7 +27,7 @@
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; cursor: none; }
 
     .cursor { position: fixed; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
-    .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(250,174,98,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
+    .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(244,119,46,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
 
     @media (hover: none), (pointer: coarse) {
       body { cursor: auto; }
@@ -41,8 +45,8 @@
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
     .nav-links a.active { color: var(--accent); }
-    .nav-cta { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: white; background: var(--accent); padding: 10px 24px; border-radius: 100px; text-decoration: none; transition: background 0.3s, transform 0.2s; box-shadow: 0 4px 20px rgba(250,174,98,0.3); }
-    .nav-cta:hover { background: #e0913f; transform: scale(1.04); }
+    .nav-cta { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: white; background: var(--accent); padding: 10px 24px; border-radius: 100px; text-decoration: none; transition: background 0.3s, transform 0.2s; box-shadow: 0 4px 20px rgba(244,119,46,0.3); }
+    .nav-cta:hover { background: #d9621f; transform: scale(1.04); }
 
     .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
     .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
@@ -67,8 +71,8 @@
     .menu-backdrop.open { opacity: 1; pointer-events: auto; }
 
     .page-header {position:relative;overflow:hidden; min-height: 42vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 130px 40px 60px; text-align: center; position: relative; overflow: hidden; }
-    .page-header::before { content: ''; position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(250,174,98,0.12) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 6s ease-in-out infinite; }
-    .page-header::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(250,174,98,0.08) 1px, transparent 1px); background-size: 40px 40px; animation: dots-drift 20s linear infinite; pointer-events: none; }
+    .page-header::before { content: ''; position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(244,119,46,0.12) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 6s ease-in-out infinite; }
+    .page-header::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(244,119,46,0.08) 1px, transparent 1px); background-size: 40px 40px; animation: dots-drift 20s linear infinite; pointer-events: none; }
     @keyframes dots-drift { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
     @keyframes pulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.12); } }
     .breadcrumb { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; z-index: 1; position: relative; }
@@ -79,9 +83,9 @@
     .page-header p { color: var(--muted); font-size: 17px; font-weight: 300; margin-top: 16px; letter-spacing: 1px; animation: fade-up 0.8s 0.1s ease both; position: relative; z-index: 1; }
     .header-meta { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.2s ease both; position: relative; z-index: 1; }
     .meta-chip { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px; color: var(--muted); }
-    .meta-chip.hot { border-color: rgba(250,174,98,0.3); color: var(--accent); background: rgba(250,174,98,0.07); }
+    .meta-chip.hot { border-color: rgba(244,119,46,0.3); color: var(--accent); background: rgba(244,119,46,0.07); }
 
-    .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
+    .ticker-wrap { background: linear-gradient(90deg, #A90E02, #E94E2C 55%, #F4772E); padding: 12px 0; overflow: hidden; white-space: nowrap; }
     .ticker { display: inline-flex; animation: ticker 24s linear infinite; }
     .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: white; }
     .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
@@ -95,12 +99,12 @@
     .size-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
     .size-note { padding: 14px 36px 20px; font-size: 13px; color: var(--muted); line-height: 1.6; }
     .size-section img { width: 100%; display: block; }
-    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(250,174,98,0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(244,119,46,0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
 
     .order-section { text-align: center; padding: 0 20px 120px; }
     .order-section p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
-    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--accent); color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: background 0.3s, transform 0.2s; box-shadow: 0 10px 40px rgba(250,174,98,0.35); }
-    .order-btn:hover { background: #e0913f; transform: scale(1.04); }
+    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--accent); color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: background 0.3s, transform 0.2s; box-shadow: 0 10px 40px rgba(244,119,46,0.35); }
+    .order-btn:hover { background: #d9621f; transform: scale(1.04); }
     .whatsapp-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: transparent; color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; border: 1px solid rgba(255,255,255,0.15); transition: border-color 0.3s, background 0.3s, transform 0.2s; margin-left: 16px; }
     .whatsapp-btn:hover { border-color: #25d366; background: rgba(37,211,102,0.08); transform: scale(1.04); }
 
@@ -119,20 +123,20 @@
 
     .care-section { max-width: 720px; margin: 0 auto 60px; }
     .care-card {
-      background: rgba(62,8,86,0.06); border: 1px solid rgba(62,8,86,0.25);
+      background: rgba(169,14,2,0.08); border: 1px solid rgba(169,14,2,0.35);
       border-radius: 18px; padding: 26px 30px; display: flex; gap: 18px; align-items: flex-start;
     }
     .care-icon {
       flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
-      background: rgba(62,8,86,0.15); display: flex; align-items: center; justify-content: center;
+      background: rgba(169,14,2,0.2); display: flex; align-items: center; justify-content: center;
       font-size: 20px;
     }
-    .care-text h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; }
+    .care-text h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
     .care-text p { font-size: 14px; color: var(--text); line-height: 1.7; opacity: 0.9; }
-    .care-text p strong { color: var(--accent2); }
+    .care-text p strong { color: var(--amber); }
 
 
-    .justdropped-badge { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--bg); background: linear-gradient(135deg, var(--accent2), var(--accent)); padding: 10px 20px; border-radius: 100px; display: inline-flex; align-items: center; gap: 8px; }
+    .justdropped-badge { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #1a0b04; background: linear-gradient(135deg, #E94E2C, var(--amber)); padding: 10px 20px; border-radius: 100px; display: inline-flex; align-items: center; gap: 8px; }
     .justdropped-badge::before { content: '\26A1'; }
     .anchor-point { display: block; height: 0; scroll-margin-top: 100px; }
 
@@ -150,7 +154,7 @@
     .spot-slide { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: .85fr 1.15fr; min-height: 540px; position: relative; isolation: isolate; }
     .spot-slide::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse 60% 70% at 70% 50%, rgba(var(--tint), .34), transparent 70%); }
     .spot-info { padding: 52px 20px 52px 56px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 14px; }
-    .spot-tag { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(250,174,98,.35); background: rgba(250,174,98,.08); padding: 6px 14px; border-radius: 100px; }
+    .spot-tag { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(244,119,46,.35); background: rgba(244,119,46,.08); padding: 6px 14px; border-radius: 100px; }
     .spot-info h3 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: clamp(48px, 5.4vw, 84px); line-height: .95; letter-spacing: 1px; }
     .spot-info p { color: var(--muted); font-size: 16px; line-height: 1.65; max-width: 380px; }
     .spot-colors { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -195,8 +199,8 @@
     .cf { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.03); border: 1px solid var(--border); color: var(--text); border-radius: 100px; padding: 7px 14px 7px 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; transition: border-color .25s, background .25s; }
     .cf[data-color="any"] { padding-left: 14px; }
     .cf i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); display: inline-block; }
-    .cf:hover { border-color: rgba(250,174,98,.5); }
-    .cf.active { border-color: var(--accent); background: rgba(250,174,98,.12); }
+    .cf:hover { border-color: rgba(244,119,46,.5); }
+    .cf.active { border-color: var(--accent); background: rgba(244,119,46,.12); }
     .sort { display: inline-flex; align-items: center; gap: 8px; }
     .sort select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 100px; padding: 9px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
     .fit-note { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; padding: 14px 18px; border: 1px solid var(--border); border-radius: 14px; background: rgba(255,255,255,.025); font-size: 13px; color: var(--muted); line-height: 1.5; }
@@ -206,7 +210,7 @@
     /* ===== PRODUCT GRID + CARDS ===== */
     .tee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 22px; }
     .tee-card { background: linear-gradient(160deg, var(--surface), #14141f); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .3s, box-shadow .4s; }
-    .tee-card:hover { border-color: rgba(250,174,98,.32); box-shadow: 0 30px 60px rgba(0,0,0,.55); }
+    .tee-card:hover { border-color: rgba(244,119,46,.32); box-shadow: 0 30px 60px rgba(0,0,0,.55); }
     .tee-card[hidden] { display: none; }
     .tee-card.enter { animation: cardSlideIn .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 45ms); }
     @keyframes cardSlideIn { from { opacity: 0; transform: translateX(46px); } to { opacity: 1; transform: none; } }
@@ -215,7 +219,7 @@
     .slide-track { display: flex; height: 100%; width: 100%; transition: transform .6s cubic-bezier(.65,0,.25,1); cursor: pointer; }
     .card-media.show-back .slide-track { transform: translateX(-100%); }
     .slide-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; padding: 12px 12px 44px; display: block; }
-    .card-badge { position: absolute; top: 14px; left: 14px; z-index: 3; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; background: rgba(8,8,16,.72); color: var(--accent); border: 1px solid rgba(250,174,98,.35); backdrop-filter: blur(6px); padding: 5px 12px; border-radius: 100px; }
+    .card-badge { position: absolute; top: 14px; left: 14px; z-index: 3; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; background: rgba(8,8,16,.72); color: var(--accent); border: 1px solid rgba(244,119,46,.35); backdrop-filter: blur(6px); padding: 5px 12px; border-radius: 100px; }
     .view-toggle { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 3; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 100px; background: rgba(8,8,16,.78); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(8px); }
     .vt-glider { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 100px; background: var(--accent); transition: transform .4s cubic-bezier(.65,0,.25,1); }
     .view-toggle[data-view="back"] .vt-glider { transform: translateX(100%); }
@@ -234,16 +238,71 @@
     .selected-color { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--text); margin-left: auto; font-weight: 600; letter-spacing: 1px; }
     .buy-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 18px; }
     .price { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: #fff; letter-spacing: 1px; line-height: 1; }
-    .buy-now-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 22px; background: var(--accent); color: #1a1208; border: none; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; border-radius: 100px; cursor: pointer; transition: background .3s, transform .2s, box-shadow .3s; box-shadow: 0 8px 24px rgba(250,174,98,.25); }
-    .buy-now-btn:hover { background: #ffc07c; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(250,174,98,.35); }
+    .buy-now-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 22px; background: var(--accent); color: #1a1208; border: none; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; border-radius: 100px; cursor: pointer; transition: background .3s, transform .2s, box-shadow .3s; box-shadow: 0 8px 24px rgba(244,119,46,.25); }
+    .buy-now-btn:hover { background: #ff9a55; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(244,119,46,.35); }
+    .buy-now-btn[disabled] { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .stock-left { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); margin-top: 10px; display: none; }
+    .stock-left.show { display: block; }
+    .stock-left.out { color: #ff6b6b; }
     .tee-empty { text-align: center; padding: 70px 20px; color: var(--muted); }
     .tee-empty p { margin-bottom: 20px; font-size: 16px; }
+
+
+    /* ===== CONVERSION + LOOK UPGRADE ===== */
+    .page-header::before { background: radial-gradient(circle, rgba(233,78,44,0.22) 0%, rgba(169,14,2,0.08) 45%, transparent 70%); }
+    .hero-cta { position: relative; z-index: 1; margin-top: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 16px 44px; border-radius: 100px; background: linear-gradient(135deg, #E94E2C, var(--amber)); color: #1a0b04; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 12px 36px rgba(233,78,44,.38); transition: transform .25s, box-shadow .25s; animation: fade-up 0.8s 0.3s ease both; }
+    .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(233,78,44,.5); }
+
+    .trust-strip { max-width: 1280px; margin: 0 auto; padding: 26px 40px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .trust-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,.025); }
+    .trust-item .ti-icon { font-size: 22px; flex-shrink: 0; }
+    .trust-item b { display: block; font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: .4px; color: var(--cream); }
+    .trust-item span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+    .offer-banner { max-width: 1200px; margin: 46px auto 0; padding: 22px 28px; border-radius: 22px; display: flex; align-items: center; justify-content: space-between; gap: 18px 30px; flex-wrap: wrap; background: linear-gradient(120deg, rgba(169,14,2,.55), rgba(233,78,44,.35) 60%, rgba(255,178,56,.22)); border: 1px solid rgba(255,178,56,.35); }
+    .offer-main { font-family: 'Bebas Neue', sans-serif; font-size: clamp(26px, 3.4vw, 40px); letter-spacing: 1.5px; line-height: 1.05; color: var(--cream); }
+    .offer-main em { font-style: normal; color: var(--amber); }
+    .offer-sub { font-size: 14px; color: rgba(245,241,232,.82); margin-top: 6px; line-height: 1.5; }
+    .offer-codes { display: flex; gap: 10px; flex-wrap: wrap; }
+    .offer-code { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 2px; padding: 10px 18px; border-radius: 100px; border: 1.5px dashed rgba(255,178,56,.7); background: rgba(8,8,16,.45); color: var(--amber); cursor: pointer; transition: background .25s, transform .2s; }
+    .offer-code:hover { background: rgba(8,8,16,.7); transform: translateY(-2px); }
+    .offer-code small { display: block; font-size: 10px; font-weight: 600; letter-spacing: .6px; color: rgba(245,241,232,.7); margin-top: 2px; text-transform: none; }
+
+    .tee-card { transition: border-color .3s, box-shadow .4s, transform .3s; }
+    .tee-card:hover { transform: translateY(-5px); border-color: rgba(255,178,56,.45); box-shadow: 0 30px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(244,119,46,.18); }
+    .card-badge { color: var(--amber); border-color: rgba(255,178,56,.4); }
+    .card-badge.limited { background: #A90E02; color: #fff; border-color: rgba(255,255,255,.25); box-shadow: 0 6px 18px rgba(169,14,2,.5); }
+    .price { color: var(--amber); font-size: 34px; }
+    .buy-now-btn { background: linear-gradient(135deg, #E94E2C, #F4772E 55%, var(--amber)); color: #1a0b04; box-shadow: 0 10px 26px rgba(233,78,44,.32); }
+    .buy-now-btn:hover { background: linear-gradient(135deg, #f0593a, #ff8a3d 55%, #ffc05a); box-shadow: 0 14px 34px rgba(233,78,44,.5); }
+    .buy-now-btn[disabled] { background: #3a3a46; color: #9a9aa6; box-shadow: none; }
+    .spot-arrow:hover { background: var(--accent); border-color: var(--accent); }
+    .spot-price { color: var(--amber); }
+    .spot-dot.active::after { background: linear-gradient(90deg, #E94E2C, var(--amber)); }
+    .tab-glider { background: linear-gradient(135deg, #E94E2C, #F4772E); }
+    .tab.active { color: #fff; }
+    .cf.active { border-color: var(--amber); background: rgba(255,178,56,.12); }
+    .stock-left { font-size: 11px; color: #ff8a6b; }
+    .stock-left.show { display: inline-flex; align-items: center; gap: 8px; }
+    .stock-left.show::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #ff5a3c; box-shadow: 0 0 0 0 rgba(255,90,60,.7); animation: livePulse 1.8s infinite; }
+    .stock-left.out::before { animation: none; background: #777; box-shadow: none; }
+    @keyframes livePulse { 70% { box-shadow: 0 0 0 9px rgba(255,90,60,0); } 100% { box-shadow: 0 0 0 0 rgba(255,90,60,0); } }
+    .spot-stock { margin-top: -4px; }
+    .order-section p { font-size: 17px; color: var(--cream); opacity: .85; }
+    .order-btn { background: linear-gradient(135deg, #E94E2C, #F4772E 55%, var(--amber)); color: #1a0b04; box-shadow: 0 14px 44px rgba(233,78,44,.4); }
+    .order-btn:hover { background: linear-gradient(135deg, #f0593a, #ff8a3d 55%, #ffc05a); }
+    .nav-cta { background: linear-gradient(135deg, #E94E2C, #F4772E); color: #fff; box-shadow: 0 4px 20px rgba(233,78,44,.4); }
+    .nav-cta:hover { background: linear-gradient(135deg, #f0593a, #ff8a3d); }
+
+    @media (max-width: 900px) { .trust-strip { grid-template-columns: repeat(2, 1fr); padding: 22px 20px 0; } .offer-banner { margin: 34px 20px 0; } }
+    @media (max-width: 480px) { .trust-strip { grid-template-columns: 1fr; } .hero-cta { width: 100%; } .offer-codes { width: 100%; } .offer-code { flex: 1; text-align: center; } }
 
     @media (prefers-reduced-motion: reduce) {
       .spot-track, .slide-track, .tab-glider, .vt-glider, .spot-art figure { transition: none !important; }
       .spot-art figure { opacity: 1; transform: none; }
       .spot-dot.active::after { animation: none; transform: scaleX(1); }
       .tee-card.enter { animation: none; }
+      .stock-left.show::before { animation: none; }
     }
 
     @media (max-width: 900px) {
@@ -347,18 +406,25 @@
     <p>Express. Bold. Street.</p>
     <div class="header-meta">
       <span class="meta-chip hot">Limited Runs</span>
-      <span class="meta-chip">15 Designs</span>
+      <span class="meta-chip">16 Designs</span>
     </div>
+    <a class="hero-cta" href="#unseenDrop">Shop the latest drop</a>
   <div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;pointer-events:none;z-index:0;"><img src="dornat-demonslayer-tee.png" style="width:min(900px,85vw);opacity:.18;filter:drop-shadow(0 40px 80px rgba(0,0,0,.6));transform:translateY(20px);" loading="lazy"></div></header>
 
   <div class="ticker-wrap">
     <div class="ticker">
-      <span>Bold Graphics</span><span>Original Prints</span><span>AARAMBH</span>
-      <span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
-      <span>Bold Graphics</span><span>Original Prints</span><span>AARAMBH</span>
-      <span>Express Yourself</span><span>Limited Runs</span><span>Street Art</span>
-      <span>More Anime Designs</span><span>Coming soon</span><span>Street Art</span>
+      <span>Cash on Delivery</span><span>Original Prints</span><span>AARAMBH</span>
+      <span>Buy 3 Save 8%</span><span>Limited Runs</span><span>3-Day Size Exchange</span>
+      <span>Cash on Delivery</span><span>Original Prints</span><span>AARAMBH</span>
+      <span>Buy 3 Save 8%</span><span>Limited Runs</span><span>3-Day Size Exchange</span>
     </div>
+  </div>
+
+  <div class="trust-strip">
+    <div class="trust-item"><span class="ti-icon">💵</span><div><b>Cash on Delivery</b><span>Pay when it reaches you</span></div></div>
+    <div class="trust-item"><span class="ti-icon">🔒</span><div><b>Secure online payment</b><span>UPI, cards and netbanking</span></div></div>
+    <div class="trust-item"><span class="ti-icon">🔁</span><div><b>3-day size exchange</b><span>After your order is delivered</span></div></div>
+    <div class="trust-item"><span class="ti-icon">🎨</span><div><b>Original DTF prints</b><span>Designed in-house, built to last</span></div></div>
   </div>
 
   <!-- SPOTLIGHT: newest drops, sliding showcase -->
@@ -376,7 +442,25 @@
     </div>
     <div class="spot-viewport" id="spotViewport" tabindex="0" aria-label="Latest drops. Swipe or use the arrow keys.">
       <div class="spot-track" id="spotTrack">
-        <article class="spot-slide" data-card="explore" style="--tint:125,140,154" role="group" aria-roledescription="slide" aria-label="1 of 5">
+        <article class="spot-slide" data-card="striker7" style="--tint:233,78,44" role="group" aria-roledescription="slide" aria-label="1 of 6">
+          <div class="spot-info">
+            <span class="spot-tag">Limited Run</span>
+            <h3>Striker 7</h3>
+            <p>An original No. 7 striker graphic for football fans. Limited run, once it's gone it's gone.</p>
+            <div class="spot-colors"><span class="color-label">Colours</span><div class="swatches"><button class="spot-swatch active" type="button" title="Black" aria-label="Show Black" style="background:#111;" data-card="striker7" data-i="0"></button><button class="spot-swatch" type="button" title="White" aria-label="Show White" style="background:#fff;" data-card="striker7" data-i="1"></button><button class="spot-swatch" type="button" title="Red" aria-label="Show Red" style="background:#b51f2e;" data-card="striker7" data-i="2"></button></div><span class="spot-colorname">Black</span></div>
+            <div class="stock-left spot-stock" id="stockLeftSpot"></div>
+            <div class="spot-price">₹499</div>
+            <div class="spot-actions">
+              <button class="buy-now-btn spot-buy" id="buyStriker7Spot" type="button" data-card="striker7">Buy now</button>
+              <a class="spot-ghost" href="#designs">Browse all designs</a>
+            </div>
+          </div>
+          <div class="spot-art">
+            <figure><img src="striker7_black_f.png" alt="Striker 7 front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="striker7_black_b.png" alt="Striker 7 back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+          </div>
+        </article>
+        <article class="spot-slide" data-card="explore" style="--tint:125,140,154" role="group" aria-roledescription="slide" aria-label="2 of 6">
           <div class="spot-info">
             <span class="spot-tag">Acid Wash</span>
             <h3>Explore Space — Acid Wash</h3>
@@ -393,7 +477,7 @@
             <figure><img src="explore_space_back.jpg" alt="Explore Space — Acid Wash back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
           </div>
         </article>
-        <article class="spot-slide" data-card="unseen" style="--tint:26,63,160" role="group" aria-roledescription="slide" aria-label="2 of 5">
+        <article class="spot-slide" data-card="unseen" style="--tint:26,63,160" role="group" aria-roledescription="slide" aria-label="3 of 6">
           <div class="spot-info">
             <span class="spot-tag">Unseen Series</span>
             <h3>Unseen</h3>
@@ -410,7 +494,7 @@
             <figure><img src="un_white_b.png" alt="Unseen back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
           </div>
         </article>
-        <article class="spot-slide" data-card="veiled" style="--tint:39,72,168" role="group" aria-roledescription="slide" aria-label="3 of 5">
+        <article class="spot-slide" data-card="veiled" style="--tint:39,72,168" role="group" aria-roledescription="slide" aria-label="4 of 6">
           <div class="spot-info">
             <span class="spot-tag">Unseen Series</span>
             <h3>Veiled Bloom</h3>
@@ -427,7 +511,7 @@
             <figure><img src="veiled_blue_b.png" alt="Veiled Bloom back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
           </div>
         </article>
-        <article class="spot-slide" data-card="grace" style="--tint:181,31,46" role="group" aria-roledescription="slide" aria-label="4 of 5">
+        <article class="spot-slide" data-card="grace" style="--tint:181,31,46" role="group" aria-roledescription="slide" aria-label="5 of 6">
           <div class="spot-info">
             <span class="spot-tag">Grace Drop</span>
             <h3>Grace</h3>
@@ -444,7 +528,7 @@
             <figure><img src="Grace_red_b.png" alt="Grace back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
           </div>
         </article>
-        <article class="spot-slide" data-card="anime" style="--tint:181,31,46" role="group" aria-roledescription="slide" aria-label="5 of 5">
+        <article class="spot-slide" data-card="anime" style="--tint:181,31,46" role="group" aria-roledescription="slide" aria-label="6 of 6">
           <div class="spot-info">
             <span class="spot-tag">Anime</span>
             <h3>Anime</h3>
@@ -464,13 +548,25 @@
       </div>
     </div>
     <div class="spot-dots" id="spotDots" role="group" aria-label="Choose a drop">
-      <button type="button" class="spot-dot active" data-i="0" aria-label="Explore Space — Acid Wash"><span class="spot-dot-name">Explore Space</span></button>
-      <button type="button" class="spot-dot" data-i="1" aria-label="Unseen"><span class="spot-dot-name">Unseen</span></button>
-      <button type="button" class="spot-dot" data-i="2" aria-label="Veiled Bloom"><span class="spot-dot-name">Veiled Bloom</span></button>
-      <button type="button" class="spot-dot" data-i="3" aria-label="Grace"><span class="spot-dot-name">Grace</span></button>
-      <button type="button" class="spot-dot" data-i="4" aria-label="Anime"><span class="spot-dot-name">Anime</span></button>
+      <button type="button" class="spot-dot active" data-i="0" aria-label="Striker 7"><span class="spot-dot-name">Striker 7</span></button>
+      <button type="button" class="spot-dot" data-i="1" aria-label="Explore Space — Acid Wash"><span class="spot-dot-name">Explore Space</span></button>
+      <button type="button" class="spot-dot" data-i="2" aria-label="Unseen"><span class="spot-dot-name">Unseen</span></button>
+      <button type="button" class="spot-dot" data-i="3" aria-label="Veiled Bloom"><span class="spot-dot-name">Veiled Bloom</span></button>
+      <button type="button" class="spot-dot" data-i="4" aria-label="Grace"><span class="spot-dot-name">Grace</span></button>
+      <button type="button" class="spot-dot" data-i="5" aria-label="Anime"><span class="spot-dot-name">Anime</span></button>
     </div>
   </section>
+
+  <div class="offer-banner">
+    <div>
+      <div class="offer-main">Pick any 3 tees, <em>save 8%</em> automatically</div>
+      <div class="offer-sub">Want more? Use TRIO10 on 3 or more printed or oversized tees for 10% off. First order with us? FIRSTDROP10 takes 10% off.</div>
+    </div>
+    <div class="offer-codes">
+      <button type="button" class="offer-code" data-code="TRIO10">TRIO10<small>10% off 3+ tees</small></button>
+      <button type="button" class="offer-code" data-code="FIRSTDROP10">FIRSTDROP10<small>10% off your first order</small></button>
+    </div>
+  </div>
 
   <!-- FINDER: filter + sort -->
   <section class="finder" id="designs">
@@ -481,7 +577,7 @@
     <div class="finder-bar" id="finderBar">
       <div class="tabs" id="tabs">
         <span class="tab-glider" id="tabGlider" aria-hidden="true"></span>
-        <button class="tab active" type="button" data-theme="all" aria-pressed="true">All designs<small>15</small></button><button class="tab" type="button" data-theme="acid" aria-pressed="false">Acid Wash<small>4</small></button><button class="tab" type="button" data-theme="anime" aria-pressed="false">Anime<small>5</small></button><button class="tab" type="button" data-theme="art" aria-pressed="false">Art & statement<small>4</small></button><button class="tab" type="button" data-theme="cars" aria-pressed="false">Cars & cartoons<small>2</small></button>
+        <button class="tab active" type="button" data-theme="all" aria-pressed="true">All designs<small>16</small></button><button class="tab" type="button" data-theme="acid" aria-pressed="false">Acid Wash<small>4</small></button><button class="tab" type="button" data-theme="anime" aria-pressed="false">Anime<small>5</small></button><button class="tab" type="button" data-theme="art" aria-pressed="false">Art & statement<small>5</small></button><button class="tab" type="button" data-theme="cars" aria-pressed="false">Cars & cartoons<small>2</small></button>
       </div>
       <div class="finder-row">
         <div class="color-filter" role="group" aria-label="Filter by colour">
@@ -500,7 +596,7 @@
     <div class="fit-note">
       <span><strong>Oversized fit</strong> 240 GSM, drop shoulder, 100% pure cotton French terry</span>
     </div>
-    <p class="finder-count" id="finderCount" aria-live="polite">Showing 15 designs</p>
+    <p class="finder-count" id="finderCount" aria-live="polite">Showing 16 designs</p>
 
     <div class="tee-grid" id="teeGrid">
       <article class="tee-card" data-id="explore" data-theme="acid" data-price="679" data-colors="Acid Wash" data-order="1" data-design="Explore Space — Acid Wash">
@@ -848,6 +944,30 @@
           </div>
         </div>
       </article>
+      <article class="tee-card" data-id="striker7" data-theme="art" data-price="499" data-colors="Black,Red,White" data-order="16" data-design="Striker 7">
+        <div class="card-media double-view">
+          <div class="slide-track">
+            <img src="striker7_black_f.png" alt="Striker 7 Black front" loading="lazy">
+            <img src="striker7_black_b.png" alt="Striker 7 Black back" loading="lazy">
+          </div>
+          <span class="card-badge limited">Limited Stock</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
+            <span class="vt-glider" aria-hidden="true"></span>
+            <button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>Striker 7</h3>
+          <p class="card-blurb">Original No. 7 striker graphic for football fans. Limited run, once it's gone it's gone. Front &amp; back designs included.</p>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="striker7_black_f.png" data-back="striker7_black_b.png" data-default onclick="selectColor(this)"></button><button class="swatch" type="button" title="White" aria-label="View White" style="background:#fff;" data-front="striker7_white_f.png" data-back="striker7_white_b.png" onclick="selectColor(this)"></button><button class="swatch" type="button" title="Red" aria-label="View Red" style="background:#b51f2e;" data-front="striker7_red_f.png" data-back="striker7_red_b.png" onclick="selectColor(this)"></button></div><span class="selected-color">Black</span></div>
+          <div class="stock-left" id="stockLeftStriker7"></div>
+          <div class="buy-row">
+            <div class="price">₹499</div>
+            <button class="buy-now-btn" id="buyStriker7" type="button" onclick="buyNow(this,'Striker 7','Printed T-Shirt','499')">Buy now</button>
+          </div>
+        </div>
+      </article>
     </div>
 
     <div class="tee-empty" id="teeEmpty" hidden>
@@ -1080,7 +1200,7 @@
     window.addEventListener('pointercancel', endDrag);
 
     // links from the home page: printed.html#unseenDrop / #veiledBloom
-    goSpot(location.hash === '#veiledBloom' ? 2 : 0);
+    goSpot(location.hash === '#veiledBloom' ? 3 : 0);
 
     // ===== FINDER: filter, sort, sliding tab =====
     const grid = document.getElementById('teeGrid');
@@ -1161,7 +1281,36 @@
     const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
-  
+
+    // ===== LIMITED STOCK: live count for Striker 7 (card + spotlight) =====
+    (async function loadStock() {
+      const backend = window.AARAMBH_BACKEND_URL;
+      if (!backend) return;
+      const labels = ['stockLeftStriker7', 'stockLeftSpot'].map(id => document.getElementById(id)).filter(Boolean);
+      const buttons = ['buyStriker7', 'buyStriker7Spot'].map(id => document.getElementById(id)).filter(Boolean);
+      try {
+        const r = await fetch(backend + '/api/stock');
+        const d = await r.json();
+        const left = d && d.left ? d.left['printed-striker-7'] : undefined;
+        if (typeof left !== 'number') return;
+        labels.forEach(label => {
+          label.classList.add('show');
+          if (left <= 0) { label.classList.add('out'); label.textContent = 'Sold out'; }
+          else label.textContent = left <= 20 ? 'Only ' + left + ' left' : 'Limited stock, once it is gone it is gone';
+        });
+        if (left <= 0) buttons.forEach(b => { b.disabled = true; b.textContent = 'Sold out'; });
+      } catch (e) { /* stay silent if the server is asleep */ }
+    })();
+
+    // ===== Tap a coupon code to copy it =====
+    document.querySelectorAll('.offer-code').forEach(btn => btn.addEventListener('click', async () => {
+      const code = btn.dataset.code;
+      const small = btn.querySelector('small');
+      const old = small.textContent;
+      try { await navigator.clipboard.writeText(code); small.textContent = 'Copied. Paste it at checkout'; }
+      catch (e) { small.textContent = 'Type ' + code + ' at checkout'; }
+      setTimeout(() => { small.textContent = old; }, 2200);
+    }));
 
 </script>
 </body>

@@ -10,6 +10,7 @@
 
   <script src="site-config.js"></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
 
   <style>
     :root{--bg:#080810;--surface:#0f0f1a;--surface2:#15151f;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,0.08);--accent-rgb:169,14,2;--accent2-rgb:255,250,205;--good:#25D366;}
@@ -285,6 +286,19 @@
     const SHOP_INSTAGRAM = 'aarambh.official';
     const SHOP_PHONE = '9405074832';
     const LOGO_URL = 'https://maheshgoudar845-sys.github.io/AARAMBH/logo.webp';
+
+    // EmailJS (bill emails). The template body must be exactly: {{{bill_html}}}
+    const EMAILJS_PUBLIC_KEY = 'ZXVO8aPvZTkk1NLI6';
+    const EMAILJS_SERVICE_ID = 'service_gnkbabo';
+    const EMAILJS_TEMPLATE_ID = 'template_j3gxuwf';
+    const OWNER_EMAIL = 'arambhofficial2025@gmail.com';
+    // true  = always send the EmailJS bill (customer + owner) for COD orders.
+    // false = send it only when the backend did not already email the bill (backup mode).
+    const EMAILJS_ALWAYS = true;
+
+    try {
+      if (window.emailjs) emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    } catch (e) { console.error('AARAMBH EmailJS init failed:', e); }
 
     function esc(v) {
       return String(v == null ? '' : v)
@@ -651,7 +665,133 @@
       return hd;
     }
 
-    // ---------- Talk to the backend (Resend emails are sent by the server) ----------
+    // ---------- EmailJS bill emails ----------
+    // Builds the full AARAMBH bill as email-safe HTML (tables + inline styles only).
+    function buildBillHtml(o) {
+      const d = o.d;
+      const rows = o.items.map((i) => (
+        '<tr>' +
+          '<td style="padding:12px 8px;border-bottom:1px solid #eeeeee;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222222;">' +
+            '<b>' + esc(i.product) + '</b><br>' +
+            '<span style="font-size:12px;color:#777777;">' + esc(i.color) + ' &middot; Size ' + esc(i.size) + '</span>' +
+          '</td>' +
+          '<td align="center" style="padding:12px 8px;border-bottom:1px solid #eeeeee;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222222;">' + esc(i.qty) + '</td>' +
+          '<td align="right" style="padding:12px 8px;border-bottom:1px solid #eeeeee;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#222222;">&#8377;' + esc(i.price * i.qty) + '</td>' +
+        '</tr>'
+      )).join('');
+
+      const line = (label, value, strong, color) => (
+        '<tr>' +
+          '<td style="padding:6px 8px;font-family:Arial,Helvetica,sans-serif;font-size:' + (strong ? '16' : '14') + 'px;color:#444444;' + (strong ? 'font-weight:bold;' : '') + '">' + label + '</td>' +
+          '<td align="right" style="padding:6px 8px;font-family:Arial,Helvetica,sans-serif;font-size:' + (strong ? '18' : '14') + 'px;color:' + (color || (strong ? '#A90E02' : '#222222')) + ';' + (strong ? 'font-weight:bold;' : '') + '">' + value + '</td>' +
+        '</tr>'
+      );
+
+      const discountLine = d.discount > 0
+        ? line('Discount' + (d.coupon ? ' (' + esc(d.coupon) + ')' : ''), '&minus;&#8377;' + esc(d.discount), false, '#1a8f4a')
+        : '';
+      const notesBlock = d.notes
+        ? '<p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#555555;"><b>Order notes:</b> ' + esc(d.notes) + '</p>'
+        : '';
+
+      return (
+        '<div style="background:#f4f4f4;padding:24px 12px;">' +
+        '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;">' +
+          '<tr><td align="center" style="background:#080810;padding:22px 16px;">' +
+            '<img src="' + LOGO_URL + '" alt="AARAMBH" height="48" style="height:48px;display:block;margin:0 auto;">' +
+          '</td></tr>' +
+          '<tr><td style="padding:26px 24px 8px;">' +
+            '<h2 style="margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:22px;color:#111111;">Order confirmed &#10003;</h2>' +
+            '<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#555555;">Hi ' + esc(d.name) + ', thank you for ordering from AARAMBH. Here is your bill.</p>' +
+            '<p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#555555;"><b>Order ID:</b> ' + esc(o.ref) + '<br><b>Payment:</b> ' + esc(o.paymentMode) + '</p>' +
+          '</td></tr>' +
+          '<tr><td style="padding:12px 24px 0;">' +
+            '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
+              '<tr>' +
+                '<th align="left" style="padding:8px;border-bottom:2px solid #111111;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#111111;text-transform:uppercase;">Item</th>' +
+                '<th align="center" style="padding:8px;border-bottom:2px solid #111111;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#111111;text-transform:uppercase;">Qty</th>' +
+                '<th align="right" style="padding:8px;border-bottom:2px solid #111111;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#111111;text-transform:uppercase;">Amount</th>' +
+              '</tr>' +
+              rows +
+            '</table>' +
+          '</td></tr>' +
+          '<tr><td style="padding:10px 24px 0;">' +
+            '<table role="presentation" width="100%" cellpadding="0" cellspacing="0">' +
+              line('Subtotal', '&#8377;' + esc(d.subtotal)) +
+              discountLine +
+              line('Delivery charge', '&#8377;' + esc(d.delivery)) +
+              line('Total payable', '&#8377;' + esc(d.total), true) +
+            '</table>' +
+          '</td></tr>' +
+          '<tr><td style="padding:20px 24px 8px;">' +
+            '<p style="margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#111111;"><b>Delivery details</b></p>' +
+            '<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#555555;">' +
+              esc(d.name) + '<br>' + esc(d.address) + '<br>' + esc(d.city) + ', ' + esc(d.state) + ' - ' + esc(d.pincode) + '<br>Phone: ' + esc(d.phone) + '<br>Email: ' + esc(d.email) +
+            '</p>' +
+            notesBlock +
+          '</td></tr>' +
+          '<tr><td align="center" style="background:#080810;padding:20px 16px;">' +
+            '<p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#FFFACD;">Questions? Message us on WhatsApp or call <b>' + esc(SHOP_PHONE) + '</b></p>' +
+            '<p style="margin:6px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#aaaaaa;">Instagram: @' + esc(SHOP_INSTAGRAM) + ' &middot; ' + esc(OWNER_EMAIL) + '</p>' +
+          '</td></tr>' +
+        '</table>' +
+        '</div>'
+      );
+    }
+
+    // Sends one EmailJS email. Template variables: subject, to_email, reply_to, bill_html
+    async function sendAarambhEmail(args) {
+      const toEmail = args.toEmail, subject = args.subject, billHtml = args.billHtml;
+
+      // Guard: never send an email with an empty body
+      if (typeof billHtml !== 'string' || billHtml.trim().length < 50) {
+        console.error('AARAMBH email blocked: bill_html is empty or invalid.', billHtml);
+        return { ok: false, reason: 'empty_bill_html' };
+      }
+      if (!window.emailjs) {
+        console.error('AARAMBH email blocked: EmailJS library did not load.');
+        return { ok: false, reason: 'emailjs_not_loaded' };
+      }
+
+      const emailParams = {
+        to_email: toEmail,
+        subject: subject,
+        reply_to: OWNER_EMAIL,
+        bill_html: billHtml   // must match {{{bill_html}}} in the template
+      };
+
+      const sizeKB = new Blob([JSON.stringify(emailParams)]).size / 1024;
+      console.log('AARAMBH email params for', toEmail, '| size:', sizeKB.toFixed(1), 'KB', emailParams);
+
+      try {
+        const res = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, emailParams);
+        console.log('AARAMBH email sent:', toEmail, res.status);
+        return { ok: true };
+      } catch (err) {
+        console.error('AARAMBH email failed:', toEmail, err);
+        return { ok: false, reason: err };
+      }
+    }
+
+    // Customer bill + owner alert, same bill HTML in both
+    async function sendOrderEmails(o) {
+      const billHtml = buildBillHtml(o);
+      const total = o.d.total;
+      return Promise.allSettled([
+        sendAarambhEmail({
+          toEmail: o.d.email,
+          subject: 'AARAMBH order confirmed (' + o.paymentMode + ') - ₹' + total,
+          billHtml: billHtml
+        }),
+        sendAarambhEmail({
+          toEmail: OWNER_EMAIL,
+          subject: '[New order] ' + o.d.name + ' - ₹' + total + ' (' + o.paymentMode + ')',
+          billHtml: billHtml
+        })
+      ]);
+    }
+
+    // ---------- Talk to the backend ----------
     async function callBackend(path, d, loadingText) {
       if (/YOUR-RENDER-URL/.test(BACKEND_URL)) throw new Error('Ordering is not available yet. Please message us on WhatsApp: ' + SHOP_PHONE);
       setLoading(true, loadingText);
@@ -714,6 +854,15 @@
               });
               const v = await res.json().catch(() => ({}));
               if (!res.ok) throw new Error(v.error || 'verify failed');
+
+              // Send the AARAMBH bill via EmailJS before leaving this page (short wait so it isn't cancelled)
+              if (EMAILJS_ALWAYS || v.emailed !== true) {
+                const ref = String(v.orderId || out.orderId || '').slice(-8).toUpperCase();
+                await Promise.race([
+                  sendOrderEmails({ ref, d, items: orderItems, paymentMode: 'Paid Online' }),
+                  new Promise((r) => setTimeout(r, 6000))
+                ]);
+              }
               location.href = 'order-success.html?order=' + encodeURIComponent(v.orderId);
             } catch (e) {
               reject(new Error('Your payment went through, but we could not confirm it on screen. Please do not pay again. Message us on WhatsApp ' + SHOP_PHONE + ' with payment ID ' + resp.razorpay_payment_id + '.'));
@@ -731,7 +880,14 @@
       const itemsText = orderItems.map((i) => i.product + ' (' + i.color + ', size ' + i.size + ') x' + i.qty).join('\n');
       const msg = 'Hi AARAMBH, I placed order ' + ref + ' (Cash on Delivery).\n' + itemsText + '\nTotal: ₹' + d.total + '\nName: ' + d.name + '\nPhone: ' + d.phone;
       $('successWhatsapp').href = 'https://wa.me/91' + SHOP_PHONE + '?text=' + encodeURIComponent(msg);
-      if (out.emailed === false) $('successOverlay').querySelector('p').textContent = 'Thanks for your order. We have received it, but your bill email could not be sent right now. We will confirm on WhatsApp.';
+
+      // AARAMBH bill emails via EmailJS (runs in the background, never blocks the success screen)
+      if (EMAILJS_ALWAYS || out.emailed !== true) {
+        sendOrderEmails({ ref, d, items: orderItems.map((i) => Object.assign({}, i)), paymentMode: 'Cash on Delivery' });
+      } else if (out.emailed === false) {
+        $('successOverlay').querySelector('p').textContent = 'Thanks for your order. We have received it, but your bill email could not be sent right now. We will confirm on WhatsApp.';
+      }
+
       $('orderForm').style.display = 'none';
       $('successOverlay').classList.add('show');
       if (cartMode) saveCart([]);

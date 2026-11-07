@@ -1283,15 +1283,16 @@
     window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
 
     // ===== LIMITED STOCK: live count for Striker 7 (card + spotlight) =====
+    // ===== LIMITED STOCK: live count for the Cristiano Ronaldo tee (card + spotlight) =====
     (async function loadStock() {
       const backend = window.AARAMBH_BACKEND_URL;
       if (!backend) return;
-      const labels = ['stockLeftStriker7', 'stockLeftSpot'].map(id => document.getElementById(id)).filter(Boolean);
+      const labels = ['stockLeftCristianoRonaldo', 'stockLeftSpot'].map(id => document.getElementById(id)).filter(Boolean);
       const buttons = ['buyStriker7', 'buyStriker7Spot'].map(id => document.getElementById(id)).filter(Boolean);
       try {
         const r = await fetch(backend + '/api/stock');
         const d = await r.json();
-        const left = d && d.left ? d.left['printed-striker-7'] : undefined;
+        const left = d && d.left ? d.left['printed-Cristiano_Ronaldo'] : undefined;
         if (typeof left !== 'number') return;
         labels.forEach(label => {
           label.classList.add('show');
@@ -1299,3 +1300,8 @@
           else label.textContent = left <= 20 ? 'Only ' + left + ' left' : 'Limited stock, once it is gone it is gone';
         });
         if (left <= 0) buttons.forEach(b => { b.disabled = true; b.textContent = 'Sold out'; });
+      } catch (e) { /* the stock count is optional, so ignore errors */ }
+    })();
+  </script>
+</body>
+</html>

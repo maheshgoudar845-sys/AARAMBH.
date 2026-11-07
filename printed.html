@@ -447,7 +447,7 @@
             <span class="spot-tag">Limited Run</span>
             <h3>Striker 7</h3>
             <p>An original No. 7 striker graphic for football fans. Limited run, once it's gone it's gone.</p>
-            <div class="spot-colors"><span class="color-label">Colours</span><div class="swatches"><button class="spot-swatch active" type="button" title="Black" aria-label="Show Black" style="background:#111;" data-card="striker7" data-i="0"></button><button class="spot-swatch" type="button" title="White" aria-label="Show White" style="background:#fff;" data-card="striker7" data-i="1"></button><button class="spot-swatch" type="button" title="Red" aria-label="Show Red" style="background:#b51f2e;" data-card="striker7" data-i="2"></button></div><span class="spot-colorname">Black</span></div>
+            <div class="spot-colors"><span class="color-label">Colours</span><div class="swatches"><button class="spot-swatch active" type="button" title="As shown" aria-label="Show As shown" style="background:linear-gradient(135deg,#E94E2C,#FFB238);" data-card="striker7" data-i="0"></button></div><span class="spot-colorname">As shown</span></div>
             <div class="stock-left spot-stock" id="stockLeftSpot"></div>
             <div class="spot-price">₹499</div>
             <div class="spot-actions">
@@ -456,8 +456,8 @@
             </div>
           </div>
           <div class="spot-art">
-            <figure><img src="striker7_black_f.png" alt="Striker 7 front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
-            <figure><img src="striker7_black_b.png" alt="Striker 7 back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+            <figure><img src="Cristiano_front.jpeg" alt="Striker 7 front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="Cristiano_back.jpeg" alt="Striker 7 back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
           </div>
         </article>
         <article class="spot-slide" data-card="explore" style="--tint:125,140,154" role="group" aria-roledescription="slide" aria-label="2 of 6">
@@ -944,11 +944,11 @@
           </div>
         </div>
       </article>
-      <article class="tee-card" data-id="striker7" data-theme="art" data-price="499" data-colors="Black,Red,White" data-order="16" data-design="Striker 7">
+      <article class="tee-card" data-id="striker7" data-theme="art" data-price="499" data-colors="" data-order="16" data-design="Striker 7">
         <div class="card-media double-view">
           <div class="slide-track">
-            <img src="striker7_black_f.png" alt="Striker 7 Black front" loading="lazy">
-            <img src="striker7_black_b.png" alt="Striker 7 Black back" loading="lazy">
+            <img src="Cristiano_front.jpeg" alt="Striker 7 front" loading="lazy">
+            <img src="Cristiano_back.jpeg" alt="Striker 7 back" loading="lazy">
           </div>
           <span class="card-badge limited">Limited Stock</span>
           <div class="view-toggle" data-view="front" role="group" aria-label="Choose view">
@@ -958,13 +958,13 @@
           </div>
         </div>
         <div class="card-body">
-          <h3>Cristiano Ronaldo</h3>
+          <h3>Striker 7</h3>
           <p class="card-blurb">Original No. 7 striker graphic for football fans. Limited run, once it's gone it's gone. Front &amp; back designs included.</p>
-          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="Black" aria-label="View Black" style="background:#111;" data-front="Cristiano_front.jpeg" data-back="Cristiano_back.jpeg" data-default onclick="selectColor(this)"></button>
+          <div class="color-row"><span class="color-label">Colours</span><div class="swatches"><button class="swatch active" type="button" title="As shown" aria-label="View As shown" style="background:linear-gradient(135deg,#E94E2C,#FFB238);" data-front="Cristiano_front.jpeg" data-back="Cristiano_back.jpeg" data-default onclick="selectColor(this)"></button></div><span class="selected-color">As shown</span></div>
           <div class="stock-left" id="stockLeftStriker7"></div>
           <div class="buy-row">
             <div class="price">₹499</div>
-            <button class="buy-now-btn" id="buyCristianoRonaldo" type="button" onclick="buyNow(this,'Cristiano Ronaldo','Printed T-Shirt','499')">Buy now</button>
+            <button class="buy-now-btn" id="buyStriker7" type="button" onclick="buyNow(this,'Striker 7','Printed T-Shirt','499')">Buy now</button>
           </div>
         </div>
       </article>
@@ -1299,19 +1299,3 @@
           else label.textContent = left <= 20 ? 'Only ' + left + ' left' : 'Limited stock, once it is gone it is gone';
         });
         if (left <= 0) buttons.forEach(b => { b.disabled = true; b.textContent = 'Sold out'; });
-      } catch (e) { /* stay silent if the server is asleep */ }
-    })();
-
-    // ===== Tap a coupon code to copy it =====
-    document.querySelectorAll('.offer-code').forEach(btn => btn.addEventListener('click', async () => {
-      const code = btn.dataset.code;
-      const small = btn.querySelector('small');
-      const old = small.textContent;
-      try { await navigator.clipboard.writeText(code); small.textContent = 'Copied. Paste it at checkout'; }
-      catch (e) { small.textContent = 'Type ' + code + ' at checkout'; }
-      setTimeout(() => { small.textContent = old; }, 2200);
-    }));
-
-</script>
-</body>
-</html>

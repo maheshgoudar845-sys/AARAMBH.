@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Admin — AARAMBH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <script src="site-config.js"></script>
+  <style>
+    :root{--bg:#080810;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,.1);}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px 80px;}
+    .wrap{max-width:680px;margin:0 auto;}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:1px;margin-bottom:20px;}
+    h2{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin:0 0 14px;}
+    .box{background:#12121c;border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+    input,select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font:inherit;font-size:15px;margin-bottom:14px;}
+    select option{background:#15151f;}
+    input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent2);outline-offset:2px;}
+    button{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 20px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;}
+    button.small{padding:8px 12px;font-size:12px;}
+    button.ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+    button:disabled{opacity:.5;cursor:not-allowed;}
+    .msg{font-size:14px;margin-top:12px;min-height:18px;}
+    .msg.ok{color:#9be6b4;} .msg.err{color:#ff8f8f;}
+    .ex{border-top:1px dashed var(--border);padding:14px 0;font-size:14px;line-height:1.7;}
+    .ex:first-child{border-top:none;}
+    .ex b{color:var(--accent2);}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>AARAMBH Admin</h1>
+
+    <div class="box">
+      <h2>Admin key</h2>
+      <label for="key">Kept only for this browser tab. It is cleared when you close the tab.</label>
+      <input id="key" type="password" autocomplete="off" placeholder="Your ADMIN_KEY">
+    </div>
+
+    <div class="box">
+      <h2>Update order status</h2>
+      <label for="ref">Reference ID</label>
+      <input id="ref" maxlength="24" autocomplete="off" placeholder="e.g. 5F3A9C21">
+      <label for="status">New status</label>
+      <select id="status">
+        <option value="placed">Placed</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="shipped">Shipped</option>
+        <option value="out_for_delivery">Out for delivery</option>
+        <option value="delivered">Delivered (starts the 3-day exchange window)</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <button id="save" type="button">Update status</button>
+      <div class="msg" id="saveMsg" role="status"></div>
+    </div>
+
+    <div class="box">
+      <div class="row">
+        <h2>Open exchange requests</h2>
+        <button id="loadEx" class="small ghost" type="button">Load requests</button>
+      </div>
+      <div id="exList"><p class="msg">Press Load requests.</p></div>
+    </div>
+  </div>
+
+  <script>
+    const API = window.AARAMBH_BACKEND_URL || '';
+    const $ = (id) => document.getElementById(id);
+    const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    $('key').value = sessionStorage.getItem('aarambhAdminKey') || '';
+    $('key').addEventListener('input', () => sessionStorage.setItem('aarambhAdminKey', $('key').value.trim()));
+
+    async function adminApi(path, method, body) {
+      const key = $('key').value.trim();
+      if (!key) throw new Error('Enter your admin key first.');
+      const res = await fetch(API + path, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+        body: body ? JSON.stringify(body) : undefined
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(out.error || 'Something went wrong.');
+      return out;
+    }
+
+    $('save').addEventListener('click', async () => {
+      const ref = $('ref').value.replace(/[^a-z0-9]/gi, '').toUpperCase();
+      const m = $('saveMsg');
+      if (!ref) { m.className = 'msg err'; m.textContent = 'Enter the reference ID.'; return; }
+      $('save').disabled = true;
+      m.className = 'msg'; m.textContent = 'Updating… (the server can take up to a minute to wake up)';
+      try {
+        const out = await adminApi('/api/admin/orders/' + encodeURIComponent(ref) + '/status', 'PATCH', { orderStatus: $('status').value });
+        m.className = 'msg ok'; m.textContent = 'Order ' + out.ref + ' is now: ' + out.orderStatus;
+      } catch (e) { m.className = 'msg err'; m.textContent = e.message; }
+      $('save').disabled = false;
+    });
+
+    async function loadExchanges() {
+      const list = $('exList');
+      list.innerHTML = '<p class="msg">Loading…</p>';
+      try {
+        const out = await adminApi('/api/admin/exchanges', 'GET');
+        const ex = out.exchanges || [];
+        list.innerHTML = ex.length ? ex.map((x) => `
+          <div class="ex">
+            <b>${esc(x.ref)}</b> — ${esc(x.customer)} (${esc(x.phone)}, ${esc(x.email)})<br>
+            ${esc(x.item)}: size ${esc(x.currentSize)} → <b>${esc(x.newSize)}</b><br>
+            Reason: ${esc(x.reason || 'Not given')}
+            <div class="actions" data-ref="${esc(x.ref)}">
+              <button class="small" data-s="approved" type="button">Approve</button>
+              <button class="small ghost" data-s="rejected" type="button">Reject</button>
+              <button class="small ghost" data-s="completed" type="button">Mark completed</button>
+            </div>
+          </div>`).join('') : '<p class="msg">No open exchange requests.</p>';
+      } catch (e) { list.innerHTML = '<p class="msg err">' + esc(e.message) + '</p>'; }
+    }
+    $('loadEx').addEventListener('click', loadExchanges);
+
+    $('exList').addEventListener('click', async (e) => {
+      const b = e.target.closest('button[data-s]');
+      if (!b) return;
+      const ref = b.parentElement.dataset.ref;
+      b.disabled = true;
+      try {
+        await adminApi('/api/admin/orders/' + encodeURIComponent(ref) + '/exchange', 'PATCH', { status: b.dataset.s });
+        loadExchanges();
+      } catch (err) { alert(err.message); b.disabled = false; }
+    });
+  </script>
+</body>
+</html>

@@ -71,10 +71,24 @@
         'One Piece': 579,
         'Tanjiro': 559,
         'Deadpool': 599,
+        'Striker 7': 499,
+        'Cristiano Ronaldo': 499,
         'Calm Acid Wash': 659,
         'Conquer Acid Wash': 649,
         'Spider Acid Wash': 669,
-        'Explore Space Acid Wash': 679
+        'Explore Space Acid Wash': 679,
+        /* Regular fit printed tees */
+        'Snake Skull': 349,
+        'Insane': 349,
+        'Fatality': 369,
+        'Fly High': 399,
+        'It\'s Part of the Process': 399,
+        'Seedhe Maut': 399,
+        'Make It Real': 429,
+        'Snake': 429,
+        'Lost Garden': 429,
+        'Japan Art': 449,
+        'Valley': 499
       },
       designColors: { /* 'Unseen|Black': 579, 'Grace|White': 619 */ }
     }

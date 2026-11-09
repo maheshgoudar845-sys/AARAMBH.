@@ -342,11 +342,12 @@
   const isCrop = typeKey.includes('crop');
   if(isCrop && !cropLive) location.replace('croptop.html');
   const isPrinted = typeKey.includes('printed') && !isCrop;
+  const isRegular = isPrinted && typeKey.includes('regular');
   const isOversized = typeKey === 'oversized';
   const isPolo = typeKey === 'polo';
   const isShirt = typeKey === 'boxy shirt';
-  /* Printed tees are oversized only; there is no regular-fit option. Crop tops are cropped fit. Boxy shirts are boxy fit. */
-  let selectedFit = isShirt ? 'Boxy' : isCrop ? 'Cropped' : (isPrinted ? 'Oversized' : (isOversized ? 'Oversized' : 'Regular'));
+  /* Printed tees are oversized unless the type says "regular" (the regular-fit printed series). Crop tops are cropped fit. Boxy shirts are boxy fit. */
+  let selectedFit = isShirt ? 'Boxy' : isCrop ? 'Cropped' : (isPrinted ? (isRegular ? 'Regular' : 'Oversized') : (isOversized ? 'Oversized' : 'Regular'));
   let selectedColor = productData.color;
   let selectedImages = [productData.image, productData.image2].filter(Boolean);
 
@@ -395,6 +396,18 @@
     'Conquer Acid Wash': [{color:'Black',image:'Conquer_acid_front.png',image2:'Conquer_acid_back.png'}],
     'Spider Acid Wash': [{color:'Black',image:'Spider_acid_front.png',image2:'Spider_acid_back.png'}],
      'Cristiano Ronaldo': [{color:'Black',image:'Cristiano_front.jpeg',image2:'Cristiano_back.jpeg'}],
+    /* Regular fit printed tees (front print only; backs are shared per colour) */
+    "Snake Skull": [{color:'Black',image:'regular-snake-skull-black-front.png',image2:'regular-black-back.png'}],
+    "Insane": [{color:'Maroon',image:'regular-insane-maroon-front.png',image2:'regular-maroon-back.png'}],
+    "Fatality": [{color:'Black',image:'regular-fatality-black-front.png',image2:'regular-black-back.png'}],
+    "Fly High": [{color:'Black',image:'regular-fly-high-black-front.png',image2:'regular-black-back.png'}],
+    "It's Part of the Process": [{color:'Black',image:'regular-part-of-the-process-black-front.png',image2:'regular-black-back.png'}],
+    "Seedhe Maut": [{color:'Black',image:'regular-seedhe-maut-black-front.png',image2:'regular-black-back.png'}],
+    "Make It Real": [{color:'Black',image:'regular-make-it-real-black-front.png',image2:'regular-black-back.png'},{color:'Maroon',image:'regular-make-it-real-maroon-front.png',image2:'regular-maroon-back.png'}],
+    "Snake": [{color:'Black',image:'regular-snake-black-front.png',image2:'regular-black-back.png'}],
+    "Lost Garden": [{color:'Black',image:'regular-lost-garden-black-front.png',image2:'regular-black-back.png'}],
+    "Japan Art": [{color:'Maroon',image:'regular-japan-art-maroon-front.png',image2:'regular-maroon-back.png'},{color:'Navy Blue',image:'regular-japan-art-navy-front.png',image2:'regular-navy-back.png'}],
+    "Valley": [{color:'White',image:'regular-valley-white-front.png',image2:'regular-white-back.png'}],
     /* Ladies printed crop tops (images in the site root, e.g. Self Love Red Crop Top-front.jpeg) */
     'Self Love': [{color:'Black',image:'Self Love Black Crop Top-front.jpeg',image2:'Self Love Black Crop Top-back.jpeg'},{color:'Red',image:'Self Love Red Crop Top-front.jpeg',image2:'Self Love Red Crop Top-back.jpeg'}],
     'Bloom and Shine': [{color:'Black',image:'Bloom Black Crop Top-front.jpeg',image2:'Bloom Black Crop Top-back.jpeg'},{color:'Baby Pink',image:'Bloom baby pink Crop Top-front.jpeg',image2:'Bloom baby pink Crop Top-back.jpeg'},{color:'Red',image:'Bloom Red Crop Top-front.jpeg',image2:'Bloom Red Crop Top-back.jpeg'}],
@@ -410,7 +423,10 @@
   selectedColor = matchingVariant.color;
   selectedImages = [productData.image || matchingVariant.image, productData.image2 || matchingVariant.image2].filter(Boolean);
 
+  /* Fill in the real fabric details for the regular fit printed tees here */
+  const REGULAR_SPECS = {material:'Premium Cotton', gsm:'180'};
   function currentSpecs(){
+    if(isRegular) return {material:REGULAR_SPECS.material,gsm:REGULAR_SPECS.gsm,fit:'Regular Fit',description:'Printed regular-fit T-shirt with a front print and a plain back.'};
     if(isShirt) return {material:'Premium Fabric',gsm:'—',fit:'Boxy Fit',description:'Premium boxy-fit shirt with a relaxed, structured drape.'};
     if(isCrop) return {material:'95% Cotton, 5% Lycra',gsm:'220 GSM',fit:'Cropped Fit',description:'Printed stretch-cotton crop top with a soft, comfortable cropped fit.'};
     if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
@@ -424,6 +440,7 @@
     if(isCrop){ img.src='CropTopSizeChart.jpeg'; cap.textContent='Crop top size chart'; }
     else if(isShirt){ img.src='ShirtSizeChart.jpeg'; cap.textContent='Boxy fit shirt size chart'; }
     else if(isPolo){ img.src='polo_size_chart.png'; cap.textContent='Polo T-shirt size chart'; }
+    else if(isRegular){ img.src='regular_chart.png'; cap.textContent='Regular fit T-shirt size chart'; }
     else { img.src='oversized_chart.png'; cap.textContent = isPrinted ? 'Oversized 240 GSM printed T-shirt size chart' : 'Oversized T-shirt size chart'; }
   }
   function updateSpecs(){
@@ -587,9 +604,21 @@
     {"product":"Luffy","type":"Printed T-Shirt","price":"549","color":"Black","image":"luffy_b_f.png","image2":"luffy_b_b.png","categoryPage":"printed.html"},
     {"product":"Justice","type":"Printed T-Shirt","price":"559","color":"Red","image":"Justice_r_f.png","image2":"Justice_r_b.png","categoryPage":"printed.html"},
     {"product":"Porsche","type":"Printed T-Shirt","price":"569","color":"Black","image":"Porsche_black_front.png","image2":"Porsche_black_back.png","categoryPage":"printed.html"},
-    {"product":"Deadpool","type":"Printed T-Shirt","price":"549","color":"Black","image":"Deadpool-black-front.png","image2":"Deadpool-black-back.png","categoryPage":"printed.html"},
+    {"product":"Deadpool","type":"Printed T-Shirt","price":"599","color":"Black","image":"Deadpool-black-front.png","image2":"Deadpool-black-back.png","categoryPage":"printed.html"},
     {"product":"Unseen","type":"Printed T-Shirt","color":"White","price":"549","image":"un_white_f.png","image2":"un_white_b.png","categoryPage":"printed.html"},
     {"product":"Veiled Bloom","type":"Printed T-Shirt","color":"Royal Blue","price":"559","image":"veiled_blue_f.png","image2":"veiled_blue_b.png","categoryPage":"printed.html"},
+    /* Regular fit printed tees */
+    {"product": "Snake Skull", "type": "Printed Regular T-Shirt", "color": "Black", "price": "349", "image": "regular-snake-skull-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "Insane", "type": "Printed Regular T-Shirt", "color": "Maroon", "price": "349", "image": "regular-insane-maroon-front.png", "image2": "regular-maroon-back.png", "categoryPage": "printed.html"},
+    {"product": "Fatality", "type": "Printed Regular T-Shirt", "color": "Black", "price": "369", "image": "regular-fatality-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "Fly High", "type": "Printed Regular T-Shirt", "color": "Black", "price": "399", "image": "regular-fly-high-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "It's Part of the Process", "type": "Printed Regular T-Shirt", "color": "Black", "price": "399", "image": "regular-part-of-the-process-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "Seedhe Maut", "type": "Printed Regular T-Shirt", "color": "Black", "price": "399", "image": "regular-seedhe-maut-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "Make It Real", "type": "Printed Regular T-Shirt", "color": "Black", "price": "429", "image": "regular-make-it-real-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "Snake", "type": "Printed Regular T-Shirt", "color": "Black", "price": "429", "image": "regular-snake-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "Lost Garden", "type": "Printed Regular T-Shirt", "color": "Black", "price": "429", "image": "regular-lost-garden-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
+    {"product": "Japan Art", "type": "Printed Regular T-Shirt", "color": "Maroon", "price": "449", "image": "regular-japan-art-maroon-front.png", "image2": "regular-maroon-back.png", "categoryPage": "printed.html"},
+    {"product": "Valley", "type": "Printed Regular T-Shirt", "color": "White", "price": "499", "image": "regular-valley-white-front.png", "image2": "regular-white-back.png", "categoryPage": "printed.html"},
     {"product":"Self Love","type":"Printed Crop Top","color":"Black","price":"449","image":"Self Love Black Crop Top-front.jpeg","image2":"Self Love Black Crop Top-back.jpeg","categoryPage":"croptop.html"},
     {"product":"Bloom and Shine","type":"Printed Crop Top","color":"Black","price":"459","image":"Bloom and Shine Black Crop Top-front.jpeg","image2":"Bloom and Shine Black Crop Top-back.jpeg","categoryPage":"croptop.html"},
     {"product":"Glorious Butterfly","type":"Printed Crop Top","color":"White","price":"439","image":"Glorious Butterfly White Crop Top-front.jpeg","image2":"Glorious Butterfly White Crop Top-back.jpeg","categoryPage":"croptop.html"},
@@ -680,7 +709,7 @@
     const collections = [
       {name:'Polos', href:'polo.html', note:'Collar tees', keys:'polo polos collar'},
       {name:'Oversized', href:'oversized.html', note:'Plain drop-shoulder tees', keys:'oversized plain drop shoulder'},
-      {name:'Printed', href:'printed.html', note:'Graphic and anime tees', keys:'printed graphic anime tee tees'},
+      {name:'Printed', href:'printed.html', note:'Graphic, anime and regular fit tees', keys:'printed graphic anime regular tee tees'},
       {name:'Hoodies', href:'hoodie.html', note:'Heavy-weight hoodies', keys:'hoodie hoodies'},
       {name:'Shirts', href:'shirt.html', note:'Boxy-fit shirts', keys:'shirt shirts boxy'}
     ];
@@ -692,7 +721,7 @@
       return byQuery || v.find(x => x.color.toLowerCase() === item.color.toLowerCase()) || v[0];
     }
     const hrefFor = (item, tokens) => { const f = pick(item, tokens); return 'product.html?' + new URLSearchParams({...item, color:f.color, image:f.image, image2:f.image2 || f.image}).toString(); };
-    const label = item => { const k = item.type.toLowerCase(); return k.includes('crop') ? 'Crop top' : k.includes('printed') ? 'Printed tee' : k === 'oversized' ? 'Oversized tee' : k === 'polo' ? 'Polo' : k === 'boxy shirt' ? 'Boxy shirt' : item.type; };
+    const label = item => { const k = item.type.toLowerCase(); return k.includes('crop') ? 'Crop top' : k.includes('regular') ? 'Regular fit tee' : k.includes('printed') ? 'Printed tee' : k === 'oversized' ? 'Oversized tee' : k === 'polo' ? 'Polo' : k === 'boxy shirt' ? 'Boxy shirt' : item.type; };
     const items = visibleCatalog.filter(i => !i.type.toLowerCase().includes('hoodie')).map(i => {
       const v = variantsFor(i);
       return {item:i, variants:v, hay:[i.product, i.type, i.categoryPage.replace('.html',''), 'tee t-shirt tshirt', (/crop/i.test(i.type) ? 'ladies women womens girls crop top' : ''), ...(i.type.toLowerCase() === 'oversized' ? [i.color] : v.map(x => x.color))].join(' ').toLowerCase()};

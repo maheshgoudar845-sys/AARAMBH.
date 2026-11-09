@@ -88,7 +88,9 @@
         'Snake': 429,
         'Lost Garden': 429,
         'Japan Art': 449,
-        'Valley': 499
+        'Valley': 499,
+       'Let-me-distract-you': 399,
+      'Owl-glass-art': 449,
       },
       designColors: { /* 'Unseen|Black': 579, 'Grace|White': 619 */ }
     }

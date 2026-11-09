@@ -424,7 +424,7 @@
   selectedImages = [productData.image || matchingVariant.image, productData.image2 || matchingVariant.image2].filter(Boolean);
 
   /* Fill in the real fabric details for the regular fit printed tees here */
-  const REGULAR_SPECS = {material:'Premium Cotton', gsm:'180'};
+  const REGULAR_SPECS = {material:'Premium Cotton', gsm:'—'};
   function currentSpecs(){
     if(isRegular) return {material:REGULAR_SPECS.material,gsm:REGULAR_SPECS.gsm,fit:'Regular Fit',description:'Printed regular-fit T-shirt with a front print and a plain back.'};
     if(isShirt) return {material:'Premium Fabric',gsm:'—',fit:'Boxy Fit',description:'Premium boxy-fit shirt with a relaxed, structured drape.'};

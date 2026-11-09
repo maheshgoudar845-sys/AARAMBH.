@@ -424,10 +424,10 @@
   selectedImages = [productData.image || matchingVariant.image, productData.image2 || matchingVariant.image2].filter(Boolean);
 
   /* Fill in the real fabric details for the regular fit printed tees here */
-  const REGULAR_SPECS = {material:'Premium Cotton', gsm:'—'};
+  const REGULAR_SPECS = {material:'Pure Cotton', gsm:'180 GSM'};
   function currentSpecs(){
-    if(isRegular) return {material:"Pure Cotton'.material,gsm:'180'gsm,fit:'Regular Fit',description:'Printed regular-fit T-shirt with a front print and a plain back.'};
-    if(isShirt) return {material:'Premium Fabric',gsm:'160',fit:'Boxy Fit',description:'Premium boxy-fit shirt with a relaxed, structured drape.'};
+    if(isRegular) return {material:REGULAR_SPECS.material,gsm:REGULAR_SPECS.gsm,fit:'Regular Fit',description:'Printed regular-fit T-shirt with a front print and a plain back.'};
+    if(isShirt) return {material:'Premium Fabric',gsm:'160 GSM',fit:'Boxy Fit',description:'Premium boxy-fit shirt with a relaxed, structured drape.'};
     if(isCrop) return {material:'95% Cotton, 5% Lycra',gsm:'220 GSM',fit:'Cropped Fit',description:'Printed stretch-cotton crop top with a soft, comfortable cropped fit.'};
     if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
     if(isPolo) return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};

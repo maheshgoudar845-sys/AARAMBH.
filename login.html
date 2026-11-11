@@ -144,19 +144,15 @@
   </main>
 
   <script>
-    /* PASTE your Firebase web config here (Firebase console > Project settings > Your apps > Web app) */
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDThhO7FdX6j3PDXcA64mz5Ld9E_RQX1BE",
-  authDomain: "aarambh-official.firebaseapp.com",
-  projectId: "aarambh-official",
-  storageBucket: "aarambh-official.firebasestorage.app",
-  messagingSenderId: "218693118273",
-  appId: "1:218693118273:web:6f925152bfe3180a4d19c0",
-  measurementId: "G-XPW799CFKV"
-};
-    
-    
+    const firebaseConfig = {
+      apiKey: "AIzaSyDThhO7FdX6j3PDXcA64mz5Ld9E_RQX1BE",
+      authDomain: "aarambh-official.firebaseapp.com",
+      projectId: "aarambh-official",
+      storageBucket: "aarambh-official.firebasestorage.app",
+      messagingSenderId: "218693118273",
+      appId: "1:218693118273:web:6f925152bfe3180a4d19c0",
+      measurementId: "G-XPW799CFKV"
+    };
 
     const API = window.AARAMBH_BACKEND_URL || '';
     const $ = (id) => document.getElementById(id);
@@ -168,8 +164,12 @@ const firebaseConfig = {
     // Only allow redirects to pages on this site, e.g. account.html
     const nextPage = /^[\w-]+\.html(\?[\w=&-]*)?$/i.test(params.get('next') || '') ? params.get('next') : 'index.html';
 
-    // Already logged in? Go straight on.
-    try { if (localStorage.getItem('arambhToken')) location.replace(nextPage); } catch (e) {}
+    // Already logged in? Go straight to the account page (unless a password reset link was opened).
+    try {
+      if (localStorage.getItem('arambhToken') && !params.get('reset')) {
+        location.replace(params.get('next') ? nextPage : 'account.html');
+      }
+    } catch (e) {}
 
     function msg(text, ok) { const m = $('msg'); m.textContent = text || ''; m.className = ok ? 'ok' : ''; }
     function show(view) {
@@ -236,7 +236,11 @@ const firebaseConfig = {
       if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Enter a valid email.');
       if (phone && !/^[6-9]\d{9}$/.test(phone)) throw new Error('Enter a valid 10-digit mobile number or leave it empty.');
       if (password.length < 8) throw new Error('Password must be 8+ characters.');
-      finish(await post('/api/auth/register', { name, email, phone, password }));
+      const out = await post('/api/auth/register', { name, email, phone, password });
+      if (out.token) return finish(out);
+      pendingEmail = email;
+      $('eSub').textContent = 'We sent a code to ' + email + '. Enter it to finish creating your account.';
+      $('eCode').value = ''; show('emailotp'); startCooldown();
     }, true);
     $('fGo').onclick = () => run($('fGo'), async () => {
       const email = $('fEmail').value.trim().toLowerCase();
@@ -245,11 +249,13 @@ const firebaseConfig = {
       msg('If that email has an account, a reset link is on its way.', true);
     }, true);
     $('nGo').onclick = () => run($('nGo'), async () => {
-const out = await post('/api/auth/register', { name, email, phone, password });
-if (out.token) return finish(out);
-pendingEmail = email;
-$('eSub').textContent = 'We sent a code to ' + email + '. Enter it to finish creating your account.';
-$('eCode').value = ''; show('emailotp'); startCooldown();    });
+      const password = $('nPass').value;
+      if (password.length < 8) throw new Error('Password must be 8+ characters.');
+      const out = await post('/api/auth/reset', { token: params.get('reset'), password });
+      if (out.token) return finish(out);
+      msg('Password updated. Please log in.', true);
+      show('login');
+    }, true);
 
     /* ---- Google and mobile (Firebase) ---- */
     const needFirebase = () => { if (!fbReady) throw new Error('Google and mobile login are not set up yet.'); };

@@ -193,8 +193,8 @@
   <div class="gallery">
     <div class="main-image" id="mainImageFrame" role="button" tabindex="0" aria-label="Product image. Click to flip between front and back.">
       <div class="flip-inner" id="flipInner">
-        <div class="face front"><img id="imgFront" alt="Product front view"></div>
-        <div class="face back"><img id="imgBack" alt="Product back view"></div>
+        <div class="face front"><img id="imgFront" alt="AARAMBH product front view"></div>
+        <div class="face back"><img id="imgBack" alt="AARAMBH product back view"></div>
       </div>
       <span class="view-status" id="viewStatus">Front</span>
       <span class="flip-hint" id="flipHint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg><span id="hintText">Tap to flip</span></span>
@@ -264,7 +264,7 @@
   <div class="modal">
     <div class="modal-head"><h2 class="display" style="font-size:1.5rem;">SIZE CHART</h2><button class="modal-close" id="closeChart" aria-label="Close">&times;</button></div>
     <p id="chartCaption" style="color:var(--muted);font-size:.85rem;margin-bottom:12px;"></p>
-    <img id="sizeChartImage" src="oversized_chart.png" alt="Size chart" style="width:100%;height:auto;border-radius:10px;display:block;">
+    <img id="sizeChartImage" src="oversized_chart.png" alt="AARAMBH size chart" style="width:100%;height:auto;border-radius:10px;display:block;">
   </div>
 </div>
 
@@ -395,7 +395,7 @@
     'Calm Acid Wash': [{color:'Black',image:'Calm_acid_front.png',image2:'Calm_acid_back.png'}],
     'Conquer Acid Wash': [{color:'Black',image:'Conquer_acid_front.png',image2:'Conquer_acid_back.png'}],
     'Spider Acid Wash': [{color:'Black',image:'Spider_acid_front.png',image2:'Spider_acid_back.png'}],
-     'Cristiano Ronaldo': [{color:'Black',image:'Cristiano_front.jpeg',image2:'Cristiano_back.jpeg'}],
+    'Cristiano Ronaldo': [{color:'Black',image:'Cristiano_front.jpeg',image2:'Cristiano_back.jpeg'}],
     /* Regular fit printed tees (front print only; backs are shared per colour) */
     "Snake Skull": [{color:'Black',image:'regular-snake-skull-black-front.png',image2:'regular-black-back.png'}],
     "Insane": [{color:'Maroon',image:'regular-insane-maroon-front.png',image2:'regular-maroon-back.png'}],
@@ -408,14 +408,14 @@
     "Lost Garden": [{color:'Black',image:'regular-lost-garden-black-front.png',image2:'regular-black-back.png'}],
     "Japan Art": [{color:'Maroon',image:'regular-japan-art-maroon-front.png',image2:'regular-maroon-back.png'},{color:'Navy Blue',image:'regular-japan-art-navy-front.png',image2:'regular-navy-back.png'}],
     "Valley": [{color:'White',image:'regular-valley-white-front.png',image2:'regular-white-back.png'}],
-    "Owl-glass-art": [{color:'Army Green',image:'Army-green-front.png',image2:'Owl-glass-art.png'}]
-    "Let-me-distract-you": [{color:'Army Green',image:'Let-me-distract-you-front.png',image2:'Army-green-back.png'}]
+    "Owl Glass Art": [{color:'Army Green',image:'Army-green-front.png',image2:'Owl-glass-art.png'}],
+    "Let Me Distract You": [{color:'Army Green',image:'Let-me-distract-you-front.png',image2:'Army-green-back.png'}],
     /* Ladies printed crop tops (images in the site root, e.g. Self Love Red Crop Top-front.jpeg) */
     'Self Love': [{color:'Black',image:'Self Love Black Crop Top-front.jpeg',image2:'Self Love Black Crop Top-back.jpeg'},{color:'Red',image:'Self Love Red Crop Top-front.jpeg',image2:'Self Love Red Crop Top-back.jpeg'}],
     'Bloom and Shine': [{color:'Black',image:'Bloom Black Crop Top-front.jpeg',image2:'Bloom Black Crop Top-back.jpeg'},{color:'Baby Pink',image:'Bloom baby pink Crop Top-front.jpeg',image2:'Bloom baby pink Crop Top-back.jpeg'},{color:'Red',image:'Bloom Red Crop Top-front.jpeg',image2:'Bloom Red Crop Top-back.jpeg'}],
     'Glorious Butterfly': [{color:'White',image:'Glorious Butterfly White Crop Top-front.jpeg',image2:'Glorious Butterfly White Crop Top-back.jpeg'},{color:'Black',image:'Glorious Butterfly Black Crop Top-front.jpeg',image2:'Glorious Butterfly Black Crop Top-back.jpeg'},{color:'Yellow',image:'Glorious Butterfly Yellow Crop Top-front.jpeg',image2:'Glorious Butterfly Yellow Crop Top-back.jpeg'}],
     'Stay Cool': [{color:'Black',image:'Stay Cool Black Crop Top-front.jpeg',image2:'Bloom Black Crop Top-back.jpeg'},{color:'Baby Pink',image:'Stay Cool Pink Crop Top-front.jpeg',image2:'Bloom Pink Crop Top-front.jpeg'},{color:'Red',image:'Stay Cool Red Crop Top-front.jpeg',image2:'Self Love Red Crop Top-back.jpeg'}],
-    'Vintage': [{color:'White',image:'Vintage White Crop Top-front.jpeg',image2:'Glorious Butterfly White Crop Top-back.jpeg'},{color:'Red',image:'Vintage Red Crop Top-front.jpeg',image2:'Self Love Red Crop Top-back.jpeg'},{color:'Black',image:'Vintage Black Crop Top-front.jpeg',image2:'Self love Black Crop Top-back.jpeg'}]
+    'Vintage': [{color:'White',image:'Vintage White Crop Top-front.jpeg',image2:'Glorious Butterfly White Crop Top-back.jpeg'},{color:'Red',image:'Vintage Red Crop Top-front.jpeg',image2:'Self Love Red Crop Top-back.jpeg'},{color:'Black',image:'Vintage Black Crop Top-front.jpeg',image2:'Self Love Black Crop Top-back.jpeg'}]
   };
   const toList = obj => Object.keys(obj).map(color => ({color, ...obj[color]}));
   let variants = isOversized ? toList(oversizedVariants) : isPolo ? toList(poloVariants) : isShirt ? toList(shirtVariants)
@@ -500,11 +500,11 @@
     [imgFront, imgBack].forEach(i => { i._queue = null; });
     imgFront.src = images[0];
     imgBack.src = two ? images[1] : images[0];
-    imgFront.alt = `${productData.product} ${selectedColor} front view`;
-    imgBack.alt = `${productData.product} ${selectedColor} back view`;
+    imgFront.alt = `AARAMBH ${productData.product} ${selectedColor} front view`;
+    imgBack.alt = `AARAMBH ${productData.product} ${selectedColor} back view`;
     frame.classList.toggle('single', !two);
     thumbs.innerHTML = (two ? images.slice(0,2) : images.slice(0,1)).map((src,i) =>
-      `<div class="thumb" data-index="${i}" role="button" tabindex="0" aria-label="${i ? 'Back' : 'Front'} view"><img src="${src}" alt="${i ? 'Back' : 'Front'} thumbnail"></div>`).join('');
+      `<div class="thumb" data-index="${i}" role="button" tabindex="0" aria-label="${i ? 'Back' : 'Front'} view"><img src="${src}" alt="AARAMBH ${i ? 'back' : 'front'} thumbnail"></div>`).join('');
     thumbs.style.display = two ? 'flex' : 'none';
     setView(0);
     frame.animate([{opacity:.2},{opacity:1}], {duration:350, easing:'ease-out'});
@@ -616,8 +616,8 @@
     {"product": "Fly High", "type": "Printed Regular T-Shirt", "color": "Black", "price": "399", "image": "regular-fly-high-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
     {"product": "It's Part of the Process", "type": "Printed Regular T-Shirt", "color": "Black", "price": "399", "image": "regular-part-of-the-process-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
     {"product": "Seedhe Maut", "type": "Printed Regular T-Shirt", "color": "Black", "price": "399", "image": "regular-seedhe-maut-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
-    {"product": "Let me Distract uoy", "type": "Printed Regular T-Shirt", "color": "Army green", "price": "399", "image": "Let-me-distract-you-front.png", "image2": "Army-green-back.png", "categoryPage": "printed.html"},
-    {"product": "Owl Glass Art", "type": "Printed Regular T-Shirt", "color": "Black", "price": "449", "image": "Army-green-front.png", "image2": "Owl-glass-art.png", "categoryPage": "printed.html"},
+    {"product": "Let Me Distract You", "type": "Printed Regular T-Shirt", "color": "Army Green", "price": "399", "image": "Let-me-distract-you-front.png", "image2": "Army-green-back.png", "categoryPage": "printed.html"},
+    {"product": "Owl Glass Art", "type": "Printed Regular T-Shirt", "color": "Army Green", "price": "449", "image": "Army-green-front.png", "image2": "Owl-glass-art.png", "categoryPage": "printed.html"},
     {"product": "Make It Real", "type": "Printed Regular T-Shirt", "color": "Black", "price": "429", "image": "regular-make-it-real-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
     {"product": "Snake", "type": "Printed Regular T-Shirt", "color": "Black", "price": "429", "image": "regular-snake-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
     {"product": "Lost Garden", "type": "Printed Regular T-Shirt", "color": "Black", "price": "429", "image": "regular-lost-garden-black-front.png", "image2": "regular-black-back.png", "categoryPage": "printed.html"},
@@ -647,7 +647,7 @@
     const params = new URLSearchParams({...item, color:first.color, image:first.image, image2:first.image2 || first.image});
     const dotsHtml = iv.map(v => `<span class="related-color" title="${v.color}" style="background:${colorHex[v.color] || '#777'}"></span>`).join('');
     return `<a class="related-card" style="transition-delay:${n*90}ms" href="product.html?${params.toString()}">
-      <div class="related-images"><img class="active" src="${first.image}" alt="${item.product} front"><img src="${first.image2 || first.image}" alt="${item.product} back"><span class="view-status">Front</span><span class="gallery-dots" aria-hidden="true"><span class="active"></span><span></span></span></div>
+      <div class="related-images"><img class="active" src="${first.image}" alt="AARAMBH ${item.product} front"><img src="${first.image2 || first.image}" alt="AARAMBH ${item.product} back"><span class="view-status">Front</span><span class="gallery-dots" aria-hidden="true"><span class="active"></span><span></span></span></div>
       <div class="related-card-info"><h3>${item.product}</h3><span>₹${item.price}</span><div class="related-colors">${dotsHtml}</div><div class="related-color-label">${iv.map(v => v.color).join(' · ')}</div></div>
     </a>`;
   }).join('');
@@ -667,6 +667,7 @@
   });
 
   /* ===== Cart ===== */
+  /* Keep this key exactly as is: order.html reads the same key, and changing it would empty existing carts. */
   const CART_KEY = 'arambhCart';
   const getCart = () => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch(_) { return []; } };
   function updateCartCount(){ $('cartCount').textContent = getCart().reduce((s,i) => s + (Number(i.qty) || 0), 0); }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hoodie Collection — Arambh</title>
+  <title>Hoodie Collection — AARAMBH</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -47,7 +47,6 @@
       transform: translate(-50%, -50%);
       transition: transform 0.15s ease, width 0.3s, height 0.3s;
     }
-
     @media (hover: none), (pointer: coarse) {
       body { cursor: auto; }
       .cursor, .cursor-ring { display: none; }
@@ -183,11 +182,7 @@
     @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
     /* PRODUCTS SECTION */
-    .products-section {
-      padding: 100px 40px;
-      max-width: 1280px; margin: auto;
-    }
-
+    .products-section { padding: 100px 40px; max-width: 1280px; margin: auto; }
     .section-label {
       font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
       letter-spacing: 4px; text-transform: uppercase; color: var(--accent2);
@@ -199,14 +194,12 @@
       margin-bottom: 50px;
     }
 
-    /* PRODUCT GRID */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 24px;
     }
 
-    /* PRODUCT CARD */
     .product-card {
       background: var(--surface);
       border-radius: 20px; overflow: hidden;
@@ -214,24 +207,30 @@
       transition: transform 0.4s ease, box-shadow 0.4s ease;
       position: relative;
     }
-    .product-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 40px 70px rgba(0,0,0,0.7);
-    }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 40px 70px rgba(0,0,0,0.7); }
 
-    .card-media {
-      position: relative; overflow: hidden;
-      background: #0a0a14;
-    }
+    .card-media { position: relative; overflow: hidden; background: #0a0a14; cursor: pointer; }
     .card-media img {
       width: 100%; height: 300px;
       object-fit: contain; padding: 20px;
-      display: block; transition: transform 0.6s ease;
+      display: block; transition: opacity 0.4s ease, transform 0.6s ease;
     }
+    .card-media img.back { position: absolute; inset: 0; background: #0a0a14; opacity: 0; }
+    .product-card:hover .card-media img.back,
+    .card-media.show-back img.back { opacity: 1; }
     .product-card:hover .card-media img { transform: scale(1.06); }
 
+    .flip-tag {
+      position: absolute; bottom: 12px; left: 14px; z-index: 2;
+      font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.75); background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 4px 10px; border-radius: 100px; pointer-events: none;
+    }
+
     .card-badge {
-      position: absolute; top: 14px; right: 14px;
+      position: absolute; top: 14px; right: 14px; z-index: 2;
       font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase;
       background: var(--accent); color: var(--accent2);
@@ -239,15 +238,9 @@
     }
 
     .card-body { padding: 22px 24px 26px; }
-    .card-body h3 {
-      font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700;
-      margin-bottom: 6px;
-    }
+    .card-body h3 { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
     .card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
-    .price {
-      font-family: 'Bebas Neue', sans-serif; font-size: 28px;
-      color: white; letter-spacing: 1px;
-    }
+    .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: white; letter-spacing: 1px; }
     .gsm-tag {
       font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
       letter-spacing: 2px; text-transform: uppercase;
@@ -255,11 +248,6 @@
       padding: 5px 12px; border-radius: 100px;
     }
 
-    /* Optional swatches, matching printed.html pattern */
-    .color-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); flex-wrap: wrap; }
-    .color-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-right: 2px; white-space: nowrap; }
-
-    /* BUY NOW BUTTON */
     .buy-now-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; margin-top: 16px; padding: 13px 20px;
@@ -277,20 +265,10 @@
       border: 1px solid var(--border);
       border-radius: 24px; overflow: hidden;
     }
-    .size-header {
-      padding: 30px 36px 0;
-      display: flex; align-items: center; gap: 14px;
-    }
-    .size-header h3 {
-      font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px;
-    }
-    .size-note {
-      padding: 14px 36px 20px;
-      font-size: 13px; color: var(--muted); line-height: 1.6;
-    }
-    .size-section img {
-      width: 100%; display: block;
-    }
+    .size-header { padding: 30px 36px 0; display: flex; align-items: center; gap: 14px; }
+    .size-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
+    .size-note { padding: 14px 36px 20px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .size-section img { width: 100%; display: block; }
     .size-warning {
       padding: 20px 36px;
       display: flex; align-items: center; gap: 12px;
@@ -316,12 +294,8 @@
     .care-text p strong { color: var(--accent2); }
 
     /* ORDER CTA */
-    .order-section {
-      text-align: center; padding: 0 20px 120px;
-    }
-    .order-section p {
-      color: var(--muted); font-size: 15px; margin-bottom: 30px;
-    }
+    .order-section { text-align: center; padding: 0 20px 120px; }
+    .order-section p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
     .order-btn {
       display: inline-flex; align-items: center; gap: 14px;
       padding: 18px 50px;
@@ -350,10 +324,7 @@
     .whatsapp-btn:hover { border-color: #25d366; background: rgba(37,211,102,0.08); transform: scale(1.04); }
 
     /* FOOTER */
-    footer {
-      background: #04040a; border-top: 1px solid var(--border);
-      padding: 40px; text-align: center;
-    }
+    footer { background: #04040a; border-top: 1px solid var(--border); padding: 40px; text-align: center; }
     footer p { color: var(--muted); font-size: 13px; }
     footer a { color: var(--accent2); text-decoration: none; }
 
@@ -401,7 +372,7 @@
   <div class="cursor-ring" id="cursorRing"></div>
 
   <nav id="navbar">
-    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="Arambh"></a>
+    <a href="index.html" class="nav-logo"><img src="logo.webp" alt="AARAMBH"></a>
     <ul class="nav-links">
       <li><a href="polo.html">Polos</a></li>
       <li><a href="oversized.html">Oversized</a></li>
@@ -436,8 +407,8 @@
     <h1>HOODIE<br><span>COLLECTION</span></h1>
     <p>Heavy-weight. Warm. Street-ready.</p>
     <div class="header-meta">
-      <span class="meta-chip hot">400 GSM Fleece</span>
-      <span class="meta-chip">Premium Fit</span>
+      <span class="meta-chip hot">320 GSM Cotton</span>
+      <span class="meta-chip">7 Colours</span>
       <span class="meta-chip">From ₹699</span>
     </div>
   </header>
@@ -445,9 +416,9 @@
   <!-- TICKER -->
   <div class="ticker-wrap">
     <div class="ticker">
-      <span>400 GSM Fleece</span><span>Premium Hoodies</span><span>Arambh</span>
+      <span>320 GSM Cotton</span><span>Premium Hoodies</span><span>AARAMBH</span>
       <span>Heavy Weight</span><span>Street Ready</span><span>Built Different</span>
-      <span>400 GSM Fleece</span><span>Premium Hoodies</span><span>Arambh</span>
+      <span>320 GSM Cotton</span><span>Premium Hoodies</span><span>AARAMBH</span>
       <span>Heavy Weight</span><span>Street Ready</span><span>Built Different</span>
     </div>
   </div>
@@ -462,57 +433,92 @@
       <div class="product-card reveal">
         <div class="card-media">
           <span class="card-badge">Popular</span>
-          <img src="hoodie1.jpg" alt="Beige Hoodie" loading="lazy">
+          <img src="navy_front.png" alt="AARAMBH Navy Hoodie front" loading="lazy">
+          <img class="back" src="navy_back.png" alt="AARAMBH Navy Hoodie back" loading="lazy">
+          <span class="flip-tag">Hover / tap for back</span>
         </div>
         <div class="card-body">
-          <h3>Beige</h3>
-          <div class="card-meta">
-            <span class="price">₹699</span>
-            <span class="gsm-tag">400 GSM</span>
-          </div>
-          <a href="order.html?product=Beige+Hoodie&type=Hoodie&color=Beige&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+          <h3>Navy</h3>
+          <div class="card-meta"><span class="price">₹699</span><span class="gsm-tag">320 GSM Cotton</span></div>
+          <a href="order.html?product=Navy+Hoodie&type=Hoodie&color=Navy&price=699&image=navy_front.png&image2=navy_back.png" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
       <div class="product-card reveal reveal-delay-1">
         <div class="card-media">
-          <img src="hoodie2.jpg" alt="Black Hoodie" loading="lazy">
+          <img src="white_front.png" alt="AARAMBH White Hoodie front" loading="lazy">
+          <img class="back" src="white_back.png" alt="AARAMBH White Hoodie back" loading="lazy">
+          <span class="flip-tag">Hover / tap for back</span>
         </div>
         <div class="card-body">
-          <h3>Black</h3>
-          <div class="card-meta">
-            <span class="price">₹699</span>
-            <span class="gsm-tag">400 GSM</span>
-          </div>
-          <a href="order.html?product=Black+Hoodie&type=Hoodie&color=Black&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+          <h3>White</h3>
+          <div class="card-meta"><span class="price">₹699</span><span class="gsm-tag">320 GSM Cotton</span></div>
+          <a href="order.html?product=White+Hoodie&type=Hoodie&color=White&price=699&image=white_front.png&image2=white_back.png" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
       <div class="product-card reveal reveal-delay-2">
         <div class="card-media">
-          <img src="hoodie3.jpg" alt="Grey Hoodie" loading="lazy">
+          <img src="black_front.png" alt="AARAMBH Black Hoodie front" loading="lazy">
+          <img class="back" src="black_back.png" alt="AARAMBH Black Hoodie back" loading="lazy">
+          <span class="flip-tag">Hover / tap for back</span>
         </div>
         <div class="card-body">
-          <h3>Grey</h3>
-          <div class="card-meta">
-            <span class="price">₹699</span>
-            <span class="gsm-tag">400 GSM</span>
-          </div>
-          <a href="order.html?product=Grey+Hoodie&type=Hoodie&color=Grey&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+          <h3>Black</h3>
+          <div class="card-meta"><span class="price">₹699</span><span class="gsm-tag">320 GSM Cotton</span></div>
+          <a href="order.html?product=Black+Hoodie&type=Hoodie&color=Black&price=699&image=black_front.png&image2=black_back.png" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
       <div class="product-card reveal reveal-delay-3">
         <div class="card-media">
-          <img src="hoodie4.jpg" alt="Navy Hoodie" loading="lazy">
+          <img src="offwhite_front.png" alt="AARAMBH Off White Hoodie front" loading="lazy">
+          <img class="back" src="offwhite_back.png" alt="AARAMBH Off White Hoodie back" loading="lazy">
+          <span class="flip-tag">Hover / tap for back</span>
         </div>
         <div class="card-body">
-          <h3>Navy</h3>
-          <div class="card-meta">
-            <span class="price">₹699</span>
-            <span class="gsm-tag">400 GSM</span>
-          </div>
-          <a href="order.html?product=Navy+Hoodie&type=Hoodie&color=Navy&price=699" class="buy-now-btn">🛍️ Buy Now</a>
+          <h3>Off White</h3>
+          <div class="card-meta"><span class="price">₹699</span><span class="gsm-tag">320 GSM Cotton</span></div>
+          <a href="order.html?product=Off+White+Hoodie&type=Hoodie&color=Off+White&price=699&image=offwhite_front.png&image2=offwhite_back.png" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="card-media">
+          <img src="grey_front.png" alt="AARAMBH Grey Hoodie front" loading="lazy">
+          <img class="back" src="grey_back.png" alt="AARAMBH Grey Hoodie back" loading="lazy">
+          <span class="flip-tag">Hover / tap for back</span>
+        </div>
+        <div class="card-body">
+          <h3>Grey</h3>
+          <div class="card-meta"><span class="price">₹699</span><span class="gsm-tag">320 GSM Cotton</span></div>
+          <a href="order.html?product=Grey+Hoodie&type=Hoodie&color=Grey&price=699&image=grey_front.png&image2=grey_back.png" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-1">
+        <div class="card-media">
+          <img src="maroon_front.png" alt="AARAMBH Maroon Hoodie front" loading="lazy">
+          <img class="back" src="maroon_back.png" alt="AARAMBH Maroon Hoodie back" loading="lazy">
+          <span class="flip-tag">Hover / tap for back</span>
+        </div>
+        <div class="card-body">
+          <h3>Maroon</h3>
+          <div class="card-meta"><span class="price">₹699</span><span class="gsm-tag">320 GSM Cotton</span></div>
+          <a href="order.html?product=Maroon+Hoodie&type=Hoodie&color=Maroon&price=699&image=maroon_front.png&image2=maroon_back.png" class="buy-now-btn">🛍️ Buy Now</a>
+        </div>
+      </div>
+
+      <div class="product-card reveal reveal-delay-2">
+        <div class="card-media">
+          <img src="red_front.png" alt="AARAMBH Red Hoodie front" loading="lazy">
+          <img class="back" src="red_back.png" alt="AARAMBH Red Hoodie back" loading="lazy">
+          <span class="flip-tag">Hover / tap for back</span>
+        </div>
+        <div class="card-body">
+          <h3>Red</h3>
+          <div class="card-meta"><span class="price">₹699</span><span class="gsm-tag">320 GSM Cotton</span></div>
+          <a href="order.html?product=Red+Hoodie&type=Hoodie&color=Red&price=699&image=red_front.png&image2=red_back.png" class="buy-now-btn">🛍️ Buy Now</a>
         </div>
       </div>
 
@@ -526,7 +532,7 @@
       <h3>Size Chart</h3>
     </div>
     <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit before placing your order.</p>
-    <img src="oversized_chart.png" alt="Size Chart" loading="lazy">
+    <img src="oversized_chart.png" alt="AARAMBH Hoodie Size Chart" loading="lazy">
     <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering — we don't offer size exchanges</div>
   </div>
 
@@ -536,7 +542,7 @@
       <div class="care-icon">🧺</div>
       <div class="care-text">
         <h4>Care Instructions</h4>
-        <p>Turn the hoodie <strong>inside out before washing</strong> to protect the fleece finish and any printed graphics. Wash cold, skip the dryer when possible, and avoid direct ironing on prints.</p>
+        <p>Turn the hoodie <strong>inside out before washing</strong> to protect the cotton finish and any printed graphics. Wash cold, skip the dryer when possible, and avoid direct ironing on prints.</p>
       </div>
     </div>
   </div>
@@ -550,7 +556,7 @@
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2026 Arambh — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+    <p>© 2026 AARAMBH — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
   </footer>
 
   <script>
@@ -584,6 +590,13 @@
     document.querySelectorAll('a, button').forEach(el => {
       el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursorRing.style.width = '60px'; cursorRing.style.height = '60px'; });
       el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursorRing.style.width = '40px'; cursorRing.style.height = '40px'; });
+    });
+
+    // Tap to flip front/back on touch devices
+    document.querySelectorAll('.card-media').forEach(m => {
+      m.addEventListener('click', () => {
+        if (window.matchMedia('(hover: none)').matches) m.classList.toggle('show-back');
+      });
     });
 
     // Reveal

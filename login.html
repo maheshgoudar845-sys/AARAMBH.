@@ -245,8 +245,11 @@ const firebaseConfig = {
       msg('If that email has an account, a reset link is on its way.', true);
     }, true);
     $('nGo').onclick = () => run($('nGo'), async () => {
-      finish(await post('/api/auth/reset', { token: params.get('reset'), password: $('nPass').value }));
-    });
+const out = await post('/api/auth/register', { name, email, phone, password });
+if (out.token) return finish(out);
+pendingEmail = email;
+$('eSub').textContent = 'We sent a code to ' + email + '. Enter it to finish creating your account.';
+$('eCode').value = ''; show('emailotp'); startCooldown();    });
 
     /* ---- Google and mobile (Firebase) ---- */
     const needFirebase = () => { if (!fbReady) throw new Error('Google and mobile login are not set up yet.'); };

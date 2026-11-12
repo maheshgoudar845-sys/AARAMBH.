@@ -324,8 +324,6 @@
   const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="100%" height="100%" fill="#101018"/><text x="50%" y="50%" fill="#9A96A8" font-family="sans-serif" font-size="32" text-anchor="middle">Image coming soon</text></svg>');
   function altCandidates(src){
     const out = [], m = src.match(/^(.*)\.(png|jpe?g)$/i);
-    /* White_back / Black_back exist for BOTH polo (.png) and oversized (.jpg): never swap between them */
-    if(/(^|\/)(White|Black)_back\.(png|jpe?g)$/i.test(src)) return /\.png$/i.test(src) ? [] : [src.replace(/\.jpe?g$/i, /\.jpg$/i.test(src) ? '.jpeg' : '.jpg')];
     const bases = [src.replace(/\.(png|jpe?g)$/i,'')];
     if(/Navy_Blue_/.test(src)) bases.push(bases[0].replace('Navy_Blue_','Blue_'));
     else if(/(^|\/)Blue_(front|back)/.test(src)) bases.push(bases[0].replace('Blue_','Navy_Blue_'));
@@ -378,15 +376,18 @@
   /* Filenames below match what oversized.html / polo.html actually display.
      The fallback above also tries the other extension automatically. */
   const oversizedVariants = {
-    'Royal Blue': {image:'Royal_blue.jpg', image2:'Royal_blue_back.png'},
-    'Aqua/Sky Blue': {image:'Aqua_sky_blue.png', image2:'Aqua_sky_blue_back.png'},
-    'Beige': {image:'Beige.png', image2:'Beige_back.png'},
-    'White': {image:'White.jpg', image2:'White_back.jpg'},
-    'Black': {image:'Black.jpg', image2:'Black_back.jpg'},
-    'Army Green': {image:'Army_green.png', image2:'Army_green_back.png'},
-    'Lavender': {image:'Lavender .png', image2:'Lavender_back.png'},
-    'Red': {image:'Red.jpg', image2:'Red_back.png'},
-    'Pink': {image:'Pink.png', image2:'Pink_back.png'}
+    'Royal Blue': {image:'ROYAL_BLUE_FRONT.png', image2:'ROYAL_BLUE_BACK.png'},
+    'Aqua/Sky Blue': {image:'SKY_BLUE_FRONT.png', image2:'SKY_BLUE_BACK.png'},
+    'Beige': {image:'BEIGE_FRONT.png', image2:'BEIGE_BACK.png'},
+    'White': {image:'WHITE_FRONT.png', image2:'WHITE_BACK.png'},
+    'Black': {image:'BLACK_FRONT.png', image2:'BLACK_BACK.png'},
+    'Army Green': {image:'ARMY_GREEN_FRONT.png', image2:'ARMY_GREEN_BACK.png'},
+    'Lavender': {image:'LAVENDER_FRONT.png', image2:'LAVENDER_BACK.png'},
+    'Red': {image:'RED_FRONT.png', image2:'RED_BACK.png'},
+    'Pink': {image:'BABY_PINK_FRONT.png', image2:'BABY_PINK_BACK.png'},
+    'Maroon': {image:'MAROON_FRONT.png', image2:'MAROON_BACK.png'},
+    'Navy Blue': {image:'NAVY_BLUE_FRONT.png', image2:'NAVY_BLUE_BACK.png'},
+    'Off White': {image:'OFF_WHITE_FRONT.png', image2:'OFF-WHITE-BACK.png'}
   };
   const poloVariants = {
     'White': {image:'White_front.png', image2:'White_back.png'},
@@ -658,15 +659,18 @@
     {"product":"Blue Boxy Shirt","type":"Boxy Shirt","color":"Blue","price":"699","image":"Boxy Blue Shirt-front.jpeg","image2":"Boxy Blue Shirt-back.jpeg","categoryPage":"shirt.html"},
     {"product":"Pink Boxy Shirt","type":"Boxy Shirt","color":"Pink","price":"689","image":"Boxy Pink Shirt-front.jpeg","image2":"Boxy Pink Shirt-back.jpeg","categoryPage":"shirt.html"},
     {"product":"Polo T-Shirt","type":"Polo","color":"White","price":"389","image":"White_front.png","image2":"White_back.png","categoryPage":"polo.html"},
-    {"product":"Royal Blue Oversized Tee","type":"Oversized","color":"Royal Blue","price":"399","image":"Royal_blue.jpg","image2":"Royal_blue_back.png","categoryPage":"oversized.html"},
-    {"product":"Aqua/Sky Blue Oversized Tee","type":"Oversized","color":"Aqua/Sky Blue","price":"389","image":"Aqua_sky_blue.png","image2":"Aqua_sky_blue_back.png","categoryPage":"oversized.html"},
-    {"product":"Beige Oversized Tee","type":"Oversized","color":"Beige","price":"385","image":"Beige.png","image2":"Beige_back.png","categoryPage":"oversized.html"},
-    {"product":"White Oversized Tee","type":"Oversized","color":"White","price":"380","image":"White.jpg","image2":"White_back.jpg","categoryPage":"oversized.html"},
-    {"product":"Black Oversized Tee","type":"Oversized","color":"Black","price":"399","image":"Black.jpg","image2":"Black_back.jpg","categoryPage":"oversized.html"},
-    {"product":"Army Green Oversized Tee","type":"Oversized","color":"Army Green","price":"392","image":"Army_green.png","image2":"Army_green_back.png","categoryPage":"oversized.html"},
-    {"product":"Lavender Oversized Tee","type":"Oversized","color":"Lavender","price":"385","image":"Lavender .png","image2":"Lavender_back.png","categoryPage":"oversized.html"},
-    {"product":"Red Oversized Tee","type":"Oversized","color":"Red","price":"389","image":"Red.jpg","image2":"Red_back.png","categoryPage":"oversized.html"},
-    {"product":"Pink Oversized Tee","type":"Oversized","color":"Pink","price":"380","image":"Pink.png","image2":"Pink_back.png","categoryPage":"oversized.html"},
+    {"product":"Royal Blue Oversized Tee","type":"Oversized","color":"Royal Blue","price":"399","image":"ROYAL_BLUE_FRONT.png","image2":"ROYAL_BLUE_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Aqua/Sky Blue Oversized Tee","type":"Oversized","color":"Aqua/Sky Blue","price":"389","image":"SKY_BLUE_FRONT.png","image2":"SKY_BLUE_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Beige Oversized Tee","type":"Oversized","color":"Beige","price":"385","image":"BEIGE_FRONT.png","image2":"BEIGE_BACK.png","categoryPage":"oversized.html"},
+    {"product":"White Oversized Tee","type":"Oversized","color":"White","price":"380","image":"WHITE_FRONT.png","image2":"WHITE_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Black Oversized Tee","type":"Oversized","color":"Black","price":"399","image":"BLACK_FRONT.png","image2":"BLACK_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Army Green Oversized Tee","type":"Oversized","color":"Army Green","price":"392","image":"ARMY_GREEN_FRONT.png","image2":"ARMY_GREEN_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Lavender Oversized Tee","type":"Oversized","color":"Lavender","price":"385","image":"LAVENDER_FRONT.png","image2":"LAVENDER_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Red Oversized Tee","type":"Oversized","color":"Red","price":"389","image":"RED_FRONT.png","image2":"RED_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Pink Oversized Tee","type":"Oversized","color":"Pink","price":"380","image":"BABY_PINK_FRONT.png","image2":"BABY_PINK_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Maroon Oversized Tee","type":"Oversized","color":"Maroon","price":"399","image":"MAROON_FRONT.png","image2":"MAROON_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Navy Blue Oversized Tee","type":"Oversized","color":"Navy Blue","price":"399","image":"NAVY_BLUE_FRONT.png","image2":"NAVY_BLUE_BACK.png","categoryPage":"oversized.html"},
+    {"product":"Off White Oversized Tee","type":"Oversized","color":"Off White","price":"385","image":"OFF_WHITE_FRONT.png","image2":"OFF-WHITE-BACK.png","categoryPage":"oversized.html"},
     {"product":"Navy Hoodie","type":"Hoodie","color":"Navy","price":"649","image":"hoodie_navy_front.png","image2":"hoodie_navy_back.png","categoryPage":"hoodie.html"},
     {"product":"White Hoodie","type":"Hoodie","color":"White","price":"599","image":"hoodie_white_front.png","image2":"hoodie_white_back.png","categoryPage":"hoodie.html"},
     {"product":"Black Hoodie","type":"Hoodie","color":"Black","price":"599","image":"hoodie_black_front.png","image2":"hoodie_black_back.png","categoryPage":"hoodie.html"},

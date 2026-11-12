@@ -145,6 +145,20 @@
   .policy-note{background:rgba(232,69,44,.08);border:1px solid rgba(232,69,44,.28);border-radius:10px;padding:13px 14px;margin:0 0 22px;color:var(--muted);font-size:.84rem;line-height:1.55;}
   .policy-note strong{color:var(--text);}
 
+  /* ---- Price details card (hoodies) ---- */
+  .price-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 22px;}
+  .price-card[hidden]{display:none;}
+  .price-card-title{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .price-line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:.9rem;cursor:pointer;transition:background .2s;}
+  .price-line:hover{background:rgba(255,255,255,.04);}
+  .price-line.active{background:rgba(232,69,44,.14);}
+  .price-line .pl-name{display:flex;align-items:center;gap:10px;}
+  .price-line .pl-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:0 0 auto;}
+  .price-line .pl-amt{font-family:'Syne',sans-serif;font-weight:700;}
+  .price-total{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:12px;border-top:1px solid var(--line);font-size:.92rem;}
+  .price-total strong{font-family:'Syne',sans-serif;font-size:1.1rem;color:var(--accent2);}
+  .price-foot{margin-top:10px;color:var(--muted);font-size:.78rem;line-height:1.55;}
+
   /* ---- Related ---- */
   .related-images{position:relative;display:block;height:230px;overflow:hidden;background:#0b0b13;}
   .related-images img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;padding:8px;opacity:0;transition:opacity .45s ease,transform .5s var(--ease);}
@@ -219,6 +233,13 @@
     <div class="option-label">Colour</div>
     <div class="swatches" id="swatches"></div>
     <div class="selected-option" id="selectedColorLabel"></div>
+
+    <div class="price-card" id="priceCard" hidden>
+      <div class="price-card-title">Price details</div>
+      <div id="priceRows"></div>
+      <div class="price-total"><span id="priceTotalLabel">Your price</span><strong id="priceTotalValue">₹0</strong></div>
+      <div class="price-foot">Price is per piece. Delivery is ₹30 for Goa and Karnataka, ₹50 for the rest of India. Coupons are applied at checkout.</div>
+    </div>
 
     <div class="size-head">
       <div class="option-label" style="margin:0;">Size</div>
@@ -346,12 +367,13 @@
   const isOversized = typeKey === 'oversized';
   const isPolo = typeKey === 'polo';
   const isShirt = typeKey === 'boxy shirt';
-  /* Printed tees are oversized unless the type says "regular" (the regular-fit printed series). Crop tops are cropped fit. Boxy shirts are boxy fit. */
-  let selectedFit = isShirt ? 'Boxy' : isCrop ? 'Cropped' : (isPrinted ? (isRegular ? 'Regular' : 'Oversized') : (isOversized ? 'Oversized' : 'Regular'));
+  const isHoodie = typeKey === 'hoodie';
+  /* Printed tees are oversized unless the type says "regular" (the regular-fit printed series). Crop tops are cropped fit. Boxy shirts are boxy fit. Hoodies are relaxed fit. */
+  let selectedFit = isHoodie ? 'Relaxed' : isShirt ? 'Boxy' : isCrop ? 'Cropped' : (isPrinted ? (isRegular ? 'Regular' : 'Oversized') : (isOversized ? 'Oversized' : 'Regular'));
   let selectedColor = productData.color;
   let selectedImages = [productData.image, productData.image2].filter(Boolean);
 
-  const colorHex = {'Black':'#111111','White':'#f5f3ee','Off White':'#e6dfcc','Red':'#b51f2e','Blue':'#74b9ff','Royal Blue':'#2748a8','Aqua/Sky Blue':'#74d6e8','Army Green':'#596b3d','Lavender':'#b9a3db','Pink':'#ef9db5','Baby Pink':'#F4B6C8','Yellow':'#FFD21F','Beige':'#d9c3a5','Cream':'#fff1cf','Grayish Green':'#7d8c7a','Navy Blue':'#000080','Maroon':'#741320','Gray':'#9DA1A2','Charcoal':'#36454F','Acid Wash':'#8f9aa3','Default':'#777777'};
+  const colorHex = {'Black':'#111111','White':'#f5f3ee','Off White':'#e6dfcc','Red':'#b51f2e','Blue':'#74b9ff','Royal Blue':'#2748a8','Aqua/Sky Blue':'#74d6e8','Army Green':'#596b3d','Lavender':'#b9a3db','Pink':'#ef9db5','Baby Pink':'#F4B6C8','Yellow':'#FFD21F','Beige':'#d9c3a5','Cream':'#fff1cf','Grayish Green':'#7d8c7a','Navy Blue':'#000080','Navy':'#000080','Maroon':'#741320','Gray':'#9DA1A2','Grey':'#9DA1A2','Charcoal':'#36454F','Acid Wash':'#8f9aa3','Default':'#777777'};
 
   /* Filenames below match what oversized.html / polo.html actually display.
      The fallback above also tries the other extension automatically. */
@@ -378,6 +400,17 @@
     'Red': {image:'Boxy Red Shirt-front.jpeg', image2:'Boxy Red Shirt-back.jpeg'},
     'Blue': {image:'Boxy Blue Shirt-front.jpeg', image2:'Boxy Blue Shirt-back.jpeg'},
     'Pink': {image:'Boxy fit Shirts-front.jpeg', image2:'Boxy fit Shirts-back.jpeg'}
+  };
+  /* HOODIES: 7 colours. If your hoodie photos have different file names, change ONLY the names inside the quotes below.
+     (.png / .jpg / .jpeg are tried automatically.) Until a photo exists, the page shows "Image coming soon". */
+  const hoodieVariants = {
+    'Navy': {image:'hoodie_navy_front.png', image2:'hoodie_navy_back.png'},
+    'White': {image:'hoodie_white_front.png', image2:'hoodie_white_back.png'},
+    'Black': {image:'hoodie_black_front.png', image2:'hoodie_black_back.png'},
+    'Off White': {image:'hoodie_offwhite_front.png', image2:'hoodie_offwhite_back.png'},
+    'Grey': {image:'hoodie_grey_front.png', image2:'hoodie_grey_back.png'},
+    'Maroon': {image:'hoodie_maroon_front.png', image2:'hoodie_maroon_back.png'},
+    'Red': {image:'hoodie_red_front.png', image2:'hoodie_red_back.png'}
   };
   const printedVariants = {
     'Unseen': [{color:'White',image:'un_white_f.png',image2:'un_white_b.png'},{color:'Royal Blue',image:'un_blue_f.png',image2:'un_blue_b.png'},{color:'Black',image:'un_black_f.png',image2:'un_black_b.png'}],
@@ -418,12 +451,19 @@
     'Vintage': [{color:'White',image:'Vintage White Crop Top-front.jpeg',image2:'Glorious Butterfly White Crop Top-back.jpeg'},{color:'Red',image:'Vintage Red Crop Top-front.jpeg',image2:'Self Love Red Crop Top-back.jpeg'},{color:'Black',image:'Vintage Black Crop Top-front.jpeg',image2:'Self Love Black Crop Top-back.jpeg'}]
   };
   const toList = obj => Object.keys(obj).map(color => ({color, ...obj[color]}));
-  let variants = isOversized ? toList(oversizedVariants) : isPolo ? toList(poloVariants) : isShirt ? toList(shirtVariants)
+  let variants = isOversized ? toList(oversizedVariants) : isPolo ? toList(poloVariants) : isShirt ? toList(shirtVariants) : isHoodie ? toList(hoodieVariants)
     : (printedVariants[productData.product] || [{color:productData.color,image:productData.image,image2:productData.image2}]);
 
-  const matchingVariant = variants.find(v => v.color.toLowerCase() === productData.color.toLowerCase()) || variants[0];
+  /* Old hoodie links may say "Navy Blue" or "Gray": treat them as Navy / Grey */
+  const colorAlias = {'navy blue':'navy','gray':'grey'};
+  const wantedColor = isHoodie ? (colorAlias[productData.color.toLowerCase()] || productData.color.toLowerCase()) : productData.color.toLowerCase();
+  const matchingVariant = variants.find(v => v.color.toLowerCase() === wantedColor) || variants[0];
   selectedColor = matchingVariant.color;
-  selectedImages = [productData.image || matchingVariant.image, productData.image2 || matchingVariant.image2].filter(Boolean);
+  if(isHoodie){ productData.product = `${selectedColor} Hoodie`; }
+  /* For hoodies always use the photos of the chosen colour (old links carried beige/black photos) */
+  selectedImages = isHoodie
+    ? [matchingVariant.image, matchingVariant.image2].filter(Boolean)
+    : [productData.image || matchingVariant.image, productData.image2 || matchingVariant.image2].filter(Boolean);
 
   /* Fill in the real fabric details for the regular fit printed tees here */
   const REGULAR_SPECS = {material:'Pure Cotton', gsm:'180 GSM'};
@@ -434,7 +474,7 @@
     if(isPrinted) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Printed heavyweight pure-cotton French terry T-shirt with a relaxed oversized fit.'};
     if(isPolo) return {material:'Poly-Cotton — 90% Cotton, 10% Polyester',gsm:'220 GSM',fit:'Regular Polo Fit',description:'Breathable poly-cotton polo designed for a clean everyday fit.'};
     if(isOversized) return {material:'100% Pure Cotton — French Terry',gsm:'240 GSM',fit:'Oversized / Drop Shoulder',description:'Heavyweight pure-cotton French terry T-shirt with a relaxed oversized streetwear fit.'};
-    if(typeKey === 'hoodie') return {material:'Premium Fabric',gsm:'See product description',fit:'Relaxed Fit',description:'Comfortable premium hoodie with a relaxed fit for layering.'};
+    if(isHoodie) return {material:'Premium Fabric',gsm:'See product description',fit:'Relaxed Fit',description:'Comfortable premium hoodie with a relaxed fit for layering.'};
     return {material:'Premium Fabric',gsm:'—',fit:'Regular Fit',description:'Premium AARAMBH apparel.'};
   }
   function updateSizeChart(){
@@ -443,6 +483,7 @@
     else if(isShirt){ img.src='ShirtSizeChart.jpeg'; cap.textContent='Boxy fit shirt size chart'; }
     else if(isPolo){ img.src='polo_size_chart.png'; cap.textContent='Polo T-shirt size chart'; }
     else if(isRegular){ img.src='regular_chart.png'; cap.textContent='Regular fit T-shirt size chart'; }
+    else if(isHoodie){ img.src='oversized_chart.png'; cap.textContent='Hoodie size chart'; }
     else { img.src='oversized_chart.png'; cap.textContent = isPrinted ? 'Oversized 240 GSM printed T-shirt size chart' : 'Oversized T-shirt size chart'; }
   }
   function updateSpecs(){
@@ -451,7 +492,7 @@
     $('materialDetail').textContent = s.material;
     $('gsmDetail').textContent = s.gsm;
     $('fitDetail').textContent = s.fit;
-    $('productCategory').textContent = isShirt ? 'Boxy Shirt' : isCrop ? 'Printed Crop Top' : (isPrinted ? `Printed ${selectedFit} T-Shirt` : `${productData.type} Collection`);
+    $('productCategory').textContent = isShirt ? 'Boxy Shirt' : isCrop ? 'Printed Crop Top' : isHoodie ? 'Hoodie' : (isPrinted ? `Printed ${selectedFit} T-Shirt` : `${productData.type} Collection`);
     const xsBtn = document.querySelector('.size-btn[data-size="XS"]');
     const xxlBtn = document.querySelector('.size-btn[data-size="2XL"]');
     if(isCrop){
@@ -472,6 +513,38 @@
   setTitle();
   $('productPrice').textContent = `₹${productData.price}`;
   $('mobileProductPrice').textContent = `₹${productData.price}`;
+
+  /* ===== Price details (hoodies) ===== */
+  /* Same prices as prices.js and server.js. Used only if prices.js is missing. */
+  const HOODIE_PRICE_BACKUP = {'Navy':649,'White':599,'Black':599,'Off White':549,'Grey':599,'Maroon':599,'Red':549};
+  function priceOf(color){
+    try {
+      if(window.AARAMBH_PRICES){
+        const v = window.AARAMBH_PRICES.get('Hoodie', `${color} Hoodie`, color);
+        if(v != null) return v;
+      }
+    } catch(_) {}
+    return HOODIE_PRICE_BACKUP[color] != null ? HOODIE_PRICE_BACKUP[color] : (Number(productData.price) || 0);
+  }
+  function renderPriceCard(){
+    const card = $('priceCard');
+    if(!isHoodie){ card.hidden = true; return; }
+    card.hidden = false;
+    $('priceRows').innerHTML = variants.map(v =>
+      `<div class="price-line ${v.color === selectedColor ? 'active' : ''}" data-color="${v.color}"><span class="pl-name"><span class="pl-dot" style="background:${colorHex[v.color] || '#777'}"></span>${v.color}</span><span class="pl-amt">₹${priceOf(v.color)}</span></div>`).join('');
+    const unit = priceOf(selectedColor);
+    productData.price = unit;
+    $('productPrice').textContent = `₹${unit}`;
+    $('mobileProductPrice').textContent = `₹${unit}`;
+    $('priceTotalLabel').textContent = qty > 1 ? `${selectedColor} Hoodie × ${qty}` : `${selectedColor} Hoodie`;
+    $('priceTotalValue').textContent = `₹${unit * qty}`;
+  }
+  $('priceRows').addEventListener('click', e => {
+    const line = e.target.closest('.price-line'); if(!line) return;
+    const idx = variants.findIndex(v => v.color === line.dataset.color);
+    const sw = swatches.querySelectorAll('.swatch')[idx];
+    if(sw) sw.click();
+  });
 
   /* ===== Gallery: click / tap / swipe / keyboard to flip front <-> back ===== */
   const frame = $('mainImageFrame'), flip = $('flipInner'), imgFront = $('imgFront'), imgBack = $('imgBack');
@@ -531,10 +604,12 @@
   thumbs.addEventListener('keydown', e => { const t = e.target.closest('.thumb'); if(t && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); setView(Number(t.dataset.index), true); } });
 
   /* ===== Swatches (name, URL and photos follow the colour) ===== */
+  let qty = 1;
   const swatches = $('swatches');
   function renderSwatches(){
     swatches.innerHTML = variants.map((v,i) => `<button type="button" class="swatch ${v.color === selectedColor ? 'active' : ''}" data-index="${i}" title="${v.color}" aria-label="Select ${v.color}" style="background:${colorHex[v.color] || '#777'}"></button>`).join('');
     $('selectedColorLabel').textContent = `Selected colour: ${selectedColor}`;
+    renderPriceCard();
   }
   swatches.addEventListener('click', e => {
     const b = e.target.closest('.swatch'); if(!b) return;
@@ -542,6 +617,7 @@
     selectedColor = v.color;
     if(isOversized){ productData.product = `${selectedColor} Oversized Tee`; setTitle(); }
     if(isShirt){ productData.product = `${selectedColor} Boxy Shirt`; setTitle(); }
+    if(isHoodie){ productData.product = `${selectedColor} Hoodie`; setTitle(); }
     renderSwatches();
     renderGallery([v.image, v.image2].filter(Boolean));
     try {
@@ -549,6 +625,7 @@
       p.set('product', productData.product); p.set('color', v.color); p.set('image', v.image); p.set('image2', v.image2 || v.image);
       history.replaceState(null, '', '?' + p.toString());
     } catch(_) {}
+    renderPriceCard();
   });
   renderSwatches();
   renderGallery(selectedImages);
@@ -561,8 +638,7 @@
   }));
 
   /* ===== Quantity ===== */
-  let qty = 1;
-  function renderQuantity(){ $('qtyVal').textContent = qty; $('qtyValMobile').textContent = qty; }
+  function renderQuantity(){ $('qtyVal').textContent = qty; $('qtyValMobile').textContent = qty; renderPriceCard(); }
   const inc = () => { if(qty < 10){ qty++; renderQuantity(); } };
   const dec = () => { if(qty > 1){ qty--; renderQuantity(); } };
   $('qtyPlus').onclick = inc; $('qtyMinus').onclick = dec; $('qtyPlusMobile').onclick = inc; $('qtyMinusMobile').onclick = dec;
@@ -576,8 +652,7 @@
   addEventListener('keydown', e => { if(e.key === 'Escape') overlay.classList.remove('open'); });
 
   /* ===== Catalog + related products ===== */
-  /* Prices updated: each product has its own price within its range.
-     Keep in sync with server.js (PRODUCTS) and the category pages (oversized.html, polo.html, printed.html, croptop.html). */
+  /* Keep in sync with prices.js and server.js (PRODUCTS). */
   const productCatalog = [
     {"product":"Red Boxy Shirt","type":"Boxy Shirt","color":"Red","price":"689","image":"Boxy Red Shirt-front.jpeg","image2":"Boxy Red Shirt-back.jpeg","categoryPage":"shirt.html"},
     {"product":"Blue Boxy Shirt","type":"Boxy Shirt","color":"Blue","price":"699","image":"Boxy Blue Shirt-front.jpeg","image2":"Boxy Blue Shirt-back.jpeg","categoryPage":"shirt.html"},
@@ -592,8 +667,13 @@
     {"product":"Lavender Oversized Tee","type":"Oversized","color":"Lavender","price":"385","image":"Lavender .png","image2":"Lavender_back.png","categoryPage":"oversized.html"},
     {"product":"Red Oversized Tee","type":"Oversized","color":"Red","price":"389","image":"Red.jpg","image2":"Red_back.png","categoryPage":"oversized.html"},
     {"product":"Pink Oversized Tee","type":"Oversized","color":"Pink","price":"380","image":"Pink.png","image2":"Pink_back.png","categoryPage":"oversized.html"},
-    {"product":"Beige Hoodie","type":"Hoodie","color":"Beige","price":"599","image":"hoodie1.jpg","categoryPage":"oversized.html"},
-    {"product":"Black Hoodie","type":"Hoodie","color":"Black","price":"599","image":"hoodie2.jpg","categoryPage":"oversized.html"},
+    {"product":"Navy Hoodie","type":"Hoodie","color":"Navy","price":"649","image":"hoodie_navy_front.png","image2":"hoodie_navy_back.png","categoryPage":"hoodie.html"},
+    {"product":"White Hoodie","type":"Hoodie","color":"White","price":"599","image":"hoodie_white_front.png","image2":"hoodie_white_back.png","categoryPage":"hoodie.html"},
+    {"product":"Black Hoodie","type":"Hoodie","color":"Black","price":"599","image":"hoodie_black_front.png","image2":"hoodie_black_back.png","categoryPage":"hoodie.html"},
+    {"product":"Off White Hoodie","type":"Hoodie","color":"Off White","price":"549","image":"hoodie_offwhite_front.png","image2":"hoodie_offwhite_back.png","categoryPage":"hoodie.html"},
+    {"product":"Grey Hoodie","type":"Hoodie","color":"Grey","price":"599","image":"hoodie_grey_front.png","image2":"hoodie_grey_back.png","categoryPage":"hoodie.html"},
+    {"product":"Maroon Hoodie","type":"Hoodie","color":"Maroon","price":"599","image":"hoodie_maroon_front.png","image2":"hoodie_maroon_back.png","categoryPage":"hoodie.html"},
+    {"product":"Red Hoodie","type":"Hoodie","color":"Red","price":"549","image":"hoodie_red_front.png","image2":"hoodie_red_back.png","categoryPage":"hoodie.html"},
     {"product":"Explore Space Acid Wash","type":"Printed Oversized Tee","price":"679","color":"Acid Wash","image":"explore_space_front.jpg","image2":"explore_space_back.jpg","categoryPage":"printed.html"},
     {"product":"Calm Acid Wash","type":"Printed Oversized Tee","price":"659","color":"Black","image":"Calm_acid_front.png","image2":"Calm_acid_back.png","categoryPage":"printed.html"},
     {"product":"Conquer Acid Wash","type":"Printed Oversized Tee","price":"649","color":"Black","image":"Conquer_acid_front.png","image2":"Conquer_acid_back.png","categoryPage":"printed.html"},
@@ -635,7 +715,7 @@
 
   function variantsFor(item){
     const k = item.type.toLowerCase();
-    return printedVariants[item.product] || (k === 'oversized' ? toList(oversizedVariants) : k === 'polo' ? toList(poloVariants) : k === 'boxy shirt' ? toList(shirtVariants) : [{color:item.color,image:item.image,image2:item.image2}]);
+    return printedVariants[item.product] || (k === 'oversized' ? toList(oversizedVariants) : k === 'polo' ? toList(poloVariants) : k === 'boxy shirt' ? toList(shirtVariants) : k === 'hoodie' ? toList(hoodieVariants) : [{color:item.color,image:item.image,image2:item.image2}]);
   }
   const currentName = productData.product.toLowerCase();
   const sameCategory = visibleCatalog.filter(i => i.product.toLowerCase() !== currentName && i.type.toLowerCase() === typeKey);

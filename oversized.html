@@ -316,7 +316,7 @@
     <div class="header-meta">
       <span class="meta-chip hot">Buy 3 Save 8%</span>
       <span class="meta-chip">Drop Shoulder</span>
-      <span class="meta-chip">9 Styles</span>
+      <span class="meta-chip">12 Styles</span>
       <span class="meta-chip">From ₹380</span>
     </div>
     <a class="hero-cta" href="#designs">Shop oversized</a>
@@ -387,7 +387,7 @@
       <span><strong>Oversized fit</strong> 240 GSM, drop shoulder, 100% pure cotton French terry</span>
       <span><strong>Offer</strong> Buy any 3, save 8%</span>
     </div>
-    <p class="finder-count" id="finderCount" aria-live="polite">Showing 9 tees</p>
+    <p class="finder-count" id="finderCount" aria-live="polite">Showing 12 tees</p>
     <div class="tee-grid" id="teeGrid"></div>
     <div class="tee-empty" id="teeEmpty" hidden>
       <p>No tee matches that colour yet.</p>
@@ -418,18 +418,21 @@
   <script>
     // ===== OVERSIZED LIST =====
     const ITEMS = [
-      { color: 'Royal Blue',    hex: '#2748a8', tint: '39,72,168',   image: 'Royal_blue.jpg',      image2: 'Royal_blue_back.png',    badge: 'Popular' },
-      { color: 'Aqua/Sky Blue', hex: '#74d6e8', tint: '116,214,232', image: 'Aqua_sky_blue.png',   image2: 'Aqua_sky_blue_back.png', badge: 'Oversized' },
-      { color: 'Beige',         hex: '#d9c3a5', tint: '217,195,165', image: 'Beige.png',           image2: 'Beige_back.png',         badge: 'Oversized' },
-      { color: 'White',         hex: '#f5f3ee', tint: '160,160,170', image: 'White.jpg',           image2: 'White_back.png',         badge: 'Oversized' },
-      { color: 'Black',         hex: '#111111', tint: '120,120,130', image: 'Black.jpg',           image2: 'Black_back.png',         badge: 'Oversized' },
-      { color: 'Army Green',    hex: '#596b3d', tint: '89,107,61',   image: 'Army_green.png',      image2: 'Army_green_back.png',    badge: 'Popular' },
-      { color: 'Lavender',      hex: '#b9a3db', tint: '185,163,219', image: 'Lavender .png',       image2: 'Lavender_back.png',      badge: 'Popular' },
-      { color: 'Red',           hex: '#b51f2e', tint: '181,31,46',   image: 'Red.jpg',             image2: 'Red_back.png',           badge: 'Popular' },
-      { color: 'Pink',          hex: '#ef9db5', tint: '239,157,181', image: 'Pink.png',            image2: 'Pink_back.png',          badge: 'Popular' }
+      { color: 'Royal Blue',    hex: '#2748a8', tint: '39,72,168',   image: 'ROYAL_BLUE_FRONT.png',  image2: 'ROYAL_BLUE_BACK.png',  badge: 'Popular' },
+      { color: 'Aqua/Sky Blue', hex: '#74d6e8', tint: '116,214,232', image: 'SKY_BLUE_FRONT.png',    image2: 'SKY_BLUE_BACK.png',    badge: 'Oversized' },
+      { color: 'Beige',         hex: '#d9c3a5', tint: '217,195,165', image: 'BEIGE_FRONT.png',       image2: 'BEIGE_BACK.png',       badge: 'Oversized' },
+      { color: 'White',         hex: '#f5f3ee', tint: '160,160,170', image: 'WHITE_FRONT.png',       image2: 'WHITE_BACK.png',       badge: 'Oversized' },
+      { color: 'Black',         hex: '#111111', tint: '120,120,130', image: 'BLACK_FRONT.png',       image2: 'BLACK_BACK.png',       badge: 'Oversized' },
+      { color: 'Army Green',    hex: '#596b3d', tint: '89,107,61',   image: 'ARMY_GREEN_FRONT.png',  image2: 'ARMY_GREEN_BACK.png',  badge: 'Popular' },
+      { color: 'Lavender',      hex: '#b9a3db', tint: '185,163,219', image: 'LAVENDER_FRONT.png',    image2: 'LAVENDER_BACK.png',    badge: 'Popular' },
+      { color: 'Red',           hex: '#b51f2e', tint: '181,31,46',   image: 'RED_FRONT.png',         image2: 'RED_BACK.png',         badge: 'Popular' },
+      { color: 'Pink',          hex: '#ef9db5', tint: '239,157,181', image: 'BABY_PINK_FRONT.png',   image2: 'BABY_PINK_BACK.png',   badge: 'Popular' },
+      { color: 'Maroon',        hex: '#741320', tint: '116,19,32',   image: 'MAROON_FRONT.png',      image2: 'MAROON_BACK.png',      badge: 'New' },
+      { color: 'Navy Blue',     hex: '#000080', tint: '60,60,150',   image: 'NAVY_BLUE_FRONT.png',   image2: 'NAVY_BLUE_BACK.png',   badge: 'New' },
+      { color: 'Off White',     hex: '#e6dfcc', tint: '230,223,204', image: 'OFF_WHITE_FRONT.png',   image2: 'OFF-WHITE-BACK.png',   badge: 'New' }
     ];
     const TYPE_NAME = 'Oversized';
-    const PRICE_BACKUP = { 'Royal Blue': 399, 'Aqua/Sky Blue': 389, 'Beige': 385, 'White': 380, 'Black': 399, 'Army Green': 392, 'Lavender': 385, 'Red': 389, 'Pink': 380 };
+    const PRICE_BACKUP = { 'Royal Blue': 399, 'Aqua/Sky Blue': 389, 'Beige': 385, 'White': 380, 'Black': 399, 'Army Green': 392, 'Lavender': 385, 'Red': 389, 'Pink': 380, 'Maroon': 399, 'Navy Blue': 399, 'Off White': 385 };
 
     function priceOf(color) {
       try { if (window.AARAMBH_PRICES) { const v = window.AARAMBH_PRICES.get(TYPE_NAME, color + ' Oversized Tee', color); if (v != null) return v; } } catch (e) {}

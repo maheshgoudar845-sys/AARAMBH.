@@ -44,7 +44,15 @@
     },
     hoodie: {
       base: 599,
-      colors: { /* 'Black': 649 */ }
+      colors: {
+        'Navy': 649,
+        'White': 599,
+        'Black': 599,
+        'Off White': 549,
+        'Gray': 599,
+        'Maroon': 599,
+        'Red': 549
+      }
     },
     crop: {
       base: 449,

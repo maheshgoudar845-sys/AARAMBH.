@@ -1,193 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hoodies — AARAMBH</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="prices.js"></script>
-<style>
-  :root{--bg:#080810;--card:#101018;--accent:#E8452C;--accent2:#FF7A45;--text:#F5F3EE;--muted:#9A96A8;--line:#232130;--ease:cubic-bezier(.2,.7,.2,1);}
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html{scroll-behavior:smooth;}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;padding-bottom:40px;animation:pageIn .5s var(--ease) both;transition:opacity .22s ease,transform .22s ease;}
-  body.leaving{opacity:0;transform:translateY(-8px);pointer-events:none;}
-  @keyframes pageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  h1,h2{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
-  #navProgress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:200;transition:width .25s ease,opacity .3s;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoodie Collection — AARAMBH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-  .site-head{position:sticky;top:0;z-index:60;background:rgba(8,8,16,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px 20px;}
-  .head-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-  .brand-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;letter-spacing:.4em;color:var(--text);text-decoration:none;line-height:1;}
-  .head-links{display:flex;align-items:center;gap:10px;}
-  .back-link{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:600;padding:0 8px;}
-  .back-link:hover{color:var(--text);}
-  .cart-link{display:inline-flex;align-items:center;gap:8px;height:44px;background:var(--card);border:1px solid var(--line);color:var(--text);text-decoration:none;border-radius:999px;padding:0 16px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.5px;transition:border-color .2s,transform .2s;}
-  .cart-link:hover{border-color:var(--accent);transform:translateY(-2px);}
-  .cart-link svg{width:18px;height:18px;}
-  .cart-count{display:inline-flex;min-width:20px;height:20px;align-items:center;justify-content:center;background:var(--accent);border-radius:50%;font-size:.7rem;}
-  @media(max-width:480px){.brand-mark{font-size:1.2rem;letter-spacing:.3em;}.cart-text{display:none;}.cart-link{padding:0 13px;}}
+  <script src="site-config.js"></script>
+  <script src="prices.js"></script>
 
-  .page-top{max-width:1200px;margin:0 auto;padding:36px 20px 8px;}
-  .page-top .eyebrow{color:var(--accent2);text-transform:uppercase;font-size:.75rem;letter-spacing:2px;font-weight:600;}
-  .page-top h1{font-size:3rem;line-height:1;margin:8px 0 10px;}
-  .page-top p{color:var(--muted);font-size:.95rem;line-height:1.6;max-width:560px;}
-
-  .grid{max-width:1200px;margin:0 auto;padding:22px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;}
-  @media(max-width:1000px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
-  @media(max-width:720px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px 12px;}}
-
-  .product-card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--text);opacity:0;transform:translateY(30px);transition:opacity .6s var(--ease),transform .6s var(--ease),border-color .2s,box-shadow .3s;}
-  .product-card.in{opacity:1;transform:none;}
-  .product-card.in:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 22px 50px rgba(0,0,0,.5);}
-  .card-images{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#0b0b13;}
-  .card-images img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px;opacity:0;transition:opacity .45s ease,transform .5s var(--ease);}
-  .card-images img.active{opacity:1;}
-  .product-card:hover .card-images img{transform:scale(1.05);}
-  .view-status{position:absolute;left:10px;bottom:10px;z-index:3;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.64);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;pointer-events:none;}
-  .card-info{padding:14px;}
-  .product-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:6px;}
-  .price{color:var(--accent2);font-weight:700;font-family:'Syne',sans-serif;font-size:1.05rem;}
-  .color-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
-  .color-dot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.35);}
-  .selected-color{font-size:.8rem;color:var(--muted);}
-  .view-btn{display:block;margin-top:14px;text-align:center;background:var(--accent);color:#fff;border-radius:8px;padding:11px;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.5px;transition:background .2s;}
-  .product-card:hover .view-btn{background:var(--accent2);}
-
-  .note{max-width:1200px;margin:10px auto 0;padding:0 20px;color:var(--muted);font-size:.82rem;line-height:1.6;}
-
-  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}}
-</style>
-</head>
-<body>
-<div id="navProgress"></div>
-
-<header class="site-head">
-  <div class="head-inner">
-    <a class="brand-mark" href="index.html" aria-label="AARAMBH home">AARAMBH</a>
-    <div class="head-links">
-      <a class="back-link" href="index.html">Home</a>
-      <a class="cart-link" href="order.html?cart=1" aria-label="Open cart">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-        <span class="cart-text">CART</span> <span class="cart-count" id="cartCount">0</span>
-      </a>
-    </div>
-  </div>
-</header>
-
-<section class="page-top">
-  <div class="eyebrow">AARAMBH Collection</div>
-  <h1>HOODIES</h1>
-  <p>Heavy-weight hoodies with a relaxed fit. Tap any hoodie to see its details, pick your size and order.</p>
-</section>
-
-<div class="grid" id="hoodieGrid"></div>
-<p class="note">Prices are per piece. Delivery is calculated at checkout.</p>
-
-<script>
-  const $ = id => document.getElementById(id);
-
-  /* ===== Page transitions ===== */
-  function go(url){
-    const bar = $('navProgress');
-    bar.style.opacity = 1; bar.style.width = '70%';
-    document.body.classList.add('leaving');
-    setTimeout(() => { bar.style.width = '100%'; location.href = url; }, 220);
-  }
-  document.addEventListener('click', e => {
-    const a = e.target.closest('a[href]');
-    if(!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button || a.target === '_blank') return;
-    let u; try { u = new URL(a.href, location.href); } catch(_) { return; }
-    if(u.origin !== location.origin) return;
-    e.preventDefault(); go(a.href);
-  });
-  addEventListener('pageshow', e => { if(e.persisted){ document.body.classList.remove('leaving'); $('navProgress').style.width = 0; } });
-
-  /* ===== Image fallbacks (.png / .jpg / .jpeg are tried automatically) ===== */
-  const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="100%" height="100%" fill="#101018"/><text x="50%" y="50%" fill="#9A96A8" font-family="sans-serif" font-size="32" text-anchor="middle">Image coming soon</text></svg>');
-  document.addEventListener('error', e => {
-    const t = e.target;
-    if(!t || t.tagName !== 'IMG') return;
-    const cur = t.getAttribute('src');
-    if(!cur || cur === FALLBACK_IMG) return;
-    if(!t._queue){
-      const m = cur.match(/^(.*)\.(png|jpe?g)$/i);
-      t._queue = m ? ['png','jpg','jpeg'].map(x => m[1] + '.' + x).filter(c => c !== cur) : [];
+  <style>
+    :root {
+      --bg: #080810;
+      --surface: #0f0f1a;
+      --accent: #F4772E;
+      --accent2: #A90E02;
+      --amber: #FFB238;
+      --cream: #F5F1E8;
+      --text: #F5F1E8;
+      --muted: #888;
+      --border: rgba(255,255,255,0.06);
     }
-    t.src = t._queue.shift() || FALLBACK_IMG;
-  }, true);
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; cursor: none; }
 
-  /* ===== Hoodies: the photo names here must match the ones in product.html ===== */
-  const hoodies = [
-    {color:'Navy',      hex:'#000080', image:'hoodie_navy_front.png',     image2:'hoodie_navy_back.png'},
-    {color:'White',     hex:'#f5f3ee', image:'hoodie_white_front.png',    image2:'hoodie_white_back.png'},
-    {color:'Black',     hex:'#111111', image:'hoodie_black_front.png',    image2:'hoodie_black_back.png'},
-    {color:'Off White', hex:'#e6dfcc', image:'hoodie_offwhite_front.png', image2:'hoodie_offwhite_back.png'},
-    {color:'Grey',      hex:'#9DA1A2', image:'hoodie_grey_front.png',     image2:'hoodie_grey_back.png'},
-    {color:'Maroon',    hex:'#741320', image:'hoodie_maroon_front.png',   image2:'hoodie_maroon_back.png'},
-    {color:'Red',       hex:'#b51f2e', image:'hoodie_red_front.png',      image2:'hoodie_red_back.png'}
-  ];
+    .cursor { position: fixed; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
+    .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(244,119,46,0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
 
-  /* Same prices as prices.js and server.js. Used only if prices.js is missing. */
-  const PRICE_BACKUP = {'Navy':649,'White':599,'Black':599,'Off White':549,'Grey':599,'Maroon':599,'Red':549};
-  function priceOf(color){
-    try {
-      if(window.AARAMBH_PRICES){
-        const v = window.AARAMBH_PRICES.get('Hoodie', color + ' Hoodie', color);
-        if(v != null) return v;
-      }
-    } catch(_) {}
-    return PRICE_BACKUP[color] || 0;
-  }
+    @media (hover: none), (pointer: coarse) {
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
 
-  /* ===== Build the cards: every card opens product.html ===== */
-  $('hoodieGrid').innerHTML = hoodies.map((h, n) => {
-    const name = h.color + ' Hoodie';
-    const price = priceOf(h.color);
-    const params = new URLSearchParams({
-      product: name,
-      type: 'Hoodie',
-      color: h.color,
-      price: String(price),
-      image: h.image,
-      image2: h.image2
-    });
-    return `<a class="product-card" style="transition-delay:${n * 70}ms" href="product.html?${params.toString()}" aria-label="View ${name}">
-      <div class="card-images">
-        <img class="active" src="${h.image}" alt="AARAMBH ${name} front">
-        <img src="${h.image2}" alt="AARAMBH ${name} back">
-        <span class="view-status">Front</span>
-      </div>
-      <div class="card-info">
-        <div class="product-name">${name}</div>
-        <div class="price">₹${price}</div>
-        <div class="color-row"><span class="color-dot" style="background:${h.hex}"></span><span class="selected-color">${h.color}</span></div>
-        <span class="view-btn">VIEW &amp; ORDER</span>
-      </div>
-    </a>`;
-  }).join('');
+    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: 0.5; }
 
-  /* Cards fade in as you scroll */
-  const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.1});
-  document.querySelectorAll('.product-card').forEach(c => io.observe(c));
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; background: rgba(8,8,16,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: padding 0.3s; }
+    nav.scrolled { padding: 12px 40px; }
+    .nav-logo img { height: 44px; }
+    .nav-links { display: flex; gap: clamp(18px, 2.3vw, 36px); list-style: none; }
+    .nav-links a { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; position: relative; transition: color 0.3s; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--accent); }
+    .nav-cta { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: white; background: var(--accent); padding: 10px 24px; border-radius: 100px; text-decoration: none; transition: background 0.3s, transform 0.2s; box-shadow: 0 4px 20px rgba(244,119,46,0.3); }
+    .nav-cta:hover { background: #d9621f; transform: scale(1.04); }
 
-  /* Front and back photos swap slowly, like the other pages */
-  document.querySelectorAll('.card-images').forEach((fr, index) => {
-    const pics = fr.querySelectorAll('img'), label = fr.querySelector('.view-status');
-    let cur = 0;
-    setInterval(() => {
-      cur = (cur + 1) % 2;
-      pics.forEach((im, i) => im.classList.toggle('active', i === cur));
-      label.textContent = cur === 0 ? 'Front' : 'Back';
-    }, 3400 + (index % 3) * 180);
-  });
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
+    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* ===== Cart count (same key as product.html and order.html) ===== */
-  try {
-    const cart = JSON.parse(localStorage.getItem('arambhCart')) || [];
-    $('cartCount').textContent = cart.reduce((s, i) => s + (Number(i.qty) || 0), 0);
-  } catch(_) {}
-</script>
-</body>
-</html>
+    .mobile-menu {
+      position: fixed; top: 0; right: 0; height: 100vh; width: min(78vw, 320px);
+      background: #0c0c16; border-left: 1px solid var(--border);
+      z-index: 150; padding: 100px 32px 40px;
+      transform: translateX(100%); transition: transform 0.4s ease;
+      display: flex; flex-direction: column; gap: 26px;
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .mobile-menu a.active { color: var(--accent); }
+    .menu-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .menu-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    .page-header { min-height: 42vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 130px 40px 60px; text-align: center; position: relative; overflow: hidden; }
+    .page-header::before { content: ''; position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(233,78,44,0.22) 0%, rgba(169,14,2,0.08) 45%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 6s ease-in-out infinite; }
+    .page-header::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(244,119,46,0.08) 1px, transparent 1px); background-size: 40px 40px; animation: dots-drift 20s linear infinite; pointer-events: none; }
+    @keyframes dots-drift { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.12); } }
+    .breadcrumb { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; z-index: 1; position: relative; }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb span { opacity: 0.4; }
+    .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 10vw, 130px); line-height: 0.9; letter-spacing: 2px; animation: fade-up 0.8s ease both; position: relative; z-index: 1; }
+    .page-header h1 span { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-header p { color: var(--muted); font-size: 17px; font-weight: 300; margin-top: 16px; letter-spacing: 1px; animation: fade-up 0.8s 0.1s ease both; position: relative; z-index: 1; }
+    .header-meta { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.2s ease both; position: relative; z-index: 1; }
+    .meta-chip { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); padding: 8px 18px; border-radius: 100px; color: var(--muted); }
+    .meta-chip.hot { border-color: rgba(244,119,46,0.3); color: var(--accent); background: rgba(244,119,46,0.07); }
+    .hero-cta { position: relative; z-index: 1; margin-top: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 16px 44px; border-radius: 100px; background: linear-gradient(135deg, #E94E2C, var(--amber)); color: #1a0b04; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 12px 36px rgba(233,78,44,.38); transition: transform .25s, box-shadow .25s; animation: fade-up 0.8s 0.3s ease both; }
+    .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(233,78,44,.5); }
+
+    .ticker-wrap { background: linear-gradient(90deg, #A90E02, #E94E2C 55%, #F4772E); padding: 12px 0; overflow: hidden; white-space: nowrap; }
+    .ticker { display: inline-flex; animation: ticker 24s linear infinite; }
+    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: white; }
+    .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    .section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(

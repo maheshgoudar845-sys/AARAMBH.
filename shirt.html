@@ -7,394 +7,350 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+  <script src="prices.js"></script>
   <style>
-    :root {
-      --bg: #080810;
-      --surface: #0f0f1a;
-      --surface2: #13131f;
-      --accent: #1F6F50;
-      --accent2: #CFF7D8;
-      --text: #f0f0f0;
-      --muted: #888;
-      --border: rgba(255,255,255,0.06);
-      --accent-rgb: 31,111,80;
-      --accent2-rgb: 207,247,216;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    :root{--bg:#080810;--surface:#0f0f1a;--surface2:#13131f;--accent:#1F6F50;--hi:#CFF7D8;--hi-rgb:207,247,216;--acc-rgb:31,111,80;--btn:#1F6F50;--btn-hover:#278a63;--btn-fg:#fff;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,.06)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none}
+    .cursor{position:fixed;width:12px;height:12px;background:var(--hi);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference}
+    .cursor-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(var(--hi-rgb),.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s}
+    @media (hover:none),(pointer:coarse){body{cursor:auto}.cursor,.cursor-ring{display:none}}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;opacity:.5}
 
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 40px;
-      background: rgba(8,8,16,0.9);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo img { height: 46px; }
-    .nav-links { display: flex; gap: 32px; list-style: none; }
-    .nav-links a {
-      font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
-      text-decoration: none; transition: color 0.25s;
-    }
-    .nav-links a:hover, .nav-links a.active { color: var(--accent2); }
-    .nav-cta {
-      font-family: 'Syne', sans-serif; font-size: 11.5px; font-weight: 700;
-      letter-spacing: 1.5px; text-transform: uppercase; color: white;
-      background: var(--accent); padding: 9px 20px; border-radius: 100px;
-      text-decoration: none; transition: background 0.25s, transform 0.2s;
-    }
-    .nav-cta:hover { transform: scale(1.04); }
-    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; }
-    .hamburger span { width: 22px; height: 2px; background: var(--text); }
+    .announce-bar{position:fixed;top:0;left:0;right:0;z-index:101;background:linear-gradient(90deg,var(--accent),#164f39,var(--accent));color:var(--hi);text-align:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 16px}
+    nav{position:fixed;top:36px;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(8,8,16,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s}
+    nav.scrolled{padding:12px 40px}
+    .nav-logo img{height:44px}
+    .nav-links{display:flex;gap:clamp(18px,2.3vw,36px);list-style:none}
+    .nav-links a{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;position:relative;transition:color .3s}
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--hi);transition:width .3s}
+    .nav-links a:hover{color:var(--text)}
+    .nav-links a:hover::after,.nav-links a.active::after{width:100%}
+    .nav-links a.active{color:var(--hi)}
+    .nav-cta{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;background:var(--accent);padding:10px 24px;border-radius:100px;text-decoration:none;transition:background .3s,transform .2s;box-shadow:0 4px 20px rgba(var(--acc-rgb),.3)}
+    .nav-cta:hover{background:#185d40;transform:scale(1.04)}
+    .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:200}
+    .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .hamburger.open span:nth-child(2){opacity:0}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .mobile-menu{position:fixed;top:36px;right:0;height:calc(100vh - 36px);width:min(78vw,320px);background:#0c0c16;border-left:1px solid var(--border);z-index:150;padding:100px 32px 40px;transform:translateX(100%);transition:transform .4s ease;display:flex;flex-direction:column;gap:26px}
+    .mobile-menu.open{transform:translateX(0)}
+    .mobile-menu a{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none}
+    .mobile-menu a.active{color:var(--hi)}
+    .menu-backdrop{position:fixed;top:36px;left:0;right:0;height:calc(100vh - 36px);background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:140;opacity:0;pointer-events:none;transition:opacity .3s}
+    .menu-backdrop.open{opacity:1;pointer-events:auto}
 
-    .hero {
-      padding: 90px 40px 60px; text-align: center; position: relative; overflow: hidden;
-    }
-    .hero::before {
-      content: ''; position: absolute; width: 700px; height: 700px;
-      background: radial-gradient(circle, rgba(var(--accent-rgb),0.16) 0%, transparent 70%);
-      top: -280px; left: 50%; transform: translateX(-50%);
-    }
-    .hero-badge {
-      position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px;
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px;
-      text-transform: uppercase; color: var(--accent2);
-      border: 1px solid rgba(var(--accent-rgb),0.4); background: rgba(var(--accent-rgb),0.1);
-      padding: 8px 18px; border-radius: 100px; margin-bottom: 24px;
-    }
-    .hero-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); animation: pulse 1.4s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.35;transform:scale(1.4);} }
-    .hero h1 {
-      position: relative; z-index: 2;
-      font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 8vw, 96px);
-      line-height: 0.95; letter-spacing: 1px;
-    }
-    .hero h1 span {
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .hero p { position: relative; z-index: 2; color: var(--muted); max-width: 560px; margin: 18px auto 0; line-height: 1.7; }
+    .page-header{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:196px 40px 80px;text-align:center;position:relative;overflow:hidden}
+    .pulse-glow{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(var(--hi-rgb),.1) 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);animation:pulse 7s ease-in-out infinite;pointer-events:none}
+    @keyframes pulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.12)}}
+    .page-header>*:not(.pulse-glow){position:relative;z-index:5}
+    .breadcrumb{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+    .breadcrumb a{color:var(--hi);text-decoration:none}
+    .breadcrumb span{opacity:.4}
+    .page-header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,10vw,140px);line-height:.9;letter-spacing:2px;animation:fade-up .8s ease both;text-shadow:0 10px 50px rgba(0,0,0,.6)}
+    .page-header h1 span{background:linear-gradient(135deg,var(--hi),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .page-header p{color:var(--muted);font-size:17px;font-weight:300;margin-top:16px;letter-spacing:1px;animation:fade-up .8s .1s ease both}
+    .header-meta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;justify-content:center;animation:fade-up .8s .2s ease both}
+    .meta-chip{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);padding:9px 20px;border-radius:100px;color:var(--muted);background:rgba(255,255,255,.02)}
+    .meta-chip.hot{border-color:rgba(var(--hi-rgb),.4);color:var(--hi);background:rgba(var(--acc-rgb),.25)}
+    .hero-cta{margin-top:30px;display:inline-flex;align-items:center;justify-content:center;padding:16px 44px;border-radius:100px;background:var(--btn);color:var(--btn-fg);text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;box-shadow:0 12px 36px rgba(var(--acc-rgb),.5);transition:transform .25s;animation:fade-up .8s .3s ease both}
+    .hero-cta:hover{transform:translateY(-3px)}
 
-    .section-wrap { max-width: 1300px; margin: auto; padding: 60px 40px 120px; }
-    .section-header { text-align: center; margin-bottom: 50px; }
-    .section-label {
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--accent2); display: block; margin-bottom: 12px;
-    }
-    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 5vw, 56px); letter-spacing: 1px; }
+    .ticker-wrap{background:var(--accent);padding:12px 0;overflow:hidden;white-space:nowrap}
+    .ticker{display:inline-flex;animation:ticker 22s linear infinite}
+    .ticker span{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:4px;padding:0 36px;color:var(--hi)}
+    .ticker span::after{content:'✦';margin-left:36px;opacity:.6}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-    .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .product-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
-      overflow: hidden; display: flex; flex-direction: column;
-      transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
-    }
-    .product-card:hover { transform: translateY(-6px); border-color: rgba(var(--accent-rgb),0.35); box-shadow: 0 30px 70px rgba(0,0,0,0.4); }
-    .product-image-wrap { position: relative; height: 380px; background: #111; overflow: hidden; }
-    .product-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-    .product-card:hover .product-image-wrap img { transform: scale(1.06); }
-    /* Back image: shown on hover */
-    .product-image-wrap img.alt-img { position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s, transform 0.6s; }
-    .product-card:hover .product-image-wrap img.alt-img { opacity: 1; }
-    .product-image-wrap > a { display: block; width: 100%; height: 100%; }
-    .product-name a { color: inherit; text-decoration: none; }
-    .product-name a:hover { color: var(--accent2); }
-    .product-badge {
-      position: absolute; top: 14px; left: 14px; z-index: 2;
-      background: var(--accent); color: var(--accent2); padding: 5px 12px; border-radius: 100px;
-      font: 800 9px 'Syne', sans-serif; letter-spacing: 1.6px; text-transform: uppercase;
-    }
-    .product-content { padding: 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; }
-    .product-type { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.6px; }
-    .product-name { font: 700 18px 'Syne', sans-serif; }
-    .product-price { font: 700 20px 'Syne', sans-serif; color: var(--accent2); }
+    .section-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--hi);display:block;margin-bottom:14px}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,5vw,64px);letter-spacing:2px;margin-bottom:50px}
+    .trust-strip{max-width:1280px;margin:0 auto;padding:26px 40px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .trust-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.025)}
+    .trust-item .ti-icon{font-size:22px;flex-shrink:0}
+    .trust-item b{display:block;font-family:'Syne',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.4px}
+    .trust-item span{display:block;font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+    .justdropped-badge{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--btn-fg);background:var(--btn);padding:10px 20px;border-radius:100px;display:inline-flex;align-items:center;gap:8px}
+    .justdropped-badge::before{content:'\26A1'}
 
-    .size-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .size-btn {
-      flex: 1; min-width: 38px; text-align: center;
-      font: 700 11px 'Syne', sans-serif; letter-spacing: 0.5px;
-      padding: 9px 0; border-radius: 8px; border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03); color: var(--text); cursor: pointer;
-      transition: border-color 0.2s, background 0.2s, color 0.2s;
-    }
-    .size-btn.active { border-color: var(--accent); background: rgba(var(--accent-rgb),0.18); color: var(--accent2); }
-    .size-error { display: none; color: #ff6b6b; font-size: 11px; }
-    .size-error.show { display: block; }
+    .spotlight{max-width:1280px;margin:0 auto;padding:56px 40px 20px;scroll-margin-top:110px}
+    .spot-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+    .spot-nav{display:flex;gap:10px}
+    .spot-arrow{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text);font-size:18px;cursor:pointer;transition:background .25s,border-color .25s}
+    .spot-arrow:hover{background:var(--btn);border-color:var(--hi)}
+    .spot-viewport{overflow:hidden;border-radius:28px;border:1px solid var(--border);background:var(--surface);touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+    .spot-viewport.dragging{cursor:grabbing}
+    .spot-viewport:focus-visible,.cf:focus-visible,.vt-btn:focus-visible,.spot-dot:focus-visible,.spot-arrow:focus-visible,.buy-now-btn:focus-visible,.size-btn:focus-visible,.sort select:focus-visible{outline:2px solid var(--hi);outline-offset:3px}
+    .spot-track{display:flex;transition:transform .85s cubic-bezier(.65,0,.25,1);will-change:transform}
+    .spot-viewport.dragging .spot-track{transition:none}
+    .spot-slide{flex:0 0 100%;min-width:0;display:grid;grid-template-columns:.85fr 1.15fr;min-height:540px;position:relative;isolation:isolate}
+    .spot-slide::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 70% at 70% 50%,rgba(var(--tint),.34),transparent 70%)}
+    .spot-info{padding:52px 20px 52px 56px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:14px}
+    .spot-tag{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--hi);border:1px solid rgba(var(--hi-rgb),.35);background:rgba(var(--hi-rgb),.08);padding:6px 14px;border-radius:100px}
+    .spot-info h3{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(48px,5.4vw,84px);line-height:.95;letter-spacing:1px}
+    .spot-info p{color:var(--muted);font-size:16px;line-height:1.65;max-width:380px}
+    .spot-colors{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .spot-colorname{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px}
+    .spot-price{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:1px;line-height:1;margin-top:4px;color:var(--hi)}
+    .spot-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+    .spot-actions .buy-now-btn{width:auto;padding:15px 34px}
+    .spot-ghost{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);text-decoration:underline;text-underline-offset:6px;text-decoration-color:rgba(255,255,255,.3);transition:color .3s,text-decoration-color .3s}
+    .spot-ghost:hover{color:var(--hi);text-decoration-color:var(--hi)}
+    .spot-art{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);gap:10px;align-items:center;padding:28px 28px 28px 0;min-width:0}
+    .spot-art figure{position:relative;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateX(70px);transition:transform .9s cubic-bezier(.2,.7,.2,1) .25s,opacity .6s ease .25s}
+    .spot-art figure+figure{transition-delay:.4s}
+    .spot-slide.is-active .spot-art figure{opacity:1;transform:none}
+    .spot-art img{width:100%;height:100%;max-height:470px;object-fit:contain;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,.45))}
+    .spot-art figcaption{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.7);background:rgba(8,8,16,.6);border:1px solid rgba(255,255,255,.12);padding:4px 12px;border-radius:100px}
+    .spot-dots{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+    .spot-dot{position:relative;overflow:hidden;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:9px 16px;cursor:pointer;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;transition:color .3s,border-color .3s}
+    .spot-dot-name{position:relative;z-index:1}
+    .spot-dot.active{color:var(--btn-fg);border-color:var(--hi)}
+    .spot-dot::after{content:'';position:absolute;inset:0;background:var(--btn);transform-origin:left;transform:scaleX(0)}
+    .spot-dot.active::after{animation:spotFill 5.5s linear forwards}
+    .spotlight.is-paused .spot-dot.active::after{animation-play-state:paused}
+    @keyframes spotFill{to{transform:scaleX(1)}}
 
-    .size-chart-link {
-      background: none; border: none; padding: 0; cursor: pointer;
-      font-family: 'DM Sans', sans-serif; font-size: 11.5px; color: var(--accent2);
-      text-decoration: underline; text-underline-offset: 3px; align-self: flex-start;
-    }
+    .finder{max-width:1280px;margin:0 auto;padding:56px 40px 70px;scroll-margin-top:100px}
+    .finder-head{margin-bottom:26px}
+    .finder-bar{position:sticky;top:104px;z-index:90;display:flex;flex-direction:column;gap:14px;padding:14px 0 16px;background:rgba(8,8,16,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+    .finder-row{display:flex;align-items:center;justify-content:space-between;gap:16px 24px;flex-wrap:wrap}
+    .color-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .cf-label,.sort span{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-right:4px}
+    .cf{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text);border-radius:100px;padding:7px 14px 7px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;transition:border-color .25s,background .25s}
+    .cf[data-color="any"]{padding-left:14px}
+    .cf i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.3);display:inline-block}
+    .cf:hover{border-color:rgba(var(--hi-rgb),.5)}
+    .cf.active{border-color:var(--hi);background:rgba(var(--hi-rgb),.12)}
+    .sort{display:inline-flex;align-items:center;gap:8px}
+    .sort select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:100px;padding:9px 16px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer}
+    .fit-note{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;padding:14px 18px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.025);font-size:13px;color:var(--muted);line-height:1.5}
+    .fit-note strong{color:var(--text);font-weight:600;margin-right:6px}
+    .finder-count{margin:20px 0 18px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 
-    .size-modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
-      align-items: center; justify-content: center; padding: 20px;
-    }
-    .size-modal-overlay.show { display: flex; }
-    .size-modal {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
-      max-width: 560px; width: 100%; padding: 30px; position: relative;
-      max-height: 85vh; overflow-y: auto;
-    }
-    .size-modal-close {
-      position: absolute; top: 16px; right: 16px; background: none; border: none;
-      color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1;
-    }
-    .size-modal h3 {
-      font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 1px; margin-bottom: 18px;
-    }
-    .size-table { width: 100%; border-collapse: collapse; }
-    .size-table th, .size-table td {
-      text-align: center; padding: 12px 6px; font-family: 'Syne', sans-serif;
-      font-size: 13px; border-bottom: 1px solid var(--border);
-    }
-    .size-table th { color: var(--accent2); letter-spacing: 0.5px; }
-    .size-table td:first-child, .size-table th:first-child {
-      text-align: left; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;
-    }
-    .size-modal-note { color: var(--muted); font-size: 11.5px; margin-top: 16px; text-align: center; }
+    .tee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:22px}
+    .tee-card{background:linear-gradient(160deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .3s,box-shadow .4s,transform .3s}
+    .tee-card:hover{transform:translateY(-5px);border-color:rgba(var(--hi-rgb),.35);box-shadow:0 30px 60px rgba(0,0,0,.55)}
+    .tee-card[hidden]{display:none}
+    .tee-card.enter{animation:cardSlideIn .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*45ms)}
+    @keyframes cardSlideIn{from{opacity:0;transform:translateX(46px)}to{opacity:1;transform:none}}
+    .card-media{position:relative;overflow:hidden;background:#0a0a14;aspect-ratio:4/5}
+    .slide-track{display:flex;height:100%;width:100%;transition:transform .6s cubic-bezier(.65,0,.25,1);cursor:pointer}
+    .card-media.show-back .slide-track{transform:translateX(-100%)}
+    .slide-track img{flex:0 0 100%;width:100%;height:100%;object-fit:contain;padding:12px 12px 44px;display:block}
+    .card-badge{position:absolute;top:14px;left:14px;z-index:3;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;background:rgba(8,8,16,.72);color:var(--hi);border:1px solid rgba(var(--hi-rgb),.4);backdrop-filter:blur(6px);padding:5px 12px;border-radius:100px}
+    .view-toggle{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:3;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:100px;background:rgba(8,8,16,.78);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(8px)}
+    .vt-glider{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:100px;background:var(--btn);transition:transform .4s cubic-bezier(.65,0,.25,1)}
+    .view-toggle[data-view="back"] .vt-glider{transform:translateX(100%)}
+    .vt-btn{position:relative;z-index:1;background:none;border:none;cursor:pointer;padding:6px 16px;border-radius:100px;color:rgba(255,255,255,.75);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;transition:color .3s}
+    .vt-btn.active{color:var(--btn-fg)}
+    .card-body{padding:18px 20px 22px;display:flex;flex-direction:column;flex:1}
+    .card-body h3{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:28px;letter-spacing:1px;line-height:1.05}
+    .card-blurb{color:var(--muted);font-size:13px;line-height:1.55;margin-top:6px}
+    .color-row{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+    .color-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+    .swatches{display:flex;gap:8px;flex-wrap:wrap}
+    .swatch{width:22px;height:22px;border-radius:50%;border:2px solid transparent;outline:2px solid var(--hi);outline-offset:2px;display:inline-block}
+    .selected-color{font-family:'Syne',sans-serif;font-size:11px;color:var(--text);margin-left:auto;font-weight:600;letter-spacing:1px}
+    .size-row{display:flex;gap:8px;margin-top:14px}
+    .size-btn{flex:1;min-width:0;text-align:center;font:700 11px 'Syne',sans-serif;letter-spacing:.5px;padding:9px 0;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:border-color .2s,background .2s,color .2s}
+    .size-btn:hover{border-color:rgba(var(--hi-rgb),.5)}
+    .size-btn.active{border-color:var(--hi);background:rgba(var(--acc-rgb),.35);color:var(--hi)}
+    .size-error{display:none;color:#ff6b6b;font-size:11px;margin-top:8px}
+    .size-error.show{display:block}
+    .size-chart-link{background:none;border:none;padding:0;margin-top:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--hi);text-decoration:underline;text-underline-offset:3px;align-self:flex-start}
+    .buy-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:18px}
+    .price{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--hi);letter-spacing:1px;line-height:1}
+    .buy-now-btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;background:var(--btn);color:var(--btn-fg);border:none;text-decoration:none;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;border-radius:100px;cursor:pointer;transition:background .3s,transform .2s,box-shadow .3s;box-shadow:0 10px 26px rgba(var(--acc-rgb),.4)}
+    .buy-now-btn:hover{background:var(--btn-hover);transform:translateY(-2px)}
+    .tee-empty{text-align:center;padding:70px 20px;color:var(--muted)}
+    .tee-empty p{margin-bottom:20px;font-size:16px}
 
-    .buy-btn {
-      margin-top: auto; text-align: center; cursor: pointer;
-      color: white; background: var(--accent); border: none;
-      padding: 12px 16px; border-radius: 100px;
-      font: 800 11px 'Syne', sans-serif; letter-spacing: 1.4px; text-transform: uppercase;
-      transition: background 0.25s, transform 0.2s;
-    }
-    .buy-btn:hover { background: #185d40; transform: translateY(-2px); }
+    .waitlist-banner{max-width:1280px;margin:0 auto 80px;padding:0 40px}
+    .waitlist-box{background:linear-gradient(135deg,rgba(var(--acc-rgb),.3),rgba(var(--hi-rgb),.05));border:1px solid rgba(var(--hi-rgb),.2);border-radius:28px;padding:46px;text-align:center}
+    .waitlist-box h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(30px,4.5vw,46px);letter-spacing:1px}
+    .waitlist-box p{color:var(--muted);max-width:540px;margin:14px auto 26px;line-height:1.7}
+    .waitlist-btn{display:inline-block;text-decoration:none;color:#06241a;background:var(--hi);padding:16px 36px;border-radius:100px;font:800 12px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;transition:transform .2s;box-shadow:0 10px 40px rgba(var(--hi-rgb),.25)}
+    .waitlist-btn:hover{transform:scale(1.04)}
+    .floating-whatsapp{position:fixed;right:20px;bottom:20px;z-index:120;display:flex;align-items:center;gap:9px;background:#25D366;color:#07120b;text-decoration:none;font:800 11px 'Syne',sans-serif;letter-spacing:1px;text-transform:uppercase;padding:13px 18px;border-radius:999px;box-shadow:0 15px 45px rgba(0,0,0,.45);transition:transform .25s}
+    .floating-whatsapp:hover{transform:translateY(-4px)}
 
-    .waitlist-banner {
-      max-width: 1300px; margin: 0 auto 100px; padding: 0 40px;
-    }
-    .waitlist-box {
-      background: linear-gradient(135deg, rgba(var(--accent-rgb),.16), rgba(15,15,26,.9) 60%);
-      border: 1px solid rgba(var(--accent-rgb),.3); border-radius: 26px;
-      padding: 46px; text-align: center;
-    }
-    .waitlist-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4.5vw, 46px); letter-spacing: 1px; }
-    .waitlist-box p { color: var(--muted); max-width: 540px; margin: 14px auto 26px; line-height: 1.7; }
-    .waitlist-btn {
-      display: inline-block; text-decoration: none; color: var(--accent2); background: var(--accent);
-      padding: 15px 30px; border-radius: 100px; font: 800 12px 'Syne', sans-serif;
-      letter-spacing: 1.6px; text-transform: uppercase; transition: transform 0.2s;
-    }
-    .waitlist-btn:hover { transform: translateY(-3px); }
+    .size-modal-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+    .size-modal-overlay.show{display:flex}
+    .size-modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;max-width:560px;width:100%;padding:30px;position:relative;max-height:85vh;overflow-y:auto}
+    .size-modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer;line-height:1}
+    .size-modal h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:18px;padding-right:30px}
+    .size-modal img{width:100%;border-radius:12px;display:block}
 
-    footer { background: #04040a; border-top: 1px solid var(--border); padding: 40px; text-align: center; }
-    footer p { color: var(--muted); font-size: 13px; }
-    footer a { color: var(--accent2); text-decoration: none; }
+    footer{background:#04040a;border-top:1px solid var(--border);padding:40px;text-align:center}
+    footer p{color:var(--muted);font-size:13px}
+    footer a{color:var(--hi);text-decoration:none}
+    .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.active{opacity:1;transform:translateY(0)}
+    @keyframes fade-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
-    .floating-whatsapp {
-      position: fixed; right: 20px; bottom: 20px; z-index: 120;
-      display: flex; align-items: center; gap: 9px; background: #25D366; color: #07120b;
-      text-decoration: none; font: 800 11px 'Syne', sans-serif; letter-spacing: 1px;
-      text-transform: uppercase; padding: 13px 18px; border-radius: 999px;
-      box-shadow: 0 15px 45px rgba(0,0,0,.45); transition: transform .25s;
+    @media (max-width:900px){
+      .trust-strip{grid-template-columns:repeat(2,1fr);padding:22px 20px 0}
+      .nav-links{display:none}.hamburger{display:flex}
+      .page-header{min-height:auto;padding-top:150px;padding-bottom:40px}
+      .spot-slide{grid-template-columns:1fr;min-height:0}
+      .spot-art{order:-1;padding:24px 20px 0;height:340px}
+      .spot-info{padding:22px 24px 34px}
+      .spot-info p{max-width:none}
+      .finder-bar{position:static}
     }
-    .floating-whatsapp:hover { transform: translateY(-4px); }
-
-    @media (max-width: 980px) {
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width:768px){
+      .announce-bar{font-size:10px;padding:8px 12px}
+      nav{padding:14px 20px}
+      .nav-logo img{height:36px}
+      .nav-cta{padding:9px 16px;font-size:11px}
+      .header-meta{gap:10px}
+      .meta-chip{font-size:10px;padding:7px 14px}
+      .ticker span{font-size:16px;padding:0 22px}
+      .ticker span::after{margin-left:22px}
+      .section-title{margin-bottom:32px}
+      .spotlight{padding:36px 20px 10px}
+      .spot-art{height:280px;gap:6px;padding:20px 12px 0}
+      .spot-dots{justify-content:center;gap:8px;margin-top:14px}
+      .spot-dot{width:30px;height:6px;padding:0;border-radius:6px}
+      .spot-dot-name{display:none}
+      .finder{padding:40px 20px 50px}
+      .tee-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+      .card-body{padding:14px 14px 16px}
+      .card-body h3{font-size:22px}
+      .card-blurb,.color-label{display:none}
+      .selected-color{font-size:10px}
+      .size-row{gap:5px}
+      .buy-row{flex-direction:column;align-items:stretch;gap:10px}
+      .price{font-size:26px}
+      .buy-now-btn{width:100%;padding:11px 14px;font-size:11px}
+      .slide-track img{padding:8px 8px 42px}
+      .waitlist-banner{padding:0 20px;margin-bottom:100px}
+      .waitlist-box{padding:32px 22px}
+      footer{padding:30px 20px}
     }
-    @media (max-width: 540px) {
-      .hero { padding: 70px 20px 40px; }
-      .section-wrap { padding: 40px 20px 80px; }
-      .product-grid { grid-template-columns: 1fr; }
-      .waitlist-banner { padding: 0 20px; }
-      .waitlist-box { padding: 32px 22px; }
-    }
-
-    /* ===== LAUNCH COUNTDOWN OVERLAY ===== */
-    #launch-overlay {
-      position: fixed; inset: 0; z-index: 999;
-      background: var(--bg);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 24px;
-      overflow: hidden;
-    }
-    #launch-overlay::before {
-      content: ''; position: absolute; width: 900px; height: 900px;
-      background: radial-gradient(circle, rgba(var(--accent-rgb),0.18) 0%, transparent 70%);
-      top: -350px; left: 50%; transform: translateX(-50%);
-    }
-    .launch-badge {
-      position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px;
-      font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px;
-      text-transform: uppercase; color: var(--accent2);
-      border: 1px solid rgba(var(--accent-rgb),0.4); background: rgba(var(--accent-rgb),0.1);
-      padding: 8px 18px; border-radius: 100px; margin-bottom: 26px;
-    }
-    .launch-title {
-      position: relative; z-index: 2;
-      font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 8vw, 84px);
-      line-height: 0.95; letter-spacing: 1px; margin-bottom: 14px;
-    }
-    .launch-title span {
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .launch-sub { position: relative; z-index: 2; color: var(--muted); max-width: 480px; margin: 0 auto 40px; line-height: 1.7; }
-    .countdown-row { position: relative; z-index: 2; display: flex; gap: 14px; margin-bottom: 44px; flex-wrap: wrap; justify-content: center; }
-    .countdown-unit {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-      padding: 18px 20px; min-width: 84px;
-    }
-    .countdown-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--accent2); line-height: 1; }
-    .countdown-label { font-family: 'Syne', sans-serif; font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
-    .launch-ig {
-      position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 10px;
-      text-decoration: none; color: #07120b;
-      background: linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);
-      padding: 15px 30px; border-radius: 100px;
-      font: 800 12px 'Syne', sans-serif; letter-spacing: 1.4px; text-transform: uppercase;
-      transition: transform 0.2s;
-    }
-    .launch-ig:hover { transform: translateY(-3px); }
-    #main-content { display: none; }
-    @media (max-width: 540px) {
-      .countdown-unit { min-width: 68px; padding: 14px 12px; }
-      .countdown-num { font-size: 32px; }
+    @media (max-width:480px){.trust-strip{grid-template-columns:1fr}.hero-cta{width:100%}}
+    @media (max-width:420px){.page-header h1{font-size:clamp(48px,14vw,72px)}.spot-art{height:240px}.spot-actions .buy-now-btn{width:100%}}
+    @media (prefers-reduced-motion:reduce){
+      .spot-track,.slide-track,.vt-glider,.spot-art figure{transition:none!important}
+      .spot-art figure{opacity:1;transform:none}
+      .spot-dot.active::after{animation:none;transform:scaleX(1)}
+      .tee-card.enter{animation:none}
     }
   </style>
 </head>
 <body>
 
-  <!-- ===== COUNTDOWN OVERLAY (shown until launch time) ===== -->
-  <div id="launch-overlay">
-    <span class="launch-badge"><span class="hero-dot"></span> Dropping Soon</span>
-    <h1 class="launch-title">SHIRT <span>DROP</span></h1>
-    <p class="launch-sub">A new range of shirts is landing on AARAMBH. Same premium fabric, same original design language. The wait is almost over.</p>
-    <div class="countdown-row">
-      <div class="countdown-unit"><div class="countdown-num" id="cd-days">00</div><div class="countdown-label">Days</div></div>
-      <div class="countdown-unit"><div class="countdown-num" id="cd-hours">00</div><div class="countdown-label">Hours</div></div>
-      <div class="countdown-unit"><div class="countdown-num" id="cd-mins">00</div><div class="countdown-label">Minutes</div></div>
-      <div class="countdown-unit"><div class="countdown-num" id="cd-secs">00</div><div class="countdown-label">Seconds</div></div>
-    </div>
-    <a href="https://instagram.com/aarambh.official__" target="_blank" class="launch-ig">📸 Stay tuned on Instagram</a>
-  </div>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
 
-  <div id="main-content">
+  <div class="announce-bar">🆕 New Shirt Drop — Boxy Fit, Premium Fabric, Original Design</div>
 
-  <nav>
+  <nav id="navbar">
     <a href="index.html" class="nav-logo"><img src="logo.webp" alt="AARAMBH"></a>
     <ul class="nav-links">
       <li><a href="polo.html">Polos</a></li>
       <li><a href="oversized.html">Oversized</a></li>
       <li><a href="printed.html">Printed</a></li>
       <li><a href="hoodie.html">Hoodies</a></li>
-      <li><a href="croptop.html">Ladies</a></li>
       <li><a href="shirt.html" class="active">Shirts</a></li>
+      <li><a href="croptop.html">Ladies</a></li>
+      <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
     </ul>
     <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
-    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </nav>
 
-  <section class="hero">
-    <span class="hero-badge"><span class="hero-dot"></span> New Collection</span>
-    <h1>SHIRT <span>DROP</span></h1>
-    <p>A new range of shirts, built with the same premium fabric and original design language as every other AARAMBH piece. Full variety live now.</p>
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="polo.html">Polos</a>
+    <a href="oversized.html">Oversized</a>
+    <a href="printed.html">Printed</a>
+    <a href="hoodie.html">Hoodies</a>
+    <a href="shirt.html" class="active">Shirts</a>
+    <a href="croptop.html">Ladies</a>
+    <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
+    <a href="tel:9637748622">📞 Order Now</a>
+  </div>
+
+  <header class="page-header">
+    <div class="pulse-glow"></div>
+    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
+    <h1>SHIRT<br><span>DROP</span></h1>
+    <p>Boxy. Clean. Original.</p>
+    <div class="header-meta">
+      <span class="meta-chip hot">New Collection</span>
+      <span class="meta-chip">Boxy Fit</span>
+      <span class="meta-chip">3 Colorways</span>
+    </div>
+    <a class="hero-cta" href="#designs">Shop shirts</a>
+  </header>
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>New Shirt Drop</span><span>Boxy Fit</span><span>AARAMBH</span>
+      <span>Premium Fabric</span><span>Original Design</span><span>Built Different</span>
+      <span>New Shirt Drop</span><span>Boxy Fit</span><span>AARAMBH</span>
+      <span>Premium Fabric</span><span>Original Design</span><span>Built Different</span>
+    </div>
+  </div>
+
+  <div class="trust-strip">
+    <div class="trust-item"><span class="ti-icon">💵</span><div><b>Cash on Delivery</b><span>Pay when it reaches you</span></div></div>
+    <div class="trust-item"><span class="ti-icon">🔒</span><div><b>UPI available</b><span>Quick and secure payment</span></div></div>
+    <div class="trust-item"><span class="ti-icon">💬</span><div><b>Direct owner support</b><span>Sizing help on WhatsApp</span></div></div>
+    <div class="trust-item"><span class="ti-icon">🧵</span><div><b>Premium fabric</b><span>Boxy fit, original design language</span></div></div>
+  </div>
+
+  <section class="spotlight" id="latestDrop" aria-roledescription="carousel" aria-label="Shirt colours">
+    <div class="spot-top">
+      <div>
+        <span class="justdropped-badge">Just dropped</span>
+        <h2 class="section-title" style="margin:14px 0 0;">LATEST SHIRTS</h2>
+      </div>
+      <div class="spot-nav">
+        <button class="spot-arrow" id="spotPrev" type="button" aria-label="Previous shirt">&#8592;</button>
+        <button class="spot-arrow" id="spotNext" type="button" aria-label="Next shirt">&#8594;</button>
+      </div>
+    </div>
+    <div class="spot-viewport" id="spotViewport" tabindex="0" aria-label="Shirts. Swipe or use the arrow keys.">
+      <div class="spot-track" id="spotTrack"></div>
+    </div>
+    <div class="spot-dots" id="spotDots" role="group" aria-label="Choose a shirt"></div>
   </section>
 
-  <section class="section-wrap">
-    <div class="section-header">
-      <span class="section-label">Shop Shirts</span>
-      <h2 class="section-title">PICK YOUR FIT</h2>
+  <section class="finder" id="designs">
+    <div class="finder-head">
+      <span class="section-label">All shirts</span>
+      <h2 class="section-title" style="margin-bottom:0;">PICK YOUR FIT</h2>
     </div>
-
-    <div class="product-grid">
-      <article class="product-card">
-        <div class="product-image-wrap">
-          <span class="product-badge">New</span>
-          <a href="product.html?product=Red%20Boxy%20Shirt&type=Boxy%20Shirt&color=Red&price=649&image=Boxy%20Red%20Shirt-front.jpeg&image2=Boxy%20Red%20Shirt-back.jpeg">
-            <img src="Boxy Red Shirt-front.jpeg" alt="AARAMBH Red Boxy Shirt front">
-            <img class="alt-img" src="Boxy Red Shirt-back.jpeg" alt="AARAMBH Red Boxy Shirt back">
-          </a>
-        </div>
-        <div class="product-content">
-          <span class="product-type">Boxy Shirt</span>
-          <h3 class="product-name"><a href="product.html?product=Red%20Boxy%20Shirt&type=Boxy%20Shirt&color=Red&price=649&image=Boxy%20Red%20Shirt-front.jpeg&image2=Boxy%20Red%20Shirt-back.jpeg">Red Boxy Shirt</a></h3>
-          <div class="product-price">₹689</div>
-          <div class="size-row" data-sizes>
-            <button class="size-btn" type="button">S</button>
-            <button class="size-btn" type="button">M</button>
-            <button class="size-btn" type="button">L</button>
-            <button class="size-btn" type="button">XL</button>
-          </div>
-          <div class="size-error">Please select a size</div>
-          <button type="button" class="size-chart-link" onclick="openSizeChart()">📏 Size Chart</button>
-          <button class="buy-btn"
-            onclick="buyNowSized(this,'Red Boxy Shirt','Boxy Shirt','Red',649,'Boxy Red Shirt-front.jpeg')">
-            Buy Now
-          </button>
-        </div>
-      </article>
-
-      <article class="product-card">
-        <div class="product-image-wrap">
-          <span class="product-badge">New</span>
-          <a href="product.html?product=Blue%20Boxy%20Shirt&type=Boxy%20Shirt&color=Blue&price=649&image=Boxy%20Blue%20Shirt-front.jpeg&image2=Boxy%20Blue%20Shirt-back.jpeg">
-            <img src="Boxy Blue Shirt-front.jpeg" alt="AARAMBH Blue Boxy Shirt front">
-            <img class="alt-img" src="Boxy Blue Shirt-back.jpeg" alt="AARAMBH Blue Boxy Shirt back">
-          </a>
-        </div>
-        <div class="product-content">
-          <span class="product-type">Boxy Shirt</span>
-          <h3 class="product-name"><a href="product.html?product=Blue%20Boxy%20Shirt&type=Boxy%20Shirt&color=Blue&price=649&image=Boxy%20Blue%20Shirt-front.jpeg&image2=Boxy%20Blue%20Shirt-back.jpeg">Blue Boxy Shirt</a></h3>
-          <div class="product-price">₹699</div>
-          <div class="size-row" data-sizes>
-            <button class="size-btn" type="button">S</button>
-            <button class="size-btn" type="button">M</button>
-            <button class="size-btn" type="button">L</button>
-            <button class="size-btn" type="button">XL</button>
-          </div>
-          <div class="size-error">Please select a size</div>
-          <button type="button" class="size-chart-link" onclick="openSizeChart()">📏 Size Chart</button>
-          <button class="buy-btn"
-            onclick="buyNowSized(this,'Blue Boxy Shirt','Boxy Shirt','Blue',649,'Boxy Blue Shirt-front.jpeg')">
-            Buy Now
-          </button>
-        </div>
-      </article>
-
-      <article class="product-card">
-        <div class="product-image-wrap">
-          <span class="product-badge">New</span>
-          <a href="product.html?product=Pink%20Boxy%20Shirt&type=Boxy%20Shirt&color=Pink&price=649&image=Boxy%20Pink%20Shirt-front.jpeg&image2=Boxy%20Pink%20Shirt-back.jpeg">
-            <img src="Boxy fit Shirts-front.jpeg" alt="AARAMBH Pink Boxy Shirt front">
-            <img class="alt-img" src="Boxy fit Shirts-back.jpeg" alt="AARAMBH Pink Boxy Shirt back">
-          </a>
-        </div>
-        <div class="product-content">
-          <span class="product-type">Boxy Shirt</span>
-          <h3 class="product-name"><a href="product.html?product=Pink%20Boxy%20Shirt&type=Boxy%20Shirt&color=Pink&price=649&image=Boxy%20Pink%20Shirt-front.jpeg&image2=Boxy%20Pink%20Shirt-back.jpeg">Pink Boxy Shirt</a></h3>
-          <div class="product-price">₹689</div>
-          <div class="size-row" data-sizes>
-            <button class="size-btn" type="button">S</button>
-            <button class="size-btn" type="button">M</button>
-            <button class="size-btn" type="button">L</button>
-            <button class="size-btn" type="button">XL</button>
-          </div>
-          <div class="size-error">Please select a size</div>
-          <button type="button" class="size-chart-link" onclick="openSizeChart()">📏 Size Chart</button>
-          <button class="buy-btn"
-            onclick="buyNowSized(this,'Pink Boxy Shirt','Boxy Shirt','Pink',649,'Boxy Pink Shirt-front.jpeg')">
-            Buy Now
-          </button>
-        </div>
-      </article>
-
+    <div class="finder-bar" id="finderBar">
+      <div class="finder-row">
+        <div class="color-filter" role="group" aria-label="Filter by colour" id="colorFilter"></div>
+        <label class="sort"><span>Sort</span>
+          <select id="sortSelect">
+            <option value="featured">Featured</option>
+            <option value="low">Price: low to high</option>
+            <option value="high">Price: high to low</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="fit-note">
+      <span><strong>Boxy fit</strong> Premium fabric, original AARAMBH design</span>
+      <span><strong>Sizes</strong> S, M, L, XL — pick a size, then Buy now</span>
+    </div>
+    <p class="finder-count" id="finderCount" aria-live="polite">Showing 3 shirts</p>
+    <div class="tee-grid" id="teeGrid"></div>
+    <div class="tee-empty" id="teeEmpty" hidden>
+      <p>No shirt matches that colour yet.</p>
+      <button type="button" class="buy-now-btn" id="resetFilters">Show all shirts</button>
     </div>
   </section>
 
-  <div class="waitlist-banner">
+  <div class="waitlist-banner reveal">
     <div class="waitlist-box">
       <h2>MORE COLOURS LANDING SOON</h2>
       <p>Red, Blue and Pink Boxy Shirts are live now — more colourways are being added as they're shot. Message us on WhatsApp if you want a specific colour or size held for you.</p>
@@ -408,98 +364,292 @@
     <p>© 2025 AARAMBH — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
   </footer>
 
-  <!-- Size Chart Modal -->
-  <div class="size-modal-overlay" id="size-modal-overlay" onclick="if(event.target===this) closeSizeChart()">
+  <div class="size-modal-overlay" id="sizeModal">
     <div class="size-modal">
-      <button class="size-modal-close" onclick="closeSizeChart()" aria-label="Close">×</button>
+      <button class="size-modal-close" id="sizeClose" type="button" aria-label="Close">×</button>
       <h3>BOXY FIT SHIRT — SIZE CHART</h3>
-      <img src="ShirtSizeChart.jpeg" alt="AARAMBH Boxy Fit Shirt Size Chart" style="width:100%; border-radius: 12px; display:block;">
+      <img src="ShirtSizeChart.jpeg" alt="AARAMBH Boxy Fit Shirt Size Chart">
     </div>
   </div>
 
-  </div><!-- /#main-content -->
-
   <script>
-    // ===== LAUNCH TIME CONFIG =====
-    // Set to Aug 10, 2026, 5:00 PM IST (+05:30)
-    const LAUNCH_TIME = new Date("2026-08-10T17:00:00+05:30").getTime();
+    // ===== SHIRT LIST =====
+    // image/image2 = pictures shown on this page. pImage/pImage2 = pictures sent to product.html / order.html.
+    const ITEMS = [
+      { color: 'Red',  hex: '#b51f2e', tint: '181,31,46',   image: 'Boxy Red Shirt-front.jpeg',  image2: 'Boxy Red Shirt-back.jpeg',  pImage: 'Boxy Red Shirt-front.jpeg',  pImage2: 'Boxy Red Shirt-back.jpeg',  badge: 'New' },
+      { color: 'Blue', hex: '#2748a8', tint: '39,72,168',   image: 'Boxy Blue Shirt-front.jpeg', image2: 'Boxy Blue Shirt-back.jpeg', pImage: 'Boxy Blue Shirt-front.jpeg', pImage2: 'Boxy Blue Shirt-back.jpeg', badge: 'New' },
+      { color: 'Pink', hex: '#ef9db5', tint: '239,157,181', image: 'Boxy fit Shirts-front.jpeg', image2: 'Boxy fit Shirts-back.jpeg', pImage: 'Boxy Pink Shirt-front.jpeg', pImage2: 'Boxy Pink Shirt-back.jpeg', badge: 'New' }
+    ];
+    const TYPE_NAME = 'Boxy Shirt';
+    const PRICE_BACKUP = { 'Red': 689, 'Blue': 699, 'Pink': 689 };
 
-    const overlay = document.getElementById('launch-overlay');
-    const mainContent = document.getElementById('main-content');
-
-    function showMainSite() {
-      overlay.style.display = 'none';
-      mainContent.style.display = 'block';
-      clearInterval(countdownInterval);
+    function priceOf(color) {
+      try { if (window.AARAMBH_PRICES) { const v = window.AARAMBH_PRICES.get(TYPE_NAME, color + ' Boxy Shirt', color); if (v != null) return v; } } catch (e) {}
+      return PRICE_BACKUP[color] || 689;
     }
+    ITEMS.forEach((h, n) => { h.name = h.color + ' Boxy Shirt'; h.price = priceOf(h.color); h.order = n + 1; });
 
-    function updateCountdown() {
-      const now = Date.now();
-      const distance = LAUNCH_TIME - now;
-
-      if (distance <= 0) {
-        showMainSite();
-        return;
+    // ===== image fallback =====
+    const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="100%" height="100%" fill="#101018"/><text x="50%" y="50%" fill="#9A96A8" font-family="sans-serif" font-size="32" text-anchor="middle">Image coming soon</text></svg>');
+    document.addEventListener('error', e => {
+      const img = e.target;
+      if (!(img instanceof HTMLImageElement)) return;
+      const cur = img.getAttribute('src');
+      if (!cur || cur === FALLBACK_IMG) return;
+      if (!img._queue) {
+        const m = cur.match(/^(.*)\.(png|jpe?g)$/i);
+        img._queue = m ? ['jpeg', 'jpg', 'png'].map(x => m[1] + '.' + x).filter(c => c !== cur) : [];
       }
+      img.src = img._queue.shift() || FALLBACK_IMG;
+    }, true);
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const secs = Math.floor((distance % (1000 * 60)) / 1000);
+    // ===== BUILD =====
+    document.getElementById('teeGrid').innerHTML = ITEMS.map(h => `<article class="tee-card" data-id="${h.color}" data-price="${h.price}" data-colors="${h.color}" data-order="${h.order}">
+        <div class="card-media">
+          <div class="slide-track"><img src="${h.image}" alt="AARAMBH ${h.name} front" loading="lazy"><img src="${h.image2}" alt="AARAMBH ${h.name} back" loading="lazy"></div>
+          <span class="card-badge">${h.badge}</span>
+          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view"><span class="vt-glider" aria-hidden="true"></span><button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button><button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button></div>
+        </div>
+        <div class="card-body">
+          <h3>${h.name}</h3>
+          <p class="card-blurb">Boxy-fit shirt in premium fabric with AARAMBH's original design language.</p>
+          <div class="color-row"><span class="color-label">Colour</span><div class="swatches"><span class="swatch" style="background:${h.hex};"></span></div><span class="selected-color">${h.color}</span></div>
+          <div class="size-row" role="group" aria-label="Choose size"><button class="size-btn" type="button">S</button><button class="size-btn" type="button">M</button><button class="size-btn" type="button">L</button><button class="size-btn" type="button">XL</button></div>
+          <div class="size-error">Please select a size</div>
+          <button type="button" class="size-chart-link">📏 Size Chart</button>
+          <div class="buy-row"><div class="price">₹${h.price}</div><button class="buy-now-btn" type="button" data-color="${h.color}">Buy now</button></div>
+        </div>
+      </article>`).join('');
 
-      document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
-      document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
-      document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
-      document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+    const total = ITEMS.length;
+    document.getElementById('spotTrack').innerHTML = ITEMS.map((h, n) => `<article class="spot-slide" data-color="${h.color}" style="--tint:${h.tint}" role="group" aria-roledescription="slide" aria-label="${n + 1} of ${total}">
+          <div class="spot-info">
+            <span class="spot-tag">Boxy Shirt · New</span>
+            <h3>${h.color}</h3>
+            <p>A boxy-fit shirt in premium fabric, built with the same original design language as every AARAMBH piece.</p>
+            <div class="spot-colors"><span class="color-label">Colour</span><div class="swatches"><span class="swatch" style="background:${h.hex};"></span></div><span class="spot-colorname">${h.color}</span></div>
+            <div class="spot-price">₹${h.price}</div>
+            <div class="spot-actions"><button class="buy-now-btn spot-buy" type="button" data-color="${h.color}">View &amp; Buy</button><a class="spot-ghost" href="#designs">Browse all shirts</a></div>
+          </div>
+          <div class="spot-art">
+            <figure><img src="${h.image}" alt="${h.name} front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+            <figure><img src="${h.image2}" alt="${h.name} back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+          </div>
+        </article>`).join('');
+    document.getElementById('spotDots').innerHTML = ITEMS.map((h, n) => `<button type="button" class="spot-dot${n === 0 ? ' active' : ''}" data-i="${n}" aria-label="${h.name}"><span class="spot-dot-name">${h.color}</span></button>`).join('');
+    document.getElementById('colorFilter').innerHTML = '<span class="cf-label">Colour</span><button class="cf active" type="button" data-color="any" aria-pressed="true">Any</button>' + ITEMS.map(h => `<button class="cf" type="button" data-color="${h.color}" aria-pressed="false"><i style="background:${h.hex}"></i>${h.color}</button>`).join('');
+
+    // ===== mobile menu =====
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    function closeMenu() { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      menuBackdrop.classList.toggle('open', isOpen);
+    });
+    menuBackdrop.addEventListener('click', closeMenu);
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    // ===== PRODUCT PAGE (image tap, spotlight button) =====
+    function openProduct(color) {
+      const h = ITEMS.find(x => x.color === color);
+      if (!h) return;
+      const params = new URLSearchParams({ product: h.name, type: TYPE_NAME, color: h.color, price: String(h.price), image: h.pImage, image2: h.pImage2 });
+      window.location.href = 'product.html?' + params.toString();
     }
 
-    // Run immediately, then check every second — auto-unlocks with no refresh needed
-    if (Date.now() >= LAUNCH_TIME) {
-      showMainSite();
-    } else {
-      updateCountdown();
-      var countdownInterval = setInterval(updateCountdown, 1000);
-    }
-
-    // Size chart modal
-    function openSizeChart() {
-      document.getElementById('size-modal-overlay').classList.add('show');
-    }
-    function closeSizeChart() {
-      document.getElementById('size-modal-overlay').classList.remove('show');
-    }
-
-    // Per-card size selection
-    document.querySelectorAll('[data-sizes]').forEach(row => {
-      row.querySelectorAll('.size-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          row.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          row.closest('.product-content').querySelector('.size-error').classList.remove('show');
-        });
+    // ===== SIZE + BUY NOW (card button needs a size, then goes to order.html) =====
+    document.querySelectorAll('#teeGrid .tee-card').forEach(card => {
+      const sizes = card.querySelectorAll('.size-btn');
+      const err = card.querySelector('.size-error');
+      sizes.forEach(btn => btn.addEventListener('click', () => {
+        sizes.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        err.classList.remove('show');
+      }));
+      card.querySelector('.buy-now-btn').addEventListener('click', () => {
+        const active = card.querySelector('.size-btn.active');
+        if (!active) { err.classList.add('show'); return; }
+        const h = ITEMS.find(x => x.color === card.dataset.id);
+        const params = new URLSearchParams({ product: h.name, type: TYPE_NAME, color: h.color, price: String(h.price), image: h.pImage, size: active.textContent.trim() });
+        window.location.href = 'order.html?' + params.toString();
       });
+      card.querySelector('.size-chart-link').addEventListener('click', () => document.getElementById('sizeModal').classList.add('show'));
     });
 
-    // Buy Now — reads the selected size from the same card, then redirects to order.html
-    function buyNowSized(btn, name, type, color, price, image) {
-      const card = btn.closest('.product-content');
-      const activeSize = card.querySelector('.size-btn.active');
-      const errorEl = card.querySelector('.size-error');
-      if (!activeSize) {
-        errorEl.classList.add('show');
-        return;
-      }
-      errorEl.classList.remove('show');
-      const params = new URLSearchParams({
-        product: name,
-        type: type,
-        color: color,
-        price: price,
-        image: image,
-        size: activeSize.textContent.trim()
+    // ===== SIZE CHART MODAL =====
+    const sizeModal = document.getElementById('sizeModal');
+    function closeSizeChart() { sizeModal.classList.remove('show'); }
+    document.getElementById('sizeClose').addEventListener('click', closeSizeChart);
+    sizeModal.addEventListener('click', e => { if (e.target === sizeModal) closeSizeChart(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSizeChart(); });
+
+    // ===== CARD FRONT / BACK =====
+    function setView(media, view) {
+      media.classList.toggle('show-back', view === 'back');
+      const toggle = media.querySelector('.view-toggle');
+      if (!toggle) return;
+      toggle.dataset.view = view;
+      toggle.querySelectorAll('.vt-btn').forEach(b => {
+        const on = b.dataset.view === view;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', on);
       });
-      window.location.href = 'order.html?' + params.toString();
     }
+    const touchPeek = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const media = entry.target;
+        clearInterval(media._peek);
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          media._peek = setInterval(() => {
+            if (Date.now() < (media._holdUntil || 0)) return;
+            setView(media, media.classList.contains('show-back') ? 'front' : 'back');
+          }, 3200);
+        }
+      });
+    }, { threshold: [0, 0.6, 1] });
+
+    document.querySelectorAll('.tee-card .card-media').forEach(media => {
+      media.querySelectorAll('.vt-btn').forEach(b => b.addEventListener('click', e => {
+        e.stopPropagation();
+        setView(media, b.dataset.view);
+        media._holdUntil = Date.now() + 9000;
+      }));
+      if (finePointer) {
+        media.addEventListener('mouseenter', () => { media._hover = setTimeout(() => setView(media, 'back'), 250); });
+        media.addEventListener('mouseleave', () => { clearTimeout(media._hover); setView(media, 'front'); });
+      } else if (!reduceMotion) {
+        touchPeek.observe(media);
+      }
+      const track = media.querySelector('.slide-track');
+      track.setAttribute('role', 'link');
+      track.setAttribute('tabindex', '0');
+      track.setAttribute('aria-label', 'View product details');
+      const open = () => openProduct(media.closest('.tee-card').dataset.id);
+      track.addEventListener('click', open);
+      track.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+
+    // ===== SPOTLIGHT =====
+    const spot = document.getElementById('latestDrop');
+    const spotViewport = document.getElementById('spotViewport');
+    const spotTrack = document.getElementById('spotTrack');
+    const slides = [...spotTrack.querySelectorAll('.spot-slide')];
+    const dots = [...document.querySelectorAll('.spot-dot')];
+    let spotIdx = 0;
+
+    function goSpot(i) {
+      spotIdx = (i + slides.length) % slides.length;
+      spotTrack.style.transform = `translateX(${-spotIdx * 100}%)`;
+      slides.forEach((s, k) => { s.classList.toggle('is-active', k === spotIdx); if (k === spotIdx) s.removeAttribute('inert'); else s.setAttribute('inert', ''); });
+      dots.forEach((d, k) => {
+        d.classList.remove('active');
+        if (k === spotIdx) { void d.offsetWidth; d.classList.add('active'); d.setAttribute('aria-current', 'true'); }
+        else d.removeAttribute('aria-current');
+      });
+    }
+    document.getElementById('spotPrev').addEventListener('click', () => goSpot(spotIdx - 1));
+    document.getElementById('spotNext').addEventListener('click', () => goSpot(spotIdx + 1));
+    dots.forEach(d => d.addEventListener('click', () => goSpot(Number(d.dataset.i))));
+    document.getElementById('spotDots').addEventListener('animationend', e => { if (e.animationName === 'spotFill') goSpot(spotIdx + 1); });
+
+    const pause = on => spot.classList.toggle('is-paused', on);
+    spotViewport.addEventListener('mouseenter', () => pause(true));
+    spotViewport.addEventListener('mouseleave', () => pause(false));
+    spotViewport.addEventListener('focusin', () => pause(true));
+    spotViewport.addEventListener('focusout', () => pause(false));
+    document.addEventListener('visibilitychange', () => pause(document.hidden));
+    new IntersectionObserver(es => es.forEach(e => pause(!e.isIntersecting)), { threshold: 0.3 }).observe(spot);
+    spotViewport.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); goSpot(spotIdx + 1); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); goSpot(spotIdx - 1); }
+    });
+    spotTrack.addEventListener('click', e => {
+      const buy = e.target.closest('.spot-buy');
+      if (buy) openProduct(buy.dataset.color);
+    });
+
+    let dragX = null, dragDX = 0;
+    spotViewport.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (e.target.closest('button, a')) return;
+      dragX = e.clientX; dragDX = 0;
+    });
+    window.addEventListener('pointermove', e => {
+      if (dragX === null) return;
+      dragDX = e.clientX - dragX;
+      if (Math.abs(dragDX) > 6) {
+        spotViewport.classList.add('dragging'); pause(true);
+        spotTrack.style.transform = `translateX(calc(${-spotIdx * 100}% + ${dragDX}px))`;
+      }
+    });
+    function endDrag() {
+      if (dragX === null) return;
+      const moved = dragDX;
+      dragX = null;
+      spotViewport.classList.remove('dragging');
+      pause(false);
+      goSpot(Math.abs(moved) > 60 ? spotIdx + (moved < 0 ? 1 : -1) : spotIdx);
+    }
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    goSpot(0);
+
+    // ===== FINDER =====
+    const grid = document.getElementById('teeGrid');
+    const cards = [...grid.querySelectorAll('.tee-card')];
+    const state = { color: 'any', sort: 'featured' };
+
+    function applyFilters(animate = true) {
+      const visible = [];
+      cards.forEach(card => {
+        const ok = state.color === 'any' || card.dataset.colors === state.color;
+        card.hidden = !ok;
+        if (ok) visible.push(card);
+      });
+      const key = { featured: c => Number(c.dataset.order), low: c => Number(c.dataset.price), high: c => -Number(c.dataset.price) }[state.sort];
+      visible.sort((a, b) => key(a) - key(b) || Number(a.dataset.order) - Number(b.dataset.order));
+      cards.filter(c => c.hidden).forEach(c => grid.appendChild(c));
+      visible.forEach((c, i) => {
+        grid.insertBefore(c, grid.querySelector('.tee-card[hidden]'));
+        c.classList.remove('enter');
+        if (animate && !reduceMotion) { c.style.setProperty('--i', Math.min(i, 8)); void c.offsetWidth; c.classList.add('enter'); }
+      });
+      document.getElementById('finderCount').textContent = `Showing ${visible.length} of ${cards.length} shirts`;
+      document.getElementById('teeEmpty').hidden = visible.length > 0;
+    }
+    document.getElementById('colorFilter').addEventListener('click', e => {
+      const b = e.target.closest('.cf'); if (!b) return;
+      document.querySelectorAll('.cf').forEach(x => { const on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
+      state.color = b.dataset.color; applyFilters();
+    });
+    document.getElementById('sortSelect').addEventListener('change', e => { state.sort = e.target.value; applyFilters(); });
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      state.color = 'any'; state.sort = 'featured';
+      document.getElementById('sortSelect').value = 'featured';
+      document.querySelectorAll('.cf').forEach(x => { const on = x.dataset.color === 'any'; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
+      applyFilters();
+    });
+
+    // ===== cursor, reveal, navbar =====
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+    function animateRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px'; requestAnimationFrame(animateRing); }
+    animateRing();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursorRing.style.width = '60px'; cursorRing.style.height = '60px'; });
+      el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursorRing.style.width = '40px'; cursorRing.style.height = '40px'; });
+    });
+    const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
   </script>
 </body>
 </html>

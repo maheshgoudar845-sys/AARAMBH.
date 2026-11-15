@@ -1,0 +1,325 @@
+/* AARAMBH customer reviews with photos for product.html
+   - Shows approved reviews (with photos) and the average rating for the product
+   - Customers can add a rating, text and up to 3 photos; you approve them in your Google Sheet
+   - Adds a "Read full policy" link to the return policy note
+   Needs upload-config.js (your Apps Script URL). Without it, text-only reviews go to Formspree. */
+(function () {
+  'use strict';
+
+  var FORMSPREE_URL = 'https://formspree.io/f/xqejgjzw';
+  var MAX_PHOTOS = 3;
+
+  var q = new URLSearchParams(location.search);
+  var type = (q.get('type') || '').toLowerCase();
+  var product = q.get('product') || 'AARAMBH Product';
+
+  function keyOf() {
+    if (type === 'oversized') return 'Oversized Tee';
+    if (type === 'hoodie') return 'Hoodie';
+    if (type === 'boxy shirt') return 'Boxy Shirt';
+    if (type === 'polo') return 'Polo T-Shirt';
+    return product;
+  }
+  var KEY = keyOf();
+  var API = '';
+
+  function esc(t) {
+    return String(t).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function stars(n) {
+    var s = '';
+    for (var i = 1; i <= 5; i++) s += i <= Math.round(n) ? '★' : '☆';
+    return s;
+  }
+  function fmtDate(d) {
+    try { return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); }
+    catch (e) { return ''; }
+  }
+  function thumb(id, size) { return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w' + size; }
+
+  function compress(file) {
+    return new Promise(function (res, rej) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, 1280 / Math.max(w, h));
+        var c = document.createElement('canvas');
+        c.width = Math.round(w * s); c.height = Math.round(h * s);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        var d = c.toDataURL('image/jpeg', 0.8);
+        URL.revokeObjectURL(url);
+        res({ type: 'image/jpeg', data: d.split(',')[1], preview: d });
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('bad image')); };
+      img.src = url;
+    });
+  }
+
+  var css = '' +
+    '.rv-section{max-width:1200px;margin:50px auto 0;padding:0 20px;}' +
+    '.rv-section h2{font-family:"Bebas Neue",sans-serif;letter-spacing:1px;font-size:2rem;margin:6px 0 18px;font-weight:400;}' +
+    '.rv-grid{display:grid;grid-template-columns:320px 1fr;gap:28px;align-items:start;}' +
+    '.rv-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;}' +
+    '.rv-avg{font-family:"Syne",sans-serif;font-size:2.4rem;font-weight:800;line-height:1;}' +
+    '.rv-stars{color:#FFB238;letter-spacing:2px;font-size:1.1rem;}' +
+    '.rv-count{color:var(--muted);font-size:.85rem;margin:4px 0 14px;}' +
+    '.rv-bar{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);margin:5px 0;}' +
+    '.rv-bar i{flex:1;height:6px;background:var(--line);border-radius:99px;overflow:hidden;display:block;}' +
+    '.rv-bar b{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));}' +
+    '.rv-write-btn{width:100%;margin-top:16px;padding:12px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--text);font-family:"Syne",sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s;}' +
+    '.rv-write-btn:hover{background:rgba(232,69,44,.14);}' +
+    '.rv-empty{color:var(--muted);font-size:.95rem;line-height:1.6;}' +
+    '.rv-item{border-bottom:1px solid var(--line);padding:16px 0;}' +
+    '.rv-item:first-child{padding-top:0;}.rv-item:last-child{border-bottom:none;padding-bottom:0;}' +
+    '.rv-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px;}' +
+    '.rv-name{font-family:"Syne",sans-serif;font-weight:700;font-size:.92rem;}' +
+    '.rv-badge{font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:#4ade80;border:1px solid rgba(74,222,128,.4);border-radius:99px;padding:2px 8px;}' +
+    '.rv-date{color:var(--muted);font-size:.78rem;margin-left:auto;}' +
+    '.rv-text{color:var(--text);font-size:.93rem;line-height:1.6;margin-top:6px;}' +
+    '.rv-thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}' +
+    '.rv-thumbs img{width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;background:#0b0b13;transition:transform .2s;}' +
+    '.rv-thumbs img:hover{transform:scale(1.05);}' +
+    '.rv-form{display:none;margin-top:18px;}.rv-form.open{display:block;animation:pageIn .35s var(--ease);}' +
+    '.rv-form label.t{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);font-weight:600;margin:12px 0 6px;}' +
+    '.rv-form input[type=text],.rv-form textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:11px 12px;font-family:"DM Sans",sans-serif;font-size:.95rem;}' +
+    '.rv-form input[type=text]:focus,.rv-form textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,69,44,.2);}' +
+    '.rv-form textarea{min-height:100px;resize:vertical;}' +
+    '.rv-pick{display:flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px;}' +
+    '.rv-pick input{position:absolute;opacity:0;pointer-events:none;}' +
+    '.rv-pick label{font-size:2rem;line-height:1;color:var(--line);cursor:pointer;transition:color .15s,transform .15s;}' +
+    '.rv-pick label:hover,.rv-pick label:hover ~ label,.rv-pick input:checked ~ label{color:#FFB238;}' +
+    '.rv-pick label:hover{transform:scale(1.15);}' +
+    '.rv-pics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}' +
+    '.rv-pic{position:relative;width:72px;height:72px;}' +
+    '.rv-pic img{width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--line);}' +
+    '.rv-pic button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:.9rem;line-height:1;cursor:pointer;}' +
+    '.rv-add{padding:10px 14px;border-radius:8px;border:1px dashed var(--muted);background:transparent;color:var(--text);font-family:"DM Sans",sans-serif;font-size:.85rem;cursor:pointer;}' +
+    '.rv-add:hover{border-color:var(--accent2);}' +
+    '.rv-note{color:var(--muted);font-size:.75rem;margin-top:6px;line-height:1.5;}' +
+    '.rv-submit{margin-top:16px;width:100%;padding:13px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-family:"Syne",sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;}' +
+    '.rv-submit:hover{background:var(--accent2);}.rv-submit:disabled{opacity:.6;cursor:default;}' +
+    '.rv-msg{margin-top:12px;font-size:.88rem;line-height:1.5;}.rv-msg.err{color:#ff8a7a;}.rv-msg.ok{color:#4ade80;}' +
+    '.rv-hp{position:absolute;left:-9999px;opacity:0;height:0;width:0;}' +
+    '.rv-lb{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:120;padding:20px;cursor:zoom-out;}' +
+    '.rv-lb img{max-width:100%;max-height:100%;border-radius:10px;}' +
+    '@media(max-width:860px){.rv-grid{grid-template-columns:1fr;}}';
+
+  var styleEl = document.createElement('style');
+  styleEl.textContent = css;
+  document.head.appendChild(styleEl);
+
+  function summaryHtml(list) {
+    var total = list.length;
+    if (!total) return '<div class="rv-stars" aria-hidden="true">☆☆☆☆☆</div><div class="rv-count">No ratings yet</div>';
+    var sum = 0, counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    list.forEach(function (r) {
+      var n = Math.max(1, Math.min(5, Number(r.rating) || 5));
+      counts[n]++; sum += n;
+    });
+    var avg = sum / total, bars = '';
+    for (var s = 5; s >= 1; s--) {
+      bars += '<div class="rv-bar"><span>' + s + '★</span><i><b style="width:' + Math.round((counts[s] / total) * 100) + '%"></b></i><span>' + counts[s] + '</span></div>';
+    }
+    return '<div class="rv-avg">' + avg.toFixed(1) + '</div>' +
+      '<div class="rv-stars" aria-label="' + avg.toFixed(1) + ' out of 5 stars">' + stars(avg) + '</div>' +
+      '<div class="rv-count">Based on ' + total + ' review' + (total > 1 ? 's' : '') + '</div>' + bars;
+  }
+  function listHtml(list) {
+    if (!list.length) return '<p class="rv-empty">No reviews yet for this product. Be the first to share how it fits and feels.</p>';
+    return list.slice().reverse().map(function (r) {
+      var n = Math.max(1, Math.min(5, Number(r.rating) || 5));
+      var pics = (r.images || []).map(function (id) {
+        return '<img src="' + thumb(id, 300) + '" data-full="' + thumb(id, 1600) + '" alt="Customer photo of AARAMBH ' + esc(KEY) + '" loading="lazy">';
+      }).join('');
+      return '<div class="rv-item"><div class="rv-head"><span class="rv-stars" aria-label="' + n + ' out of 5 stars">' + stars(n) + '</span>' +
+        '<span class="rv-name">' + esc(r.name || 'Customer') + '</span>' +
+        (r.verified ? '<span class="rv-badge">Verified buyer</span>' : '') +
+        (r.date ? '<span class="rv-date">' + esc(fmtDate(r.date)) + '</span>' : '') +
+        '</div><p class="rv-text">' + esc(r.text || '') + '</p>' +
+        (pics ? '<div class="rv-thumbs">' + pics + '</div>' : '') + '</div>';
+    }).join('');
+  }
+
+  function build() {
+    API = window.AARAMBH_UPLOAD_URL || '';
+    var section = document.createElement('section');
+    section.className = 'rv-section';
+    section.id = 'reviews';
+    section.innerHTML =
+      '<div class="option-label">What customers say</div>' +
+      '<h2>CUSTOMER REVIEWS</h2>' +
+      '<div class="rv-grid">' +
+        '<div class="rv-card"><div id="rvSummary">' + summaryHtml([]) + '</div>' +
+          '<button type="button" class="rv-write-btn" id="rvToggle">WRITE A REVIEW</button>' +
+          '<form class="rv-form" id="rvForm" novalidate>' +
+            '<label class="t">Your rating</label>' +
+            '<div class="rv-pick" role="radiogroup" aria-label="Rating">' +
+              [5, 4, 3, 2, 1].map(function (n) {
+                return '<input type="radio" name="rating" id="rv-r' + n + '" value="' + n + '"><label for="rv-r' + n + '" title="' + n + ' star' + (n > 1 ? 's' : '') + '">★</label>';
+              }).join('') +
+            '</div>' +
+            '<label class="t" for="rvName">Your name</label>' +
+            '<input type="text" id="rvName" maxlength="40" autocomplete="name" placeholder="e.g. Rahul">' +
+            '<label class="t" for="rvText">Your review</label>' +
+            '<textarea id="rvText" maxlength="600" placeholder="How is the fit, fabric and print quality?"></textarea>' +
+            (API ?
+              '<label class="t">Photos (optional, up to ' + MAX_PHOTOS + ')</label>' +
+              '<div class="rv-pics" id="rvPics"></div>' +
+              '<button type="button" class="rv-add" id="rvAdd">+ ADD PHOTOS</button>' +
+              '<input type="file" id="rvFile" accept="image/*" multiple hidden>' +
+              '<div class="rv-note">Photos are shown publicly on this page after approval.</div>' : '') +
+            '<input type="text" class="rv-hp" id="rvHp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+            '<button type="submit" class="rv-submit" id="rvSubmit">SUBMIT REVIEW</button>' +
+            '<div class="rv-msg" id="rvMsg" role="status"></div>' +
+          '</form>' +
+        '</div>' +
+        '<div class="rv-card" id="rvList">' + listHtml([]) + '</div>' +
+      '</div>';
+
+    var anchor = document.querySelector('.related-section');
+    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(section, anchor);
+    else document.body.appendChild(section);
+
+    var policy = document.querySelector('.policy-note');
+    if (policy && !policy.querySelector('a')) {
+      policy.insertAdjacentHTML('beforeend', ' <a href="returns.html" style="color:var(--accent2);white-space:nowrap;">Read full policy</a>');
+    }
+
+    function renderAll(list) {
+      document.getElementById('rvSummary').innerHTML = summaryHtml(list);
+      document.getElementById('rvList').innerHTML = listHtml(list);
+    }
+
+    if (API) {
+      fetch(API + '?action=reviews&key=' + encodeURIComponent(KEY))
+        .then(function (r) { return r.json(); })
+        .then(function (j) { if (j && j.ok && j.reviews) renderAll(j.reviews); })
+        .catch(function () {});
+    }
+
+    /* Photo lightbox */
+    document.getElementById('rvList').addEventListener('click', function (e) {
+      var img = e.target.closest('.rv-thumbs img');
+      if (!img) return;
+      var lb = document.createElement('div');
+      lb.className = 'rv-lb';
+      lb.innerHTML = '<img src="' + esc(img.dataset.full) + '" alt="Customer photo of AARAMBH product">';
+      function close() { lb.remove(); document.removeEventListener('keydown', onKey); }
+      function onKey(ev) { if (ev.key === 'Escape') close(); }
+      lb.addEventListener('click', close);
+      document.addEventListener('keydown', onKey);
+      document.body.appendChild(lb);
+    });
+
+    var toggle = document.getElementById('rvToggle');
+    var form = document.getElementById('rvForm');
+    var msg = document.getElementById('rvMsg');
+    var btn = document.getElementById('rvSubmit');
+    var sentKey = 'aarambhReviewSent:' + KEY;
+    var items = [];
+
+    function setMsg(text, cls) { msg.textContent = text; msg.className = 'rv-msg ' + (cls || ''); }
+
+    var alreadySent = false;
+    try { alreadySent = !!localStorage.getItem(sentKey); } catch (e) {}
+
+    toggle.addEventListener('click', function () {
+      form.classList.toggle('open');
+      toggle.textContent = form.classList.contains('open') ? 'CLOSE' : 'WRITE A REVIEW';
+      if (alreadySent && form.classList.contains('open')) setMsg('You have already sent a review for this product. Thank you!', 'ok');
+    });
+
+    if (API) {
+      var fileEl = document.getElementById('rvFile'), addBtn = document.getElementById('rvAdd'), picsEl = document.getElementById('rvPics');
+      var draw = function () {
+        picsEl.innerHTML = items.map(function (it, i) {
+          return '<div class="rv-pic"><img src="' + it.preview + '" alt="Selected photo ' + (i + 1) + '"><button type="button" data-i="' + i + '" aria-label="Remove photo">×</button></div>';
+        }).join('');
+        addBtn.style.display = items.length >= MAX_PHOTOS ? 'none' : '';
+      };
+      addBtn.addEventListener('click', function () { fileEl.click(); });
+      fileEl.addEventListener('change', function () {
+        var files = Array.prototype.slice.call(fileEl.files).slice(0, MAX_PHOTOS - items.length);
+        fileEl.value = '';
+        files.reduce(function (p, f) {
+          return p.then(function () {
+            if (!/^image\//.test(f.type)) return;
+            return compress(f).then(function (x) { items.push(x); })
+              .catch(function () { setMsg('One photo could not be read. Please try a JPG or PNG.', 'err'); });
+          });
+        }, Promise.resolve()).then(draw);
+      });
+      picsEl.addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-i]');
+        if (b) { items.splice(Number(b.dataset.i), 1); draw(); }
+      });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (document.getElementById('rvHp').value) return;
+      if (alreadySent) { setMsg('You have already sent a review for this product. Thank you!', 'ok'); return; }
+
+      var checked = form.querySelector('input[name="rating"]:checked');
+      var name = document.getElementById('rvName').value.trim();
+      var text = document.getElementById('rvText').value.trim();
+
+      if (!checked) { setMsg('Please choose a star rating.', 'err'); return; }
+      if (name.length < 2) { setMsg('Please enter your name.', 'err'); return; }
+      if (text.length < 10) { setMsg('Please write at least a short sentence (10 characters).', 'err'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'SENDING...';
+      setMsg('', '');
+
+      var req;
+      if (API) {
+        req = fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'review', key: KEY, product: product, rating: Number(checked.value), name: name, text: text,
+            images: items.map(function (it) { return { type: it.type, data: it.data }; })
+          })
+        }).then(function (r) { return r.json(); }).then(function (j) {
+          if (!j.ok) throw new Error(j.error || 'failed');
+        });
+      } else {
+        req = fetch(FORMSPREE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            _subject: 'New AARAMBH review: ' + KEY + ' (' + checked.value + '/5)',
+            product: product, review_for: KEY, rating: checked.value + ' / 5', name: name, review: text, page: location.href
+          })
+        }).then(function (r) { if (!r.ok) throw new Error('bad status'); });
+      }
+
+      req.then(function () {
+        try { localStorage.setItem(sentKey, '1'); } catch (e2) {}
+        alreadySent = true;
+        form.reset();
+        items.length = 0;
+        if (API) { document.getElementById('rvPics').innerHTML = ''; document.getElementById('rvAdd').style.display = ''; }
+        btn.textContent = 'SENT';
+        setMsg('Thank you! Your review has been sent to AARAMBH and will appear here after approval.', 'ok');
+      }).catch(function (err) {
+        btn.disabled = false;
+        btn.textContent = 'SUBMIT REVIEW';
+        setMsg(err && err.message && err.message !== 'failed' && err.message !== 'bad status' && err.message !== 'Failed to fetch'
+          ? err.message : 'Could not send your review. Please check your connection and try again.', 'err');
+      });
+    });
+  }
+
+  /* Load upload-config.js (Apps Script URL), then build the section */
+  function start() {
+    var s = document.createElement('script');
+    s.src = 'upload-config.js';
+    s.onload = s.onerror = build;
+    document.head.appendChild(s);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();

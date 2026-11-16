@@ -1,383 +1,350 @@
-/*! AARAMBH Size Advisor — "Find my size" popup for product pages.
- *  Drop-in: save as size-advisor.js next to product.html and add before </body>:
- *    <script src="size-advisor.js"></script>
- *  Edit the CONFIG block below to tune sizes to your real size chart.
- */
-(function () {
+/* AARAMBH Size Advisor — "Find my size" (3 steps: measurements, shape, recommendation)
+   Loaded by product.html through <script src="size-advisor.js"></script>. No other changes needed. */
+(function(){
   'use strict';
+  if(window.__aarambhSizeAdvisor) return;
+  window.__aarambhSizeAdvisor = true;
 
-  /* ---------------- CONFIG (edit me) ---------------- */
+  /* ================= CONFIG (edit me) =================
+     Weight limits (kg) for each size, in the same order as sizes.
+     A person lighter than the number is in that size. The last number (999) catches everyone heavier.
+     tallCm / shortCm: at or above / at or below these heights the size nudges up / down. */
   var CONFIG = {
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-    // Upper weight limit (kg, exclusive) for each size. Last one catches everyone heavier.
-    men:   [55, 63, 73, 83, 94, 999],
-    women: [45, 52, 60, 69, 79, 999],
-    tallCm: 182,   // at or above = nudge size up
-    shortCm: 163,  // at or below = nudge size down
-    // Where to place the "Find my size" button (first match wins)
-    mountAfter: '.size-options, .sizes, .size-selector, .size-buttons, #sizes, #sizeOptions, #size-options',
-    storageKey: 'aarambh_size_advisor_v1'
+    sizes:  ['XS', 'S', 'M', 'L', 'XL', '2XL'],
+    men:    [55, 63, 73, 83, 94, 999],
+    women:  [45, 52, 60, 69, 79, 999],
+    tallCm: 182,
+    shortCm: 163
   };
 
-  /* ---------------- STATE ---------------- */
-  var state = {
-    step: 1,
-    gender: 'men',
-    cm: 172,
-    kg: 68,
-    heightUnit: 'cm',
-    weightUnit: 'kg',
-    chest: 'average',
-    stomach: 'average',
-    fit: 'true'
-  };
+  function init(){
+    var sizeHead = document.querySelector('.size-head');
+    var openChart = document.getElementById('openChart');
+    if(!sizeHead || !openChart) return;
 
-  try {
-    var saved = JSON.parse(localStorage.getItem(CONFIG.storageKey) || 'null');
-    if (saved && typeof saved === 'object') {
-      for (var k in saved) { if (k !== 'step' && state.hasOwnProperty(k)) state[k] = saved[k]; }
-    }
-  } catch (e) {}
+    var ALL = CONFIG.sizes;
+    var KEY = 'aarambhSizeAdvisor';
+    var st = {g:'men', cm:175, kg:72, hu:'cm', wu:'kg', chest:1, stomach:1, hips:1, fit:'true'};
+    try { var saved = JSON.parse(localStorage.getItem(KEY)); if(saved && typeof saved === 'object'){ for(var k in st){ if(saved[k] !== undefined) st[k] = saved[k]; } } } catch(_){}
+    var step = 1, result = null, lastFocus = null;
 
-  function persist() {
-    try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(state)); } catch (e) {}
-  }
+    /* ---------- Styles ---------- */
+    var css = document.createElement('style');
+    css.textContent = [
+      '.sa-link{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid var(--accent,#E8452C);color:var(--text,#F5F3EE);border-radius:999px;padding:6px 12px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s,transform .2s;}',
+      '.sa-link:hover{background:rgba(232,69,44,.14);transform:translateY(-1px);}',
+      '.sa-link svg{width:14px;height:14px;}',
+      '.sa-overlay{position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;}',
+      '.sa-overlay.open{display:flex;animation:saFade .25s ease;}',
+      '.sa-overlay.open .sa-sheet{animation:saIn .35s cubic-bezier(.2,.7,.2,1);}',
+      '@keyframes saFade{from{opacity:0}to{opacity:1}}',
+      '@keyframes saIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}',
+      '.sa-sheet{background:var(--card,#101018);color:var(--text,#F5F3EE);border:1px solid var(--line,#232130);border-radius:16px;width:100%;max-width:440px;max-height:92vh;overflow-y:auto;padding:18px 18px 16px;font-family:"DM Sans",sans-serif;}',
+      '@media(max-width:560px){.sa-overlay{align-items:flex-end;padding:0;}.sa-sheet{max-width:none;border-radius:18px 18px 0 0;max-height:94vh;}}',
+      '.sa-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}',
+      '.sa-eyebrow{font-family:"Syne",sans-serif;font-size:.68rem;font-weight:700;letter-spacing:2px;color:var(--muted,#9A96A8);}',
+      '.sa-x{background:none;border:none;color:var(--muted,#9A96A8);font-size:1.6rem;line-height:1;cursor:pointer;padding:0 4px;}',
+      '.sa-prod{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid var(--line,#232130);border-radius:12px;padding:10px;margin-bottom:12px;}',
+      '.sa-pimg{width:40px;height:50px;border-radius:6px;background:#0b0b13;overflow:hidden;flex:0 0 auto;}',
+      '.sa-pimg img{width:100%;height:100%;object-fit:contain;display:block;}',
+      '.sa-pname{font-family:"Syne",sans-serif;font-weight:700;font-size:.92rem;}',
+      '.sa-pprice{color:var(--muted,#9A96A8);font-size:.82rem;margin-top:2px;}',
+      '.sa-bars{display:flex;gap:6px;margin-bottom:8px;}',
+      '.sa-bars i{flex:1;height:3px;border-radius:3px;background:var(--line,#232130);transition:background .3s;}',
+      '.sa-bars i.on{background:var(--accent,#E8452C);}',
+      '.sa-stepname{color:var(--muted,#9A96A8);font-size:.76rem;margin-bottom:14px;}',
+      '.sa-h{font-family:"Bebas Neue",sans-serif;letter-spacing:1px;font-size:1.9rem;line-height:1;margin-bottom:4px;}',
+      '.sa-sub{color:var(--muted,#9A96A8);font-size:.88rem;margin-bottom:14px;}',
+      '.sa-tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line,#232130);border-radius:10px;overflow:hidden;margin-bottom:16px;}',
+      '.sa-tabs button{background:transparent;border:none;color:var(--muted,#9A96A8);padding:11px 8px;font-family:"Syne",sans-serif;font-weight:700;font-size:.72rem;letter-spacing:1.4px;text-transform:uppercase;cursor:pointer;transition:.2s;}',
+      '.sa-tabs button.on{background:var(--text,#F5F3EE);color:#080810;}',
+      '.sa-field{margin-bottom:16px;}',
+      '.sa-fhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;}',
+      '.sa-flabel{font-size:.68rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted,#9A96A8);font-weight:600;}',
+      '.sa-units{display:flex;border:1px solid var(--line,#232130);border-radius:6px;overflow:hidden;}',
+      '.sa-units button{background:transparent;border:none;color:var(--muted,#9A96A8);font-size:.66rem;font-weight:700;padding:4px 8px;cursor:pointer;letter-spacing:.5px;}',
+      '.sa-units button.on{background:var(--text,#F5F3EE);color:#080810;}',
+      '.sa-big{font-family:"Syne",sans-serif;font-weight:700;font-size:1.7rem;margin:2px 0 6px;}',
+      '.sa-slide{display:flex;align-items:center;gap:10px;}',
+      '.sa-slide input[type=range]{flex:1;accent-color:#E8452C;height:28px;}',
+      '.sa-step{width:30px;height:30px;border-radius:50%;border:1px solid var(--line,#232130);background:var(--card,#101018);color:var(--text,#F5F3EE);font-size:1.05rem;cursor:pointer;flex:0 0 auto;}',
+      '.sa-step:active{transform:scale(.92);}',
+      '.sa-live{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line,#232130);border-radius:10px;padding:12px 14px;background:rgba(255,255,255,.03);}',
+      '.sa-live small{display:block;font-size:.66rem;letter-spacing:1.6px;color:var(--muted,#9A96A8);font-weight:600;}',
+      '.sa-live em{display:block;font-style:normal;font-size:.76rem;color:var(--muted,#9A96A8);margin-top:2px;}',
+      '.sa-live b{font-family:"Syne",sans-serif;font-size:1.5rem;color:var(--accent2,#FF7A45);}',
+      '.sa-group{margin-bottom:16px;}',
+      '.sa-group .sa-flabel{margin-bottom:8px;}',
+      '.sa-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}',
+      '.sa-seg button{padding:11px 6px;border-radius:8px;border:1px solid var(--line,#232130);background:var(--card,#101018);color:var(--text,#F5F3EE);font-family:inherit;font-weight:500;font-size:.85rem;cursor:pointer;transition:.2s;}',
+      '.sa-seg button.on{border-color:var(--accent,#E8452C);background:rgba(232,69,44,.16);}',
+      '.sa-ring{width:128px;height:128px;border-radius:50%;border:7px solid #3fae6a;margin:6px auto 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;}',
+      '.sa-ring.mid{border-color:#e9a23b;}',
+      '.sa-ring b{font-family:"Syne",sans-serif;font-size:2.6rem;line-height:1;}',
+      '.sa-ring span{font-size:.78rem;color:var(--muted,#9A96A8);margin-top:4px;}',
+      '.sa-title{text-align:center;font-family:"Syne",sans-serif;font-weight:700;font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted,#9A96A8);}',
+      '.sa-msg{background:rgba(255,255,255,.05);border-radius:10px;padding:12px 14px;font-size:.88rem;line-height:1.55;margin-bottom:12px;}',
+      '.sa-rows{margin-bottom:12px;}',
+      '.sa-row{display:flex;justify-content:space-between;align-items:center;padding:9px 4px;border-bottom:1px solid var(--line,#232130);font-size:.86rem;gap:10px;}',
+      '.sa-row span:first-child{font-weight:600;}',
+      '.sa-row span:last-child{display:flex;align-items:center;gap:8px;color:var(--muted,#9A96A8);text-align:right;}',
+      '.sa-dot{width:8px;height:8px;border-radius:50%;background:#3fae6a;flex:0 0 auto;}',
+      '.sa-dot.mid{background:#e9a23b;}',
+      '.sa-you{text-align:center;font-size:.62rem;letter-spacing:1.6px;color:var(--accent2,#FF7A45);font-weight:700;margin-top:6px;}',
+      '.sa-chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:4px 0 10px;}',
+      '.sa-chip{min-width:46px;padding:9px 10px;text-align:center;border-radius:8px;border:1px solid var(--line,#232130);color:var(--muted,#9A96A8);font-weight:600;font-size:.85rem;}',
+      '.sa-chip.on{background:var(--accent,#E8452C);border-color:var(--accent,#E8452C);color:#fff;}',
+      '.sa-chip.off{opacity:.35;text-decoration:line-through;}',
+      '.sa-note{font-size:.78rem;color:var(--muted,#9A96A8);line-height:1.55;margin-bottom:12px;}',
+      '.sa-foot{margin-top:6px;}',
+      '.sa-btn{width:100%;height:50px;border-radius:10px;border:none;background:var(--accent,#E8452C);color:#fff;font-family:"Syne",sans-serif;font-weight:700;font-size:.95rem;letter-spacing:.4px;cursor:pointer;transition:.2s;}',
+      '.sa-btn:hover{background:var(--accent2,#FF7A45);}',
+      '.sa-btn.ghost{background:transparent;border:1px solid var(--line,#232130);color:var(--text,#F5F3EE);margin-top:8px;height:44px;font-size:.85rem;}',
+      '.sa-btn.ghost:hover{border-color:var(--accent,#E8452C);background:rgba(232,69,44,.1);}',
+      '.sa-links{display:flex;justify-content:center;gap:18px;margin-top:10px;}',
+      '.sa-links button{background:none;border:none;color:var(--muted,#9A96A8);font-size:.7rem;letter-spacing:1.4px;text-transform:uppercase;font-weight:600;cursor:pointer;text-decoration:underline;font-family:inherit;}',
+      '.sa-privacy{text-align:center;color:var(--muted,#9A96A8);font-size:.72rem;margin-top:12px;}'
+    ].join('\n');
+    document.head.appendChild(css);
 
-  /* ---------------- SIZE LOGIC ---------------- */
-  function recommend() {
-    var limits = CONFIG[state.gender] || CONFIG.men;
-    var idx = 0;
-    while (idx < limits.length - 1 && state.kg >= limits[idx]) idx++;
+    /* ---------- Button next to "Size Chart" ---------- */
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;align-items:center;gap:14px;';
+    var openBtn = document.createElement('button');
+    openBtn.type = 'button';
+    openBtn.className = 'sa-link';
+    openBtn.id = 'openSizeAdvisor';
+    openBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17 17 3l4 4L7 21H3v-4Z"/><path d="m13 7 2 2M10 10l2 2M7 13l2 2"/></svg>Find my size';
+    sizeHead.insertBefore(wrap, openChart);
+    wrap.appendChild(openBtn);
+    wrap.appendChild(openChart);
 
-    var net = 0;
-    var reasons = [];
+    /* ---------- Modal ---------- */
+    var ov = document.createElement('div');
+    ov.className = 'sa-overlay';
+    ov.id = 'saOverlay';
+    ov.setAttribute('role', 'dialog');
+    ov.setAttribute('aria-modal', 'true');
+    ov.setAttribute('aria-label', 'AARAMBH size advisor');
+    ov.innerHTML =
+      '<div class="sa-sheet">' +
+        '<div class="sa-top"><span class="sa-eyebrow">SIZE ADVISOR</span><button type="button" class="sa-x" id="saClose" aria-label="Close">&times;</button></div>' +
+        '<div class="sa-prod"><div class="sa-pimg"><img id="saImg" alt="AARAMBH product"></div><div><div class="sa-pname" id="saName"></div><div class="sa-pprice" id="saPrice"></div></div></div>' +
+        '<div class="sa-bars"><i id="saB1"></i><i id="saB2"></i><i id="saB3"></i></div>' +
+        '<div class="sa-stepname" id="saStepName"></div>' +
 
-    if (state.cm >= CONFIG.tallCm) { net += 0.5; reasons.push(['Height', 'Taller frame, extra length helps']); }
-    else if (state.cm <= CONFIG.shortCm) { net -= 0.5; reasons.push(['Height', 'Shorter frame, a trimmer length works']); }
-    else { reasons.push(['Height', 'Average height, standard length suits you']); }
+        '<section id="saS1">' +
+          '<h3 class="sa-h">LET\'S FIND YOUR FIT</h3><p class="sa-sub">Two measurements, about ten seconds.</p>' +
+          '<div class="sa-tabs"><button type="button" data-g="women">Womenswear</button><button type="button" data-g="men">Menswear</button></div>' +
+          '<div class="sa-field"><div class="sa-fhead"><span class="sa-flabel">Height</span><div class="sa-units" id="saHU"><button type="button" data-u="cm">CM</button><button type="button" data-u="ft">FT/IN</button></div></div>' +
+            '<div class="sa-big" id="saHVal"></div>' +
+            '<div class="sa-slide"><button type="button" class="sa-step" id="saHm" aria-label="Decrease height">&minus;</button><input type="range" id="saH" min="140" max="210" step="1" aria-label="Height"><button type="button" class="sa-step" id="saHp" aria-label="Increase height">+</button></div></div>' +
+          '<div class="sa-field"><div class="sa-fhead"><span class="sa-flabel">Weight</span><div class="sa-units" id="saWU"><button type="button" data-u="kg">KG</button><button type="button" data-u="lb">LB</button></div></div>' +
+            '<div class="sa-big" id="saWVal"></div>' +
+            '<div class="sa-slide"><button type="button" class="sa-step" id="saWm" aria-label="Decrease weight">&minus;</button><input type="range" id="saW" min="35" max="130" step="1" aria-label="Weight"><button type="button" class="sa-step" id="saWp" aria-label="Increase weight">+</button></div></div>' +
+          '<div class="sa-live"><div><small>LIVE ESTIMATE</small><em>Refines in the next steps</em></div><b id="saLive">M</b></div>' +
+        '</section>' +
 
-    if (state.chest === 'fuller') { net += 0.5; reasons.push(['Chest', 'Fuller chest needs a little more room']); }
-    else if (state.chest === 'narrower') { net -= 0.5; reasons.push(['Chest', 'Narrower chest, a closer fit through the body']); }
-    else { reasons.push(['Chest', 'Right for the fit it was cut for']); }
+        '<section id="saS2" hidden>' +
+          '<h3 class="sa-h">YOUR SHAPE</h3><p class="sa-sub">Compared with most people your height and weight.</p>' +
+          '<div class="sa-group"><div class="sa-flabel">Chest</div><div class="sa-seg" data-k="chest"><button type="button" data-v="0">Narrower</button><button type="button" data-v="1">Average</button><button type="button" data-v="2">Fuller</button></div></div>' +
+          '<div class="sa-group"><div class="sa-flabel">Stomach</div><div class="sa-seg" data-k="stomach"><button type="button" data-v="0">Narrower</button><button type="button" data-v="1">Average</button><button type="button" data-v="2">Fuller</button></div></div>' +
+          '<div class="sa-group"><div class="sa-flabel">Hips</div><div class="sa-seg" data-k="hips"><button type="button" data-v="0">Narrower</button><button type="button" data-v="1">Average</button><button type="button" data-v="2">Fuller</button></div></div>' +
+          '<div class="sa-group"><div class="sa-flabel">How do you like it to fit?</div><div class="sa-seg" data-k="fit"><button type="button" data-v="snug">Snug</button><button type="button" data-v="true">True to size</button><button type="button" data-v="loose">Loose</button></div></div>' +
+        '</section>' +
 
-    if (state.stomach === 'fuller') { net += 0.5; reasons.push(['Waist', 'Fuller midsection needs a little more room']); }
-    else if (state.stomach === 'narrower') { net -= 0.5; reasons.push(['Waist', 'Slimmer midsection, a closer fit']); }
-    else { reasons.push(['Waist', 'Right for the fit it was cut for']); }
+        '<section id="saS3" hidden></section>' +
 
-    if (state.fit === 'loose') { net += 0.5; reasons.push(['Fit', 'You like it loose, so we sized up']); }
-    else if (state.fit === 'snug') { net -= 0.5; reasons.push(['Fit', 'You like it snug, so we sized down']); }
-    else { reasons.push(['Fit', 'True to size']); }
+        '<div class="sa-foot" id="saFoot"></div>' +
+        '<div class="sa-privacy">Your answers stay on this device. Nothing is sent anywhere.</div>' +
+      '</div>';
+    document.body.appendChild(ov);
 
-    var final = idx;
-    if (net >= 1) final = idx + 1;
-    else if (net <= -1) final = idx - 1;
-    final = Math.max(0, Math.min(CONFIG.sizes.length - 1, final));
+    function $(id){ return document.getElementById(id); }
+    var sheet = ov.querySelector('.sa-sheet');
 
-    var alt = null;
-    if (Math.abs(net) === 0.5) {
-      var a = net > 0 ? final + 1 : final - 1;
-      if (a >= 0 && a < CONFIG.sizes.length) alt = CONFIG.sizes[a];
-    }
-    return { size: CONFIG.sizes[final], alt: alt, reasons: reasons };
-  }
-
-  function quickEstimate() {
-    var limits = CONFIG[state.gender] || CONFIG.men;
-    var idx = 0;
-    while (idx < limits.length - 1 && state.kg >= limits[idx]) idx++;
-    return CONFIG.sizes[idx];
-  }
-
-  /* ---------------- HELPERS ---------------- */
-  function cmToFtIn(cm) {
-    var totalIn = Math.round(cm / 2.54);
-    return Math.floor(totalIn / 12) + '\u2032' + (totalIn % 12) + '\u2033';
-  }
-  function kgToLb(kg) { return Math.round(kg * 2.20462); }
-  function heightLabel() { return state.heightUnit === 'cm' ? state.cm + ' cm' : cmToFtIn(state.cm); }
-  function weightLabel() { return state.weightUnit === 'kg' ? state.kg + ' kg' : kgToLb(state.kg) + ' lb'; }
-
-  function productName() {
-    var h = document.querySelector('h1');
-    return h ? h.textContent.trim() : 'AARAMBH';
-  }
-
-  /* ---------------- STYLES ---------------- */
-  var css = '' +
-    '.asa-trigger{display:inline-flex;align-items:center;gap:8px;margin:10px 0;padding:8px 14px;background:transparent;color:#F5F1E8;border:1px solid rgba(245,241,232,.35);border-radius:6px;font:600 13px/1 "DM Sans",system-ui,sans-serif;letter-spacing:.04em;cursor:pointer;transition:.2s}' +
-    '.asa-trigger:hover{border-color:#E94E2C;color:#E94E2C}' +
-    '.asa-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(4,4,10,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}' +
-    '.asa-overlay.asa-open{display:flex}' +
-    '.asa-modal{width:min(440px,100%);max-height:92vh;overflow-y:auto;background:#0E0E18;color:#F5F1E8;border:1px solid rgba(245,241,232,.12);border-radius:16px;font-family:"DM Sans",system-ui,sans-serif;position:relative;padding:20px 20px 22px}' +
-    '@media(max-width:560px){.asa-overlay{align-items:flex-end}.asa-modal{border-radius:18px 18px 0 0;max-height:94vh}}' +
-    '.asa-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}' +
-    '.asa-kicker{font:600 11px/1 "DM Sans",sans-serif;letter-spacing:.18em;color:rgba(245,241,232,.55)}' +
-    '.asa-close{background:none;border:0;color:#F5F1E8;font-size:22px;cursor:pointer;line-height:1}' +
-    '.asa-prod{padding:10px 12px;background:rgba(245,241,232,.06);border-radius:8px;font:600 14px/1.3 "Syne","DM Sans",sans-serif;margin-bottom:14px}' +
-    '.asa-bar{display:flex;gap:6px;margin-bottom:6px}' +
-    '.asa-bar i{flex:1;height:3px;border-radius:2px;background:rgba(245,241,232,.15)}' +
-    '.asa-bar i.on{background:#E94E2C}' +
-    '.asa-stepl{font-size:11px;color:rgba(245,241,232,.5);margin-bottom:14px}' +
-    '.asa-h{font:400 30px/1 "Bebas Neue","Syne",sans-serif;letter-spacing:.03em;margin:0 0 4px}' +
-    '.asa-sub{font-size:13px;color:rgba(245,241,232,.6);margin:0 0 16px}' +
-    '.asa-seg{display:flex;border:1px solid rgba(245,241,232,.2);border-radius:8px;overflow:hidden;margin-bottom:18px}' +
-    '.asa-seg button{flex:1;padding:10px;background:transparent;color:rgba(245,241,232,.7);border:0;font:600 12px/1 "DM Sans",sans-serif;letter-spacing:.08em;cursor:pointer}' +
-    '.asa-seg button.on{background:#F5F1E8;color:#080810}' +
-    '.asa-row{margin-bottom:18px}' +
-    '.asa-rowhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:11px;letter-spacing:.14em;color:rgba(245,241,232,.55)}' +
-    '.asa-unit{display:inline-flex;gap:4px}' +
-    '.asa-unit button{padding:4px 8px;background:transparent;border:1px solid rgba(245,241,232,.2);border-radius:4px;color:rgba(245,241,232,.6);font:600 11px/1 "DM Sans",sans-serif;cursor:pointer}' +
-    '.asa-unit button.on{background:#F5F1E8;color:#080810;border-color:#F5F1E8}' +
-    '.asa-val{font:400 38px/1 "Bebas Neue",sans-serif;letter-spacing:.03em}' +
-    '.asa-ctl{display:flex;align-items:center;gap:10px;margin-top:6px}' +
-    '.asa-ctl input[type=range]{flex:1;accent-color:#E94E2C;height:4px}' +
-    '.asa-step{width:28px;height:28px;border-radius:50%;border:1px solid rgba(245,241,232,.3);background:transparent;color:#F5F1E8;font-size:16px;cursor:pointer;line-height:1}' +
-    '.asa-live{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1px solid rgba(245,241,232,.15);border-radius:8px;margin-bottom:16px}' +
-    '.asa-live small{display:block;color:rgba(245,241,232,.5);font-size:11px;margin-top:3px}' +
-    '.asa-live b{font:400 28px/1 "Bebas Neue",sans-serif}' +
-    '.asa-q{margin-bottom:16px}' +
-    '.asa-q p{margin:0 0 8px;font-size:11px;letter-spacing:.14em;color:rgba(245,241,232,.55)}' +
-    '.asa-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}' +
-    '.asa-opts button{padding:12px 6px;background:transparent;color:#F5F1E8;border:1px solid rgba(245,241,232,.2);border-radius:8px;font:500 13px/1 "DM Sans",sans-serif;cursor:pointer}' +
-    '.asa-opts button.on{border-color:#E94E2C;background:rgba(233,78,44,.14);color:#fff}' +
-    '.asa-cta{width:100%;padding:15px;background:linear-gradient(90deg,#E94E2C,#FFB238);color:#080810;border:0;border-radius:8px;font:700 14px/1 "DM Sans",sans-serif;letter-spacing:.06em;cursor:pointer;margin-top:4px}' +
-    '.asa-ghost{width:100%;padding:12px;background:none;color:rgba(245,241,232,.7);border:0;font:600 12px/1 "DM Sans",sans-serif;letter-spacing:.08em;cursor:pointer;margin-top:6px}' +
-    '.asa-note{font-size:11px;color:rgba(245,241,232,.45);text-align:center;margin-top:12px}' +
-    '.asa-ring{width:128px;height:128px;margin:6px auto 14px;border-radius:50%;border:5px solid #E94E2C;display:flex;flex-direction:column;align-items:center;justify-content:center}' +
-    '.asa-ring b{font:400 54px/1 "Bebas Neue",sans-serif}' +
-    '.asa-ring span{font-size:11px;color:rgba(245,241,232,.6)}' +
-    '.asa-why{list-style:none;margin:0 0 14px;padding:0}' +
-    '.asa-why li{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(245,241,232,.05);border-radius:6px;margin-bottom:6px;font-size:13px}' +
-    '.asa-why li span:first-child{font-weight:600}' +
-    '.asa-why li span:last-child{color:rgba(245,241,232,.65);text-align:right}' +
-    '.asa-sizes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}' +
-    '.asa-sizes span{min-width:44px;text-align:center;padding:10px 0;border:1px solid rgba(245,241,232,.2);border-radius:6px;font-weight:600;font-size:13px;color:rgba(245,241,232,.6)}' +
-    '.asa-sizes span.rec{background:#F5F1E8;color:#080810;border-color:#F5F1E8}' +
-    '.asa-sizes span.alt{border-style:dashed;color:#FFB238;border-color:#FFB238}';
-
-  var styleEl = document.createElement('style');
-  styleEl.textContent = css;
-  document.head.appendChild(styleEl);
-
-  /* ---------------- MODAL ---------------- */
-  var overlay = document.createElement('div');
-  overlay.className = 'asa-overlay';
-  overlay.setAttribute('role', 'dialog');
-  overlay.setAttribute('aria-modal', 'true');
-  overlay.setAttribute('aria-label', 'AARAMBH size advisor');
-  var modal = document.createElement('div');
-  modal.className = 'asa-modal';
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-
-  function header(step) {
-    return '' +
-      '<div class="asa-top"><span class="asa-kicker">AARAMBH SIZE ADVISOR</span>' +
-      '<button class="asa-close" data-a="close" aria-label="Close">&times;</button></div>' +
-      '<div class="asa-prod">' + escapeHtml(productName()) + '</div>' +
-      '<div class="asa-bar"><i class="' + (step >= 1 ? 'on' : '') + '"></i><i class="' + (step >= 2 ? 'on' : '') + '"></i><i class="' + (step >= 3 ? 'on' : '') + '"></i></div>' +
-      '<div class="asa-stepl">Step ' + step + ' of 3</div>';
-  }
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
-
-  function opts(name, list) {
-    return '<div class="asa-opts">' + list.map(function (o) {
-      return '<button data-a="opt" data-k="' + name + '" data-v="' + o[0] + '" class="' + (state[name] === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
-    }).join('') + '</div>';
-  }
-
-  function render() {
-    var html = header(state.step);
-
-    if (state.step === 1) {
-      html += '<h3 class="asa-h">Let\u2019s find your fit</h3><p class="asa-sub">Two measurements, about ten seconds.</p>' +
-        '<div class="asa-seg"><button data-a="gender" data-v="women" class="' + (state.gender === 'women' ? 'on' : '') + '">WOMENSWEAR</button>' +
-        '<button data-a="gender" data-v="men" class="' + (state.gender === 'men' ? 'on' : '') + '">MENSWEAR</button></div>' +
-
-        '<div class="asa-row"><div class="asa-rowhead"><span>HEIGHT</span><span class="asa-unit">' +
-        '<button data-a="hunit" data-v="cm" class="' + (state.heightUnit === 'cm' ? 'on' : '') + '">CM</button>' +
-        '<button data-a="hunit" data-v="ft" class="' + (state.heightUnit === 'ft' ? 'on' : '') + '">FT/IN</button></span></div>' +
-        '<div class="asa-val" id="asa-hv">' + heightLabel() + '</div>' +
-        '<div class="asa-ctl"><button class="asa-step" data-a="hminus" aria-label="Decrease height">\u2212</button>' +
-        '<input type="range" id="asa-h" min="140" max="210" value="' + state.cm + '">' +
-        '<button class="asa-step" data-a="hplus" aria-label="Increase height">+</button></div></div>' +
-
-        '<div class="asa-row"><div class="asa-rowhead"><span>WEIGHT</span><span class="asa-unit">' +
-        '<button data-a="wunit" data-v="kg" class="' + (state.weightUnit === 'kg' ? 'on' : '') + '">KG</button>' +
-        '<button data-a="wunit" data-v="lb" class="' + (state.weightUnit === 'lb' ? 'on' : '') + '">LB</button></span></div>' +
-        '<div class="asa-val" id="asa-wv">' + weightLabel() + '</div>' +
-        '<div class="asa-ctl"><button class="asa-step" data-a="wminus" aria-label="Decrease weight">\u2212</button>' +
-        '<input type="range" id="asa-w" min="35" max="150" value="' + state.kg + '">' +
-        '<button class="asa-step" data-a="wplus" aria-label="Increase weight">+</button></div></div>' +
-
-        '<div class="asa-live"><div>LIVE ESTIMATE<small>Refines in the next steps</small></div><b id="asa-est">' + quickEstimate() + '</b></div>' +
-        '<button class="asa-cta" data-a="next">CONTINUE \u2192</button>' +
-        '<div class="asa-note">Your answers stay on this device. Nothing is sent anywhere.</div>';
-    }
-
-    if (state.step === 2) {
-      html += '<h3 class="asa-h">Your shape</h3><p class="asa-sub">Compared with most people your height and weight.</p>' +
-        '<div class="asa-q"><p>CHEST</p>' + opts('chest', [['narrower', 'Narrower'], ['average', 'Average'], ['fuller', 'Fuller']]) + '</div>' +
-        '<div class="asa-q"><p>STOMACH</p>' + opts('stomach', [['narrower', 'Narrower'], ['average', 'Average'], ['fuller', 'Fuller']]) + '</div>' +
-        '<div class="asa-q"><p>HOW DO YOU LIKE IT TO FIT?</p>' + opts('fit', [['snug', 'Snug'], ['true', 'True to size'], ['loose', 'Loose']]) + '</div>' +
-        '<button class="asa-cta" data-a="next">SEE MY SIZE \u2192</button>' +
-        '<button class="asa-ghost" data-a="back">\u2190 BACK</button>';
-    }
-
-    if (state.step === 3) {
-      var r = recommend();
-      html += '<h3 class="asa-h" style="text-align:center">Your size</h3>' +
-        '<div class="asa-ring"><b>' + r.size + '</b><span>Best fit</span></div>' +
-        '<ul class="asa-why">' + r.reasons.map(function (x) {
-          return '<li><span>' + x[0] + '</span><span>' + x[1] + '</span></li>';
-        }).join('') + '</ul>' +
-        '<div class="asa-sizes">' + CONFIG.sizes.map(function (s) {
-          return '<span class="' + (s === r.size ? 'rec' : (s === r.alt ? 'alt' : '')) + '">' + s + '</span>';
-        }).join('') + '</div>' +
-        (r.alt ? '<div class="asa-note" style="margin:-6px 0 12px">Between sizes? ' + r.alt + ' is a close second.</div>' : '') +
-        '<button class="asa-cta" data-a="apply" data-v="' + r.size + '">SELECT ' + r.size + ' ON THE PAGE</button>' +
-        '<button class="asa-ghost" data-a="back">EDIT DETAILS</button>' +
-        '<div class="asa-note">Based on your height, weight and shape. It\u2019s a guide, not a guarantee.</div>';
-    }
-
-    modal.innerHTML = html;
-    bindSliders();
-  }
-
-  function bindSliders() {
-    var h = document.getElementById('asa-h');
-    var w = document.getElementById('asa-w');
-    if (h) h.addEventListener('input', function () { state.cm = +h.value; refresh1(); });
-    if (w) w.addEventListener('input', function () { state.kg = +w.value; refresh1(); });
-  }
-
-  function refresh1() {
-    var hv = document.getElementById('asa-hv');
-    var wv = document.getElementById('asa-wv');
-    var est = document.getElementById('asa-est');
-    var h = document.getElementById('asa-h');
-    var w = document.getElementById('asa-w');
-    if (hv) hv.textContent = heightLabel();
-    if (wv) wv.textContent = weightLabel();
-    if (est) est.textContent = quickEstimate();
-    if (h) h.value = state.cm;
-    if (w) w.value = state.kg;
-    persist();
-  }
-
-  /* ---------------- SELECT SIZE ON PAGE ---------------- */
-  function selectOnPage(size) {
-    var done = false;
-
-    var selects = document.querySelectorAll('select');
-    for (var i = 0; i < selects.length; i++) {
-      var opt = Array.prototype.find.call(selects[i].options, function (o) {
-        return o.value.toUpperCase() === size || o.textContent.trim().toUpperCase() === size;
+    /* ---------- Helpers ---------- */
+    function ftin(cm){ var t = Math.round(cm / 2.54), f = Math.floor(t / 12), i = t % 12; return f + "'" + i + '"'; }
+    function lb(kg){ return Math.round(kg * 2.2046); }
+    function availableSizes(){
+      var out = [];
+      document.querySelectorAll('.size-btn').forEach(function(b){
+        if(b.style.display !== 'none' && ALL.indexOf(b.dataset.size) > -1) out.push(b.dataset.size);
       });
-      if (opt) {
-        selects[i].value = opt.value;
-        selects[i].dispatchEvent(new Event('change', { bubbles: true }));
-        done = true;
-        break;
+      return out.length ? out : ['S','M','L','XL','2XL'];
+    }
+    function baseIdx(){
+      var lim = st.g === 'women' ? CONFIG.women : CONFIG.men, n = lim.length, i = 0;
+      while(i < n - 1 && st.kg >= lim[i]) i++;
+      var upper = lim[i], lower = i === 0 ? lim[0] - 10 : lim[i - 1];
+      if(i === n - 1) upper = lower + 12;
+      var frac = Math.max(0, Math.min(1, (st.kg - lower) / (upper - lower)));
+      return i - 0.5 + frac;
+    }
+    function nearest(idx, avail){
+      var best = avail[0], bd = 99;
+      avail.forEach(function(s){ var d = Math.abs(idx - ALL.indexOf(s)); if(d < bd){ bd = d; best = s; } });
+      return best;
+    }
+    function fitKind(){
+      var f = (typeof selectedFit !== 'undefined') ? String(selectedFit) : 'Regular';
+      return f;
+    }
+
+    /* ---------- Step 1 ---------- */
+    function paintStep1(){
+      ov.querySelectorAll('.sa-tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.g === st.g); });
+      $('saHU').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.u === st.hu); });
+      $('saWU').querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', b.dataset.u === st.wu); });
+      $('saH').value = st.cm; $('saW').value = st.kg;
+      $('saHVal').textContent = st.hu === 'cm' ? st.cm + ' cm' : ftin(st.cm);
+      $('saWVal').textContent = st.wu === 'kg' ? st.kg + ' kg' : lb(st.kg) + ' lb';
+      $('saLive').textContent = nearest(baseIdx(), availableSizes());
+    }
+    ov.querySelectorAll('.sa-tabs button').forEach(function(b){ b.addEventListener('click', function(){ st.g = b.dataset.g; paintStep1(); }); });
+    $('saHU').addEventListener('click', function(e){ var b = e.target.closest('button'); if(b){ st.hu = b.dataset.u; paintStep1(); } });
+    $('saWU').addEventListener('click', function(e){ var b = e.target.closest('button'); if(b){ st.wu = b.dataset.u; paintStep1(); } });
+    $('saH').addEventListener('input', function(){ st.cm = Number(this.value); paintStep1(); });
+    $('saW').addEventListener('input', function(){ st.kg = Number(this.value); paintStep1(); });
+    $('saHm').onclick = function(){ st.cm = Math.max(140, st.cm - 1); paintStep1(); };
+    $('saHp').onclick = function(){ st.cm = Math.min(210, st.cm + 1); paintStep1(); };
+    $('saWm').onclick = function(){ st.kg = Math.max(35, st.kg - 1); paintStep1(); };
+    $('saWp').onclick = function(){ st.kg = Math.min(130, st.kg + 1); paintStep1(); };
+
+    /* ---------- Step 2 ---------- */
+    function paintStep2(){
+      ov.querySelectorAll('#saS2 .sa-seg').forEach(function(seg){
+        var k = seg.dataset.k;
+        seg.querySelectorAll('button').forEach(function(b){ b.classList.toggle('on', String(st[k]) === b.dataset.v); });
+      });
+    }
+    ov.querySelectorAll('#saS2 .sa-seg').forEach(function(seg){
+      seg.addEventListener('click', function(e){
+        var b = e.target.closest('button'); if(!b) return;
+        var k = seg.dataset.k; st[k] = k === 'fit' ? b.dataset.v : Number(b.dataset.v); paintStep2();
+      });
+    });
+
+    /* ---------- Recommendation ---------- */
+    function compute(){
+      var avail = availableSizes();
+      var oc = st.chest - 1, os = st.stomach - 1, oh = st.hips - 1;
+      var base = baseIdx();
+      var hn = st.cm >= CONFIG.tallCm ? 0.4 : (st.cm <= CONFIG.shortCm ? -0.4 : 0);
+      var fn = st.fit === 'loose' ? 0.5 : (st.fit === 'snug' ? -0.5 : 0);
+      var idx = base + 0.5 * oc + 0.35 * os + 0.25 * oh + hn + fn;
+      var size = nearest(idx, avail), si = ALL.indexOf(size);
+      var dist = Math.abs(idx - si);
+      var altIdx = si + (idx > si ? 1 : -1);
+      var alt = (dist > 0.3 && altIdx >= 0 && altIdx < ALL.length && avail.indexOf(ALL[altIdx]) > -1) ? ALL[altIdx] : null;
+      function status(dimIdx, word){
+        var d = si - dimIdx;
+        if(d >= 0.6) return {ok:false, t: word === 'length' ? 'Will sit longer on you' : 'A bit roomy'};
+        if(d <= -0.6) return {ok:false, t: word === 'length' ? 'Will sit shorter on you' : 'A bit snug'};
+        return {ok:true, t:'Right for the fit it was cut for'};
       }
+      var fitText = st.fit === 'loose' ? 'You like it loose, so we sized up' : (st.fit === 'snug' ? 'You like it snug, so we sized down' : 'True to size');
+      return {
+        size:size, alt:alt, avail:avail, close: dist <= 0.3,
+        rows:[
+          ['Chest', status(base + 0.8 * oc, 'chest')],
+          ['Waist', status(base + 0.8 * os, 'waist')],
+          ['Hips',  status(base + 0.8 * oh, 'hips')],
+          ['Length', status(base + (st.cm >= CONFIG.tallCm ? 0.8 : (st.cm <= CONFIG.shortCm ? -0.8 : 0)), 'length')],
+          ['Fit', {ok:true, t:fitText}]
+        ]
+      };
     }
-    if (done) return true;
-
-    var nodes = document.querySelectorAll('[data-size], button, label, .size, .size-btn, .size-option');
-    for (var j = 0; j < nodes.length; j++) {
-      var n = nodes[j];
-      if (overlay.contains(n)) continue;
-      var val = (n.getAttribute('data-size') || n.textContent || '').trim().toUpperCase();
-      if (val === size) { n.click(); return true; }
+    function fitNote(){
+      var f = fitKind();
+      if(f === 'Oversized') return 'Cut oversized with a drop shoulder, so this size gives the relaxed look. Go one size down for a closer fit.';
+      if(f === 'Relaxed') return 'Relaxed fit made for layering. Go one size down if you want it closer to the body.';
+      if(f === 'Boxy') return 'Boxy cut with a structured drape. This size keeps the boxy shape.';
+      if(f === 'Cropped') return 'Cropped stretch fit. If you are between sizes, go one up for a looser, longer feel.';
+      return 'Regular cut. If you like it roomier, go one size up.';
     }
-    return false;
-  }
-
-  /* ---------------- OPEN / CLOSE ---------------- */
-  function open() {
-    state.step = 1;
-    render();
-    overlay.classList.add('asa-open');
-    document.body.style.overflow = 'hidden';
-  }
-  function close() {
-    overlay.classList.remove('asa-open');
-    document.body.style.overflow = '';
-  }
-
-  overlay.addEventListener('click', function (e) {
-    if (e.target === overlay) return close();
-    var t = e.target.closest('[data-a]');
-    if (!t) return;
-    var a = t.getAttribute('data-a');
-    var v = t.getAttribute('data-v');
-
-    if (a === 'close') close();
-    else if (a === 'next') { state.step = Math.min(3, state.step + 1); persist(); render(); }
-    else if (a === 'back') { state.step = Math.max(1, state.step - 1); render(); }
-    else if (a === 'gender') { state.gender = v; persist(); render(); }
-    else if (a === 'hunit') { state.heightUnit = v; persist(); render(); }
-    else if (a === 'wunit') { state.weightUnit = v; persist(); render(); }
-    else if (a === 'hminus') { state.cm = Math.max(140, state.cm - 1); refresh1(); }
-    else if (a === 'hplus') { state.cm = Math.min(210, state.cm + 1); refresh1(); }
-    else if (a === 'wminus') { state.kg = Math.max(35, state.kg - 1); refresh1(); }
-    else if (a === 'wplus') { state.kg = Math.min(150, state.kg + 1); refresh1(); }
-    else if (a === 'opt') { state[t.getAttribute('data-k')] = v; persist(); render(); }
-    else if (a === 'apply') {
-      var ok = selectOnPage(v);
-      close();
-      if (!ok) { try { alert('We recommend size ' + v + '. Please select it on the page.'); } catch (err) {} }
+    function paintStep3(){
+      result = compute();
+      var r = result;
+      var msg = r.close
+        ? r.size + ' lines up best for the fit it was cut for through the body.'
+        : 'You are between ' + (r.alt && ALL.indexOf(r.alt) < ALL.indexOf(r.size) ? r.alt + ' and ' + r.size : r.size + ' and ' + (r.alt || r.size)) + '. ' + r.size + ' is the closest match' + (r.alt ? '; ' + r.alt + ' will feel ' + (ALL.indexOf(r.alt) > ALL.indexOf(r.size) ? 'roomier.' : 'closer.') : '.');
+      var rows = r.rows.map(function(x){
+        return '<div class="sa-row"><span>' + x[0] + '</span><span><i class="sa-dot' + (x[1].ok ? '' : ' mid') + '"></i>' + x[1].t + '</span></div>';
+      }).join('');
+      var chips = ALL.map(function(s){
+        var cls = s === r.size ? 'on' : (r.avail.indexOf(s) < 0 ? 'off' : '');
+        return '<div class="sa-chip ' + cls + '">' + s + '</div>';
+      }).join('');
+      $('saS3').innerHTML =
+        '<div class="sa-title">Your size</div>' +
+        '<div class="sa-ring' + (r.close ? '' : ' mid') + '"><b>' + r.size + '</b><span>' + (r.close ? 'Best fit' : 'Closest fit') + '</span></div>' +
+        '<div class="sa-msg">' + msg + '</div>' +
+        '<div class="sa-rows">' + rows + '</div>' +
+        '<div class="sa-chips">' + chips + '</div>' +
+        '<div class="sa-you">YOU: ' + r.size + '</div>' +
+        '<p class="sa-note">' + fitNote() + ' Based on your height, weight and shape. It is a guide, so check the size chart too.</p>';
     }
-  });
 
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && overlay.classList.contains('asa-open')) close();
-  });
-
-  /* ---------------- TRIGGER BUTTON ---------------- */
-  function makeTrigger() {
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.id = 'asa-open';
-    b.className = 'asa-trigger';
-    b.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 17 3l4 4L7 21z"/><path d="m8 12 2 2M11 9l2 2M14 6l2 2"/></svg>Find my size';
-    return b;
-  }
-
-  function mount() {
-    var existing = document.getElementById('asa-open');
-    if (existing) {
-      if (!existing.__asa) { existing.addEventListener('click', open); existing.__asa = true; }
-      return true;
+    /* ---------- Navigation ---------- */
+    function product(){
+      var n = document.getElementById('productName'), p = document.getElementById('productPrice'), im = document.getElementById('imgFront');
+      $('saName').textContent = n ? n.textContent : 'AARAMBH';
+      $('saPrice').textContent = p ? p.textContent : '';
+      var img = $('saImg');
+      if(im && im.getAttribute('src')){ img.src = im.getAttribute('src'); img.alt = 'AARAMBH ' + (n ? n.textContent : 'product'); }
     }
-    var anchor = document.querySelector(CONFIG.mountAfter);
-    if (!anchor) return false;
-    var btn = makeTrigger();
-    btn.addEventListener('click', open);
-    btn.__asa = true;
-    anchor.parentNode.insertBefore(btn, anchor.nextSibling);
-    return true;
-  }
-
-  function init() {
-    if (mount()) return;
-    var tries = 0;
-    var timer = setInterval(function () {
-      tries++;
-      if (mount() || tries > 30) {
-        clearInterval(timer);
-        if (tries > 30) console.warn('AARAMBH Size Advisor: no size container found. Add <button id="asa-open">Find my size</button> where you want it.');
+    function go(n){
+      step = n;
+      $('saS1').hidden = n !== 1; $('saS2').hidden = n !== 2; $('saS3').hidden = n !== 3;
+      $('saB1').className = 'on'; $('saB2').className = n >= 2 ? 'on' : ''; $('saB3').className = n >= 3 ? 'on' : '';
+      $('saStepName').textContent = n === 1 ? 'Step 1 of 3 · Measurements' : n === 2 ? 'Step 2 of 3 · Body shape' : 'Your recommendation';
+      var foot = $('saFoot');
+      if(n === 1){
+        paintStep1();
+        foot.innerHTML = '<button type="button" class="sa-btn" id="saNext">Continue &rarr;</button>';
+        $('saNext').onclick = function(){ go(2); };
+      } else if(n === 2){
+        paintStep2();
+        foot.innerHTML = '<button type="button" class="sa-btn" id="saNext">Continue &rarr;</button><button type="button" class="sa-btn ghost" id="saBack">Back</button>';
+        $('saNext').onclick = function(){ save(); go(3); };
+        $('saBack').onclick = function(){ go(1); };
+      } else {
+        paintStep3();
+        foot.innerHTML =
+          '<button type="button" class="sa-btn" id="saAdd">Add size ' + result.size + ' to bag</button>' +
+          '<div class="sa-links"><button type="button" id="saSel">Select ' + result.size + ' on the page</button><button type="button" id="saEdit">Edit details</button><button type="button" id="saChart">Size chart</button></div>';
+        $('saAdd').onclick = function(){ pick(result.size); close(); if(typeof addToCart === 'function') addToCart(); };
+        $('saSel').onclick = function(){ pick(result.size); close(); };
+        $('saEdit').onclick = function(){ go(1); };
+        $('saChart').onclick = function(){ close(); openChart.click(); };
       }
-    }, 400);
+      sheet.scrollTop = 0;
+    }
+    function pick(sz){
+      document.querySelectorAll('.size-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.size === sz); });
+    }
+    function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(_){} }
+    function open(){
+      lastFocus = document.activeElement;
+      product();
+      go(1);
+      ov.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      $('saClose').focus();
+    }
+    function close(){
+      ov.classList.remove('open');
+      document.body.style.overflow = '';
+      save();
+      if(lastFocus && lastFocus.focus){ try { lastFocus.focus(); } catch(_){} }
+    }
+    openBtn.addEventListener('click', open);
+    $('saClose').addEventListener('click', close);
+    ov.addEventListener('click', function(e){ if(e.target === ov) close(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && ov.classList.contains('open')) close(); });
   }
 
-  window.AARAMBHSizeAdvisor = { open: open, close: close };
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();

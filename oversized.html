@@ -1,686 +1,793 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oversized Collection — AARAMBH</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <script src="prices.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oversized Collection — AARAMBH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="prices.js"></script>
+<script src="site-config.js"></script>
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--surface2:#15100c;--accent:#A90E02;--hi:#FFFACD;--hi-rgb:255,250,205;--acc-rgb:169,14,2;--btn:#A90E02;--btn-hover:#c4140a;--btn-fg:#ffffff;--tick-fg:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,.06)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none}
+.cursor{position:fixed;width:12px;height:12px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference}
+.cursor-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(var(--acc-rgb),.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .3s,height .3s}
+@media (hover:none),(pointer:coarse){body{cursor:auto}.cursor,.cursor-ring{display:none}}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9997;opacity:.5}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:rgba(8,8,16,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:padding .3s}
+nav.scrolled{padding:12px 40px}
+.nav-logo img{height:44px}
+.nav-links{display:flex;gap:clamp(18px,2.3vw,36px);list-style:none}
+.nav-links a{font:600 13px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-links a.active{color:var(--accent)}
+.nav-cta{font:700 12px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#fff;background:var(--accent);padding:10px 24px;border-radius:100px;text-decoration:none;transition:transform .2s;box-shadow:0 4px 20px rgba(var(--acc-rgb),.3)}
+.nav-cta:hover{transform:scale(1.04)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;z-index:200}
+.hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s,opacity .3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mobile-menu{position:fixed;top:0;right:0;height:100vh;width:min(78vw,320px);background:#0c0c16;border-left:1px solid var(--border);z-index:150;padding:100px 32px 40px;transform:translateX(100%);transition:transform .4s ease;display:flex;flex-direction:column;gap:26px}
+.mobile-menu.open{transform:translateX(0)}
+.mobile-menu a{font:700 16px 'Syne',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none}
+.mobile-menu a.active{color:var(--accent)}
+.menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:140;opacity:0;pointer-events:none;transition:opacity .3s}
+.menu-backdrop.open{opacity:1;pointer-events:auto}
 
-  <style>
-    :root {
-      --bg: #080810; --surface: #0f0f1a; --surface2: #15100c;
-      --accent: #A90E02; --hi: #FFFACD; --hi-rgb: 255,250,205; --acc-rgb: 169,14,2;
-      --btn: #A90E02; --btn-hover: #c4140a; --btn-fg: #ffffff;
-      --text: #f0f0f0; --muted: #888; --border: rgba(255,255,255,0.06);
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; cursor: none; }
+.page-header{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:140px 40px 70px;text-align:center;position:relative;overflow:hidden}
+.pulse-glow{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(var(--hi-rgb),.1) 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);animation:pulse 7s ease-in-out infinite;pointer-events:none;z-index:1}
+@keyframes pulse{0%,100%{opacity:.5;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.12)}}
+.page-header::before{content:'';position:absolute;top:10%;left:4%;width:24%;height:85%;background-image:url('oversized_por1.jpeg');background-size:cover;background-position:center;border-radius:16px;opacity:.5;mask-image:linear-gradient(to right,#000 50%,transparent 100%);-webkit-mask-image:linear-gradient(to right,#000 50%,transparent 100%);z-index:0}
+.page-header::after{content:'';position:absolute;top:10%;right:4%;width:24%;height:85%;background-image:url('oversized_por2.jpeg');background-size:cover;background-position:center;border-radius:16px;opacity:.5;mask-image:linear-gradient(to left,#000 50%,transparent 100%);-webkit-mask-image:linear-gradient(to left,#000 50%,transparent 100%);z-index:0}
+@media (max-width:900px){.page-header::before,.page-header::after{width:44%;height:100%;top:0;opacity:.18;border-radius:0}.page-header::before{left:0}.page-header::after{right:0}}
+.page-header>*:not(.pulse-glow){position:relative;z-index:5}
+.breadcrumb{font:600 11px 'Syne',sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.breadcrumb a{color:var(--hi);text-decoration:none}
+.breadcrumb span{opacity:.4}
+.page-header h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(64px,10vw,140px);line-height:.9;letter-spacing:2px;animation:fade-up .8s ease both;text-shadow:0 10px 50px rgba(0,0,0,.6)}
+.page-header h1 span{background:linear-gradient(135deg,var(--accent),var(--hi));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-header p{color:var(--muted);font-size:17px;font-weight:300;margin-top:16px;letter-spacing:1px;animation:fade-up .8s .1s ease both}
+.header-meta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;justify-content:center;animation:fade-up .8s .2s ease both}
+.meta-chip{font:700 11px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);padding:9px 20px;border-radius:100px;color:var(--muted);background:rgba(255,255,255,.02)}
+.meta-chip.hot{border-color:rgba(var(--acc-rgb),.45);color:var(--hi);background:rgba(var(--acc-rgb),.14)}
+.hero-cta{margin-top:30px;display:inline-flex;align-items:center;justify-content:center;padding:16px 44px;border-radius:100px;background:var(--btn);color:var(--btn-fg);text-decoration:none;font:800 13px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;box-shadow:0 12px 36px rgba(var(--acc-rgb),.4);transition:transform .25s;animation:fade-up .8s .3s ease both}
+.hero-cta:hover{transform:translateY(-3px)}
+.ticker-wrap{background:var(--accent);padding:12px 0;overflow:hidden;white-space:nowrap}
+.ticker{display:inline-flex;animation:ticker 24s linear infinite}
+.ticker span{font:400 20px 'Bebas Neue',sans-serif;letter-spacing:4px;padding:0 36px;color:var(--tick-fg)}
+.ticker span::after{content:'✦';margin-left:36px;opacity:.6}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.section-label{font:700 11px 'Syne',sans-serif;letter-spacing:4px;text-transform:uppercase;color:var(--hi);display:block;margin-bottom:14px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(40px,5vw,64px);letter-spacing:2px;margin-bottom:50px}
+.trust-strip{max-width:1280px;margin:0 auto;padding:26px 40px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.trust-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.025)}
+.trust-item .ti-icon{font-size:22px;flex-shrink:0}
+.trust-item b{display:block;font:700 12.5px 'Syne',sans-serif;letter-spacing:.4px}
+.trust-item span{display:block;font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+.justdropped-badge{font:700 11px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--btn-fg);background:var(--btn);padding:10px 20px;border-radius:100px;display:inline-flex;align-items:center;gap:8px}
+.justdropped-badge::before{content:'\26A1'}
+.anchor-point{display:block;height:0;scroll-margin-top:100px}
 
-    .cursor { position: fixed; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
-    .cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid rgba(var(--acc-rgb),0.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: transform 0.15s ease, width 0.3s, height 0.3s; }
-    @media (hover: none), (pointer: coarse) { body { cursor: auto; } .cursor, .cursor-ring { display: none; } }
+/* SPOTLIGHT */
+.spotlight{max-width:1280px;margin:0 auto;padding:56px 40px 20px;scroll-margin-top:110px}
+.spot-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+.spot-nav{display:flex;gap:10px}
+.spot-arrow{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text);font-size:18px;cursor:pointer;transition:background .25s,border-color .25s,color .25s}
+.spot-arrow:hover{background:var(--btn);border-color:var(--btn);color:var(--btn-fg)}
+.spot-viewport{overflow:hidden;border-radius:28px;border:1px solid var(--border);background:var(--surface);touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.spot-viewport.dragging{cursor:grabbing}
+.spot-viewport:focus-visible,.tab:focus-visible,.cf:focus-visible,.vt-btn:focus-visible,.swatch:focus-visible,.spot-swatch:focus-visible,.spot-dot:focus-visible,.spot-arrow:focus-visible,.buy-now-btn:focus-visible,.sort select:focus-visible{outline:2px solid var(--hi);outline-offset:3px}
+.spot-track{display:flex;transition:transform .85s cubic-bezier(.65,0,.25,1);will-change:transform}
+.spot-viewport.dragging .spot-track{transition:none}
+.spot-slide{flex:0 0 100%;min-width:0;display:grid;grid-template-columns:.85fr 1.15fr;min-height:540px;position:relative;isolation:isolate}
+.spot-slide::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 60% 70% at 70% 50%,rgba(var(--tint),.34),transparent 70%)}
+.spot-info{padding:52px 20px 52px 56px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:14px}
+.spot-tag{font:700 11px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--hi);border:1px solid rgba(var(--hi-rgb),.35);background:rgba(var(--hi-rgb),.08);padding:6px 14px;border-radius:100px}
+.spot-info h3{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(48px,5.4vw,84px);line-height:.95;letter-spacing:1px}
+.spot-info p{color:var(--muted);font-size:16px;line-height:1.65;max-width:380px}
+.spot-colors{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.spot-colorname{font:600 12px 'Syne',sans-serif;letter-spacing:1px}
+.spot-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;outline:2px solid transparent;transition:transform .2s,outline-color .2s}
+.spot-swatch:hover{transform:scale(1.15)}
+.spot-swatch.active{outline-color:var(--hi);outline-offset:3px}
+.spot-price{font:400 40px 'Bebas Neue',sans-serif;letter-spacing:1px;line-height:1;margin-top:4px;color:var(--hi)}
+.spot-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.spot-actions .buy-now-btn{width:auto;padding:15px 34px}
+.spot-ghost{font:700 12px 'Syne',sans-serif;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);text-decoration:underline;text-underline-offset:6px;text-decoration-color:rgba(255,255,255,.3);transition:text-decoration-color .3s,color .3s}
+.spot-ghost:hover{color:var(--hi);text-decoration-color:var(--hi)}
+.spot-art{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);gap:10px;align-items:center;padding:28px 28px 28px 0;min-width:0}
+.spot-art figure{position:relative;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateX(70px);transition:transform .9s cubic-bezier(.2,.7,.2,1) .25s,opacity .6s ease .25s}
+.spot-art figure+figure{transition-delay:.4s}
+.spot-slide.is-active .spot-art figure{opacity:1;transform:none}
+.spot-art img{width:100%;height:100%;max-height:470px;object-fit:contain;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,.45))}
+.spot-art figcaption{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font:700 10px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.7);background:rgba(8,8,16,.6);border:1px solid rgba(255,255,255,.12);padding:4px 12px;border-radius:100px}
+.spot-dots{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.spot-dot{position:relative;overflow:hidden;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:9px 16px;cursor:pointer;color:var(--muted);font:700 11px 'Syne',sans-serif;letter-spacing:1.2px;text-transform:uppercase;transition:color .3s,border-color .3s}
+.spot-dot-name{position:relative;z-index:1}
+.spot-dot.active{color:var(--btn-fg);border-color:var(--hi)}
+.spot-dot::after{content:'';position:absolute;inset:0;background:var(--btn);transform-origin:left;transform:scaleX(0)}
+.spot-dot.active::after{animation:spotFill 5.5s linear forwards}
+.spotlight.is-paused .spot-dot.active::after{animation-play-state:paused}
+@keyframes spotFill{to{transform:scaleX(1)}}
 
-    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: 0.5; }
+/* OFFER */
+.offer-banner{max-width:1200px;margin:46px auto 0;padding:22px 28px;border-radius:22px;display:flex;align-items:center;justify-content:space-between;gap:18px 30px;flex-wrap:wrap;background:linear-gradient(120deg,rgba(var(--acc-rgb),.55),rgba(var(--hi-rgb),.1));border:1px solid rgba(var(--hi-rgb),.3)}
+.offer-main{font:400 clamp(26px,3.4vw,40px) 'Bebas Neue',sans-serif;letter-spacing:1.5px;line-height:1.05}
+.offer-main em{font-style:normal;color:var(--hi)}
+.offer-sub{font-size:14px;color:rgba(240,240,240,.82);margin-top:6px;line-height:1.5}
+.offer-codes{display:flex;gap:10px;flex-wrap:wrap}
+.offer-code{font:800 12px 'Syne',sans-serif;letter-spacing:2px;padding:10px 18px;border-radius:100px;border:1.5px dashed rgba(var(--hi-rgb),.7);background:rgba(8,8,16,.45);color:var(--hi);cursor:pointer;transition:background .25s,transform .2s}
+.offer-code:hover{background:rgba(8,8,16,.7);transform:translateY(-2px)}
+.offer-code small{display:block;font-size:10px;font-weight:600;letter-spacing:.6px;color:rgba(240,240,240,.7);margin-top:2px;text-transform:none}
 
-    .announce-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 101; background: linear-gradient(90deg, var(--accent), #6e0a01, var(--accent)); color: var(--hi); text-align: center; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 9px 16px; }
-    nav { position: fixed; top: 36px; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; background: rgba(8,8,16,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); transition: padding 0.3s; }
-    nav.scrolled { padding: 12px 40px; }
-    .nav-logo img { height: 44px; }
-    .nav-links { display: flex; gap: clamp(18px, 2.3vw, 36px); list-style: none; }
-    .nav-links a { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; position: relative; transition: color 0.3s; }
-    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
-    .nav-links a:hover { color: var(--text); }
-    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
-    .nav-links a.active { color: var(--accent); }
-    .nav-cta { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: white; background: var(--accent); padding: 10px 24px; border-radius: 100px; text-decoration: none; transition: background 0.3s, transform 0.2s; box-shadow: 0 4px 20px rgba(169,14,2,0.3); }
-    .nav-cta:hover { background: #8a0b02; transform: scale(1.04); }
+/* FINDER */
+.finder{max-width:1280px;margin:0 auto;padding:56px 40px 90px;scroll-margin-top:90px}
+.finder-head{margin-bottom:26px}
+.finder-bar{position:sticky;top:76px;z-index:90;display:flex;flex-direction:column;gap:14px;padding:14px 0 16px;background:rgba(8,8,16,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.tabs{position:relative;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:4px;border:1px solid var(--border);border-radius:100px;background:rgba(255,255,255,.03);align-self:flex-start;max-width:100%}
+.tabs::-webkit-scrollbar{display:none}
+.tab-glider{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:100px;background:var(--btn);transition:transform .45s cubic-bezier(.65,0,.25,1),width .45s cubic-bezier(.65,0,.25,1);z-index:0}
+.tab{position:relative;z-index:1;flex:0 0 auto;background:none;border:none;cursor:pointer;padding:10px 20px;border-radius:100px;color:var(--muted);font:700 12px 'Syne',sans-serif;letter-spacing:1.2px;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px;transition:color .3s;white-space:nowrap}
+.tab small{font-size:10px;opacity:.7}
+.tab.active{color:var(--btn-fg)}
+.finder-row{display:flex;align-items:center;justify-content:space-between;gap:16px 24px;flex-wrap:wrap}
+.color-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cf-label,.sort span{font:700 10px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.cf{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text);border-radius:100px;padding:7px 14px 7px 8px;cursor:pointer;font:500 13px 'DM Sans',sans-serif;transition:border-color .25s,background .25s}
+.cf[data-color="any"]{padding-left:14px}
+.cf i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.3);display:inline-block}
+.cf:hover{border-color:rgba(var(--hi-rgb),.5)}
+.cf.active{border-color:var(--hi);background:rgba(var(--hi-rgb),.12)}
+.sort{display:inline-flex;align-items:center;gap:8px}
+.sort select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:100px;padding:9px 16px;font:13px 'DM Sans',sans-serif;cursor:pointer}
+.fit-note{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;padding:14px 18px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.025);font-size:13px;color:var(--muted);line-height:1.5}
+.fit-note strong{color:var(--text);font-weight:600;margin-right:6px}
+.finder-count{margin:20px 0 18px;font:700 11px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 
-    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; z-index: 200; }
-    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
-    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .hamburger.open span:nth-child(2) { opacity: 0; }
-    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu { position: fixed; top: 36px; right: 0; height: calc(100vh - 36px); width: min(78vw, 320px); background: #0c0c16; border-left: 1px solid var(--border); z-index: 150; padding: 100px 32px 40px; transform: translateX(100%); transition: transform 0.4s ease; display: flex; flex-direction: column; gap: 26px; }
-    .mobile-menu.open { transform: translateX(0); }
-    .mobile-menu a { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text); text-decoration: none; }
-    .mobile-menu a.active { color: var(--accent); }
-    .menu-backdrop { position: fixed; top: 36px; left: 0; right: 0; height: calc(100vh - 36px); background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-    .menu-backdrop.open { opacity: 1; pointer-events: auto; }
+/* CARDS */
+.tee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:22px}
+.tee-card{background:linear-gradient(160deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .3s,box-shadow .4s,transform .3s}
+.tee-card:hover{transform:translateY(-5px);border-color:rgba(var(--hi-rgb),.35);box-shadow:0 30px 60px rgba(0,0,0,.55)}
+.tee-card[hidden]{display:none}
+.tee-card.enter{animation:cardSlideIn .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*45ms)}
+@keyframes cardSlideIn{from{opacity:0;transform:translateX(46px)}to{opacity:1;transform:none}}
+.card-media{position:relative;overflow:hidden;background:#0a0a14;aspect-ratio:4/5}
+.slide-track{display:flex;height:100%;width:100%;transition:transform .6s cubic-bezier(.65,0,.25,1);cursor:pointer}
+.card-media.show-back .slide-track{transform:translateX(-100%)}
+.slide-track img{flex:0 0 100%;width:100%;height:100%;object-fit:contain;padding:12px 12px 44px;display:block}
+.card-media.single .slide-track img{padding-bottom:12px}
+.card-media.single .view-toggle{display:none}
+.card-badge{position:absolute;top:14px;left:14px;z-index:3;font:700 10px 'Syne',sans-serif;letter-spacing:1.6px;text-transform:uppercase;background:rgba(8,8,16,.72);color:var(--hi);border:1px solid rgba(var(--hi-rgb),.4);backdrop-filter:blur(6px);padding:5px 12px;border-radius:100px}
+.card-badge.limited{background:#A90E02;color:#fff;border-color:rgba(255,255,255,.25);box-shadow:0 6px 18px rgba(169,14,2,.5)}
+.view-toggle{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:3;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:100px;background:rgba(8,8,16,.78);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(8px)}
+.vt-glider{position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:100px;background:var(--btn);transition:transform .4s cubic-bezier(.65,0,.25,1)}
+.view-toggle[data-view="back"] .vt-glider{transform:translateX(100%)}
+.vt-btn{position:relative;z-index:1;background:none;border:none;cursor:pointer;padding:6px 16px;border-radius:100px;color:rgba(255,255,255,.75);font:700 10px 'Syne',sans-serif;letter-spacing:1.4px;text-transform:uppercase;transition:color .3s}
+.vt-btn.active{color:var(--btn-fg)}
+.card-body{padding:18px 20px 22px;display:flex;flex-direction:column;flex:1}
+.card-body h3{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:28px;letter-spacing:1px;line-height:1.05}
+.card-blurb{color:var(--muted);font-size:13px;line-height:1.55;margin-top:6px}
+.color-row{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap}
+.color-label{font:700 10px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;outline:2px solid transparent;transition:transform .2s,outline-color .2s}
+.swatch:hover{transform:scale(1.2)}
+.swatch.active{outline-color:var(--hi);outline-offset:2px}
+.selected-color{font:600 11px 'Syne',sans-serif;color:var(--text);margin-left:auto;letter-spacing:1px}
+.buy-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:18px}
+.price{font:400 34px 'Bebas Neue',sans-serif;color:var(--hi);letter-spacing:1px;line-height:1}
+.price.soon{font-size:22px;color:var(--muted)}
+.buy-now-btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;background:var(--btn);color:var(--btn-fg);border:none;font:800 12px 'Syne',sans-serif;letter-spacing:1.6px;text-transform:uppercase;border-radius:100px;cursor:pointer;transition:background .3s,transform .2s,box-shadow .3s;box-shadow:0 10px 26px rgba(var(--acc-rgb),.3)}
+.buy-now-btn:hover{background:var(--btn-hover);transform:translateY(-2px)}
+.buy-now-btn[disabled]{background:#3a3a46;color:#9a9aa6;box-shadow:none;cursor:not-allowed;transform:none}
+.stock-left{font:700 11px 'Syne',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:#ff8a6b;margin-top:10px;display:none}
+.stock-left.show{display:inline-flex;align-items:center;gap:8px}
+.stock-left.show::before{content:'';width:8px;height:8px;border-radius:50%;background:#ff5a3c;animation:livePulse 1.8s infinite}
+.stock-left.out{color:#ff6b6b}
+.stock-left.out::before{animation:none;background:#777}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(255,90,60,.7)}70%{box-shadow:0 0 0 9px rgba(255,90,60,0)}100%{box-shadow:0 0 0 0 rgba(255,90,60,0)}}
+.spot-stock{margin-top:-4px}
+.tee-empty{text-align:center;padding:70px 20px;color:var(--muted)}
+.tee-empty p{margin-bottom:20px;font-size:16px}
 
-    /* HEADER with street photos */
-    .page-header { min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 196px 40px 80px; text-align: center; position: relative; overflow: hidden; }
-    .page-header .pulse-glow { position: absolute; width: 700px; height: 700px; background: radial-gradient(circle, rgba(var(--hi-rgb),0.08) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation: pulse 7s ease-in-out infinite; pointer-events: none; z-index: 1; }
-    @keyframes pulse { 0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.12); } }
-    .page-header::before { content: ''; position: absolute; top: 10%; left: 4%; width: 24%; height: 85%; background-image: url('oversized_por1.jpeg'); background-size: cover; background-position: center; border-radius: 16px; opacity: 0.5; mask-image: linear-gradient(to right, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%); z-index: 0; }
-    .page-header::after { content: ''; position: absolute; top: 10%; right: 4%; width: 24%; height: 85%; background-image: url('oversized_por2.jpeg'); background-size: cover; background-position: center; border-radius: 16px; opacity: 0.5; mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%); -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%); z-index: 0; }
-    .page-header > *:not(.pulse-glow) { position: relative; z-index: 5; }
-    .breadcrumb { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-    .breadcrumb a { color: var(--hi); text-decoration: none; }
-    .breadcrumb span { opacity: 0.4; }
-    .page-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 10vw, 140px); line-height: 0.9; letter-spacing: 2px; animation: fade-up 0.8s ease both; text-shadow: 0 10px 50px rgba(0,0,0,0.6); }
-    .page-header h1 span { background: linear-gradient(135deg, var(--accent), var(--hi)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .page-header p { color: var(--muted); font-size: 17px; font-weight: 300; margin-top: 16px; letter-spacing: 1px; animation: fade-up 0.8s 0.1s ease both; }
-    .header-meta { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; justify-content: center; animation: fade-up 0.8s 0.2s ease both; }
-    .meta-chip { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border); padding: 9px 20px; border-radius: 100px; color: var(--muted); background: rgba(255,255,255,0.02); }
-    .meta-chip.hot { border-color: rgba(169,14,2,0.4); color: var(--hi); background: rgba(169,14,2,0.14); }
-    .hero-cta { margin-top: 30px; display: inline-flex; align-items: center; justify-content: center; padding: 16px 44px; border-radius: 100px; background: var(--btn); color: var(--btn-fg); text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 12px 36px rgba(var(--acc-rgb),.4); transition: transform .25s, box-shadow .25s; animation: fade-up 0.8s 0.3s ease both; }
-    .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(var(--acc-rgb),.55); }
+.size-section{max-width:720px;margin:0 auto 60px;background:linear-gradient(160deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:24px;overflow:hidden}
+.size-header{padding:30px 36px 0;display:flex;align-items:center;gap:14px}
+.size-header h3{font:400 32px 'Bebas Neue',sans-serif;letter-spacing:1px}
+.size-note{padding:14px 36px 20px;font-size:13px;color:var(--muted);line-height:1.6}
+.size-section img{width:100%;display:block}
+.size-warning{padding:20px 36px;display:flex;align-items:center;gap:12px;background:rgba(var(--acc-rgb),.06);border-top:1px solid var(--border);font:600 12px 'Syne',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--hi)}
+.care-section{max-width:720px;margin:0 auto 60px}
+.care-card{background:rgba(169,14,2,.08);border:1px solid rgba(169,14,2,.35);border-radius:18px;padding:26px 30px;display:flex;gap:18px;align-items:flex-start}
+.care-icon{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:rgba(169,14,2,.2);display:flex;align-items:center;justify-content:center;font-size:20px}
+.care-text h4{font:700 13px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--hi);margin-bottom:8px}
+.care-text p{font-size:14px;line-height:1.7;opacity:.9}
+.care-text p strong{color:var(--hi)}
+.order-section{text-align:center;padding:0 20px 60px}
+.order-banner{max-width:900px;margin:0 auto;background:linear-gradient(135deg,rgba(var(--acc-rgb),.32),rgba(var(--hi-rgb),.05));border:1px solid rgba(var(--hi-rgb),.2);border-radius:28px;padding:50px 40px}
+.order-banner h3{font:400 clamp(32px,4.5vw,48px) 'Bebas Neue',sans-serif;letter-spacing:1px;margin-bottom:10px}
+.order-section p{color:var(--muted);font-size:15px;margin-bottom:30px}
+.order-btn{display:inline-flex;align-items:center;gap:14px;padding:18px 50px;background:var(--hi);color:#2e2400;text-decoration:none;font:700 13px 'Syne',sans-serif;letter-spacing:3px;text-transform:uppercase;border-radius:100px;transition:transform .2s}
+.order-btn:hover{transform:scale(1.04)}
+.whatsapp-btn{display:inline-flex;align-items:center;gap:14px;padding:18px 50px;background:transparent;color:#fff;text-decoration:none;font:700 13px 'Syne',sans-serif;letter-spacing:3px;text-transform:uppercase;border-radius:100px;border:1px solid rgba(255,255,255,.15);transition:border-color .3s,background .3s,transform .2s;margin-left:16px}
+.whatsapp-btn:hover{border-color:#25d366;background:rgba(37,211,102,.08);transform:scale(1.04)}
+footer{background:#04040a;border-top:1px solid var(--border);padding:40px;text-align:center}
+footer p{color:var(--muted);font-size:13px}
+footer a{color:var(--hi);text-decoration:none}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+.reveal.active{opacity:1;transform:translateY(0)}
+@keyframes fade-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
-    .ticker-wrap { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
-    .ticker { display: inline-flex; animation: ticker 22s linear infinite; }
-    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 4px; padding: 0 36px; color: var(--hi); }
-    .ticker span::after { content: '✦'; margin-left: 36px; opacity: 0.6; }
-    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-    .section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--hi); display: block; margin-bottom: 14px; }
-    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 5vw, 64px); letter-spacing: 2px; margin-bottom: 50px; }
-
-    .trust-strip { max-width: 1280px; margin: 0 auto; padding: 26px 40px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .trust-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px; background: rgba(255,255,255,.025); }
-    .trust-item .ti-icon { font-size: 22px; flex-shrink: 0; }
-    .trust-item b { display: block; font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: .4px; color: var(--text); }
-    .trust-item span { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-
-    .justdropped-badge { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--btn-fg); background: var(--btn); padding: 10px 20px; border-radius: 100px; display: inline-flex; align-items: center; gap: 8px; }
-    .justdropped-badge::before { content: '\26A1'; }
-
-    /* SPOTLIGHT */
-    .spotlight { max-width: 1280px; margin: 0 auto; padding: 56px 40px 20px; scroll-margin-top: 110px; }
-    .spot-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 26px; }
-    .spot-nav { display: flex; gap: 10px; }
-    .spot-arrow { width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); color: var(--text); font-size: 18px; cursor: pointer; transition: background .25s, border-color .25s, color .25s; }
-    .spot-arrow:hover { background: var(--btn); border-color: var(--btn); color: var(--btn-fg); }
-    .spot-viewport { overflow: hidden; border-radius: 28px; border: 1px solid var(--border); background: var(--surface); touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
-    .spot-viewport.dragging { cursor: grabbing; }
-    .spot-viewport:focus-visible, .cf:focus-visible, .vt-btn:focus-visible, .spot-dot:focus-visible, .spot-arrow:focus-visible, .buy-now-btn:focus-visible, .sort select:focus-visible { outline: 2px solid var(--hi); outline-offset: 3px; }
-    .spot-track { display: flex; transition: transform .85s cubic-bezier(.65, 0, .25, 1); will-change: transform; }
-    .spot-viewport.dragging .spot-track { transition: none; }
-    .spot-slide { flex: 0 0 100%; min-width: 0; display: grid; grid-template-columns: .85fr 1.15fr; min-height: 540px; position: relative; isolation: isolate; }
-    .spot-slide::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse 60% 70% at 70% 50%, rgba(var(--tint), .34), transparent 70%); }
-    .spot-info { padding: 52px 20px 52px 56px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 14px; }
-    .spot-tag { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--hi); border: 1px solid rgba(var(--hi-rgb),.35); background: rgba(var(--hi-rgb),.08); padding: 6px 14px; border-radius: 100px; }
-    .spot-info h3 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: clamp(48px, 5.4vw, 84px); line-height: .95; letter-spacing: 1px; }
-    .spot-info p { color: var(--muted); font-size: 16px; line-height: 1.65; max-width: 380px; }
-    .spot-colors { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .spot-colorname { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; }
-    .spot-price { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 1px; line-height: 1; margin-top: 4px; color: var(--hi); }
-    .spot-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-    .spot-actions .buy-now-btn { width: auto; padding: 15px 34px; }
-    .spot-ghost { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text); text-decoration: underline; text-underline-offset: 6px; text-decoration-color: rgba(255,255,255,.3); transition: text-decoration-color .3s, color .3s; }
-    .spot-ghost:hover { color: var(--hi); text-decoration-color: var(--hi); }
-    .spot-art { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr); gap: 10px; align-items: center; padding: 28px 28px 28px 0; min-width: 0; }
-    .spot-art figure { position: relative; height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateX(70px); transition: transform .9s cubic-bezier(.2,.7,.2,1) .25s, opacity .6s ease .25s; }
-    .spot-art figure + figure { transition-delay: .4s; }
-    .spot-slide.is-active .spot-art figure { opacity: 1; transform: none; }
-    .spot-art img { width: 100%; height: 100%; max-height: 470px; object-fit: contain; display: block; filter: drop-shadow(0 24px 40px rgba(0,0,0,.45)); }
-    .spot-art figcaption { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.7); background: rgba(8,8,16,.6); border: 1px solid rgba(255,255,255,.12); padding: 4px 12px; border-radius: 100px; }
-    .spot-dots { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
-    .spot-dot { position: relative; overflow: hidden; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 100px; padding: 9px 16px; cursor: pointer; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; transition: color .3s, border-color .3s; }
-    .spot-dot-name { position: relative; z-index: 1; }
-    .spot-dot.active { color: var(--btn-fg); border-color: var(--hi); }
-    .spot-dot::after { content: ''; position: absolute; inset: 0; background: var(--btn); transform-origin: left; transform: scaleX(0); }
-    .spot-dot.active::after { animation: spotFill 5.5s linear forwards; }
-    .spotlight.is-paused .spot-dot.active::after { animation-play-state: paused; }
-    @keyframes spotFill { to { transform: scaleX(1); } }
-
-    /* OFFER */
-    .offer-banner { max-width: 1200px; margin: 46px auto 0; padding: 22px 28px; border-radius: 22px; display: flex; align-items: center; justify-content: space-between; gap: 18px 30px; flex-wrap: wrap; background: linear-gradient(120deg, rgba(var(--acc-rgb),.55), rgba(var(--hi-rgb),.1)); border: 1px solid rgba(var(--hi-rgb),.3); }
-    .offer-main { font-family: 'Bebas Neue', sans-serif; font-size: clamp(26px, 3.4vw, 40px); letter-spacing: 1.5px; line-height: 1.05; color: var(--text); }
-    .offer-main em { font-style: normal; color: var(--hi); }
-    .offer-sub { font-size: 14px; color: rgba(240,240,240,.82); margin-top: 6px; line-height: 1.5; }
-    .offer-codes { display: flex; gap: 10px; flex-wrap: wrap; }
-    .offer-code { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 2px; padding: 10px 18px; border-radius: 100px; border: 1.5px dashed rgba(var(--hi-rgb),.7); background: rgba(8,8,16,.45); color: var(--hi); cursor: pointer; transition: background .25s, transform .2s; }
-    .offer-code:hover { background: rgba(8,8,16,.7); transform: translateY(-2px); }
-    .offer-code small { display: block; font-size: 10px; font-weight: 600; letter-spacing: .6px; color: rgba(240,240,240,.7); margin-top: 2px; text-transform: none; }
-
-    /* FINDER */
-    .finder { max-width: 1280px; margin: 0 auto; padding: 56px 40px 90px; scroll-margin-top: 100px; }
-    .finder-head { margin-bottom: 26px; }
-    .finder-bar { position: sticky; top: 104px; z-index: 90; display: flex; flex-direction: column; gap: 14px; padding: 14px 0 16px; background: rgba(8,8,16,.9); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
-    .finder-row { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; }
-    .color-filter { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .cf-label, .sort span { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
-    .cf { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.03); border: 1px solid var(--border); color: var(--text); border-radius: 100px; padding: 7px 14px 7px 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; transition: border-color .25s, background .25s; }
-    .cf[data-color="any"] { padding-left: 14px; }
-    .cf i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); display: inline-block; }
-    .cf:hover { border-color: rgba(var(--hi-rgb),.5); }
-    .cf.active { border-color: var(--hi); background: rgba(var(--hi-rgb),.12); }
-    .sort { display: inline-flex; align-items: center; gap: 8px; }
-    .sort select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 100px; padding: 9px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
-    .fit-note { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 18px; padding: 14px 18px; border: 1px solid var(--border); border-radius: 14px; background: rgba(255,255,255,.025); font-size: 13px; color: var(--muted); line-height: 1.5; }
-    .fit-note strong { color: var(--text); font-weight: 600; margin-right: 6px; }
-    .finder-count { margin: 20px 0 18px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-
-    .tee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 22px; }
-    .tee-card { background: linear-gradient(160deg, var(--surface), var(--surface2)); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .3s, box-shadow .4s, transform .3s; }
-    .tee-card:hover { transform: translateY(-5px); border-color: rgba(var(--hi-rgb),.35); box-shadow: 0 30px 60px rgba(0,0,0,.55); }
-    .tee-card[hidden] { display: none; }
-    .tee-card.enter { animation: cardSlideIn .6s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 45ms); }
-    @keyframes cardSlideIn { from { opacity: 0; transform: translateX(46px); } to { opacity: 1; transform: none; } }
-    .card-media { position: relative; overflow: hidden; background: #0a0a14; aspect-ratio: 4 / 5; }
-    .slide-track { display: flex; height: 100%; width: 100%; transition: transform .6s cubic-bezier(.65,0,.25,1); cursor: pointer; }
-    .card-media.show-back .slide-track { transform: translateX(-100%); }
-    .slide-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: contain; padding: 12px 12px 44px; display: block; }
-    .card-badge { position: absolute; top: 14px; left: 14px; z-index: 3; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; background: rgba(8,8,16,.72); color: var(--hi); border: 1px solid rgba(var(--hi-rgb),.4); backdrop-filter: blur(6px); padding: 5px 12px; border-radius: 100px; }
-    .view-toggle { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 3; display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 100px; background: rgba(8,8,16,.78); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(8px); }
-    .vt-glider { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 100px; background: var(--btn); transition: transform .4s cubic-bezier(.65,0,.25,1); }
-    .view-toggle[data-view="back"] .vt-glider { transform: translateX(100%); }
-    .vt-btn { position: relative; z-index: 1; background: none; border: none; cursor: pointer; padding: 6px 16px; border-radius: 100px; color: rgba(255,255,255,.75); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; transition: color .3s; }
-    .vt-btn.active { color: var(--btn-fg); }
-    .card-body { padding: 18px 20px 22px; display: flex; flex-direction: column; flex: 1; }
-    .card-body h3 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 28px; letter-spacing: 1px; line-height: 1.05; }
-    .card-blurb { color: var(--muted); font-size: 13px; line-height: 1.55; margin-top: 6px; }
-    .color-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
-    .color-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-    .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
-    .swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; outline: 2px solid var(--hi); outline-offset: 2px; display: inline-block; }
-    .selected-color { font-family: 'Syne', sans-serif; font-size: 11px; color: var(--text); margin-left: auto; font-weight: 600; letter-spacing: 1px; }
-    .buy-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 18px; }
-    .price { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--hi); letter-spacing: 1px; line-height: 1; }
-    .buy-now-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 22px; background: var(--btn); color: var(--btn-fg); border: none; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; border-radius: 100px; cursor: pointer; transition: background .3s, transform .2s, box-shadow .3s; box-shadow: 0 10px 26px rgba(var(--acc-rgb),.3); }
-    .buy-now-btn:hover { background: var(--btn-hover); transform: translateY(-2px); box-shadow: 0 14px 34px rgba(var(--acc-rgb),.5); }
-    .tee-empty { text-align: center; padding: 70px 20px; color: var(--muted); }
-    .tee-empty p { margin-bottom: 20px; font-size: 16px; }
-
-    .size-section { max-width: 720px; margin: 0 auto 80px; background: linear-gradient(160deg, var(--surface), var(--surface2)); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
-    .size-header { padding: 30px 36px 0; display: flex; align-items: center; gap: 14px; }
-    .size-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
-    .size-note { padding: 14px 36px 20px; font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .size-section img { width: 100%; display: block; }
-    .size-warning { padding: 20px 36px; display: flex; align-items: center; gap: 12px; background: rgba(var(--acc-rgb),0.06); border-top: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--hi); }
-
-    .order-section { text-align: center; padding: 0 20px 60px; }
-    .order-banner { max-width: 900px; margin: 0 auto; background: linear-gradient(135deg, rgba(169,14,2,.32), rgba(255,250,205,.05)); border: 1px solid rgba(255,250,205,.2); border-radius: 28px; padding: 50px 40px; }
-    .order-banner h3 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 4.5vw, 48px); letter-spacing: 1px; margin-bottom: 10px; }
-    .order-section p { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
-    .order-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: var(--hi); color: #2e2400; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; transition: transform 0.2s; box-shadow: 0 10px 40px rgba(255,250,205,0.28); }
-    .order-btn:hover { transform: scale(1.04); }
-    .whatsapp-btn { display: inline-flex; align-items: center; gap: 14px; padding: 18px 50px; background: transparent; color: white; text-decoration: none; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; border-radius: 100px; border: 1px solid rgba(255,255,255,0.15); transition: border-color 0.3s, background 0.3s, transform 0.2s; margin-left: 16px; }
-    .whatsapp-btn:hover { border-color: #25d366; background: rgba(37,211,102,0.08); transform: scale(1.04); }
-
-    footer { background: #04040a; border-top: 1px solid var(--border); padding: 40px; text-align: center; }
-    footer p { color: var(--muted); font-size: 13px; }
-    footer a { color: var(--hi); text-decoration: none; }
-
-    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.active { opacity: 1; transform: translateY(0); }
-    @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-    @media (max-width: 900px) {
-      .trust-strip { grid-template-columns: repeat(2, 1fr); padding: 22px 20px 0; }
-      .offer-banner { margin: 34px 20px 0; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .page-header { min-height: auto; padding-top: 150px; padding-bottom: 40px; }
-      .page-header::before { width: 44%; height: 100%; top: 0; left: 0; opacity: 0.18; border-radius: 0; mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); }
-      .page-header::after { width: 44%; height: 100%; top: 0; right: 0; opacity: 0.18; border-radius: 0; mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0)); }
-      .spot-slide { grid-template-columns: 1fr; min-height: 0; }
-      .spot-art { order: -1; padding: 24px 20px 0; height: 340px; }
-      .spot-info { padding: 22px 24px 34px; }
-      .spot-info p { max-width: none; }
-      .finder-bar { position: static; }
-    }
-    @media (max-width: 768px) {
-      .announce-bar { font-size: 10px; padding: 8px 12px; }
-      nav { padding: 14px 20px; }
-      .nav-logo img { height: 36px; }
-      .nav-cta { padding: 9px 16px; font-size: 11px; }
-      .header-meta { gap: 10px; }
-      .meta-chip { font-size: 10px; padding: 7px 14px; }
-      .ticker span { font-size: 16px; padding: 0 22px; }
-      .ticker span::after { margin-left: 22px; }
-      .section-title { margin-bottom: 32px; }
-      .spotlight { padding: 36px 20px 10px; }
-      .spot-art { height: 280px; gap: 6px; padding: 20px 12px 0; }
-      .spot-dots { justify-content: center; gap: 8px; margin-top: 14px; }
-      .spot-dot { width: 30px; height: 6px; padding: 0; border-radius: 6px; }
-      .spot-dot-name { display: none; }
-      .finder { padding: 40px 20px 70px; }
-      .tee-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .card-body { padding: 14px 14px 16px; }
-      .card-body h3 { font-size: 22px; }
-      .card-blurb, .color-label { display: none; }
-      .selected-color { font-size: 10px; }
-      .buy-row { flex-direction: column; align-items: stretch; gap: 10px; }
-      .price { font-size: 26px; }
-      .buy-now-btn { width: 100%; padding: 11px 14px; font-size: 11px; }
-      .slide-track img { padding: 8px 8px 42px; }
-      .size-section { margin: 0 20px 60px; }
-      .size-header { padding: 24px 24px 0; }
-      .size-note { padding: 12px 24px 16px; }
-      .size-warning { padding: 16px 24px; font-size: 11px; }
-      .order-banner { padding: 34px 22px; }
-      .order-section { padding: 0 20px 80px; }
-      .order-btn, .whatsapp-btn { width: 100%; justify-content: center; padding: 16px 20px; }
-      .whatsapp-btn { margin-left: 0; margin-top: 12px; }
-      footer { padding: 30px 20px; }
-    }
-    @media (max-width: 480px) { .trust-strip { grid-template-columns: 1fr; } .hero-cta { width: 100%; } .offer-codes { width: 100%; } .offer-code { flex: 1; text-align: center; } }
-    @media (max-width: 420px) {
-      .page-header h1 { font-size: clamp(48px, 14vw, 72px); }
-      .spot-art { height: 240px; }
-      .spot-actions .buy-now-btn { width: 100%; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .spot-track, .slide-track, .vt-glider, .spot-art figure { transition: none !important; }
-      .spot-art figure { opacity: 1; transform: none; }
-      .spot-dot.active::after { animation: none; transform: scaleX(1); }
-      .tee-card.enter { animation: none; }
-    }
-  </style>
+@media (max-width:900px){
+.trust-strip{grid-template-columns:repeat(2,1fr);padding:22px 20px 0}
+.offer-banner{margin:34px 20px 0}
+.nav-links{display:none}
+.hamburger{display:flex}
+.page-header{min-height:auto;padding-top:120px;padding-bottom:40px}
+.spot-slide{grid-template-columns:1fr;min-height:0}
+.spot-art{order:-1;padding:24px 20px 0;height:340px}
+.spot-info{padding:22px 24px 34px}
+.spot-info p{max-width:none}
+.finder-bar{position:static}
+}
+@media (max-width:768px){
+nav{padding:14px 20px}
+.nav-logo img{height:36px}
+.nav-cta{padding:9px 16px;font-size:11px}
+.header-meta{gap:10px}
+.meta-chip{font-size:10px;padding:7px 14px}
+.ticker span{font-size:16px;padding:0 22px}
+.ticker span::after{margin-left:22px}
+.section-title{margin-bottom:32px}
+.spotlight{padding:36px 20px 10px}
+.spot-art{height:280px;gap:6px;padding:20px 12px 0}
+.spot-dots{justify-content:center;gap:8px;margin-top:14px}
+.spot-dot{width:30px;height:6px;padding:0;border-radius:6px}
+.spot-dot-name{display:none}
+.finder{padding:40px 20px 70px}
+.tabs{align-self:stretch}
+.tee-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+.card-body{padding:14px 14px 16px}
+.card-body h3{font-size:22px}
+.card-blurb,.color-label{display:none}
+.selected-color{font-size:10px}
+.buy-row{flex-direction:column;align-items:stretch;gap:10px}
+.price{font-size:26px}
+.buy-now-btn{width:100%;padding:11px 14px;font-size:11px}
+.slide-track img{padding:8px 8px 42px}
+.size-section{margin:0 20px 40px}
+.size-header{padding:24px 24px 0}
+.size-note{padding:12px 24px 16px}
+.size-warning{padding:16px 24px;font-size:11px}
+.care-section{margin:0 20px 40px}
+.care-card{flex-direction:column;padding:20px}
+.order-banner{padding:34px 22px}
+.order-section{padding:0 20px 80px}
+.order-btn,.whatsapp-btn{width:100%;justify-content:center;padding:16px 20px}
+.whatsapp-btn{margin-left:0;margin-top:12px}
+footer{padding:30px 20px}
+}
+@media (max-width:480px){.trust-strip{grid-template-columns:1fr}.hero-cta{width:100%}.offer-codes{width:100%}.offer-code{flex:1;text-align:center}}
+@media (max-width:420px){.page-header h1{font-size:clamp(48px,14vw,72px)}.spot-art{height:240px}.spot-actions .buy-now-btn{width:100%}}
+@media (prefers-reduced-motion:reduce){.spot-track,.slide-track,.tab-glider,.vt-glider,.spot-art figure{transition:none!important}.spot-art figure{opacity:1;transform:none}.spot-dot.active::after{animation:none;transform:scaleX(1)}.tee-card.enter{animation:none}.stock-left.show::before{animation:none}}
+</style>
 </head>
 <body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+<nav id="navbar">
+  <a href="index.html" class="nav-logo"><img src="LOGO.png" alt="AARAMBH"></a>
+  <ul class="nav-links">
+    <li><a href="polo.html">Polos</a></li>
+    <li><a href="oversized.html" class="active">Oversized</a></li>
+    <li><a href="printed.html">Regular Fit</a></li>
+    <li><a href="hoodie.html">Hoodies</a></li>
+    <li><a href="shirt.html">Shirts</a></li>
+    <li><a href="croptop.html">Ladies</a></li>
+    <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
+  </ul>
+  <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="menu-backdrop" id="menuBackdrop"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="polo.html">Polos</a>
+  <a href="oversized.html" class="active">Oversized</a>
+  <a href="printed.html">Regular Fit</a>
+  <a href="hoodie.html">Hoodies</a>
+  <a href="shirt.html">Shirts</a>
+  <a href="croptop.html">Ladies</a>
+  <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
+  <a href="tel:9637748622">📞 Order Now</a>
+</div>
 
-  <div class="announce-bar">🔥 Oversized Fits — Drop Shoulder, Heavy Fabric, Street Ready</div>
+<header class="page-header">
+  <div class="pulse-glow"></div>
+  <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
+  <h1>OVER<span>SIZED</span></h1>
+  <p>Comfort. Street. Power. Plain and printed.</p>
+  <div class="header-meta"><span class="meta-chip hot">Buy 3 Save 8%</span><span class="meta-chip">Drop Shoulder</span><span class="meta-chip">28 Styles</span><span class="meta-chip">Plain + Printed</span><span class="meta-chip">From ₹380</span></div>
+  <a class="hero-cta" href="#designs">Shop oversized</a>
+</header>
 
-  <nav id="navbar">
-    <a href="index.html" class="nav-logo"><img src="LOGO.png" alt="AARAMBH"></a>
-    <ul class="nav-links">
-      <li><a href="polo.html">Polos</a></li>
-      <li><a href="oversized.html" class="active">Oversized</a></li>
-      <li><a href="printed.html">Printed</a></li>
-      <li><a href="hoodie.html">Hoodies</a></li>
-      <li><a href="shirt.html">Shirts</a></li>
-      <li><a href="croptop.html">Ladies</a></li>
-      <li><a href="mailto:arambhofficial2025@gmail.com">Contact</a></li>
-    </ul>
-    <a href="tel:9637748622" class="nav-cta">📞 Order Now</a>
-    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
-  </nav>
+<div class="ticker-wrap"><div class="ticker"><span>Drop Shoulder</span><span>Oversized Fit</span><span>AARAMBH</span><span>Plain + Printed</span><span>Buy 3 Save 8%</span><span>Heavy Fabric</span><span>3-Day Size Exchange</span><span>Drop Shoulder</span><span>Oversized Fit</span><span>AARAMBH</span><span>Plain + Printed</span><span>Buy 3 Save 8%</span><span>Heavy Fabric</span><span>3-Day Size Exchange</span></div></div>
 
-  <div class="menu-backdrop" id="menuBackdrop"></div>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="polo.html">Polos</a>
-    <a href="oversized.html" class="active">Oversized</a>
-    <a href="printed.html">Printed</a>
-    <a href="hoodie.html">Hoodies</a>
-    <a href="shirt.html">Shirts</a>
-    <a href="croptop.html">Ladies</a>
-    <a href="mailto:arambhofficial2025@gmail.com">Contact</a>
-    <a href="tel:9637748622">📞 Order Now</a>
-  </div>
+<div class="trust-strip">
+  <div class="trust-item"><span class="ti-icon">💵</span><div><b>Cash on Delivery</b><span>Pay when it reaches you</span></div></div>
+  <div class="trust-item"><span class="ti-icon">🔒</span><div><b>Secure online payment</b><span>UPI, cards and netbanking</span></div></div>
+  <div class="trust-item"><span class="ti-icon">🔁</span><div><b>3-day size exchange</b><span>After your order is delivered</span></div></div>
+  <div class="trust-item"><span class="ti-icon">🧵</span><div><b>Heavy-weight fabric</b><span>240 GSM pure cotton French terry</span></div></div>
+</div>
 
-  <header class="page-header">
-    <div class="pulse-glow"></div>
-    <div class="breadcrumb"><a href="index.html">Home</a><span>/</span>Collections</div>
-    <h1>OVER<span>SIZED</span></h1>
-    <p>Comfort. Street. Power.</p>
-    <div class="header-meta">
-      <span class="meta-chip hot">Buy 3 Save 8%</span>
-      <span class="meta-chip">Drop Shoulder</span>
-      <span class="meta-chip">12 Styles</span>
-      <span class="meta-chip">From ₹380</span>
-    </div>
-    <a class="hero-cta" href="#designs">Shop oversized</a>
-  </header>
-
-  <div class="ticker-wrap">
-    <div class="ticker">
-      <span>Drop Shoulder</span><span>Oversized Fit</span><span>AARAMBH</span>
-      <span>Buy 3 Save 8%</span><span>Heavy Fabric</span><span>3-Day Size Exchange</span>
-      <span>Drop Shoulder</span><span>Oversized Fit</span><span>AARAMBH</span>
-      <span>Buy 3 Save 8%</span><span>Heavy Fabric</span><span>3-Day Size Exchange</span>
-    </div>
-  </div>
-
-  <div class="trust-strip">
-    <div class="trust-item"><span class="ti-icon">💵</span><div><b>Cash on Delivery</b><span>Pay when it reaches you</span></div></div>
-    <div class="trust-item"><span class="ti-icon">🔒</span><div><b>Secure online payment</b><span>UPI, cards and netbanking</span></div></div>
-    <div class="trust-item"><span class="ti-icon">🔁</span><div><b>3-day size exchange</b><span>After your order is delivered</span></div></div>
-    <div class="trust-item"><span class="ti-icon">🧵</span><div><b>Heavy-weight fabric</b><span>240 GSM pure cotton French terry</span></div></div>
-  </div>
-
-  <section class="spotlight" id="latestDrop" aria-roledescription="carousel" aria-label="Oversized colours">
-    <div class="spot-top">
-      <div>
-        <span class="justdropped-badge">The range</span>
-        <h2 class="section-title" style="margin:14px 0 0;">LATEST OVERSIZED</h2>
-      </div>
-      <div class="spot-nav">
-        <button class="spot-arrow" id="spotPrev" type="button" aria-label="Previous tee">&#8592;</button>
-        <button class="spot-arrow" id="spotNext" type="button" aria-label="Next tee">&#8594;</button>
-      </div>
-    </div>
-    <div class="spot-viewport" id="spotViewport" tabindex="0" aria-label="Oversized tees. Swipe or use the arrow keys.">
-      <div class="spot-track" id="spotTrack"></div>
-    </div>
-    <div class="spot-dots" id="spotDots" role="group" aria-label="Choose a tee"></div>
-  </section>
-
-  <div class="offer-banner">
+<section class="spotlight" id="latestDrop" aria-roledescription="carousel" aria-label="Featured styles">
+  <span id="veiledBloom" class="anchor-point"></span>
+  <div class="spot-top">
     <div>
-      <div class="offer-main">Pick any 3 oversized plain tees, <em>save 8%</em> automatically</div>
-      <div class="offer-sub">Want more? Use TRIO10 on 3 or more printed or oversized tees for 10% off. First order with us? FIRSTDROP10 takes 10% off. Tap a code to copy it.</div>
+      <span class="justdropped-badge">The range</span>
+      <h2 class="section-title" style="margin:14px 0 0;">LATEST OVERSIZED</h2>
     </div>
-    <div class="offer-codes">
-      <button type="button" class="offer-code" data-code="TRIO10">TRIO10<small>10% off 3+ tees</small></button>
-      <button type="button" class="offer-code" data-code="FIRSTDROP10">FIRSTDROP10<small>10% off your first order</small></button>
-    </div>
-  </div>
-
-  <section class="finder" id="designs">
-    <div class="finder-head">
-      <span class="section-label">All oversized tees</span>
-      <h2 class="section-title" style="margin-bottom:0;">PICK YOUR COLOR</h2>
-    </div>
-    <div class="finder-bar" id="finderBar">
-      <div class="finder-row">
-        <div class="color-filter" role="group" aria-label="Filter by colour" id="colorFilter"></div>
-        <label class="sort"><span>Sort</span>
-          <select id="sortSelect">
-            <option value="featured">Featured</option>
-            <option value="low">Price: low to high</option>
-            <option value="high">Price: high to low</option>
-          </select>
-        </label>
-      </div>
-    </div>
-    <div class="fit-note">
-      <span><strong>Oversized fit</strong> 240 GSM, drop shoulder, 100% pure cotton French terry</span>
-      <span><strong>Offer</strong> Buy any 3, save 8%</span>
-    </div>
-    <p class="finder-count" id="finderCount" aria-live="polite">Showing 12 tees</p>
-    <div class="tee-grid" id="teeGrid"></div>
-    <div class="tee-empty" id="teeEmpty" hidden>
-      <p>No tee matches that colour yet.</p>
-      <button type="button" class="buy-now-btn" id="resetFilters">Show all tees</button>
-    </div>
-  </section>
-
-  <div class="size-section reveal">
-    <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>
-    <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit.</p>
-    <img src="oversized_chart.png" alt="AARAMBH Oversized Size Chart" loading="lazy">
-    <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering</div>
-  </div>
-
-  <div class="order-section reveal">
-    <div class="order-banner">
-      <h3>ROCK THE OVERSIZED VIBE</h3>
-      <p>Grab yours now — direct order or a quick chat on WhatsApp.</p>
-      <a href="order.html" class="order-btn">🛒 Place Order</a>
-      <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+    <div class="spot-nav">
+      <button class="spot-arrow" id="spotPrev" type="button" aria-label="Previous style">&#8592;</button>
+      <button class="spot-arrow" id="spotNext" type="button" aria-label="Next style">&#8594;</button>
     </div>
   </div>
+  <div class="spot-viewport" id="spotViewport" tabindex="0" aria-label="Featured styles. Swipe or use the arrow keys.">
+    <div class="spot-track" id="spotTrack"></div>
+  </div>
+  <div class="spot-dots" id="spotDots" role="group" aria-label="Choose a style"></div>
+</section>
 
-  <footer>
-    <p>© 2025 AARAMBH — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
-  </footer>
+<div class="offer-banner">
+  <div>
+    <div class="offer-main">Pick any 3 oversized plain tees, <em>save 8%</em> automatically</div>
+    <div class="offer-sub">Want more? Use TRIO10 on 3 or more printed or oversized tees for 10% off. First order with us? FIRSTDROP10 takes 10% off. Tap a code to copy it.</div>
+  </div>
+  <div class="offer-codes">
+    <button type="button" class="offer-code" data-code="TRIO10">TRIO10<small>10% off 3+ tees</small></button>
+    <button type="button" class="offer-code" data-code="FIRSTDROP10">FIRSTDROP10<small>10% off your first order</small></button>
+  </div>
+</div>
 
-  <script>
-    // ===== OVERSIZED LIST =====
-    const ITEMS = [
-      { color: 'Royal Blue',    hex: '#2748a8', tint: '39,72,168',   image: 'ROYAL_BLUE_FRONT.png',  image2: 'ROYAL_BLUE_BACK.png',  badge: 'Popular' },
-      { color: 'Aqua/Sky Blue', hex: '#74d6e8', tint: '116,214,232', image: 'SKY_BLUE_FRONT.png',    image2: 'SKY_BLUE_BACK.png',    badge: 'Oversized' },
-      { color: 'Beige',         hex: '#d9c3a5', tint: '217,195,165', image: 'BEIGEA_FRONT.png',       image2: 'BEIGEA_BACK.png',       badge: 'Oversized' },
-      { color: 'White',         hex: '#f5f3ee', tint: '160,160,170', image: 'WHITE_FRONT.png',       image2: 'WHITE_BACKK.png',       badge: 'Oversized' },
-      { color: 'Black',         hex: '#111111', tint: '120,120,130', image: 'BLACK_FRONT.png',       image2: 'BLACK_BACKK.png',       badge: 'Oversized' },
-      { color: 'Army Green',    hex: '#596b3d', tint: '89,107,61',   image: 'ARMY_GREEN_FRONT.png',  image2: 'ARMY_GREEN_BACK.png',  badge: 'Popular' },
-      { color: 'Lavender',      hex: '#b9a3db', tint: '185,163,219', image: 'LAVENDER_FRONT.png',    image2: 'LAVENDER_BACK.png',    badge: 'Popular' },
-      { color: 'Red',           hex: '#b51f2e', tint: '181,31,46',   image: 'RED_FRONT.png',         image2: 'RED_BACK.png',         badge: 'Popular' },
-      { color: 'Pink',          hex: '#ef9db5', tint: '239,157,181', image: 'BABY_PINK_FRONT.png',   image2: 'BABY_PINK_BACK.png',   badge: 'Popular' },
-      { color: 'Maroon',        hex: '#741320', tint: '116,19,32',   image: 'MAROON_FRONT.png',      image2: 'MAROON_BACKK.png',      badge: 'New' },
-      { color: 'Navy Blue',     hex: '#000080', tint: '60,60,150',   image: 'NAVY_BLUE_FRONT.png',   image2: 'NAVY_BLUE_BACKK.png',   badge: 'New' },
-      { color: 'Off White',     hex: '#e6dfcc', tint: '230,223,204', image: 'OFF_WHITE_FRONT.png',   image2: 'OFF_WHITE-BACK.png',   badge: 'New' }
-    ];
-    const TYPE_NAME = 'Oversized';
-    const PRICE_BACKUP = { 'Royal Blue': 399, 'Aqua/Sky Blue': 389, 'Beige': 385, 'White': 380, 'Black': 399, 'Army Green': 392, 'Lavender': 385, 'Red': 389, 'Pink': 380, 'Maroon': 399, 'Navy Blue': 399, 'Off White': 385 };
+<section class="finder" id="designs">
+  <div class="finder-head">
+    <span class="section-label">All oversized tees, plain and printed</span>
+    <h2 class="section-title" style="margin-bottom:0;">PICK YOUR STYLE</h2>
+  </div>
+  <div class="finder-bar" id="finderBar">
+    <div class="tabs" id="tabs"><span class="tab-glider" id="tabGlider" aria-hidden="true"></span></div>
+    <div class="finder-row">
+      <div class="color-filter" role="group" aria-label="Filter by colour" id="colorFilter"></div>
+      <label class="sort"><span>Sort</span>
+        <select id="sortSelect">
+          <option value="featured">Featured</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <div class="fit-note"><span><strong>Oversized fit</strong> 240 GSM, drop shoulder, 100% pure cotton French terry</span><span><strong>Offer</strong> Buy any 3 plain oversized tees, save 8%</span></div>
+  <p class="finder-count" id="finderCount" aria-live="polite"></p>
+  <div class="tee-grid" id="teeGrid"></div>
+  <div class="tee-empty" id="teeEmpty" hidden>
+    <p>No style matches that colour yet.</p>
+    <button type="button" class="buy-now-btn" id="resetFilters">Show all styles</button>
+  </div>
+</section>
 
-    function priceOf(color) {
-      try { if (window.AARAMBH_PRICES) { const v = window.AARAMBH_PRICES.get(TYPE_NAME, color + ' Oversized Tee', color); if (v != null) return v; } } catch (e) {}
-      return PRICE_BACKUP[color] || 399;
+<div class="size-section reveal">
+  <div class="size-header"><span>📐</span><h3>Size Chart</h3></div>
+  <p class="size-note">Measure once, order right. Use the chart below to find your perfect fit.</p>
+  <img src="oversized_chart.png" alt="AARAMBH Oversized Collection Size Chart" loading="lazy">
+  <div class="size-warning">⚠️ &nbsp; Always check the size chart before ordering</div>
+</div>
+
+<div class="care-section reveal">
+  <div class="care-card">
+    <div class="care-icon">🧺</div>
+    <div class="care-text">
+      <h4>Care Instructions (Printed Tees)</h4>
+      <p>Printed tees are <strong>DTF (Direct-to-Film) printed</strong>. For the design to last wash after wash, always turn the t-shirt <strong>inside out before washing</strong>. Avoid direct ironing on the print and skip the dryer when possible — air dry inside out for best results.</p>
+    </div>
+  </div>
+</div>
+
+<div class="order-section reveal">
+  <div class="order-banner">
+    <h3>ROCK THE OVERSIZED VIBE</h3>
+    <p>Grab yours now — direct order or a quick chat on WhatsApp.</p>
+    <a href="order.html" class="order-btn">🛒 Place Order</a>
+    <a href="https://wa.me/919637748622" class="whatsapp-btn">💬 WhatsApp Us</a>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 AARAMBH — <a href="mailto:arambhofficial2025@gmail.com">arambhofficial2025@gmail.com</a> — <a href="tel:9637748622">9637748622</a></p>
+</footer>
+
+<script>
+const CATALOG = {"cards": [{"id": "plain-royal-blue", "group": "plain", "theme": "plain", "price": 399, "pc": "Royal Blue", "badge": "Popular", "cls": "", "h3": "Royal Blue Plain", "design": "Royal Blue Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Royal Blue Oversized Tee", "sw": [["Royal Blue", "#2748a8", "ROYAL_BLUE_FRONT.png", "ROYAL_BLUE_BACK.png"]]}, {"id": "plain-aqua-sky-blue", "group": "plain", "theme": "plain", "price": 389, "pc": "Aqua/Sky Blue", "badge": "Oversized", "cls": "", "h3": "Aqua/Sky Blue Plain", "design": "Aqua/Sky Blue Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Aqua/Sky Blue Oversized Tee", "sw": [["Aqua/Sky Blue", "#74d6e8", "SKY_BLUE_FRONT.png", "SKY_BLUE_BACK.png"]]}, {"id": "plain-beige", "group": "plain", "theme": "plain", "price": 385, "pc": "Beige", "badge": "Oversized", "cls": "", "h3": "Beige Plain", "design": "Beige Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Beige Oversized Tee", "sw": [["Beige", "#d9c3a5", "BEIGEA_FRONT.png", "BEIGEA_BACK.png"]]}, {"id": "plain-white", "group": "plain", "theme": "plain", "price": 380, "pc": "White", "badge": "Oversized", "cls": "", "h3": "White Plain", "design": "White Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "White Oversized Tee", "sw": [["White", "#f5f3ee", "WHITE_FRONT.png", "WHITE_BACKK.png"]]}, {"id": "plain-black", "group": "plain", "theme": "plain", "price": 399, "pc": "Black", "badge": "Oversized", "cls": "", "h3": "Black Plain", "design": "Black Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Black Oversized Tee", "sw": [["Black", "#111111", "BLACK_FRONT.png", "BLACK_BACKK.png"]]}, {"id": "plain-army-green", "group": "plain", "theme": "plain", "price": 392, "pc": "Army Green", "badge": "Popular", "cls": "", "h3": "Army Green Plain", "design": "Army Green Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Army Green Oversized Tee", "sw": [["Army Green", "#596b3d", "ARMY_GREEN_FRONT.png", "ARMY_GREEN_BACK.png"]]}, {"id": "plain-lavender", "group": "plain", "theme": "plain", "price": 385, "pc": "Lavender", "badge": "Popular", "cls": "", "h3": "Lavender Plain", "design": "Lavender Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Lavender Oversized Tee", "sw": [["Lavender", "#b9a3db", "LAVENDER_FRONT.png", "LAVENDER_BACK.png"]]}, {"id": "plain-red", "group": "plain", "theme": "plain", "price": 389, "pc": "Red", "badge": "Popular", "cls": "", "h3": "Red Plain", "design": "Red Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Red Oversized Tee", "sw": [["Red", "#b51f2e", "RED_FRONT.png", "RED_BACK.png"]]}, {"id": "plain-pink", "group": "plain", "theme": "plain", "price": 380, "pc": "Pink", "badge": "Popular", "cls": "", "h3": "Pink Plain", "design": "Pink Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Pink Oversized Tee", "sw": [["Pink", "#ef9db5", "BABY_PINK_FRONT.png", "BABY_PINK_BACK.png"]]}, {"id": "plain-maroon", "group": "plain", "theme": "plain", "price": 399, "pc": "Maroon", "badge": "New", "cls": "", "h3": "Maroon Plain", "design": "Maroon Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Maroon Oversized Tee", "sw": [["Maroon", "#741320", "MAROON_FRONT.png", "MAROON_BACKK.png"]]}, {"id": "plain-navy-blue", "group": "plain", "theme": "plain", "price": 399, "pc": "Navy Blue", "badge": "New", "cls": "", "h3": "Navy Blue Plain", "design": "Navy Blue Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Navy Blue Oversized Tee", "sw": [["Navy Blue", "#000080", "NAVY_BLUE_FRONT.png", "NAVY_BLUE_BACKK.png"]]}, {"id": "plain-off-white", "group": "plain", "theme": "plain", "price": 385, "pc": "Off White", "badge": "New", "cls": "", "h3": "Off White Plain", "design": "Off White Oversized Tee", "blurb": "Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.", "type": "Oversized", "buy": "Off White Oversized Tee", "sw": [["Off White", "#e6dfcc", "OFF_WHITE_FRONT.png", "OFF_WHITE-BACK.png"]]}, {"id": "explore", "group": "printed", "theme": "acid", "price": 679, "badge": "Acid Wash", "cls": "", "h3": "Explore Space — Acid Wash", "design": "Explore Space — Acid Wash", "blurb": "Pure cotton, acid-washed oversized tee. Front &amp; back designs included.", "type": "Printed Oversized Tee", "buy": "Explore Space Acid Wash", "sw": [["Acid Wash", "linear-gradient(135deg,#9fb0bf 0%,#59667a 48%,#c3ccd6 100%)", "explore_space_front.jpg", "explore_space_back.jpg"]], "stock": false}, {"id": "calm", "group": "printed", "theme": "acid", "price": 659, "badge": "Acid Wash", "cls": "", "h3": "Calm — Acid Wash", "design": "Calm — Acid Wash", "blurb": "Acid-washed oversized tee. Front &amp; back designs included.", "type": "Printed Oversized Tee", "buy": "Calm Acid Wash", "sw": [["Black", "#111", "Calm_acid_front.png", "Calm_acid_back.png"]], "stock": false}, {"id": "conquer", "group": "printed", "theme": "acid", "price": 649, "badge": "Acid Wash", "cls": "", "h3": "Conquer — Acid Wash", "design": "Conquer — Acid Wash", "blurb": "Acid-washed oversized tee. Front &amp; back designs included.", "type": "Printed Oversized Tee", "buy": "Conquer Acid Wash", "sw": [["Black", "#111", "Conquer_acid_front.png", "Conquer_acid_back.png"]], "stock": false}, {"id": "spider", "group": "printed", "theme": "acid", "price": 669, "badge": "Acid Wash", "cls": "", "h3": "Spider — Acid Wash", "design": "Spider — Acid Wash", "blurb": "Acid-washed oversized tee. Front &amp; back designs included.", "type": "Printed Oversized Tee", "buy": "Spider Acid Wash", "sw": [["Black", "#111", "Spider_acid_front.png", "Spider_acid_back.png"]], "stock": false}, {"id": "unseen", "group": "printed", "theme": "art", "price": 549, "badge": "Unseen Series", "cls": "", "h3": "Unseen", "design": "Unseen", "blurb": "“Covered, but not contained.” Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Unseen", "sw": [["White", "#fff", "un_white_f.png", "un_white_b.png"], ["Royal Blue", "#1a3fa0", "un_blue_f.png", "un_blue_b.png"], ["Black", "#111", "un_black_f.png", "un_black_b.png"]], "stock": false}, {"id": "veiled", "group": "printed", "theme": "art", "price": 559, "badge": "Unseen Series", "cls": "", "h3": "Veiled Bloom", "design": "Veiled Bloom", "blurb": "“Elegance in silence.” Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Veiled Bloom", "sw": [["Royal Blue", "#1a3fa0", "veiled_blue_f.png", "veiled_blue_b.png"], ["White", "#fff", "veiled_black_f.png", "veiled_black_b.png"]], "stock": false}, {"id": "grace", "group": "printed", "theme": "art", "price": 599, "badge": "Grace Drop", "cls": "", "h3": "Grace", "design": "Grace", "blurb": "New Grace design. Front &amp; back artwork included.", "type": "Printed T-Shirt", "buy": "Grace", "sw": [["Red", "#b51f2e", "Grace_red_f.png", "Grace_red_b.png"], ["Blue", "#88ccff", "Grace_blue_f.png", "Grace_blue_b.png"], ["White", "#fff", "Grace_white_f.png", "Grace_white_b.png"], ["Black", "#111", "Grace_black_f.jpeg", "Grace_black_b.jpeg"]], "stock": false}, {"id": "anime", "group": "printed", "theme": "anime", "price": 579, "badge": "Anime", "cls": "", "h3": "Anime", "design": "Anime", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Anime", "sw": [["Black", "#111", "anime_b_f.png", "anime_b_b.png"], ["White", "#fff", "anime_w_f.png", "anime_w_b.png"], ["Red", "#b51f2e", "anime_r_f.png", "anime_r_b.png"]], "stock": false}, {"id": "naruto", "group": "printed", "theme": "anime", "price": 569, "badge": "Anime", "cls": "", "h3": "Naruto", "design": "Naruto", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Naruto", "sw": [["White", "#fff", "naruto_w_f.png", "naruto_w_b.png"], ["Black", "#111", "naruto_b_f.png", "naruto_b_b.png"], ["Red", "#b51f2e", "naruto_r_f.png", "naruto_r_b.png"]], "stock": false}, {"id": "onepiece", "group": "printed", "theme": "anime", "price": 579, "badge": "Anime", "cls": "", "h3": "One Piece", "design": "One Piece", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "One Piece", "sw": [["White", "#fff", "one_w_f.png", "one_w_b.png"], ["Black", "#111", "one_b_f.png", "one_b_b.png"], ["Red", "#b51f2e", "one_r_f.png", "one_r_b.png"]], "stock": false}, {"id": "tanjiro", "group": "printed", "theme": "anime", "price": 559, "badge": "Anime", "cls": "", "h3": "Tanjiro", "design": "Tanjiro", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Tanjiro", "sw": [["White", "#fff", "tanjiro_w_f.png", "tanjiro_w_b.png"], ["Black", "#111", "tanjiro_b_f.png", "tanjiro_b_b.png"], ["Red", "#b51f2e", "tanjiro_r_f.png", "tanjiro_r_b.png"]], "stock": false}, {"id": "luffy", "group": "printed", "theme": "anime", "price": 549, "badge": "Anime", "cls": "", "h3": "Luffy", "design": "Luffy", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Luffy", "sw": [["Black", "#111", "luffy_b_f.png", "luffy_b_b.png"], ["Red", "#b51f2e", "luffy_r_f.png", "luffy_r_b.png"], ["White", "#fff", "luffy_w_f.png", "luffy_w_b.png"]], "stock": false}, {"id": "justice", "group": "printed", "theme": "art", "price": 559, "badge": "New Arrival", "cls": "", "h3": "Justice", "design": "Justice", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Justice", "sw": [["Red", "#b51f2e", "Justice_r_f.png", "Justice_r_b.png"], ["White", "#fff", "Justice_w_f.png", "Justice_w_b.png"]], "stock": false}, {"id": "porsche", "group": "printed", "theme": "cars", "price": 569, "badge": "New Arrival", "cls": "", "h3": "Porsche", "design": "Porsche", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Porsche", "sw": [["Black", "#111", "Porsche_black_front.png", "Porsche_black_back.png"], ["Red", "#b51f2e", "Porsche_red_front.png", "Porsche_red_back.png"]], "stock": false}, {"id": "deadpool", "group": "printed", "theme": "cars", "price": 599, "badge": "New Arrival", "cls": "", "h3": "Deadpool", "design": "Deadpool", "blurb": "Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Deadpool", "sw": [["Black", "#111", "Deadpool-black-front.png", "Deadpool-black-back.png"], ["Off White", "#ece6d6", "Deadpool-offwhite-front.png", "Deadpool-offwhite-back.png"], ["White", "#fff", "Deadpool-white-front.png", "Deadpool-white-back.png"]], "stock": false}, {"id": "striker7", "group": "printed", "theme": "art", "price": 499, "badge": "Limited Stock", "cls": "limited", "h3": "Cristiano Ronaldo", "design": "Striker 7", "blurb": "Original No. 7 striker graphic for football fans. Limited run, once it's gone it's gone. Front &amp; back designs included.", "type": "Printed T-Shirt", "buy": "Striker 7", "sw": [["As shown", "linear-gradient(135deg,#E94E2C,#FFB238)", "Cristiano_front.jpeg", "Cristiano_back.jpeg"]], "stock": true}], "spots": [{"id": "spider", "tag": "Acid Wash", "title": "Spider — Acid Wash", "blurb": "Acid-washed oversized tee. Front &amp; back designs included.", "tint": "125,140,154", "dot": "Spider"}, {"id": "calm", "tag": "Acid Wash", "title": "Calm — Acid Wash", "blurb": "Acid-washed oversized tee. Front &amp; back designs included.", "tint": "125,140,154", "dot": "Calm"}, {"id": "conquer", "tag": "Acid Wash", "title": "Conquer — Acid Wash", "blurb": "Acid-washed oversized tee. Front &amp; back designs included.", "tint": "125,140,154", "dot": "Conquer"}, {"id": "explore", "tag": "Acid Wash", "title": "Explore Space — Acid Wash", "blurb": "Pure cotton, acid-washed oversized tee. Front &amp; back designs included.", "tint": "125,140,154", "dot": "Explore Space"}, {"id": "unseen", "tag": "Unseen Series", "title": "Unseen", "blurb": "“Covered, but not contained.” Front &amp; back designs included.", "tint": "26,63,160", "dot": "Unseen"}, {"id": "veiled", "tag": "Unseen Series", "title": "Veiled Bloom", "blurb": "“Elegance in silence.” Front &amp; back designs included.", "tint": "39,72,168", "dot": "Veiled Bloom"}, {"id": "grace", "tag": "Grace Drop", "title": "Grace", "blurb": "New Grace design. Front &amp; back artwork included.", "tint": "181,31,46", "dot": "Grace"}, {"id": "striker7", "tag": "Limited Run", "title": "Striker 7", "blurb": "An original No. 7 striker graphic for football fans. Limited run, once it's gone it's gone.", "tint": "233,78,44", "dot": "Striker 7"}, {"id": "plain-maroon", "tag": "Plain Oversized · 240 GSM", "title": "Maroon", "blurb": "Drop-shoulder silhouette cut from heavy fabric. Relaxed, bold, and built to hold its shape.", "tint": "116,19,32", "dot": "Maroon"}, {"id": "plain-navy-blue", "tag": "Plain Oversized · 240 GSM", "title": "Navy Blue", "blurb": "Drop-shoulder silhouette cut from heavy fabric. Relaxed, bold, and built to hold its shape.", "tint": "60,60,150", "dot": "Navy Blue"}, {"id": "plain-off-white", "tag": "Plain Oversized · 240 GSM", "title": "Off White", "blurb": "Drop-shoulder silhouette cut from heavy fabric. Relaxed, bold, and built to hold its shape.", "tint": "230,223,204", "dot": "Off White"}, {"id": "plain-royal-blue", "tag": "Plain Oversized · 240 GSM", "title": "Royal Blue", "blurb": "Drop-shoulder silhouette cut from heavy fabric. Relaxed, bold, and built to hold its shape.", "tint": "39,72,168", "dot": "Royal Blue"}]};
+const TABS = [["all", "All styles"], ["plain", "Plain"], ["printed", "Printed"], ["acid", "Acid Wash"], ["anime", "Anime"], ["art", "Art & statement"], ["cars", "Cars & cartoons"]];
+
+/* ===== helpers ===== */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+const grp = t => /blue/i.test(t) ? 'Blue' : /as shown/i.test(t) ? '' : t;
+const FILTER_HEX = {'Black':'#111','White':'#fff','Off White':'#ece6d6','Red':'#b51f2e','Blue':'#1a3fa0','Maroon':'#741320','Army Green':'#596b3d','Acid Wash':'linear-gradient(135deg,#9fb0bf 0%,#59667a 48%,#c3ccd6 100%)','Beige':'#d9c3a5','Lavender':'#b9a3db','Pink':'#ef9db5'};
+
+/* plain oversized prices come from prices.js when it loads, otherwise the typed backup prices */
+function priceOf(color) {
+  try { if (window.AARAMBH_PRICES) { const v = window.AARAMBH_PRICES.get('Oversized', color + ' Oversized Tee', color); if (v != null) return v; } } catch (e) {}
+  return null;
+}
+CATALOG.cards.forEach(p => {
+  if (p.pc) { const v = priceOf(p.pc); if (v != null) p.price = v; }
+  p.colorsList = [...new Set(p.sw.map(s => grp(s[0])).filter(Boolean))];
+});
+
+/* image fallback: tries .png / .jpg / .jpeg, then a placeholder */
+const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="100%" height="100%" fill="#101018"/><text x="50%" y="50%" fill="#9A96A8" font-family="sans-serif" font-size="32" text-anchor="middle">Image coming soon</text></svg>');
+document.addEventListener('error', e => {
+  const img = e.target;
+  if (!(img instanceof HTMLImageElement)) return;
+  const cur = img.getAttribute('src');
+  if (!cur || cur === FALLBACK_IMG) return;
+  if (!img._queue) {
+    const m = cur.match(/^(.*)\.(png|jpe?g|webp)$/i);
+    img._queue = m ? ['png', 'jpg', 'jpeg', 'webp'].map(x => m[1] + '.' + x).filter(c => c !== cur) : [];
+  }
+  img.src = img._queue.shift() || FALLBACK_IMG;
+}, true);
+
+/* ===== BUILD CARDS, SPOTLIGHT, TABS, COLOUR FILTERS ===== */
+const byId = Object.fromEntries(CATALOG.cards.map(c => [c.id, c]));
+const swatchBtns = (p, cls, extra) => p.sw.map((s, i) => `<button class="${cls}${i === 0 ? ' active' : ''}" type="button" title="${s[0]}" aria-label="${cls === 'swatch' ? 'View' : 'Show'} ${s[0]}" style="background:${s[1]};" ${extra(s, i)}></button>`).join('');
+
+document.getElementById('teeGrid').innerHTML = CATALOG.cards.map((p, n) => {
+  const t = p.sw[0];
+  const buyRow = p.soon
+    ? '<div class="price soon">Coming soon</div><button class="buy-now-btn" type="button" disabled>Coming soon</button>'
+    : `<div class="price">₹${p.price}</div><button class="buy-now-btn"${p.stock ? ' id="buyStriker7"' : ''} type="button" data-buy="${n}">Buy now</button>`;
+  return `<article class="tee-card" data-id="${p.id}" data-group="${p.group}" data-theme="${p.theme}" data-price="${p.soon ? 0 : p.price}" data-colors="${p.colorsList.join(',')}" data-order="${n + 1}" data-design="${p.design}"${p.soon ? ' data-soon="1"' : ''}>
+    <div class="card-media${p.soon ? ' single' : ''}">
+      <div class="slide-track"><img src="${t[2]}" alt="${p.h3} ${t[0]} front" loading="lazy"><img src="${t[3]}" alt="${p.h3} ${t[0]} back" loading="lazy"></div>
+      <span class="card-badge${p.cls ? ' ' + p.cls : ''}">${p.badge}</span>
+      <div class="view-toggle" data-view="front" role="group" aria-label="Choose view"><span class="vt-glider" aria-hidden="true"></span><button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button><button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button></div>
+    </div>
+    <div class="card-body">
+      <h3>${p.h3}</h3>
+      <p class="card-blurb">${p.blurb}</p>
+      <div class="color-row"><span class="color-label">${p.sw.length > 1 ? 'Colours' : 'Colour'}</span><div class="swatches">${swatchBtns(p, 'swatch', (s, i) => `data-front="${s[2]}" data-back="${s[3]}"${i === 0 ? ' data-default' : ''} onclick="selectColor(this)"`)}</div><span class="selected-color">${t[0]}</span></div>
+      ${p.stock ? '<div class="stock-left" id="stockLeftCristianoRonaldo"></div>' : ''}
+      <div class="buy-row">${buyRow}</div>
+    </div>
+  </article>`;
+}).join('');
+document.querySelectorAll('#teeGrid .buy-now-btn[data-buy]').forEach(btn => {
+  const p = CATALOG.cards[Number(btn.dataset.buy)];
+  btn.onclick = () => buyNow(btn, p.buy, p.type, String(p.price));
+});
+
+const total = CATALOG.spots.length;
+document.getElementById('spotTrack').innerHTML = CATALOG.spots.map((s, n) => {
+  const p = byId[s.id], t = p.sw[0];
+  return `<article class="spot-slide" data-card="${p.id}" style="--tint:${s.tint}" role="group" aria-roledescription="slide" aria-label="${n + 1} of ${total}">
+    <div class="spot-info">
+      <span class="spot-tag">${s.tag}</span>
+      <h3>${s.title}</h3>
+      <p>${s.blurb}</p>
+      <div class="spot-colors"><span class="color-label">${p.sw.length > 1 ? 'Colours' : 'Colour'}</span><div class="swatches">${swatchBtns(p, 'spot-swatch', (x, i) => `data-card="${p.id}" data-i="${i}"`)}</div><span class="spot-colorname">${t[0]}</span></div>
+      ${p.stock ? '<div class="stock-left spot-stock" id="stockLeftSpot"></div>' : ''}
+      <div class="spot-price">₹${p.price}</div>
+      <div class="spot-actions"><button class="buy-now-btn spot-buy"${p.stock ? ' id="buyStriker7Spot"' : ''} type="button" data-card="${p.id}">Buy now</button><a class="spot-ghost" href="#designs">Browse all styles</a></div>
+    </div>
+    <div class="spot-art">
+      <figure><img src="${t[2]}" alt="${s.title} front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
+      <figure><img src="${t[3]}" alt="${s.title} back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
+    </div>
+  </article>`;
+}).join('');
+document.getElementById('spotDots').innerHTML = CATALOG.spots.map((s, n) => `<button type="button" class="spot-dot${n === 0 ? ' active' : ''}" data-i="${n}" aria-label="${s.title}"><span class="spot-dot-name">${s.dot}</span></button>`).join('');
+
+const inTab = (p, key) => key === 'all' || ((key === 'plain' || key === 'printed') ? p.group === key : p.theme === key);
+document.getElementById('tabs').insertAdjacentHTML('beforeend', TABS.map((t, i) => `<button class="tab${i === 0 ? ' active' : ''}" type="button" data-theme="${t[0]}" aria-pressed="${i === 0}">${t[1]}<small>${CATALOG.cards.filter(p => inTab(p, t[0])).length}</small></button>`).join(''));
+const colourSet = [...new Set(CATALOG.cards.flatMap(p => p.colorsList))];
+document.getElementById('colorFilter').innerHTML = '<span class="cf-label">Colour</span><button class="cf active" type="button" data-color="any" aria-pressed="true">Any</button>' + colourSet.map(c => `<button class="cf" type="button" data-color="${c}" aria-pressed="false"><i style="background:${FILTER_HEX[c] || '#777'}"></i>${c}</button>`).join('');
+
+/* ===== mobile menu ===== */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuBackdrop = document.getElementById('menuBackdrop');
+function closeMenu() { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
+hamburger.addEventListener('click', () => {
+  const isOpen = mobileMenu.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+  menuBackdrop.classList.toggle('open', isOpen);
+});
+menuBackdrop.addEventListener('click', closeMenu);
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+/* ===== colour swatch on a card ===== */
+function selectColor(el) {
+  const row = el.closest('.color-row');
+  const card = el.closest('.tee-card');
+  if (!row || !card) return;
+  row.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const color = el.getAttribute('title') || '';
+  const label = row.querySelector('.selected-color');
+  if (label) label.textContent = color;
+  const images = card.querySelectorAll('.card-media img');
+  if (images[0] && el.dataset.front) { images[0].src = el.dataset.front; images[0].alt = `${card.dataset.design} ${color} front`; }
+  if (images[1] && el.dataset.back) { images[1].src = el.dataset.back; images[1].alt = `${card.dataset.design} ${color} back`; }
+  syncSlide(card.dataset.id);
+}
+
+/* ===== BUY NOW: opens the shared product page with the chosen colour + images ===== */
+function buyNow(btn, productName, typeName, price) {
+  const card = btn.closest('.tee-card');
+  const colorEl = card ? card.querySelector('.selected-color') : null;
+  const color = colorEl ? colorEl.textContent.trim() : 'Default';
+  const images = card ? [...card.querySelectorAll('.card-media img')] : [];
+  const params = new URLSearchParams({ product: productName, type: typeName, color: color, price: price });
+  if (images[0]) params.set('image', images[0].getAttribute('src'));
+  if (images[1]) params.set('image2', images[1].getAttribute('src'));
+  window.location.href = 'product.html?' + params.toString();
+}
+
+/* ===== card front / back ===== */
+function setView(media, view) {
+  media.classList.toggle('show-back', view === 'back');
+  const toggle = media.querySelector('.view-toggle');
+  if (!toggle) return;
+  toggle.dataset.view = view;
+  toggle.querySelectorAll('.vt-btn').forEach(b => {
+    const on = b.dataset.view === view;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on);
+  });
+}
+const touchPeek = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const media = entry.target;
+    clearInterval(media._peek);
+    if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+      media._peek = setInterval(() => {
+        if (Date.now() < (media._holdUntil || 0)) return;
+        setView(media, media.classList.contains('show-back') ? 'front' : 'back');
+      }, 3200);
     }
-    ITEMS.forEach((h, n) => { h.name = h.color + ' Oversized Tee'; h.price = priceOf(h.color); h.order = n + 1; });
+  });
+}, { threshold: [0, 0.6, 1] });
 
-    // ===== image fallback =====
-    const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="100%" height="100%" fill="#101018"/><text x="50%" y="50%" fill="#9A96A8" font-family="sans-serif" font-size="32" text-anchor="middle">Image coming soon</text></svg>');
-    document.addEventListener('error', e => {
-      const img = e.target;
-      if (!(img instanceof HTMLImageElement)) return;
-      const cur = img.getAttribute('src');
-      if (!cur || cur === FALLBACK_IMG) return;
-      if (!img._queue) {
-        const m = cur.match(/^(.*)\.(png|jpe?g)$/i);
-        img._queue = m ? ['png', 'jpg', 'jpeg'].map(x => m[1] + '.' + x).filter(c => c !== cur) : [];
-      }
-      img.src = img._queue.shift() || FALLBACK_IMG;
-    }, true);
-
-    // ===== BUILD =====
-    document.getElementById('teeGrid').innerHTML = ITEMS.map(h => `<article class="tee-card" data-id="${h.color}" data-price="${h.price}" data-colors="${h.color}" data-order="${h.order}">
-        <div class="card-media">
-          <div class="slide-track"><img src="${h.image}" alt="AARAMBH ${h.name} front" loading="lazy"><img src="${h.image2}" alt="AARAMBH ${h.name} back" loading="lazy"></div>
-          <span class="card-badge">${h.badge}</span>
-          <div class="view-toggle" data-view="front" role="group" aria-label="Choose view"><span class="vt-glider" aria-hidden="true"></span><button type="button" class="vt-btn active" data-view="front" aria-pressed="true">Front</button><button type="button" class="vt-btn" data-view="back" aria-pressed="false">Back</button></div>
-        </div>
-        <div class="card-body">
-          <h3>${h.color}</h3>
-          <p class="card-blurb">Drop-shoulder oversized tee in heavy 240 GSM pure cotton French terry.</p>
-          <div class="color-row"><span class="color-label">Colour</span><div class="swatches"><span class="swatch" style="background:${h.hex};"></span></div><span class="selected-color">${h.color}</span></div>
-          <div class="buy-row"><div class="price">₹${h.price}</div><button class="buy-now-btn" type="button" data-color="${h.color}">Buy now</button></div>
-        </div>
-      </article>`.replace(/&/g, '&amp;').replace(/&amp;amp;/g, '&amp;')).join('');
-
-    const total = ITEMS.length;
-    document.getElementById('spotTrack').innerHTML = ITEMS.map((h, n) => `<article class="spot-slide" data-color="${h.color}" style="--tint:${h.tint}" role="group" aria-roledescription="slide" aria-label="${n + 1} of ${total}">
-          <div class="spot-info">
-            <span class="spot-tag">Oversized · 240 GSM</span>
-            <h3>${h.color}</h3>
-            <p>Drop-shoulder silhouette cut from heavy fabric. Relaxed, bold, and built to hold its shape.</p>
-            <div class="spot-colors"><span class="color-label">Colour</span><div class="swatches"><span class="swatch" style="background:${h.hex};"></span></div><span class="spot-colorname">${h.color}</span></div>
-            <div class="spot-price">₹${h.price}</div>
-            <div class="spot-actions"><button class="buy-now-btn spot-buy" type="button" data-color="${h.color}">Buy now</button><a class="spot-ghost" href="#designs">Browse all tees</a></div>
-          </div>
-          <div class="spot-art">
-            <figure><img src="${h.image}" alt="${h.name} front" decoding="async" draggable="false"><figcaption>Front</figcaption></figure>
-            <figure><img src="${h.image2}" alt="${h.name} back" decoding="async" draggable="false"><figcaption>Back</figcaption></figure>
-          </div>
-        </article>`).join('');
-    document.getElementById('spotDots').innerHTML = ITEMS.map((h, n) => `<button type="button" class="spot-dot${n === 0 ? ' active' : ''}" data-i="${n}" aria-label="${h.name}"><span class="spot-dot-name">${h.color}</span></button>`).join('');
-    document.getElementById('colorFilter').innerHTML = '<span class="cf-label">Colour</span><button class="cf active" type="button" data-color="any" aria-pressed="true">Any</button>' + ITEMS.map(h => `<button class="cf" type="button" data-color="${h.color}" aria-pressed="false"><i style="background:${h.hex}"></i>${h.color}</button>`).join('');
-
-    // ===== mobile menu =====
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const menuBackdrop = document.getElementById('menuBackdrop');
-    function closeMenu() { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); menuBackdrop.classList.remove('open'); }
-    hamburger.addEventListener('click', () => {
-      const isOpen = mobileMenu.classList.toggle('open');
-      hamburger.classList.toggle('open', isOpen);
-      menuBackdrop.classList.toggle('open', isOpen);
-    });
-    menuBackdrop.addEventListener('click', closeMenu);
-    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-    // ===== BUY: opens the product page =====
-    function buyNow(color) {
-      const h = ITEMS.find(x => x.color === color);
-      if (!h) return;
-      const params = new URLSearchParams({ product: h.name, type: TYPE_NAME, color: h.color, price: String(h.price), image: h.image, image2: h.image2 });
-      window.location.href = 'product.html?' + params.toString();
+document.querySelectorAll('.tee-card .card-media').forEach(media => {
+  const single = media.classList.contains('single');
+  media.querySelectorAll('.vt-btn').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    setView(media, b.dataset.view);
+    media._holdUntil = Date.now() + 9000;
+  }));
+  if (!single) {
+    if (finePointer) {
+      media.addEventListener('mouseenter', () => { media._hover = setTimeout(() => setView(media, 'back'), 250); });
+      media.addEventListener('mouseleave', () => { clearTimeout(media._hover); setView(media, 'front'); });
+    } else if (!reduceMotion) {
+      touchPeek.observe(media);
     }
-    document.querySelectorAll('#teeGrid .buy-now-btn').forEach(btn => { btn.onclick = () => buyNow(btn.dataset.color); });
+  }
+  const track = media.querySelector('.slide-track');
+  track.setAttribute('role', 'link');
+  track.setAttribute('tabindex', '0');
+  track.setAttribute('aria-label', 'View product details');
+  const open = () => { const b = media.closest('.tee-card').querySelector('.buy-now-btn[data-buy]'); if (b) b.click(); };
+  track.addEventListener('click', open);
+  track.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+});
 
-    // ===== CARD FRONT / BACK =====
-    function setView(media, view) {
-      media.classList.toggle('show-back', view === 'back');
-      const toggle = media.querySelector('.view-toggle');
-      if (!toggle) return;
-      toggle.dataset.view = view;
-      toggle.querySelectorAll('.vt-btn').forEach(b => {
-        const on = b.dataset.view === view;
-        b.classList.toggle('active', on);
-        b.setAttribute('aria-pressed', on);
-      });
+/* ===== SPOTLIGHT ===== */
+const spot = document.getElementById('latestDrop');
+const spotViewport = document.getElementById('spotViewport');
+const spotTrack = document.getElementById('spotTrack');
+const slides = [...spotTrack.querySelectorAll('.spot-slide')];
+const dots = [...document.querySelectorAll('.spot-dot')];
+let spotIdx = 0;
+
+function syncSlide(id) {
+  const slide = slides.find(s => s.dataset.card === id);
+  const card = document.querySelector(`.tee-card[data-id="${id}"]`);
+  if (!slide || !card) return;
+  const cardImgs = card.querySelectorAll('.card-media img');
+  slide.querySelectorAll('.spot-art img').forEach((img, i) => { if (cardImgs[i]) { img.src = cardImgs[i].getAttribute('src'); img.alt = cardImgs[i].alt; } });
+  const swatches = [...card.querySelectorAll('.swatch')];
+  const at = swatches.findIndex(s => s.classList.contains('active'));
+  slide.querySelectorAll('.spot-swatch').forEach((s, i) => s.classList.toggle('active', i === at));
+  const name = slide.querySelector('.spot-colorname');
+  if (name && swatches[at]) name.textContent = swatches[at].title;
+}
+function goSpot(i) {
+  spotIdx = (i + slides.length) % slides.length;
+  spotTrack.style.transform = `translateX(${-spotIdx * 100}%)`;
+  slides.forEach((s, k) => { s.classList.toggle('is-active', k === spotIdx); if (k === spotIdx) s.removeAttribute('inert'); else s.setAttribute('inert', ''); });
+  dots.forEach((d, k) => {
+    d.classList.remove('active');
+    if (k === spotIdx) { void d.offsetWidth; d.classList.add('active'); d.setAttribute('aria-current', 'true'); }
+    else d.removeAttribute('aria-current');
+  });
+}
+document.getElementById('spotPrev').addEventListener('click', () => goSpot(spotIdx - 1));
+document.getElementById('spotNext').addEventListener('click', () => goSpot(spotIdx + 1));
+dots.forEach(d => d.addEventListener('click', () => goSpot(Number(d.dataset.i))));
+document.getElementById('spotDots').addEventListener('animationend', e => { if (e.animationName === 'spotFill') goSpot(spotIdx + 1); });
+const pause = on => spot.classList.toggle('is-paused', on);
+spotViewport.addEventListener('mouseenter', () => pause(true));
+spotViewport.addEventListener('mouseleave', () => pause(false));
+spotViewport.addEventListener('focusin', () => pause(true));
+spotViewport.addEventListener('focusout', () => pause(false));
+document.addEventListener('visibilitychange', () => pause(document.hidden));
+new IntersectionObserver(es => es.forEach(e => pause(!e.isIntersecting)), { threshold: 0.3 }).observe(spot);
+spotViewport.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { e.preventDefault(); goSpot(spotIdx + 1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goSpot(spotIdx - 1); }
+});
+spotTrack.addEventListener('click', e => {
+  const sw = e.target.closest('.spot-swatch');
+  if (sw) {
+    const card = document.querySelector(`.tee-card[data-id="${sw.dataset.card}"]`);
+    const target = card && card.querySelectorAll('.swatch')[Number(sw.dataset.i)];
+    if (target) selectColor(target);
+  }
+  const buy = e.target.closest('.spot-buy');
+  if (buy) { const card = document.querySelector(`.tee-card[data-id="${buy.dataset.card}"]`); if (card) card.querySelector('.buy-now-btn').click(); }
+});
+let dragX = null, dragDX = 0;
+spotViewport.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  if (e.target.closest('button, a')) return;
+  dragX = e.clientX; dragDX = 0;
+});
+window.addEventListener('pointermove', e => {
+  if (dragX === null) return;
+  dragDX = e.clientX - dragX;
+  if (Math.abs(dragDX) > 6) {
+    spotViewport.classList.add('dragging'); pause(true);
+    spotTrack.style.transform = `translateX(calc(${-spotIdx * 100}% + ${dragDX}px))`;
+  }
+});
+function endDrag() {
+  if (dragX === null) return;
+  const moved = dragDX;
+  dragX = null;
+  spotViewport.classList.remove('dragging');
+  pause(false);
+  goSpot(Math.abs(moved) > 60 ? spotIdx + (moved < 0 ? 1 : -1) : spotIdx);
+}
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', endDrag);
+goSpot(location.hash === '#veiledBloom' ? Math.max(0, CATALOG.spots.findIndex(s => s.id === 'veiled')) : 0);
+
+/* ===== FINDER: tabs, colour, sort ===== */
+const grid = document.getElementById('teeGrid');
+const cards = [...grid.querySelectorAll('.tee-card')];
+const tabsEl = document.getElementById('tabs');
+const glider = document.getElementById('tabGlider');
+const state = { theme: 'all', color: 'any', sort: 'featured' };
+
+function moveGlider() {
+  const a = tabsEl.querySelector('.tab.active');
+  if (!a) return;
+  glider.style.width = a.offsetWidth + 'px';
+  glider.style.transform = `translateX(${a.offsetLeft}px)`;
+}
+function applyFilters(animate = true) {
+  const visible = [];
+  cards.forEach((card, idx) => {
+    const p = CATALOG.cards[idx];
+    const colors = card.dataset.colors ? card.dataset.colors.split(',') : [];
+    const ok = inTab(p, state.theme) && (state.color === 'any' || colors.includes(state.color));
+    card.hidden = !ok;
+    if (ok) visible.push(card);
+    const swatches = [...card.querySelectorAll('.swatch')];
+    if (swatches.length) {
+      const want = state.color === 'any' ? swatches.find(s => s.hasAttribute('data-default')) : swatches.find(s => grp(s.title) === state.color);
+      if (want && !want.classList.contains('active')) selectColor(want);
     }
-    const touchPeek = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        const media = entry.target;
-        clearInterval(media._peek);
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-          media._peek = setInterval(() => {
-            if (Date.now() < (media._holdUntil || 0)) return;
-            setView(media, media.classList.contains('show-back') ? 'front' : 'back');
-          }, 3200);
-        }
-      });
-    }, { threshold: [0, 0.6, 1] });
+  });
+  const key = { featured: c => Number(c.dataset.order), low: c => Number(c.dataset.price), high: c => -Number(c.dataset.price) }[state.sort];
+  const rank = c => (c.dataset.soon ? 1e9 : 0) + key(c);
+  visible.sort((a, b) => rank(a) - rank(b) || Number(a.dataset.order) - Number(b.dataset.order));
+  cards.filter(c => c.hidden).forEach(c => grid.appendChild(c));
+  visible.forEach((c, i) => {
+    grid.insertBefore(c, grid.querySelector('.tee-card[hidden]'));
+    c.classList.remove('enter');
+    if (animate && !reduceMotion) { c.style.setProperty('--i', Math.min(i, 8)); void c.offsetWidth; c.classList.add('enter'); }
+  });
+  document.getElementById('finderCount').textContent = `Showing ${visible.length} of ${cards.length} styles`;
+  document.getElementById('teeEmpty').hidden = visible.length > 0;
+}
+function setTab(key, animate = true) {
+  const t = [...tabsEl.querySelectorAll('.tab')].find(b => b.dataset.theme === key);
+  if (!t) return;
+  tabsEl.querySelectorAll('.tab').forEach(b => { const on = b === t; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+  state.theme = key; moveGlider(); applyFilters(animate);
+}
+tabsEl.addEventListener('click', e => { const t = e.target.closest('.tab'); if (t) setTab(t.dataset.theme); });
+document.getElementById('colorFilter').addEventListener('click', e => {
+  const b = e.target.closest('.cf'); if (!b) return;
+  document.querySelectorAll('.cf').forEach(x => { const on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
+  state.color = b.dataset.color; applyFilters();
+});
+document.getElementById('sortSelect').addEventListener('change', e => { state.sort = e.target.value; applyFilters(); });
+document.getElementById('resetFilters').addEventListener('click', () => {
+  state.color = 'any'; state.sort = 'featured';
+  document.getElementById('sortSelect').value = 'featured';
+  document.querySelectorAll('.cf').forEach(x => { const on = x.dataset.color === 'any'; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
+  setTab('all');
+});
+applyFilters(false);
+moveGlider();
+window.addEventListener('load', moveGlider);
+window.addEventListener('resize', moveGlider);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveGlider);
 
-    document.querySelectorAll('.tee-card .card-media').forEach(media => {
-      media.querySelectorAll('.vt-btn').forEach(b => b.addEventListener('click', e => {
-        e.stopPropagation();
-        setView(media, b.dataset.view);
-        media._holdUntil = Date.now() + 9000;
-      }));
-      if (finePointer) {
-        media.addEventListener('mouseenter', () => { media._hover = setTimeout(() => setView(media, 'back'), 250); });
-        media.addEventListener('mouseleave', () => { clearTimeout(media._hover); setView(media, 'front'); });
-      } else if (!reduceMotion) {
-        touchPeek.observe(media);
-      }
-      const track = media.querySelector('.slide-track');
-      track.setAttribute('role', 'link');
-      track.setAttribute('tabindex', '0');
-      track.setAttribute('aria-label', 'View product details');
-      const open = () => { const b = media.closest('.tee-card').querySelector('.buy-now-btn'); if (b) b.click(); };
-      track.addEventListener('click', open);
-      track.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+/* links from the home page: #plain and #printed open that tab */
+function applyHash() {
+  const h = location.hash.replace('#', '');
+  if (h === 'plain' || h === 'printed') { setTab(h, false); const d = document.getElementById('designs'); if (d) d.scrollIntoView(); }
+}
+applyHash();
+window.addEventListener('hashchange', applyHash);
+
+/* tap an offer code to copy it */
+document.querySelectorAll('.offer-code[data-code]').forEach(b => b.addEventListener('click', () => {
+  const code = b.dataset.code, small = b.querySelector('small'), old = small.textContent;
+  try { if (navigator.clipboard) navigator.clipboard.writeText(code); } catch (e) {}
+  small.textContent = 'Copied!';
+  setTimeout(() => { small.textContent = old; }, 1600);
+}));
+
+/* ===== cursor, reveal, navbar ===== */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+function animateRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px'; requestAnimationFrame(animateRing); }
+animateRing();
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursorRing.style.width = '60px'; cursorRing.style.height = '60px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursorRing.style.width = '40px'; cursorRing.style.height = '40px'; });
+});
+const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
+
+/* ===== LIMITED STOCK: live count for the Striker 7 tee (card + spotlight) ===== */
+(async function loadStock() {
+  const backend = window.AARAMBH_BACKEND_URL;
+  if (!backend) return;
+  const labels = ['stockLeftCristianoRonaldo', 'stockLeftSpot'].map(id => document.getElementById(id)).filter(Boolean);
+  const buttons = ['buyStriker7', 'buyStriker7Spot'].map(id => document.getElementById(id)).filter(Boolean);
+  if (!labels.length) return;
+  try {
+    const r = await fetch(backend + '/api/stock');
+    const d = await r.json();
+    const left = d && d.left ? d.left['printed-striker-7'] : undefined;
+    if (typeof left !== 'number') return;
+    labels.forEach(label => {
+      label.classList.add('show');
+      if (left <= 0) { label.classList.add('out'); label.textContent = 'Sold out'; }
+      else label.textContent = left <= 20 ? 'Only ' + left + ' left' : 'Limited stock, once it is gone it is gone';
     });
-
-    // ===== SPOTLIGHT =====
-    const spot = document.getElementById('latestDrop');
-    const spotViewport = document.getElementById('spotViewport');
-    const spotTrack = document.getElementById('spotTrack');
-    const slides = [...spotTrack.querySelectorAll('.spot-slide')];
-    const dots = [...document.querySelectorAll('.spot-dot')];
-    let spotIdx = 0;
-
-    function goSpot(i) {
-      spotIdx = (i + slides.length) % slides.length;
-      spotTrack.style.transform = `translateX(${-spotIdx * 100}%)`;
-      slides.forEach((s, k) => { s.classList.toggle('is-active', k === spotIdx); if (k === spotIdx) s.removeAttribute('inert'); else s.setAttribute('inert', ''); });
-      dots.forEach((d, k) => {
-        d.classList.remove('active');
-        if (k === spotIdx) { void d.offsetWidth; d.classList.add('active'); d.setAttribute('aria-current', 'true'); }
-        else d.removeAttribute('aria-current');
-      });
-    }
-    document.getElementById('spotPrev').addEventListener('click', () => goSpot(spotIdx - 1));
-    document.getElementById('spotNext').addEventListener('click', () => goSpot(spotIdx + 1));
-    dots.forEach(d => d.addEventListener('click', () => goSpot(Number(d.dataset.i))));
-    document.getElementById('spotDots').addEventListener('animationend', e => { if (e.animationName === 'spotFill') goSpot(spotIdx + 1); });
-
-    const pause = on => spot.classList.toggle('is-paused', on);
-    spotViewport.addEventListener('mouseenter', () => pause(true));
-    spotViewport.addEventListener('mouseleave', () => pause(false));
-    spotViewport.addEventListener('focusin', () => pause(true));
-    spotViewport.addEventListener('focusout', () => pause(false));
-    document.addEventListener('visibilitychange', () => pause(document.hidden));
-    new IntersectionObserver(es => es.forEach(e => pause(!e.isIntersecting)), { threshold: 0.3 }).observe(spot);
-    spotViewport.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); goSpot(spotIdx + 1); }
-      if (e.key === 'ArrowLeft')  { e.preventDefault(); goSpot(spotIdx - 1); }
-    });
-    spotTrack.addEventListener('click', e => {
-      const buy = e.target.closest('.spot-buy');
-      if (buy) buyNow(buy.dataset.color);
-    });
-
-    let dragX = null, dragDX = 0;
-    spotViewport.addEventListener('pointerdown', e => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      if (e.target.closest('button, a')) return;
-      dragX = e.clientX; dragDX = 0;
-    });
-    window.addEventListener('pointermove', e => {
-      if (dragX === null) return;
-      dragDX = e.clientX - dragX;
-      if (Math.abs(dragDX) > 6) {
-        spotViewport.classList.add('dragging'); pause(true);
-        spotTrack.style.transform = `translateX(calc(${-spotIdx * 100}% + ${dragDX}px))`;
-      }
-    });
-    function endDrag() {
-      if (dragX === null) return;
-      const moved = dragDX;
-      dragX = null;
-      spotViewport.classList.remove('dragging');
-      pause(false);
-      goSpot(Math.abs(moved) > 60 ? spotIdx + (moved < 0 ? 1 : -1) : spotIdx);
-    }
-    window.addEventListener('pointerup', endDrag);
-    window.addEventListener('pointercancel', endDrag);
-    goSpot(0);
-
-    // ===== FINDER =====
-    const grid = document.getElementById('teeGrid');
-    const cards = [...grid.querySelectorAll('.tee-card')];
-    const state = { color: 'any', sort: 'featured' };
-
-    function applyFilters(animate = true) {
-      const visible = [];
-      cards.forEach(card => {
-        const ok = state.color === 'any' || card.dataset.colors === state.color;
-        card.hidden = !ok;
-        if (ok) visible.push(card);
-      });
-      const key = { featured: c => Number(c.dataset.order), low: c => Number(c.dataset.price), high: c => -Number(c.dataset.price) }[state.sort];
-      visible.sort((a, b) => key(a) - key(b) || Number(a.dataset.order) - Number(b.dataset.order));
-      cards.filter(c => c.hidden).forEach(c => grid.appendChild(c));
-      visible.forEach((c, i) => {
-        grid.insertBefore(c, grid.querySelector('.tee-card[hidden]'));
-        c.classList.remove('enter');
-        if (animate && !reduceMotion) { c.style.setProperty('--i', Math.min(i, 8)); void c.offsetWidth; c.classList.add('enter'); }
-      });
-      document.getElementById('finderCount').textContent = `Showing ${visible.length} of ${cards.length} tees`;
-      document.getElementById('teeEmpty').hidden = visible.length > 0;
-    }
-    document.getElementById('colorFilter').addEventListener('click', e => {
-      const b = e.target.closest('.cf'); if (!b) return;
-      document.querySelectorAll('.cf').forEach(x => { const on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
-      state.color = b.dataset.color; applyFilters();
-    });
-    document.getElementById('sortSelect').addEventListener('change', e => { state.sort = e.target.value; applyFilters(); });
-    document.getElementById('resetFilters').addEventListener('click', () => {
-      state.color = 'any'; state.sort = 'featured';
-      document.getElementById('sortSelect').value = 'featured';
-      document.querySelectorAll('.cf').forEach(x => { const on = x.dataset.color === 'any'; x.classList.toggle('active', on); x.setAttribute('aria-pressed', on); });
-      applyFilters();
-    });
-
-    // ===== tap an offer code to copy it =====
-    document.querySelectorAll('.offer-code[data-code]').forEach(b => b.addEventListener('click', () => {
-      const code = b.dataset.code, small = b.querySelector('small'), old = small.textContent;
-      try { if (navigator.clipboard) navigator.clipboard.writeText(code); } catch (e) {}
-      small.textContent = 'Copied!';
-      setTimeout(() => { small.textContent = old; }, 1600);
-    }));
-
-    // ===== cursor, reveal, navbar =====
-    const cursor = document.getElementById('cursor');
-    const cursorRing = document.getElementById('cursorRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
-    function animateRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px'; requestAnimationFrame(animateRing); }
-    animateRing();
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursorRing.style.width = '60px'; cursorRing.style.height = '60px'; });
-      el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; cursorRing.style.width = '40px'; cursorRing.style.height = '40px'; });
-    });
-    const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
-  </script>
+    if (left <= 0) buttons.forEach(b => { b.disabled = true; b.textContent = 'Sold out'; });
+  } catch (e) { /* the stock count is optional, so ignore errors */ }
+})();
+</script>
 </body>
 </html>

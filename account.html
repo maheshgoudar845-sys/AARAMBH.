@@ -4,96 +4,236 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Account — AARAMBH</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="site-config.js"></script>
   <style>
-    :root{--bg:#080810;--accent:#A90E02;--accent2:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,.08);}
+    :root{
+      --bg:#080810; --surface:#101019; --surface2:#171723; --line:rgba(255,255,255,.09);
+      --accent:#A90E02; --accent-hi:#c8190b; --cream:#FFFACD;
+      --text:#f2f2f5; --muted:#9b9bad; --ok:#9be6b4; --bad:#ff8f8f;
+      --r-lg:18px; --r-md:12px;
+    }
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-    nav{display:flex;justify-content:space-between;align-items:center;padding:16px 40px;border-bottom:1px solid var(--border);}
-    nav img{height:42px;}
-    nav a,nav button{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;background:none;border:none;cursor:pointer;}
-    .wrap{max-width:720px;margin:40px auto;padding:0 20px 80px;}
-    h1{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:1px;}
-    .sub{color:var(--muted);font-size:14px;margin:6px 0 28px;}
-    h2{font-family:'Syne',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:28px 0 14px;}
-    .o{background:linear-gradient(160deg,#0f0f1a,#15151f);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:14px;}
-    .oh,.of{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
-    .oh b{font-family:'Syne',sans-serif;letter-spacing:1px;} .oh span{color:var(--muted);font-size:13px;}
-    ul{list-style:none;margin:12px 0;font-size:14px;line-height:1.8;color:#ddd;}
-    .tag{font-family:'Syne',sans-serif;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:rgba(255,250,205,.12);color:var(--accent2);}
-    .tag.red{background:rgba(255,107,107,.15);color:#ff8f8f;}
-    .tag.green{background:rgba(155,230,180,.15);color:#9be6b4;}
-    .of b{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent2);}
-    .empty,.err{color:var(--muted);font-size:14px;line-height:1.7;}
-    .err{color:#ff6b6b;}
-    .ok{color:#9be6b4;font-size:14px;line-height:1.7;}
-    .btn{display:inline-block;margin-top:14px;padding:13px 26px;background:var(--accent);color:#fff;border:none;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;cursor:pointer;}
-    .btn:disabled{opacity:.6;cursor:not-allowed;}
-    .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;}
+    a{color:inherit;}
+    button{font:inherit;color:inherit;}
+    :focus-visible{outline:2px solid var(--cream);outline-offset:3px;border-radius:6px;}
 
-    /* track box */
-    .box{background:linear-gradient(160deg,#0f0f1a,#15151f);border:1px solid var(--border);border-radius:16px;padding:20px;}
-    .row{display:flex;gap:10px;flex-wrap:wrap;}
-    .row .f{flex:1;min-width:180px;}
-    label{display:block;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-    input,select,textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:14px;}
-    select option{background:#15151f;color:#f0f0f0;}
-    textarea{resize:vertical;min-height:70px;}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(169,14,2,.6);box-shadow:0 0 0 3px rgba(169,14,2,.15);}
-    #trackMsg{font-size:13px;margin-top:10px;min-height:18px;}
-    #trackOut{margin-top:16px;}
+    /* ---------- nav ---------- */
+    nav{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:12px 32px;background:rgba(8,8,16,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+    nav img{height:40px;display:block;}
+    .navlinks{display:flex;align-items:center;gap:6px;}
+    .navlinks a,.navlinks button{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--muted);text-decoration:none;background:none;border:none;cursor:pointer;padding:10px 14px;border-radius:100px;transition:color .15s,background .15s;}
+    .navlinks a:hover,.navlinks button:hover{color:var(--text);background:rgba(255,255,255,.06);}
 
-    /* timeline */
-    .tl{display:flex;justify-content:space-between;margin:18px 0 8px;position:relative;}
-    .tl::before{content:'';position:absolute;top:7px;left:8%;right:8%;height:2px;background:var(--border);}
-    .st{flex:1;text-align:center;position:relative;font-size:10px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;font-family:'Syne',sans-serif;font-weight:700;}
-    .st i{display:block;width:16px;height:16px;border-radius:50%;background:#1d1d2b;border:2px solid #2c2c3d;margin:0 auto 8px;position:relative;}
-    .st.done{color:var(--accent2);}
-    .st.done i{background:var(--accent);border-color:var(--accent);}
+    /* ---------- layout ---------- */
+    .wrap{max-width:760px;margin:0 auto;padding:36px 20px 90px;}
+    .head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px;}
+    h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(44px,9vw,68px);line-height:.95;letter-spacing:1px;}
+    .sub{color:var(--muted);font-size:14px;margin-top:8px;word-break:break-all;}
+    .stats{display:flex;gap:10px;}
+    .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 16px;min-width:92px;}
+    .stat b{display:block;font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:30px;line-height:1;color:var(--cream);}
+    .stat span{font-size:12px;color:var(--muted);}
+    h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin:0 0 14px;}
+    .section{margin-top:36px;}
+
+    /* ---------- buttons ---------- */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;background:var(--accent);color:#fff;border:none;border-radius:100px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;transition:background .15s,transform .1s;}
+    .btn:hover{background:var(--accent-hi);}
+    .btn:active{transform:scale(.98);}
+    .btn:disabled{opacity:.55;cursor:not-allowed;}
+    .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text);}
+    .btn.ghost:hover{background:rgba(255,255,255,.06);}
+    .btn.small{padding:10px 18px;font-size:13px;}
+
+    /* ---------- filters ---------- */
+    .filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none;}
+    .filters::-webkit-scrollbar{display:none;}
+    .chip{flex:none;padding:9px 16px;border-radius:100px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+    .chip:hover{color:var(--text);}
+    .chip[aria-pressed="true"]{background:var(--cream);border-color:var(--cream);color:#1a1a12;}
+
+    /* ---------- order card (ticket) ---------- */
+    .o{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:14px;overflow:hidden;}
+    .o-top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 20px;background:none;border:none;text-align:left;cursor:pointer;}
+    .o-top:hover{background:rgba(255,255,255,.02);}
+    .o-ref{display:block;font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;letter-spacing:2px;color:var(--cream);}
+    .o-date{display:block;font-size:13px;color:var(--muted);margin-top:4px;}
+    .o-right{display:flex;align-items:center;gap:12px;text-align:right;}
+    .o-total{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;}
+    .o-count{display:block;font-size:12px;color:var(--muted);}
+    .chev{width:20px;height:20px;flex:none;color:var(--muted);transition:transform .2s;}
+    .o-top[aria-expanded="true"] .chev{transform:rotate(180deg);}
+    .pill{display:inline-block;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:5px 12px;border-radius:100px;background:rgba(255,250,205,.12);color:var(--cream);white-space:nowrap;}
+    .pill.green{background:rgba(155,230,180,.14);color:var(--ok);}
+    .pill.red{background:rgba(255,107,107,.15);color:var(--bad);}
+
+    /* progress */
+    .prog{padding:2px 20px 18px;}
+    .bar{position:relative;height:4px;background:rgba(255,255,255,.08);border-radius:4px;margin:8px 8px 12px;}
+    .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:4px;transition:width .6s ease;}
+    .bar b{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:#262634;border:2px solid #34344a;transform:translate(-50%,-50%);}
+    .bar b.on{background:var(--accent);border-color:var(--accent);}
+    .bar b.now{box-shadow:0 0 0 5px rgba(169,14,2,.28);}
+    .labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+    .labels span{flex:1;text-align:center;padding:0 2px;}
+    .labels span:first-child{text-align:left;} .labels span:last-child{text-align:right;}
+    .labels .now{color:var(--cream);font-weight:700;}
+    .cancelled-note{padding:0 20px 18px;}
+
+    /* perforation between summary and details */
+    .o-body{position:relative;border-top:2px dashed rgba(255,255,255,.12);padding:18px 20px 20px;}
+    .o-body::before,.o-body::after{content:'';position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--line);}
+    .o-body::before{left:-11px;} .o-body::after{right:-11px;}
+    .items{list-style:none;}
+    .items li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px;}
+    .items li:last-child{border-bottom:none;}
+    .items small{color:var(--muted);font-size:13px;}
+    .items .amt{color:var(--muted);white-space:nowrap;}
+    .meta{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:12px;}
+    .meta .pay{font-size:13px;color:var(--muted);}
+    .meta .tot{font-size:15px;}
+    .meta .tot b{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:28px;color:var(--cream);margin-left:6px;}
+    .copy{margin-top:14px;}
 
     /* exchange */
-    .ex{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);font-size:13px;color:var(--muted);line-height:1.7;}
-    .ex form{margin-top:12px;display:flex;flex-direction:column;gap:12px;}
-    .exmsg{font-size:13px;min-height:16px;}
-    .count{color:var(--muted);font-size:13px;margin:-4px 0 14px;}
-    .hide{display:none;}
-    @media(max-width:520px){nav{padding:14px 18px;}.st{font-size:9px;}}
+    .ex{margin-top:16px;padding:14px 16px;background:var(--surface2);border-radius:var(--r-md);font-size:14px;color:var(--muted);}
+    .ex strong{color:var(--text);font-weight:500;}
+    .ex .when{color:var(--cream);font-weight:700;}
+    .exform{margin-top:14px;display:flex;flex-direction:column;gap:16px;}
+    .exform[hidden]{display:none;}
+    .fld>label,.fld>legend{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px;}
+    fieldset{border:none;}
+    select,input[type=email],input[type=text],textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:var(--r-md);padding:13px 14px;color:var(--text);font-family:inherit;font-size:15px;}
+    select option{background:#15151f;color:#f0f0f0;}
+    textarea{resize:vertical;min-height:76px;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(255,250,205,.6);box-shadow:0 0 0 3px rgba(255,250,205,.12);}
+    .sizes{display:flex;flex-wrap:wrap;gap:8px;}
+    .sizes input{position:absolute;opacity:0;pointer-events:none;}
+    .sizes label{margin:0;min-width:52px;text-align:center;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-md);cursor:pointer;font-weight:700;font-size:14px;transition:all .15s;}
+    .sizes input:checked + label{background:var(--cream);color:#1a1a12;border-color:var(--cream);}
+    .sizes input:focus-visible + label{outline:2px solid var(--cream);outline-offset:2px;}
+    .exmsg{font-size:14px;min-height:20px;}
+    .err{color:var(--bad);} .ok{color:var(--ok);} .muted{color:var(--muted);}
+
+    /* ---------- tracker ---------- */
+    details.track{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);}
+    details.track summary{list-style:none;cursor:pointer;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+    details.track summary::-webkit-details-marker{display:none;}
+    details.track summary h2{margin:0;}
+    details.track summary p{font-size:13px;color:var(--muted);margin-top:2px;}
+    details.track[open] summary .chev{transform:rotate(180deg);}
+    .track-in{padding:0 20px 20px;}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    #trackMsg{font-size:14px;margin-top:12px;min-height:20px;}
+    #trackOut{margin-top:16px;}
+    #trackOut .o{margin-bottom:0;}
+
+    /* ---------- login panel (guests) ---------- */
+    .login-card{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(135deg,#1c0b0a,var(--surface));border:1px solid rgba(169,14,2,.4);border-radius:var(--r-lg);padding:22px;}
+    .login-card h2{margin-bottom:4px;}
+    .login-card p{color:var(--muted);font-size:14px;max-width:44ch;}
+
+    /* ---------- states ---------- */
+    .skel{height:118px;border-radius:var(--r-lg);margin-bottom:14px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:sh 1.4s linear infinite;}
+    @keyframes sh{to{background-position:-200% 0;}}
+    .state{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r-lg);padding:34px 22px;text-align:center;}
+    .state h3{font-family:'Syne',sans-serif;font-size:18px;margin-bottom:6px;}
+    .state p{color:var(--muted);font-size:14px;max-width:40ch;margin:0 auto 16px;}
+    .slow{font-size:13px;color:var(--muted);margin:2px 0 14px;}
+    .foot{margin-top:40px;}
+
+    /* toast */
+    #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--cream);color:#1a1a12;font-weight:700;font-size:14px;padding:11px 20px;border-radius:100px;opacity:0;pointer-events:none;transition:all .25s;z-index:50;}
+    #toast.show{opacity:1;transform:translate(-50%,0);}
+
+    .hide{display:none !important;}
+    @media(max-width:560px){
+      nav{padding:10px 14px;}
+      .wrap{padding-top:26px;}
+      .row{grid-template-columns:1fr;}
+      .o-top{padding:16px;} .prog{padding:2px 16px 16px;} .o-body{padding:16px;}
+      .o-ref{font-size:30px;} .labels{font-size:11px;}
+      .o-count{display:none;}
+    }
+    @media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;scroll-behavior:auto !important;}}
   </style>
 </head>
 <body>
   <nav>
-    <a href="index.html"><img src="logo.webp" alt="AARAMBH"></a>
-    <div><a href="index.html">Shop</a> &nbsp; <button id="logout" class="hide">Log out</button><a id="loginLink" class="hide" href="login.html?next=account.html">Log in</a></div>
+    <a href="index.html" aria-label="AARAMBH home"><img src="LOGO.png" alt="AARAMBH"></a>
+    <div class="navlinks">
+      <a href="index.html">Shop</a>
+      <button id="logout" class="hide" type="button">Log out</button>
+      <a id="loginLink" class="hide" href="login.html?next=account.html">Log in</a>
+    </div>
   </nav>
-  <div class="wrap">
-    <h1 id="hello">My Account</h1>
-    <p class="sub" id="who">Track your AARAMBH orders and request exchanges.</p>
 
-    <h2>Track your order</h2>
-    <div class="box">
-      <form id="trackForm" novalidate>
-        <div class="row">
-          <div class="f"><label for="tRef">Reference ID</label><input id="tRef" maxlength="24" placeholder="e.g. 5F3A9C21" autocomplete="off"></div>
-          <div class="f"><label for="tEmail">Order email</label><input id="tEmail" type="email" maxlength="120" placeholder="you@example.com" autocomplete="email"></div>
-        </div>
-        <button class="btn" id="tGo" type="submit">Track order</button>
-        <div id="trackMsg"></div>
-      </form>
-      <div id="trackOut"></div>
+  <main class="wrap">
+    <div class="head">
+      <div>
+        <h1 id="hello">My account</h1>
+        <p class="sub" id="who">Track your orders and request size exchanges.</p>
+      </div>
+      <div class="stats hide" id="stats">
+        <div class="stat"><b id="statAll">0</b><span>Orders</span></div>
+        <div class="stat"><b id="statActive">0</b><span>On the way</span></div>
+      </div>
     </div>
 
-    <div id="mineWrap" class="hide">
-      <h2>My orders</h2>
-      <div id="orders"><p class="empty">Loading your orders… (the first load can take up to a minute)</p></div>
-    </div>
+    <!-- Guests: log in prompt -->
     <div id="guestNote" class="hide">
-      <h2>My orders</h2>
-      <p class="empty">Log in to see all your orders in one place, including earlier orders placed with your email. <a style="color:var(--accent2)" href="login.html?next=account.html">Log in or create an account</a></p>
+      <div class="login-card">
+        <div>
+          <h2>See all your orders in one place</h2>
+          <p>Log in to see every order you have placed with AARAMBH, including earlier ones made with the same email.</p>
+        </div>
+        <a class="btn" href="login.html?next=account.html">Log in or sign up</a>
+      </div>
     </div>
 
-    <a class="btn" href="index.html">Continue shopping</a>
-  </div>
+    <!-- Logged in: order history -->
+    <section id="mineWrap" class="hide" aria-live="polite">
+      <h2>Your orders</h2>
+      <div id="filters" class="filters hide" role="group" aria-label="Filter orders"></div>
+      <div id="orders">
+        <div class="skel"></div><div class="skel"></div>
+      </div>
+      <p id="slow" class="slow hide">The server is waking up. The first load can take up to a minute.</p>
+    </section>
+
+    <!-- Tracker -->
+    <section class="section">
+      <details class="track" id="trackBox">
+        <summary>
+          <div>
+            <h2>Track with a reference ID</h2>
+            <p>Ordered as a guest, or with a different email? Look it up here.</p>
+          </div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="track-in">
+          <form id="trackForm" novalidate>
+            <div class="row">
+              <div class="fld"><label for="tRef">Reference ID</label><input id="tRef" type="text" maxlength="24" placeholder="e.g. 5F3A9C21" autocomplete="off" autocapitalize="characters"></div>
+              <div class="fld"><label for="tEmail">Email used on the order</label><input id="tEmail" type="email" maxlength="120" placeholder="you@example.com" autocomplete="email"></div>
+            </div>
+            <button class="btn" id="tGo" type="submit" style="margin-top:16px">Track order</button>
+            <div id="trackMsg" role="status"></div>
+          </form>
+          <div id="trackOut"></div>
+        </div>
+      </details>
+    </section>
+
+    <div class="foot"><a class="btn ghost" href="index.html">Continue shopping</a></div>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
 
   <script>
     const API = window.AARAMBH_BACKEND_URL || '';
@@ -104,23 +244,35 @@
     const EXCHANGE_DAYS = 3;
     const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
     const STEPS = [['placed', 'Placed'], ['confirmed', 'Confirmed'], ['shipped', 'Shipped'], ['out_for_delivery', 'Out for delivery'], ['delivered', 'Delivered']];
+    const STATUS_TEXT = { placed: 'Order placed', confirmed: 'Confirmed', shipped: 'On its way', out_for_delivery: 'Out for delivery', delivered: 'Delivered', cancelled: 'Cancelled' };
     const backendReady = () => API && !/YOUR-RENDER-URL/.test(API);
     const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    const money = (n) => '₹' + Number(n || 0).toLocaleString('en-IN');
     const refOf = (o) => (o.ref || String(o._id).slice(-8)).toUpperCase();
+    const isActive = (o) => !['delivered', 'cancelled'].includes(o.orderStatus || 'placed');
 
     let userEmail = '';
     try { userEmail = (JSON.parse(localStorage.getItem('arambhUser') || '{}').email) || ''; } catch (e) {}
+    let allOrders = [];
+    let filter = 'all';
+    let uid = 0;
 
     if (token) { $('logout').classList.remove('hide'); $('mineWrap').classList.remove('hide'); }
-    else { $('loginLink').classList.remove('hide'); $('guestNote').classList.remove('hide'); }
+    else { $('loginLink').classList.remove('hide'); $('guestNote').classList.remove('hide'); $('trackBox').open = true; }
     if (userEmail) $('tEmail').value = userEmail;
 
     $('logout').onclick = () => { localStorage.removeItem('arambhToken'); localStorage.removeItem('arambhUser'); location.href = 'index.html'; };
 
+    let toastTimer;
+    function toast(msg) {
+      const t = $('toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+    }
+
     async function api(path, opts = {}) {
       const headers = Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {});
       const res = await fetch(API + path, Object.assign({}, opts, { headers }));
-      // An expired or invalid login on any account call sends the customer back to log in.
+      // An expired or invalid login on an account call sends the customer back to log in.
       if (res.status === 401 && token && (path.startsWith('/api/auth') || path.startsWith('/api/orders/mine'))) {
         localStorage.removeItem('arambhToken'); localStorage.removeItem('arambhUser');
         location.replace('login.html?next=account.html');
@@ -131,115 +283,200 @@
       return out;
     }
 
+    /* ---------- exchange ---------- */
     function exchangeHTML(o, email) {
       const status = o.orderStatus || 'placed';
       if (o.exchange && o.exchange.status) {
         const s = o.exchange.status;
         const cls = s === 'rejected' ? 'red' : s === 'approved' || s === 'completed' ? 'green' : '';
-        return `<div class="ex">Exchange request: <span class="tag ${cls}">${esc(s)}</span> — new size <b>${esc(o.exchange.newSize || '')}</b>. We will contact you with the next steps.</div>`;
+        return `<div class="ex"><strong>Exchange request</strong> <span class="pill ${cls}">${esc(s)}</span><br>New size: <strong>${esc(o.exchange.newSize || '')}</strong>. We will contact you with the next steps.</div>`;
       }
       if (status === 'cancelled') return '';
       if (status !== 'delivered' || !o.deliveredAt) {
-        return `<div class="ex">Exchange is available for ${EXCHANGE_DAYS} days after delivery.</div>`;
+        return `<div class="ex">Size exchange opens once your order is delivered, and stays open for ${EXCHANGE_DAYS} days.</div>`;
       }
       const deadline = new Date(o.deliveredAt).getTime() + EXCHANGE_DAYS * DAY;
       if (Date.now() > deadline) {
         return `<div class="ex">The ${EXCHANGE_DAYS}-day exchange window for this order closed on ${fmtDate(deadline)}.</div>`;
       }
       const items = o.items || [];
+      const n = ++uid;
       return `<div class="ex">
-        Delivered on ${fmtDate(o.deliveredAt)} — you can request an exchange until <b style="color:var(--accent2)">${fmtDate(deadline)}</b>.
-        <button type="button" class="btn ghost ex-open" style="margin-top:10px;display:block">Request exchange</button>
-        <form class="exform hide" data-ref="${esc(refOf(o))}" data-email="${esc(email)}">
-          <div><label>Item to exchange</label>
-            <select name="item">${items.map((i, n) => `<option value="${n}">${esc(i.name)}${i.size ? ' (' + esc(i.size) + ')' : ''}</option>`).join('')}</select></div>
-          <div><label>New size</label>
-            <select name="size">${SIZES.map((s) => `<option>${s}</option>`).join('')}</select></div>
-          <div><label>Reason</label><textarea name="reason" maxlength="300" placeholder="Wrong size, fit issue…"></textarea></div>
-          <button type="submit" class="btn" style="margin-top:0">Submit exchange request</button>
-          <div class="exmsg"></div>
+        Delivered on ${fmtDate(o.deliveredAt)}. You can exchange the size until <span class="when">${fmtDate(deadline)}</span>.
+        <div style="margin-top:12px"><button type="button" class="btn ghost small ex-open" aria-expanded="false">Request size exchange</button></div>
+        <form class="exform" hidden data-ref="${esc(refOf(o))}" data-email="${esc(email)}">
+          <div class="fld"><label for="item${n}">Item to exchange</label>
+            <select id="item${n}" name="item">${items.map((i, k) => `<option value="${k}">${esc(i.name)}${i.size ? ' (' + esc(i.size) + ')' : ''}</option>`).join('')}</select></div>
+          <fieldset class="fld"><legend>New size</legend>
+            <div class="sizes">${SIZES.map((s, k) => `<input type="radio" name="size" id="sz${n}_${k}" value="${s}"${k === 2 ? ' checked' : ''}><label for="sz${n}_${k}">${s}</label>`).join('')}</div></fieldset>
+          <div class="fld"><label for="rs${n}">Reason (optional)</label><textarea id="rs${n}" name="reason" maxlength="300" placeholder="Too tight in the shoulders, too long…"></textarea></div>
+          <div><button type="submit" class="btn">Send exchange request</button></div>
+          <div class="exmsg" role="status"></div>
         </form>
       </div>`;
     }
 
-    function orderHTML(o, email) {
-      const status = o.orderStatus || 'placed';
-      const idx = STEPS.findIndex((s) => s[0] === status);
-      const timeline = status === 'cancelled'
-        ? '<div style="margin:14px 0"><span class="tag red">Cancelled</span></div>'
-        : `<div class="tl">${STEPS.map((s, n) => `<div class="st ${n <= idx ? 'done' : ''}"><i></i>${s[1]}</div>`).join('')}</div>`;
-      return `<div class="o">
-        <div class="oh"><b>Ref: ${esc(refOf(o))}</b><span>${fmtDate(o.createdAt)}</span></div>
-        ${timeline}
-        <ul>${(o.items || []).map((i) => `<li>${esc(i.name)}${i.size ? ' (' + esc(i.size) + ')' : ''} × ${esc(i.qty)}</li>`).join('')}</ul>
-        <div class="of"><span class="tag">${o.status === 'paid' ? 'Paid online' : 'Cash on Delivery'}</span><b>₹${esc(o.total)}</b></div>
-        ${exchangeHTML(o, email)}
-      </div>`;
+    /* ---------- order card ---------- */
+    function progressHTML(status) {
+      if (status === 'cancelled') return '<div class="cancelled-note"><span class="pill red">Cancelled</span></div>';
+      const idx = Math.max(0, STEPS.findIndex((s) => s[0] === status));
+      const last = STEPS.length - 1;
+      const dots = STEPS.map((s, n) => `<b class="${n <= idx ? 'on' : ''} ${n === idx ? 'now' : ''}" style="left:${(n / last) * 100}%"></b>`).join('');
+      const labels = STEPS.map((s, n) => `<span class="${n === idx ? 'now' : ''}">${s[1]}</span>`).join('');
+      return `<div class="prog" aria-label="Order progress: ${esc(STATUS_TEXT[status] || '')}">
+        <div class="bar"><i style="width:${(idx / last) * 100}%"></i>${dots}</div>
+        <div class="labels">${labels}</div></div>`;
     }
 
-    // ---- Track by reference ID ----
+    function orderHTML(o, email, open) {
+      const status = o.orderStatus || 'placed';
+      const id = 'ob' + (++uid);
+      const cls = status === 'delivered' ? 'green' : status === 'cancelled' ? 'red' : '';
+      const qty = (o.items || []).reduce((s, i) => s + (Number(i.qty) || 0), 0);
+      const rows = (o.items || []).map((i) => `<li><span>${esc(i.name)}${i.size ? ` <small>Size ${esc(i.size)}</small>` : ''} <small>× ${esc(i.qty)}</small></span>${i.price ? `<span class="amt">${money(i.price * i.qty)}</span>` : ''}</li>`).join('');
+      return `<article class="o" data-status="${esc(status)}">
+        <button type="button" class="o-top" aria-expanded="${open ? 'true' : 'false'}" aria-controls="${id}">
+          <span>
+            <span class="o-ref">${esc(refOf(o))}</span>
+            <span class="o-date">Ordered ${fmtDate(o.createdAt)}</span>
+          </span>
+          <span class="o-right">
+            <span><span class="pill ${cls}">${esc(STATUS_TEXT[status] || status)}</span>
+              <span class="o-count">${qty} item${qty === 1 ? '' : 's'}</span></span>
+            <span class="o-total">${money(o.total)}</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </button>
+        ${progressHTML(status)}
+        <div class="o-body" id="${id}" ${open ? '' : 'hidden'}>
+          <ul class="items">${rows}</ul>
+          <div class="meta">
+            <span class="pay">${o.status === 'paid' ? 'Paid online' : 'Cash on delivery'}</span>
+            <span class="tot">${o.status === 'paid' ? 'Total paid' : 'Pay on delivery'}<b>${money(o.total)}</b></span>
+          </div>
+          <button type="button" class="btn ghost small copy" data-ref="${esc(refOf(o))}">Copy reference ID</button>
+          ${exchangeHTML(o, email)}
+        </div>
+      </article>`;
+    }
+
+    /* ---------- interactions ---------- */
+    document.addEventListener('click', (e) => {
+      const top = e.target.closest('.o-top');
+      if (top) {
+        const open = top.getAttribute('aria-expanded') === 'true';
+        top.setAttribute('aria-expanded', String(!open));
+        document.getElementById(top.getAttribute('aria-controls')).hidden = open;
+        return;
+      }
+      const ex = e.target.closest('.ex-open');
+      if (ex) {
+        const form = ex.closest('.ex').querySelector('.exform');
+        form.hidden = !form.hidden;
+        ex.setAttribute('aria-expanded', String(!form.hidden));
+        if (!form.hidden) form.querySelector('select').focus();
+        return;
+      }
+      const cp = e.target.closest('.copy');
+      if (cp) {
+        const ref = cp.dataset.ref;
+        (navigator.clipboard ? navigator.clipboard.writeText(ref) : Promise.reject()).then(() => toast('Reference ID copied')).catch(() => toast('Reference ID: ' + ref));
+        return;
+      }
+      const chip = e.target.closest('.chip');
+      if (chip) { filter = chip.dataset.f; renderOrders(); }
+    });
+
+    document.addEventListener('submit', async (e) => {
+      const f = e.target.closest('.exform');
+      if (!f) return;
+      e.preventDefault();
+      const m = f.querySelector('.exmsg'), btn = f.querySelector('button[type=submit]');
+      m.className = 'exmsg muted'; m.textContent = 'Sending your request…'; btn.disabled = true;
+      try {
+        await api('/api/orders/exchange', { method: 'POST', body: JSON.stringify({
+          ref: f.dataset.ref, email: f.dataset.email,
+          itemIndex: Number(f.item.value), newSize: f.size.value, reason: f.reason.value.trim()
+        }) });
+        f.closest('.ex').innerHTML = '<strong>Exchange request sent.</strong> <span class="pill">requested</span><br>We will contact you shortly with the next steps.';
+        toast('Exchange request sent');
+      } catch (err) {
+        m.className = 'exmsg err'; m.textContent = err.message; btn.disabled = false;
+      }
+    });
+
+    /* ---------- track by reference ID ---------- */
     $('trackForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const ref = $('tRef').value.replace(/[^a-z0-9]/gi, '').toUpperCase();
       const email = $('tEmail').value.trim();
       const msg = $('trackMsg');
       msg.className = 'err'; $('trackOut').innerHTML = '';
-      if (!backendReady()) { msg.textContent = 'Tracking is not available yet.'; return; }
-      if (!ref) { msg.textContent = 'Please enter your reference ID.'; return; }
-      if (!/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'Please enter the email used for the order.'; return; }
+      if (!backendReady()) { msg.textContent = 'Tracking is not available yet. Please try again later.'; return; }
+      if (!ref) { msg.textContent = 'Enter the reference ID from your order email.'; $('tRef').focus(); return; }
+      if (!/^\S+@\S+\.\S+$/.test(email)) { msg.textContent = 'Enter the email you used for the order.'; $('tEmail').focus(); return; }
       $('tGo').disabled = true;
-      msg.className = 'empty'; msg.textContent = 'Looking up your order… (the first request can take up to a minute)';
+      msg.className = 'muted'; msg.textContent = 'Looking up your order. The first request can take up to a minute.';
       try {
         const out = await api('/api/orders/track?ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
         msg.textContent = '';
-        $('trackOut').innerHTML = orderHTML(out.order, email);
+        $('trackOut').innerHTML = orderHTML(out.order, email, true);
       } catch (err) {
         msg.className = 'err'; msg.textContent = err.message === 'login' ? '' : err.message;
       } finally { $('tGo').disabled = false; }
     });
 
-    // ---- Exchange (works for tracked and listed orders) ----
-    document.addEventListener('click', (e) => {
-      const b = e.target.closest('.ex-open');
-      if (!b) return;
-      b.nextElementSibling.classList.toggle('hide');
-    });
-    document.addEventListener('submit', async (e) => {
-      const f = e.target.closest('.exform');
-      if (!f) return;
-      e.preventDefault();
-      const m = f.querySelector('.exmsg'), btn = f.querySelector('button[type=submit]');
-      m.className = 'exmsg empty'; m.textContent = 'Submitting…'; btn.disabled = true;
-      try {
-        await api('/api/orders/exchange', { method: 'POST', body: JSON.stringify({
-          ref: f.dataset.ref, email: f.dataset.email,
-          itemIndex: Number(f.item.value), newSize: f.size.value, reason: f.reason.value.trim()
-        }) });
-        f.innerHTML = '<div class="ok">Exchange request submitted. We will contact you shortly with the next steps.</div>';
-      } catch (err) {
-        m.className = 'exmsg err'; m.textContent = err.message; btn.disabled = false;
+    /* ---------- order list ---------- */
+    function renderOrders() {
+      const box = $('orders'), fbox = $('filters');
+      if (!allOrders.length) {
+        fbox.classList.add('hide');
+        box.innerHTML = `<div class="state"><h3>No orders yet</h3><p>Orders placed with your account email will show up here.</p><a class="btn" href="index.html">Start shopping</a></div>`;
+        return;
       }
-    });
+      const counts = {
+        all: allOrders.length,
+        active: allOrders.filter(isActive).length,
+        delivered: allOrders.filter((o) => o.orderStatus === 'delivered').length,
+        cancelled: allOrders.filter((o) => o.orderStatus === 'cancelled').length,
+      };
+      const defs = [['all', 'All'], ['active', 'On the way'], ['delivered', 'Delivered'], ['cancelled', 'Cancelled']].filter((d) => d[0] === 'all' || counts[d[0]]);
+      if (!defs.some((d) => d[0] === filter)) filter = 'all';
+      fbox.classList.toggle('hide', defs.length < 3);
+      fbox.innerHTML = defs.map((d) => `<button type="button" class="chip" data-f="${d[0]}" aria-pressed="${filter === d[0]}">${d[1]} (${counts[d[0]]})</button>`).join('');
+      const list = allOrders.filter((o) => filter === 'all' || (filter === 'active' ? isActive(o) : o.orderStatus === filter));
+      box.innerHTML = list.map((o, n) => orderHTML(o, o.email || userEmail, n === 0)).join('');
+      $('statAll').textContent = counts.all;
+      $('statActive').textContent = counts.active;
+      $('stats').classList.remove('hide');
+    }
 
-    // ---- Logged-in: full order history (newest first) ----
-    (async () => {
-      if (!token) return;
-      if (!backendReady()) { $('orders').innerHTML = '<p class="err">Accounts are not available yet.</p>'; return; }
+    async function loadOrders() {
+      $('orders').innerHTML = '<div class="skel"></div><div class="skel"></div>';
+      const slowTimer = setTimeout(() => $('slow').classList.remove('hide'), 4000);
       try {
         const [me, mine] = await Promise.all([api('/api/auth/me'), api('/api/orders/mine')]);
         const u = me.user || {};
         userEmail = u.email || userEmail;
         if (userEmail && !$('tEmail').value) $('tEmail').value = userEmail;
         $('hello').textContent = 'Hi, ' + (u.name || 'there').split(' ')[0];
-        $('who').textContent = u.email || '';
-        const orders = (mine.orders || []).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        $('orders').innerHTML = orders.length
-          ? `<p class="count">${orders.length} order${orders.length > 1 ? 's' : ''} found</p>` + orders.map((o) => orderHTML(o, o.email || userEmail)).join('')
-          : '<p class="empty">No orders yet. Orders placed with your account email will show up here.</p>';
+        $('who').textContent = u.email || u.phone || '';
+        allOrders = (mine.orders || []).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        renderOrders();
       } catch (e) {
-        if (e.message !== 'login') $('orders').innerHTML = '<p class="err">' + esc(e.message || 'Something went wrong.') + '</p>';
+        if (e.message !== 'login') {
+          $('orders').innerHTML = `<div class="state"><h3>We could not load your orders</h3><p>${esc(e.message || 'Something went wrong.')}</p><button type="button" class="btn" id="retry">Try again</button></div>`;
+          $('retry').onclick = loadOrders;
+        }
+      } finally {
+        clearTimeout(slowTimer); $('slow').classList.add('hide');
       }
-    })();
+    }
+
+    if (token) {
+      if (!backendReady()) $('orders').innerHTML = '<div class="state"><h3>Accounts are not available yet</h3><p>Please check back soon.</p></div>';
+      else loadOrders();
+    }
   </script>
 </body>
 </html>

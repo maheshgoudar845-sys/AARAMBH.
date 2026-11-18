@@ -56,6 +56,7 @@
     .ex{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);font-size:13px;color:var(--muted);line-height:1.7;}
     .ex form{margin-top:12px;display:flex;flex-direction:column;gap:12px;}
     .exmsg{font-size:13px;min-height:16px;}
+    .count{color:var(--muted);font-size:13px;margin:-4px 0 14px;}
     .hide{display:none;}
     @media(max-width:520px){nav{padding:14px 18px;}.st{font-size:9px;}}
   </style>
@@ -88,7 +89,7 @@
     </div>
     <div id="guestNote" class="hide">
       <h2>My orders</h2>
-      <p class="empty">Log in to see all your orders in one place. <a style="color:var(--accent2)" href="login.html?next=account.html">Log in or create an account</a></p>
+      <p class="empty">Log in to see all your orders in one place, including earlier orders placed with your email. <a style="color:var(--accent2)" href="login.html?next=account.html">Log in or create an account</a></p>
     </div>
 
     <a class="btn" href="index.html">Continue shopping</a>
@@ -119,7 +120,12 @@
     async function api(path, opts = {}) {
       const headers = Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {});
       const res = await fetch(API + path, Object.assign({}, opts, { headers }));
-      if (res.status === 401 && token && path.startsWith('/api/auth')) { localStorage.removeItem('arambhToken'); location.replace('login.html?next=account.html'); throw new Error('login'); }
+      // An expired or invalid login on any account call sends the customer back to log in.
+      if (res.status === 401 && token && (path.startsWith('/api/auth') || path.startsWith('/api/orders/mine'))) {
+        localStorage.removeItem('arambhToken'); localStorage.removeItem('arambhUser');
+        location.replace('login.html?next=account.html');
+        throw new Error('login');
+      }
       const out = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(out.error || 'Something went wrong. Please try again.');
       return out;
@@ -215,7 +221,7 @@
       }
     });
 
-    // ---- Logged-in: my orders ----
+    // ---- Logged-in: full order history (newest first) ----
     (async () => {
       if (!token) return;
       if (!backendReady()) { $('orders').innerHTML = '<p class="err">Accounts are not available yet.</p>'; return; }
@@ -226,10 +232,10 @@
         if (userEmail && !$('tEmail').value) $('tEmail').value = userEmail;
         $('hello').textContent = 'Hi, ' + (u.name || 'there').split(' ')[0];
         $('who').textContent = u.email || '';
-        const orders = mine.orders || [];
+        const orders = (mine.orders || []).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         $('orders').innerHTML = orders.length
-          ? orders.map((o) => orderHTML(o, o.email || userEmail)).join('')
-          : '<p class="empty">No orders yet. Orders you place while logged in will show up here.</p>';
+          ? `<p class="count">${orders.length} order${orders.length > 1 ? 's' : ''} found</p>` + orders.map((o) => orderHTML(o, o.email || userEmail)).join('')
+          : '<p class="empty">No orders yet. Orders placed with your account email will show up here.</p>';
       } catch (e) {
         if (e.message !== 'login') $('orders').innerHTML = '<p class="err">' + esc(e.message || 'Something went wrong.') + '</p>';
       }

@@ -5,7 +5,7 @@
 <meta name="google-site-verification" content="google32b0e884023597a4.html" />
 <title>AARAMBH — Premium Streetwear</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="AARAMBH — premium Indian streetwear. Polos, oversized tees, printed tees, hoodies, shirts and ladies crop tops. Original designs, premium GSM fabric.">
+<meta name="description" content="AARAMBH — premium Indian streetwear. Polos, oversized and regular fit tees (plain and printed), hoodies, shirts and ladies crop tops. Original designs, premium GSM fabric.">
 <meta name="theme-color" content="#080810">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 nav.scrolled{padding:10px 40px}
 .nav-logo img{height:54px;filter:brightness(1.1);transition:height .3s}
 nav.scrolled .nav-logo img{height:44px}
-.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links{display:flex;gap:22px;list-style:none}
 .nav-links a{font:600 12px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;position:relative;transition:color .3s;white-space:nowrap}
 .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s}
 .nav-links a:hover{color:var(--text)}.nav-links a:hover::after{width:100%}
@@ -101,7 +101,7 @@ nav.scrolled .nav-logo img{height:44px}
 .section-title{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(46px,6vw,80px);letter-spacing:2px;line-height:1}
 .section-desc{margin-top:14px;color:var(--muted);font-size:16px;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.6}
 
-/* JUST DROPPED PROMO SECTION (Spider Acid Wash + Regular Fit Tee) */
+/* JUST DROPPED PROMO SECTION (Spider Acid Wash + Printed Regular Fit Tee) */
 .drop-promo-section{padding:90px 40px 100px;max-width:1400px;margin:auto}
 .drop-promo-badge{display:inline-flex;align-items:center;gap:8px;font:800 11px 'Syne',sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.35);padding:8px 18px;border-radius:100px;margin-bottom:20px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent2);animation:teaser-pulse 1.4s ease-in-out infinite}
@@ -122,17 +122,28 @@ nav.scrolled .nav-logo img{height:44px}
 .drop-promo-card:hover .drop-promo-cta{background:var(--accent);border-color:var(--accent)}
 .drop-promo-price{font:400 24px 'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--accent2)}
 
-/* COLLECTIONS */
+/* COLLECTIONS (grouped by fit) */
 .collections-section{padding:100px 40px;max-width:1500px;margin:auto}
 .collections-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.collections-grid.two{grid-template-columns:repeat(2,1fr)}
+.collections-grid.four{grid-template-columns:repeat(4,1fr)}
+.fit-block{margin-bottom:64px}
+.fit-block:last-child{margin-bottom:0}
+.fit-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.fit-title{font:400 clamp(34px,4vw,52px) 'Bebas Neue',sans-serif;letter-spacing:2px;line-height:1}
+.fit-title span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.fit-sub{color:var(--muted);font-size:14px;margin-top:8px;line-height:1.5}
+.fit-link{font:700 11px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);text-decoration:none;border:1px solid rgba(var(--accent2-rgb),.3);padding:9px 18px;border-radius:100px;white-space:nowrap;transition:background .3s,border-color .3s}
+.fit-link:hover{background:rgba(var(--accent-rgb),.25);border-color:var(--accent)}
 .collection-card{position:relative;border-radius:20px;overflow:hidden;display:block;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--border);transition:transform .4s ease,box-shadow .4s ease,border-color .3s}
 .collection-card:hover{transform:translateY(-8px);box-shadow:0 40px 80px rgba(0,0,0,.8);border-color:rgba(var(--accent-rgb),.25)}
 .collection-card img{width:100%;height:480px;object-fit:cover;display:block;transition:transform .6s ease}
+.collections-grid.four .collection-card img{height:420px}
 .collection-card:hover img{transform:scale(1.07)}
 .card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(4,4,10,.95) 0%,rgba(4,4,10,.4) 45%,transparent 75%);pointer-events:none}
 .card-tag{position:absolute;top:16px;left:16px;font:700 10px 'Syne',sans-serif;letter-spacing:3px;text-transform:uppercase;background:var(--accent);color:var(--accent2);padding:5px 13px;border-radius:100px;z-index:3}
 .card-info{position:absolute;bottom:0;left:0;right:0;padding:24px 22px 26px;z-index:3}
-.card-info h2{font:400 32px 'Bebas Neue',sans-serif;letter-spacing:1.5px;line-height:1;color:#fff;margin-bottom:6px}
+.card-info h2,.card-info h3{font:400 32px 'Bebas Neue',sans-serif;letter-spacing:1.5px;line-height:1;color:#fff;margin-bottom:6px}
 .card-info p{color:rgba(255,255,255,.7);font-size:13px;line-height:1.5;margin-bottom:14px}
 .card-cta{display:inline-flex;align-items:center;gap:8px;font:700 11px 'Syne',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#fff;border:1px solid rgba(255,255,255,.25);padding:8px 16px;border-radius:100px;transition:background .3s,border-color .3s}
 .collection-card:hover .card-cta{background:var(--accent);border-color:var(--accent)}
@@ -268,7 +279,8 @@ footer{background:#04040a;border-top:1px solid var(--border);padding:80px 40px 4
 .reveal-delay-1{transition-delay:.1s}.reveal-delay-2{transition-delay:.2s}.reveal-delay-3{transition-delay:.3s}
 .no-js .reveal{opacity:1;transform:none}
 
-@media (max-width:1100px){.nav-links{gap:16px}.nav-links a{font-size:11px;letter-spacing:1.4px}}
+@media (max-width:1250px){.nav-links{gap:16px}.nav-links a{font-size:11px;letter-spacing:1.4px}.nav-login{display:none}}
+@media (max-width:1100px){.nav-links{gap:14px}.nav-links a{font-size:10.5px;letter-spacing:1.2px}.collections-grid.four{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:980px){
 nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 .nav-links,.nav-login{display:none}
@@ -280,8 +292,9 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 .trust-strip{grid-template-columns:1fr 1fr;padding:20px}
 .drop-promo-grid{grid-template-columns:1fr}
 .drop-promo-media{height:440px}
-.collections-grid{grid-template-columns:repeat(2,1fr);gap:12px}
-.collection-card img{height:340px}
+.collections-grid,.collections-grid.two,.collections-grid.four{grid-template-columns:repeat(2,1fr);gap:12px}
+.collection-card img,.collections-grid.four .collection-card img{height:340px}
+.fit-block{margin-bottom:48px}
 .product-grid{grid-template-columns:repeat(2,1fr)}
 .pick-shell{grid-template-columns:1fr}
 .pick-image{min-height:420px}
@@ -309,8 +322,8 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 .drop-promo-section{padding:60px 20px 70px}
 .drop-promo-media{height:380px}
 .drop-promo-info h3{font-size:36px}
-.collections-grid{grid-template-columns:1fr}
-.collection-card img{height:300px}
+.collections-grid,.collections-grid.two,.collections-grid.four{grid-template-columns:1fr}
+.collection-card img,.collections-grid.four .collection-card img{height:300px}
 .drop-section,.pick-section,.conversion-section{padding:70px 20px}
 .product-grid{grid-template-columns:1fr}
 .product-image-wrap{height:360px}
@@ -338,7 +351,7 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
-<div class="announce" id="announce">🔥 First order? Use code <b>FIRSTDROP10</b> for 10% off · Spider Acid Wash Tee is live
+<div class="announce" id="announce">🔥 First order? Use code <b>FIRSTDROP10</b> for 10% off · Plain and printed tees in Oversized and Regular Fit
   <button type="button" id="announceClose" aria-label="Close announcement">×</button>
 </div>
 
@@ -346,7 +359,8 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
   <a href="#" class="nav-logo" aria-label="AARAMBH home"><img src="LOGO.png" alt="AARAMBH" width="150" height="54"></a>
   <ul class="nav-links">
     <li><a href="polo.html">Polos</a></li>
-    <li><a href="oversized.html">Oversized</a></li>
+    <li><a href="#oversizedFit">Oversized</a></li>
+    <li><a href="#regularFit">Regular Fit</a></li>
     <li><a href="printed.html">Printed</a></li>
     <li><a href="hoodie.html">Hoodies</a></li>
     <li><a href="shirt.html">Shirts</a></li>
@@ -366,7 +380,8 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
   <a href="#" class="active">Home</a>
   <a href="login.html">Log In</a>
   <a href="polo.html">Polos</a>
-  <a href="oversized.html">Oversized</a>
+  <a href="#oversizedFit">Oversized</a>
+  <a href="#regularFit">Regular Fit</a>
   <a href="printed.html">Printed</a>
   <a href="hoodie.html">Hoodies</a>
   <a href="shirt.html">Shirts</a>
@@ -403,12 +418,12 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 
 <div class="ticker-wrap" aria-hidden="true">
   <div class="ticker">
-    <span>Premium GSM Fabric</span><span>Streetwear</span><span>AARAMBH</span><span>Wear Your Vibe</span><span>Bold Prints</span><span>Oversized Fits</span><span>🔥 Spider Acid Wash Tee — Live Now</span><span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
-    <span>Premium GSM Fabric</span><span>Streetwear</span><span>AARAMBH</span><span>Wear Your Vibe</span><span>Bold Prints</span><span>Oversized Fits</span><span>🔥 Spider Acid Wash Tee — Live Now</span><span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
+    <span>Premium GSM Fabric</span><span>Streetwear</span><span>AARAMBH</span><span>Wear Your Vibe</span><span>Bold Prints</span><span>Oversized Fits</span><span>Regular Fits</span><span>🔥 Spider Acid Wash Tee — Live Now</span><span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
+    <span>Premium GSM Fabric</span><span>Streetwear</span><span>AARAMBH</span><span>Wear Your Vibe</span><span>Bold Prints</span><span>Oversized Fits</span><span>Regular Fits</span><span>🔥 Spider Acid Wash Tee — Live Now</span><span class="crop-ticker">💗 Ladies Crop Tops — Live Now</span>
   </div>
 </div>
 
-<!-- JUST DROPPED: Spider Acid Wash + Regular Fit Tee -->
+<!-- JUST DROPPED: Spider Acid Wash + Printed Regular Fit Tee -->
 <section class="drop-promo-section" id="justDropped">
   <div class="section-header reveal">
     <span class="drop-promo-badge"><span class="dot"></span>Just Dropped</span>
@@ -434,16 +449,16 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
     </a>
     <a href="printed.html" class="drop-promo-card reveal reveal-delay-1">
       <div class="drop-promo-media">
-        <img src="regular-fatality-black-front.png" alt="AARAMBH regular fit tee front" loading="lazy" decoding="async">
-        <img src="regular-black-back.png" alt="AARAMBH regular fit tee back" loading="lazy" decoding="async">
+        <img src="regular-fatality-black-front.png" alt="AARAMBH printed regular fit tee front" loading="lazy" decoding="async">
+        <img src="regular-black-back.png" alt="AARAMBH printed regular fit tee back" loading="lazy" decoding="async">
       </div>
       <div class="drop-promo-overlay"></div>
       <span class="drop-promo-tag">New Drop</span>
       <div class="drop-promo-info">
-        <h3>REGULAR FIT TEE</h3>
-        <p>Clean regular fit. Premium GSM cotton. Everyday AARAMBH.</p>
+        <h3>PRINTED REGULAR FIT</h3>
+        <p>Clean regular fit with a front print. 180 GSM pure cotton. Everyday AARAMBH.</p>
         <div class="drop-promo-foot">
-          <span class="drop-promo-price">₹369</span>
+          <span class="drop-promo-price">From ₹349</span>
           <span class="drop-promo-cta">Shop Now →</span>
         </div>
       </div>
@@ -451,43 +466,87 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
   </div>
 </section>
 
-<section class="collections-section">
+<!-- COLLECTIONS, SECTIONED BY FIT -->
+<section class="collections-section" id="collections">
   <div class="section-header reveal">
     <span class="section-label">Our Collections</span>
-    <h2 class="section-title">SHOP THE DROPS</h2>
-    <p class="section-desc">Six distinct collections. One unmistakable identity.</p>
+    <h2 class="section-title">SHOP BY FIT</h2>
+    <p class="section-desc">Pick your fit first, then plain or printed.</p>
   </div>
-  <div class="collections-grid">
-    <a href="polo.html" class="collection-card reveal">
-      <img src="Black_back.png" alt="AARAMBH Polo Collection" loading="lazy" decoding="async">
-      <div class="card-overlay"></div><span class="card-tag">Bestseller</span>
-      <div class="card-info"><h2>Polo Collection</h2><p>Sharp silhouettes. Premium GSM cotton. Collars that command.</p><span class="card-cta">Shop Now →</span></div>
-    </a>
-    <a href="oversized.html" class="collection-card reveal reveal-delay-1">
-      <img src="Royal_blue.jpg" alt="AARAMBH Oversized Collection" loading="lazy" decoding="async">
-      <div class="card-overlay"></div><span class="card-tag">New Drop</span>
-      <div class="card-info"><h2>Oversized</h2><p>Relaxed fits with bold presence. Drop shoulders, heavy fabric.</p><span class="card-cta">Shop Now →</span></div>
-    </a>
-    <a href="printed.html" class="collection-card reveal reveal-delay-2">
-      <img src="Spider_acid_front.png" alt="AARAMBH Printed Collection" loading="lazy" decoding="async">
-      <div class="card-overlay"></div><span class="card-tag">New Drop</span>
-      <div class="card-info"><h2>Printed Tees</h2><p>Graphics that speak before you do. Bold art, sharp prints.</p><span class="card-cta">Shop Now →</span></div>
-    </a>
-    <a href="hoodie.html" class="collection-card reveal reveal-delay-1">
-      <img src="hoodie-grey-front.png" alt="AARAMBH Hoodie Collection" loading="lazy" decoding="async">
-      <div class="card-overlay"></div><span class="card-tag">Premium</span>
-      <div class="card-info"><h2>Hoodies</h2><p>Heavy-weight comfort. Street-ready silhouettes. Made to last.</p><span class="card-cta">Shop Now →</span></div>
-    </a>
-    <a href="shirt.html" class="collection-card reveal reveal-delay-2">
-      <img src="red_boxy.jpeg" alt="AARAMBH Shirt Collection" loading="lazy" decoding="async">
-      <div class="card-overlay"></div><span class="card-tag">New Drop</span>
-      <div class="card-info"><h2>Shirts</h2><p>Boxy fit, bold colour. Red, Blue and Pink, live now.</p><span class="card-cta">Shop Now →</span></div>
-    </a>
-    <a href="croptop.html" class="collection-card reveal reveal-delay-3">
-      <img src="Glorious Butterfly White Crop Top-front.jpeg" alt="AARAMBH Ladies Crop Tops Collection" loading="lazy" decoding="async">
-      <div class="card-overlay"></div><span class="card-tag" id="cropTag">New Drop</span>
-      <div class="card-info"><h2>Ladies Crop Tops</h2><p>Printed crop tops for women. Cropped fit, soft stretch cotton. Just <span data-price="crop_self_love">₹349</span>.</p><span class="card-cta">Shop Now →</span></div>
-    </a>
+
+  <div class="fit-block" id="oversizedFit">
+    <div class="fit-head reveal">
+      <div>
+        <h2 class="fit-title">OVERSIZED <span>FIT</span></h2>
+        <p class="fit-sub">Drop shoulder, 240 GSM pure cotton French terry. Plain and printed.</p>
+      </div>
+      <a class="fit-link" href="oversized.html">View plain oversized →</a>
+    </div>
+    <div class="collections-grid two">
+      <a href="oversized.html" class="collection-card reveal">
+        <img src="ROYAL_BLUE_FRONT.png" alt="AARAMBH Plain Oversized Tees" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag">Plain</span>
+        <div class="card-info"><h3>Plain Oversized</h3><p>12 colours. Drop shoulders, heavy fabric. Buy any 3 and save 8%.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+      <a href="printed.html" class="collection-card reveal reveal-delay-1">
+        <img src="Spider_acid_front.png" alt="AARAMBH Printed Oversized Tees" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag">Printed</span>
+        <div class="card-info"><h3>Printed Oversized</h3><p>Graphics that speak before you do. Acid wash, art and anime prints.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="fit-block" id="regularFit">
+    <div class="fit-head reveal">
+      <div>
+        <h2 class="fit-title">REGULAR <span>FIT</span></h2>
+        <p class="fit-sub">Classic fit, 180 GSM pure cotton. Plain and printed.</p>
+      </div>
+      <a class="fit-link" href="regular.html">View plain regular →</a>
+    </div>
+    <div class="collections-grid two">
+      <a href="regular.html" class="collection-card reveal">
+        <img src="regular-black-back.png" alt="AARAMBH Plain Regular Fit Tees" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag">Plain</span>
+        <div class="card-info"><h3>Plain Regular Fit</h3><p>Clean everyday basics in a classic regular fit.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+      <a href="printed.html" class="collection-card reveal reveal-delay-1">
+        <img src="regular-fatality-black-front.png" alt="AARAMBH Printed Regular Fit Tees" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag">Printed</span>
+        <div class="card-info"><h3>Printed Regular Fit</h3><p>13 designs with a bold front print. From ₹349.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="fit-block" id="moreCollections">
+    <div class="fit-head reveal">
+      <div>
+        <h2 class="fit-title">MORE <span>COLLECTIONS</span></h2>
+        <p class="fit-sub">Polos, hoodies, shirts and ladies crop tops.</p>
+      </div>
+    </div>
+    <div class="collections-grid four">
+      <a href="polo.html" class="collection-card reveal">
+        <img src="Black_back.png" alt="AARAMBH Polo Collection" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag">Bestseller</span>
+        <div class="card-info"><h3>Polos</h3><p>Sharp silhouettes. Premium GSM cotton. Collars that command.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+      <a href="hoodie.html" class="collection-card reveal reveal-delay-1">
+        <img src="hoodie-grey-front.png" alt="AARAMBH Hoodie Collection" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag">Premium</span>
+        <div class="card-info"><h3>Hoodies</h3><p>Heavy-weight comfort. Street-ready silhouettes.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+      <a href="shirt.html" class="collection-card reveal reveal-delay-2">
+        <img src="red_boxy.jpeg" alt="AARAMBH Shirt Collection" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag">New Drop</span>
+        <div class="card-info"><h3>Shirts</h3><p>Boxy fit, bold colour. Red, Blue and Pink.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+      <a href="croptop.html" class="collection-card reveal reveal-delay-3">
+        <img src="Glorious Butterfly White Crop Top-front.jpeg" alt="AARAMBH Ladies Crop Tops Collection" loading="lazy" decoding="async">
+        <div class="card-overlay"></div><span class="card-tag" id="cropTag">New Drop</span>
+        <div class="card-info"><h3>Ladies Crop Tops</h3><p>Printed crop tops for women. Just <span data-price="crop_self_love">₹349</span>.</p><span class="card-cta">Shop Now →</span></div>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -515,7 +574,7 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 
 <section class="pick-section" id="yourPick">
   <div class="pick-shell reveal">
-    <div class="pick-image"><img id="suggestedImage" src="Royal_blue.jpg" alt="Recommended AARAMBH product"></div>
+    <div class="pick-image"><img id="suggestedImage" src="ROYAL_BLUE_FRONT.png" alt="Recommended AARAMBH product"></div>
     <div class="pick-panel">
       <span class="pick-kicker">Picked for you</span>
       <h2 class="pick-title">YOUR AARAMBH PICK</h2>
@@ -603,8 +662,9 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
         <h4>Collections</h4>
         <ul>
           <li><a href="polo.html">Polo Collection</a></li>
-          <li><a href="oversized.html">Oversized Collection</a></li>
-          <li><a href="printed.html">Printed Collection</a></li>
+          <li><a href="oversized.html">Plain Oversized</a></li>
+          <li><a href="regular.html">Plain Regular Fit</a></li>
+          <li><a href="printed.html">Printed Tees (Oversized and Regular)</a></li>
           <li><a href="hoodie.html">Hoodies</a></li>
           <li><a href="shirt.html">Shirts</a></li>
           <li><a href="croptop.html">Ladies Crop Tops</a></li>
@@ -718,9 +778,10 @@ if (!cropLive) {
 /* Random product recommendation (price lookup falls back to typed prices if prices.js fails) */
 const fp = (key, fallback) => (typeof formatPrice === 'function' && window.PRICES && window.PRICES[key] != null) ? formatPrice(key) : fallback;
 const recommendedProducts = [
-  { name:'Royal Blue Oversized', type:'Plain Oversized', price: fp('oversized_royal_blue','₹399'), image:'Royal_blue.jpg', link:'oversized.html' },
-  { name:'Spider Acid Wash', type:'Printed Oversized', price: fp('unseen','₹549'), image:'Spider_acid_front.png', link:'printed.html' },
-  { name:'Veiled Bloom', type:'Printed Oversized', price: fp('veiled','₹549'), image:'veiled_blue_b.png', link:'printed.html#veiledBloom' },
+  { name:'Royal Blue Oversized', type:'Plain Oversized', price: fp('oversized_royal_blue','₹399'), image:'ROYAL_BLUE_FRONT.png', link:'oversized.html' },
+  { name:'Spider Acid Wash', type:'Printed Oversized', price: fp('unseen','₹669'), image:'Spider_acid_front.png', link:'printed.html' },
+  { name:'Veiled Bloom', type:'Printed Oversized', price: fp('veiled','₹559'), image:'veiled_blue_b.png', link:'printed.html#veiledBloom' },
+  { name:'Fatality', type:'Printed Regular Fit', price:'₹369', image:'regular-fatality-black-front.png', link:'printed.html' },
   { name:'Classic Polo', type:'Polo Collection', price: fp('polo','₹399'), image:'polo1.jpg', link:'polo.html' },
   { name:'Black Hoodie', type:'Hoodie Collection', price:'Explore collection', image:'hoodie-black-front.png', link:'hoodie.html' },
   { name:'Red Boxy Shirt', type:'Shirt Collection', price: fp('shirt_red_boxy','₹649'), image:'red_boxy.jpeg', link:'shirt.html' }

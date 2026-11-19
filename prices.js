@@ -97,6 +97,7 @@
         'Lost Garden': 429,
         'Japan Art': 449,
         'Valley': 499,
+         'Cathedral':449,
        'Let-me-distract-you': 399,
       'Owl-glass-art': 449,
       },

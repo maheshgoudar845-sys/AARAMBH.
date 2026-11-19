@@ -422,6 +422,7 @@
       if (cartMode) saveCart(orderItems);
       renderSummary();
       updateOrderTotal();
+      scheduleCartSave();
     }
     cartItemsList.addEventListener('click', (e) => {
       const btn = e.target.closest('.cart-item-remove');
@@ -895,6 +896,48 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // ---------- Cart reminders (AARAMBH win-back) ----------
+    // Once the customer has typed a valid email, we quietly save their cart on the server.
+    // If they leave without ordering, the server emails them a reminder later.
+    // Nothing is saved after they press the order button.
+    let cartSaveTimer = null;
+    let cartSaveBlocked = false;
+    let lastCartSaved = '';
+
+    function scheduleCartSave() {
+      clearTimeout(cartSaveTimer);
+      cartSaveTimer = setTimeout(saveCartForReminder, 1500);
+    }
+
+    function saveCartForReminder() {
+      try {
+        if (cartSaveBlocked || !orderItems.length) return;
+        if (/YOUR-RENDER-URL/.test(BACKEND_URL)) return;
+        const email = $('email').value.trim().toLowerCase();
+        if (!/^\S+@\S+\.\S+$/.test(email)) return;
+        const body = JSON.stringify({
+          email: email,
+          phone: $('phone').value,
+          name: $('fullName').value.trim(),
+          items: orderItems.map((i) => ({
+            id: i.id,
+            product: i.product,
+            size: (!multi && sizeSelect.value) ? sizeSelect.value.toUpperCase() : i.size,
+            qty: i.qty
+          }))
+        });
+        if (body === lastCartSaved) return;
+        lastCartSaved = body;
+        fetch(BACKEND_URL + '/api/cart/save', { method: 'POST', headers: authHeaders(), body: body, keepalive: true }).catch(() => {});
+      } catch (e) { /* never bother the customer */ }
+    }
+
+    ['email', 'phone', 'fullName'].forEach((id) => $(id).addEventListener('change', scheduleCartSave));
+    sizeSelect.addEventListener('change', scheduleCartSave);
+    quantityInput.addEventListener('change', scheduleCartSave);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveCartForReminder(); });
+    window.addEventListener('pagehide', saveCartForReminder);
+
     // ---------- Submit ----------
     $('orderForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -902,10 +945,13 @@
       if (!orderItems.length) { alert('Your order is empty. Please pick a product first.'); return; }
       if (!validateForm()) return;
       const d = collect();
+      cartSaveBlocked = true; // they are ordering now, so no reminder needed
+      clearTimeout(cartSaveTimer);
       try {
         if (selectedMethod === 'ONLINE') await startPayment(d);
         else await placeCod(d);
       } catch (err) {
+        cartSaveBlocked = false; // the order did not go through, so reminders can work again
         alert(err.message || 'Something went wrong. Please try again.');
         setLoading(false);
       }
@@ -931,6 +977,7 @@
             put('address', a.line1);
             if (a.pincode && !$('pincode').value) { $('pincode').value = a.pincode; $('pincode').dispatchEvent(new Event('input')); }
           }
+          scheduleCartSave(); // logged-in customers already have an email
         })
         .catch(() => {});
     })();

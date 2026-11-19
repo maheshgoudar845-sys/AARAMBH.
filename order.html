@@ -48,6 +48,7 @@
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
     input,select,textarea{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:13px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .25s,background .25s,box-shadow .25s;}
     input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(var(--accent-rgb),0.5);background:rgba(255,255,255,0.05);box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.12);}
+    input[readonly]{opacity:.8;}
     textarea{resize:vertical;min-height:70px;}
     select{cursor:pointer;}
     .field-error{color:#ff6b6b;font-size:12px;margin-top:6px;display:none;}
@@ -99,6 +100,14 @@
     .success-icon{font-size:46px;margin-bottom:14px;}
     .success-overlay h3{font-family:'Bebas Neue',sans-serif;font-size:30px;margin-bottom:10px;}
     .success-overlay p{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.7;}
+    .login-gate{display:none;text-align:center;padding:10px 4px 6px;}
+    .login-gate.show{display:block;}
+    .login-gate .gate-icon{font-size:40px;margin-bottom:12px;}
+    .login-gate h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:10px;}
+    .login-gate p{color:var(--muted);font-size:14px;line-height:1.7;margin-bottom:22px;}
+    .gate-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:16px 20px;background:var(--accent);color:#fff;text-decoration:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;border-radius:100px;box-shadow:0 10px 30px rgba(var(--accent-rgb),0.3);transition:background .3s,transform .2s;}
+    .gate-btn:hover{background:#8a0b02;transform:translateY(-2px);}
+    .gate-note{margin-top:14px;font-size:12px;color:var(--muted);}
     footer{text-align:center;padding:30px 20px;border-top:1px solid var(--border);}
     footer p{color:var(--muted);font-size:12.5px;}
     footer a{color:var(--accent2);text-decoration:none;}
@@ -118,12 +127,20 @@
   <div class="page-wrap">
     <div>
       <h1 class="page-title">Place Your Order</h1>
-      <p class="page-sub">Fill in your details below. Pay on delivery, or pay online securely.</p>
+      <p class="page-sub">Log in or create an account, then fill in your details. Pay on delivery, or pay online securely.</p>
 
       <div class="card">
         <div class="summary-block">
           <div class="summary-heading"><h2 id="summaryHeading">Your Order</h2></div>
           <div id="cartItemsList"></div>
+        </div>
+
+        <div class="login-gate" id="loginGate">
+          <div class="gate-icon">🔐</div>
+          <h3>Create an account to order</h3>
+          <p>To place your order at AARAMBH, please log in or create a free account. It takes less than a minute, and it makes sure every discount code works fairly: one use per customer.</p>
+          <a href="login.html" id="gateLoginBtn" class="gate-btn">Log in / Create account</a>
+          <div class="gate-note">Your items stay saved. You will come right back to this page after logging in.</div>
         </div>
 
         <form id="orderForm" novalidate>
@@ -195,7 +212,7 @@
           </div>
 
           <div class="form-group" id="group-coupon">
-            <label for="couponCode">Discount Code (optional)</label>
+            <label for="couponCode">Discount Code (optional, one use per account)</label>
             <div style="display:flex; gap:10px;">
               <input type="text" id="couponCode" name="couponCode" placeholder="Have a code?" maxlength="20" style="text-transform:uppercase;">
               <button type="button" class="copy-btn" id="applyCouponBtn" style="flex-shrink:0; padding:0 18px;">Apply</button>
@@ -269,9 +286,9 @@
         <div class="side-divider"></div>
         <h3 style="font-size:20px;">How It Works</h3>
         <ul class="side-list">
-          <li>1️⃣ <span><b>Fill the form</b> with your size, address and payment choice.</span></li>
-          <li>2️⃣ <span><b>We confirm</b> your order on WhatsApp within a few hours.</span></li>
-          <li>3️⃣ <span><b>Your order ships.</b> Pay on delivery, or pay online securely.</span></li>
+          <li>1️⃣ <span><b>Log in</b> or create your free AARAMBH account.</span></li>
+          <li>2️⃣ <span><b>Fill the form</b> with your size, address and payment choice.</span></li>
+          <li>3️⃣ <span><b>We confirm</b> your order on WhatsApp, then it ships. Pay on delivery, or pay online securely.</span></li>
         </ul>
       </div>
     </div>
@@ -471,6 +488,26 @@
     let isNearZone = false;
     let lookupToken = 0;
 
+    // ---------- Account required (one customer = one account = one use of each coupon) ----------
+    function getToken() {
+      try { return localStorage.getItem('arambhToken') || ''; } catch (e) { return ''; }
+    }
+    function clearToken() {
+      try { localStorage.removeItem('arambhToken'); } catch (e) {}
+    }
+    function loginUrl() {
+      return 'login.html?next=' + encodeURIComponent('order.html' + location.search);
+    }
+    function showLoginGate() {
+      $('orderForm').style.display = 'none';
+      $('loginGate').classList.add('show');
+      $('gateLoginBtn').href = loginUrl();
+    }
+    function showOrderForm() {
+      $('loginGate').classList.remove('show');
+      $('orderForm').style.display = '';
+    }
+
     // Restore items after a failed online payment (order.html?retry=1)
     if (params.get('retry') === '1') {
       try {
@@ -541,7 +578,7 @@
         }
       } else {
         st.className = 'pincode-status show found';
-        txt.textContent = appliedCoupon + ' applied: ' + Math.round(COUPONS[appliedCoupon] * 100) + '% off';
+        txt.textContent = appliedCoupon + ' applied: ' + Math.round(COUPONS[appliedCoupon] * 100) + '% off (one use per account)';
       }
     }
 
@@ -602,6 +639,7 @@
 
     // ---------- Coupon ----------
     $('applyCouponBtn').addEventListener('click', () => {
+      if (!getToken()) { showLoginGate(); return; }
       const code = $('couponCode').value.trim().toUpperCase();
       const st = $('couponStatus');
       if (!code) {
@@ -663,7 +701,8 @@
 
     function authHeaders() {
       const hd = { 'Content-Type': 'application/json' };
-      try { const t = localStorage.getItem('arambhToken'); if (t) hd.Authorization = 'Bearer ' + t; } catch (e) {}
+      const t = getToken();
+      if (t) hd.Authorization = 'Bearer ' + t;
       return hd;
     }
 
@@ -813,6 +852,11 @@
           })
         });
         const out = await res.json().catch(() => ({}));
+        if (res.status === 401) {
+          clearToken();
+          showLoginGate();
+          throw new Error('Please log in or create an AARAMBH account to place your order.');
+        }
         if (!res.ok) throw new Error(out.error || 'Something went wrong. Please try again.');
         return out;
       } catch (e) {
@@ -942,6 +986,11 @@
     $('orderForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if ($('website').value) return; // honeypot
+      if (!getToken()) {
+        showLoginGate();
+        alert('Please log in or create an AARAMBH account to place your order.');
+        return;
+      }
       if (!orderItems.length) { alert('Your order is empty. Please pick a product first.'); return; }
       if (!validateForm()) return;
       const d = collect();
@@ -957,27 +1006,34 @@
       }
     });
 
-    // ---------- Logged-in customers: account link + autofill ----------
+    // ---------- Account: required before ordering, plus autofill ----------
     (function accountBits() {
-      let token = null;
-      try { token = localStorage.getItem('arambhToken'); } catch (e) {}
-      const nextUrl = encodeURIComponent('order.html' + location.search);
+      const token = getToken();
       document.querySelector('.page-sub').insertAdjacentHTML('beforeend', token
         ? '<br><a href="account.html" style="color:var(--accent2)">My account and orders</a>'
-        : '<br>Have an account? <a href="login.html?next=' + nextUrl + '" style="color:var(--accent2)">Log in</a> to autofill your details.');
-      if (!token || /YOUR-RENDER-URL/.test(BACKEND_URL)) return;
+        : '<br>Already have an account? <a href="' + loginUrl() + '" style="color:var(--accent2)">Log in</a>');
+
+      if (!token) { showLoginGate(); return; }
+      showOrderForm();
+      if (/YOUR-RENDER-URL/.test(BACKEND_URL)) return;
+
       fetch(BACKEND_URL + '/api/auth/me', { headers: authHeaders() })
-        .then((r) => { if (r.status === 401) { try { localStorage.removeItem('arambhToken'); } catch (e) {} } return r.ok ? r.json() : null; })
+        .then((r) => {
+          if (r.status === 401) { clearToken(); showLoginGate(); return null; }
+          return r.ok ? r.json() : null;
+        })
         .then((d) => {
           if (!d || !d.user) return;
           const put = (id, v) => { if (v && !$(id).value) $(id).value = v; };
-          put('fullName', d.user.name); put('email', d.user.email); put('phone', d.user.phone);
+          put('fullName', d.user.name); put('phone', d.user.phone);
+          // The bill and coupon use are tied to the account email, so it is filled in and locked
+          if (d.user.email) { $('email').value = d.user.email; $('email').readOnly = true; }
           const a = d.lastAddress;
           if (a) {
             put('address', a.line1);
             if (a.pincode && !$('pincode').value) { $('pincode').value = a.pincode; $('pincode').dispatchEvent(new Event('input')); }
           }
-          scheduleCartSave(); // logged-in customers already have an email
+          scheduleCartSave();
         })
         .catch(() => {});
     })();

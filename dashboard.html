@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Dashboard — AARAMBH</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="site-config.js"></script>
+<style>
+:root{--bg:#080810;--card:#12121c;--accent:#A90E02;--gold:#FFFACD;--text:#f0f0f0;--muted:#888;--border:rgba(255,255,255,.1);--ok:#9be6b4;--bad:#ff8f8f;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);padding:24px 16px 80px;}
+.wrap{max-width:1000px;margin:0 auto;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:1px;}
+h2{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px;}
+.box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+input,select{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font:inherit;font-size:14px;}
+select option{background:#15151f;}
+button,a.btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block;}
+button.ghost,a.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text);}
+button:disabled{opacity:.5;}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.kpi{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:14px;}
+.kpi b{display:block;font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);}
+.kpi span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.chart{display:flex;align-items:flex-end;gap:8px;height:190px;overflow-x:auto;padding-top:8px;}
+.col{flex:1;min-width:46px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.col .bar{width:70%;background:linear-gradient(#FFB238,#A90E02);border-radius:6px 6px 0 0;min-height:2px;}
+.col small{font-size:10px;color:var(--muted);margin-top:4px;white-space:nowrap;}
+.col em{font-size:10px;font-style:normal;color:var(--gold);margin-bottom:3px;}
+.line{display:flex;align-items:center;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--border);}
+.line:last-child{border:none;}
+.line .n{flex:1.4;} .line .v{flex:1;text-align:right;color:var(--gold);}
+.track{flex:1.2;height:8px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;}
+.track i{display:block;height:100%;background:linear-gradient(90deg,#A90E02,#FFB238);}
+.ins{padding:10px 12px;border-left:3px solid var(--gold);background:rgba(255,255,255,.03);border-radius:6px;margin-bottom:8px;font-size:14px;line-height:1.55;}
+.ins.warn{border-color:var(--bad);} .ins.good{border-color:var(--ok);}
+.msg{font-size:14px;color:var(--muted);} .msg.err{color:var(--bad);}
+.ai{white-space:pre-wrap;font-size:14px;line-height:1.65;margin-top:12px;}
+a{color:var(--gold);}
+@media(max-width:700px){.grid{grid-template-columns:1fr 1fr;}.two{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="row" style="margin-bottom:16px;">
+    <h1>AARAMBH Dashboard</h1>
+    <a class="btn ghost" href="admin.html">Orders &amp; status →</a>
+  </div>
+
+  <div class="box">
+    <div class="row">
+      <input id="key" type="password" autocomplete="off" placeholder="Your ADMIN_KEY" style="flex:2;min-width:200px;">
+      <select id="range" style="flex:1;min-width:150px;">
+        <option value="all">All time</option>
+        <option value="month">This month</option>
+        <option value="30">Last 30 days</option>
+        <option value="7">Last 7 days</option>
+      </select>
+      <button id="load" type="button">Load dashboard</button>
+    </div>
+    <p class="msg" id="status" style="margin-top:10px;">Enter your admin key and press Load. The server can take up to a minute to wake up.</p>
+  </div>
+
+  <div id="out" style="display:none;">
+    <div class="grid" id="kpis" style="margin-bottom:16px;"></div>
+
+    <div class="box"><h2>Month-wise revenue</h2><div class="chart" id="monthly"></div></div>
+
+    <div class="two">
+      <div class="box"><h2>Sales by category</h2><div id="cats"></div></div>
+      <div class="box"><h2>Top products</h2><div id="prods"></div></div>
+    </div>
+
+    <div class="two">
+      <div class="box"><h2>Order status &amp; payment</h2><div id="split"></div></div>
+      <div class="box"><h2>Top states &amp; coupons</h2><div id="geo"></div></div>
+    </div>
+
+    <div class="box"><h2>What to improve</h2><div id="insights"></div></div>
+
+    <div class="box">
+      <h2>Ask Claude (AI analysis)</h2>
+      <p class="msg">Optional. Paste your Claude API key (kept only in this browser tab). Only totals are sent, never customer names, phones or addresses.</p>
+      <div class="row" style="margin-top:10px;">
+        <input id="aikey" type="password" autocomplete="off" placeholder="Claude API key" style="flex:2;min-width:200px;">
+        <button id="askAi" type="button">Analyse my business</button>
+      </div>
+      <div class="ai" id="aiOut"></div>
+    </div>
+
+    <div class="box"><h2>Abandoned carts (last 14 days)</h2><div id="carts"><p class="msg">Loading…</p></div></div>
+  </div>
+</div>
+
+<script>
+const API = window.AARAMBH_BACKEND_URL || '';
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const inr = (n) => '₹' + Math.round(n || 0).toLocaleString('en-IN');
+const DAY = 86400000;
+let ALL = [], CARTS = [], SUMMARY = null;
+
+$('key').value = sessionStorage.getItem('aarambhAdminKey') || '';
+$('aikey').value = sessionStorage.getItem('aarambhClaudeKey') || '';
+$('key').addEventListener('input', () => sessionStorage.setItem('aarambhAdminKey', $('key').value.trim()));
+$('aikey').addEventListener('input', () => sessionStorage.setItem('aarambhClaudeKey', $('aikey').value.trim()));
+
+const PRINTED_OV = new Set(['explore space acid wash','calm acid wash','conquer acid wash','spider acid wash','deadpool','grace','anime','naruto','one piece','tanjiro','luffy','justice','porsche','unseen','veiled bloom','cristiano ronaldo','striker 7']);
+const CROP = new Set(['self love','bloom and shine','glorious butterfly','stay cool','vintage']);
+function cat(name) {
+  const n = String(name || '').toLowerCase();
+  if (/oversized tee$/.test(n)) return 'Plain Oversized';
+  if (PRINTED_OV.has(n)) return 'Printed Oversized';
+  if (CROP.has(n)) return 'Ladies Crop Tops';
+  if (n.includes('hoodie')) return 'Hoodies';
+  if (n.includes('boxy')) return 'Boxy Shirts';
+  if (n.includes('polo')) return 'Polo';
+  return 'Printed Regular Fit';
+}
+const CATS = ['Plain Oversized','Printed Oversized','Printed Regular Fit','Ladies Crop Tops','Polo','Boxy Shirts','Hoodies'];
+
+async function adminApi(path) {
+  const key = $('key').value.trim();
+  if (!key) throw new Error('Enter your admin key first.');
+  const res = await fetch(API + path, { headers: { 'x-admin-key': key } });
+  const out = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(out.error || 'Something went wrong.');
+  return out;
+}
+const ist = (d) => new Date(d).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // YYYY-MM-DD
+const monthLabel = (k) => new Date(k + '-01T00:00:00').toLocaleString('en-IN', { month: 'short', year: '2-digit' });
+const pieces = (o) => (o.items || []).reduce((s, i) => s + (i.qty || 0), 0);
+const lines = (rows, fn) => rows.length ? rows.map(fn).join('') : '<p class="msg">No data yet.</p>';
+const pct = (a, b) => b ? Math.round((a / b) * 100) : 0;
+
+function inRange(o) {
+  const r = $('range').value;
+  if (r === 'all') return true;
+  const t = new Date(o.createdAt).getTime();
+  if (r === 'month') return ist(o.createdAt).slice(0, 7) === ist(Date.now()).slice(0, 7);
+  return t >= Date.now() - Number(r) * DAY;
+}
+
+function compute() {
+  const rows = ALL.filter(inRange);
+  const live = rows.filter((o) => o.orderStatus !== 'cancelled');
+  const cancelled = rows.length - live.length;
+  const revenue = live.reduce((s, o) => s + (o.total || 0), 0);
+  const pcs = live.reduce((s, o) => s + pieces(o), 0);
+  const discount = live.reduce((s, o) => s + (o.discount || 0), 0);
+
+  const months = {};
+  live.forEach((o) => { const k = ist(o.createdAt).slice(0, 7); (months[k] = months[k] || { rev: 0, n: 0 }); months[k].rev += o.total || 0; months[k].n += 1; });
+  const monthList = Object.keys(months).sort().slice(-12).map((k) => ({ k, ...months[k] }));
+
+  const cats = {}; CATS.forEach((c) => (cats[c] = { qty: 0, rev: 0 }));
+  const prods = {};
+  live.forEach((o) => (o.items || []).forEach((i) => {
+    const c = cat(i.name); cats[c].qty += i.qty || 0; cats[c].rev += (i.price || 0) * (i.qty || 0);
+    const p = (prods[i.name] = prods[i.name] || { qty: 0, rev: 0 }); p.qty += i.qty || 0; p.rev += (i.price || 0) * (i.qty || 0);
+  }));
+
+  const status = {}; rows.forEach((o) => { status[o.orderStatus] = (status[o.orderStatus] || 0) + 1; });
+  const paid = live.filter((o) => o.payment === 'paid').length;
+  const states = {};
+  live.forEach((o) => { const parts = String(o.address || '').split(',').map((x) => x.trim()); const s = parts.length >= 2 ? parts[parts.length - 2] : ''; if (s) states[s] = (states[s] || 0) + 1; });
+  const coupons = {}; live.forEach((o) => { if (o.coupon) coupons[o.coupon] = (coupons[o.coupon] || 0) + 1; });
+  const buyers = {}; live.forEach((o) => { const k = o.phone || o.email; if (k) buyers[k] = (buyers[k] || 0) + 1; });
+  const repeat = Object.values(buyers).filter((n) => n > 1).length;
+  const single = live.filter((o) => pieces(o) === 1).length;
+  const stale = ALL.filter((o) => (o.orderStatus === 'placed' || o.orderStatus === 'confirmed') && Date.now() - new Date(o.createdAt).getTime() > 2 * DAY).length;
+
+  return { rows, live, cancelled, revenue, pcs, discount, monthList, cats, prods, status, paid, cod: live.length - paid, states, coupons, buyers: Object.keys(buyers).length, repeat, single, stale };
+}
+
+const bars = (entries, total, fmt) => lines(entries, ([n, v]) => '<div class="line"><span class="n">' + esc(n) + '</span><span class="track"><i style="width:' + pct(v.rev != null ? v.rev : v, total) + '%"></i></span><span class="v">' + fmt(v) + '</span></div>');
+
+function render() {
+  const s = compute();
+  const aov = s.live.length ? s.revenue / s.live.length : 0;
+  const k = [['Revenue', inr(s.revenue)], ['Orders', s.live.length], ['Pieces sold', s.pcs], ['Avg order value', inr(aov)],
+    ['To ship', s.rows.filter((o) => o.orderStatus === 'placed' || o.orderStatus === 'confirmed').length], ['Delivered', s.status.delivered || 0],
+    ['Cancelled', s.cancelled], ['Discounts given', inr(s.discount)]];
+  $('kpis').innerHTML = k.map(([l, v]) => '<div class="kpi"><b>' + esc(v) + '</b><span>' + l + '</span></div>').join('');
+
+  const max = Math.max(1, ...s.monthList.map((m) => m.rev));
+  $('monthly').innerHTML = s.monthList.length ? s.monthList.map((m) => '<div class="col"><em>' + inr(m.rev) + '</em><div class="bar" style="height:' + Math.max(2, (m.rev / max) * 130) + 'px"></div><small>' + monthLabel(m.k) + '</small><small>' + m.n + ' orders</small></div>').join('') : '<p class="msg">No orders in this period.</p>';
+
+  const catRows = Object.entries(s.cats).sort((a, b) => b[1].rev - a[1].rev);
+  const catTotal = catRows.reduce((t, [, v]) => t + v.rev, 0);
+  $('cats').innerHTML = bars(catRows, catTotal, (v) => inr(v.rev) + ' · ' + v.qty + ' pcs');
+  const prodRows = Object.entries(s.prods).sort((a, b) => b[1].qty - a[1].qty).slice(0, 8);
+  const pTotal = prodRows.reduce((t, [, v]) => t + v.qty, 0) || 1;
+  $('prods').innerHTML = lines(prodRows, ([n, v]) => '<div class="line"><span class="n">' + esc(n) + '</span><span class="track"><i style="width:' + pct(v.qty, prodRows[0][1].qty) + '%"></i></span><span class="v">' + v.qty + ' pcs</span></div>');
+
+  const L = { placed: 'Placed', confirmed: 'Confirmed', shipped: 'Shipped', out_for_delivery: 'Out for delivery', delivered: 'Delivered', cancelled: 'Cancelled' };
+  $('split').innerHTML = lines(Object.entries(s.status), ([n, v]) => '<div class="line"><span class="n">' + esc(L[n] || n) + '</span><span class="v">' + v + '</span></div>') +
+    '<div class="line"><span class="n">Paid online</span><span class="v">' + s.paid + ' (' + pct(s.paid, s.live.length) + '%)</span></div>' +
+    '<div class="line"><span class="n">Cash on delivery</span><span class="v">' + s.cod + ' (' + pct(s.cod, s.live.length) + '%)</span></div>' +
+    '<div class="line"><span class="n">Repeat customers</span><span class="v">' + s.repeat + ' of ' + s.buyers + '</span></div>';
+  const stateRows = Object.entries(s.states).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  $('geo').innerHTML = lines(stateRows, ([n, v]) => '<div class="line"><span class="n">' + esc(n) + '</span><span class="v">' + v + ' orders</span></div>') +
+    Object.entries(s.coupons).map(([n, v]) => '<div class="line"><span class="n">Coupon ' + esc(n) + '</span><span class="v">' + v + ' orders</span></div>').join('');
+
+  const cartValue = CARTS.reduce((t, c) => t + (c.total || 0), 0);
+  const ins = [];
+  const ml = s.monthList;
+  if (ml.length >= 2) {
+    const a = ml[ml.length - 1], b = ml[ml.length - 2];
+    const ch = b.rev ? Math.round(((a.rev - b.rev) / b.rev) * 100) : 0;
+    ins.push([ch >= 0 ? 'good' : 'warn', monthLabel(a.k) + ' revenue is ' + inr(a.rev) + ', ' + (ch >= 0 ? 'up ' : 'down ') + Math.abs(ch) + '% vs ' + monthLabel(b.k) + ' (note: the latest month may still be running).']);
+  }
+  if (s.stale) ins.push(['warn', s.stale + ' order(s) have been in Placed/Confirmed for over 2 days. Ship or update them quickly; delays lead to cancellations and bad reviews.']);
+  if (s.live.length && pct(s.cancelled, s.rows.length) >= 10) ins.push(['warn', 'Cancellation rate is ' + pct(s.cancelled, s.rows.length) + '%. Check whether it is mostly COD orders and consider confirming COD orders on WhatsApp before shipping.']);
+  if (s.live.length >= 5 && pct(s.cod, s.live.length) >= 70) ins.push(['', pct(s.cod, s.live.length) + '% of orders are COD. COD has more returns and refusals, so try a small prepaid benefit (for example free delivery on online payment).']);
+  if (s.live.length >= 5 && pct(s.single, s.live.length) >= 60) ins.push(['', pct(s.single, s.live.length) + '% of orders are a single piece. Push your bundle offer (TRIO10 / 3-tee discount) on product pages and in cart to raise the average order value.']);
+  const zero = Object.entries(s.cats).filter(([, v]) => !v.qty).map(([n]) => n);
+  if (s.live.length >= 5 && zero.length) ins.push(['', 'No sales yet in: ' + zero.join(', ') + '. Promote them on Instagram or index.html, or review price and photos.']);
+  if (catRows[0] && catRows[0][1].rev && pct(catRows[0][1].rev, catTotal) >= 60) ins.push(['', catRows[0][0] + ' brings ' + pct(catRows[0][1].rev, catTotal) + '% of sales. Good as your hero category, but add push for a second category to reduce dependence.']);
+  if (prodRows[0] && s.pcs >= 10) ins.push(['good', 'Best seller: ' + prodRows[0][0] + ' (' + prodRows[0][1].qty + ' pcs). Feature it first on the home page and keep every size in stock.']);
+  if (s.buyers >= 10 && pct(s.repeat, s.buyers) < 10) ins.push(['', 'Only ' + pct(s.repeat, s.buyers) + '% of customers have ordered again. Send past buyers a WhatsApp message about each new drop.']);
+  if (stateRows[0] && s.live.length >= 10 && pct(stateRows[0][1], s.live.length) >= 50) ins.push(['', pct(stateRows[0][1], s.live.length) + '% of orders come from ' + stateRows[0][0] + '. Try Instagram ads for other states to grow beyond your campus circle.']);
+  if (CARTS.length) ins.push(['warn', CARTS.length + ' abandoned cart(s) worth ' + inr(cartValue) + ' are waiting. Message them on WhatsApp using the links below.']);
+  if (!ins.length) ins.push(['', 'Not enough data for insights yet. They appear as orders come in.']);
+  $('insights').innerHTML = ins.map(([c, t]) => '<div class="ins ' + c + '">' + esc(t) + '</div>').join('');
+
+  SUMMARY = {
+    period: $('range').selectedOptions[0].text, revenue: s.revenue, orders: s.live.length, pieces: s.pcs, avgOrderValue: Math.round(aov),
+    cancelled: s.cancelled, discountsGiven: s.discount, paidOnline: s.paid, cod: s.cod, repeatCustomers: s.repeat, uniqueCustomers: s.buyers, singlePieceOrders: s.single,
+    monthly: s.monthList, categories: s.cats, topProducts: Object.fromEntries(prodRows), topStates: Object.fromEntries(stateRows), coupons: s.coupons,
+    abandonedCarts: CARTS.length, abandonedCartValue: cartValue
+  };
+  $('carts').innerHTML = CARTS.length ? CARTS.slice(0, 15).map((c) => '<div class="line"><span class="n">' + esc(c.name || c.email) + '<br><small style="color:var(--muted)">' + esc(c.items.map((i) => i.name + ' ×' + i.qty).join(', ')) + '</small></span><span class="v">' + inr(c.total) + (c.whatsappLink ? '<br><a href="' + esc(c.whatsappLink) + '" target="_blank" rel="noopener">WhatsApp</a>' : '') + '</span></div>').join('') : '<p class="msg">No abandoned carts right now.</p>';
+}
+
+async function load() {
+  const st = $('status'); $('load').disabled = true;
+  st.className = 'msg'; st.textContent = 'Loading… (the server can take up to a minute to wake up)';
+  try {
+    ALL = (await adminApi('/api/admin/orders')).orders || [];
+    CARTS = [];
+    try { CARTS = (await adminApi('/api/admin/abandoned-carts')).carts || []; } catch (e) { /* carts are optional */ }
+    $('out').style.display = 'block';
+    render();
+    st.textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN') + ' · ' + ALL.length + ' orders loaded (latest 500).';
+  } catch (e) { st.className = 'msg err'; st.textContent = e.message; }
+  $('load').disabled = false;
+}
+$('load').addEventListener('click', load);
+$('range').addEventListener('change', () => { if (ALL.length) render(); });
+if ($('key').value) load();
+
+$('askAi').addEventListener('click', async () => {
+  const k = $('aikey').value.trim(), out = $('aiOut');
+  if (!k) { out.textContent = 'Paste your Claude API key first.'; return; }
+  if (!SUMMARY) { out.textContent = 'Load the dashboard first.'; return; }
+  $('askAi').disabled = true; out.textContent = 'Analysing…';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-5-5', max_tokens: 1200,
+        messages: [{ role: 'user', content: 'You are a business advisor for AARAMBH, a small Indian streetwear brand started in 2025 that sells through its own website (oversized tees, printed tees, polos, hoodies, boxy shirts, ladies crop tops) and is run by a college student founder. Here are the sales numbers as JSON (amounts in rupees):\n' + JSON.stringify(SUMMARY) + '\n\nGive: 1) a 3-line performance summary, 2) the 5 most important things to improve to get more sales, each with one concrete action I can do this week, 3) which products or categories to push or drop. Be specific, short and practical. Do not invent numbers.' }]
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error((data.error && data.error.message) || 'The AI request failed.');
+    out.textContent = data.content.map((c) => c.text || '').join('\n');
+  } catch (e) { out.textContent = 'Error: ' + e.message; }
+  $('askAi').disabled = false;
+});
+</script>
+</body>
+</html>

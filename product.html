@@ -976,7 +976,7 @@
       ['Can I return it?', 'Returns are accepted only for print-related issues, and the issue must be reported within 3 days of receiving the delivery. Because of this, please review the size chart carefully before you order.'],
       ['Will the colour match the photos?', 'We photograph every piece to show the colour as close as possible. Slight differences can appear depending on your screen brightness.'],
       ['How do I care for it?', care],
-      ['How will it look on me?', 'Tap “Try On” above the size buttons, add your photo, and move the garment over yourself. It is a quick visual preview, so use the size chart for the actual fit.']
+      ['How will it look on me?', 'Tap “Try On” above the size buttons, add your photo, and tap “Generate my look” to see yourself wearing this exact product. You can also drag the garment over your photo for a quick preview. Use the size chart for the actual fit.']
     ];
     var faq = document.createElement('div');
     faq.className = 'ex-box faq';
@@ -1006,7 +1006,7 @@
   ov.innerHTML =
     '<div class="tryon-modal">' +
     '<div class="tryon-head"><h2 class="display" style="font-size:1.5rem;">TRY ON</h2><button class="modal-close" id="tryClose" aria-label="Close">&times;</button></div>' +
-    '<p class="tryon-note">Your photo stays on your phone. It is never uploaded anywhere.</p>' +
+    '<p class="tryon-note">Your photo is used only to create your look. AARAMBH does not save it.</p>' +
     '<label class="tryon-drop" id="tryDrop"><strong>Add your photo</strong><span>Upload one or take a selfie. Standing straight against a plain background works best.</span>' +
     '<input type="file" id="tryFile" accept="image/*" hidden></label>' +
     '<div id="tryWork" hidden>' +
@@ -1227,6 +1227,171 @@
   });
 
   apply();
+})();
+</script>
+
+<!-- ===== Desktop layout fixes (Try On, Size Advisor) + AI try-on result styles. Keep this block AFTER the scripts above. ===== -->
+<style>
+  .wrap > .gallery, .wrap > .info { min-width: 0; }
+  .info > * { max-width: 100%; }
+  .tryon-btn, .ex-box, .buy-row, .price-card, .details-grid { width: 100%; box-sizing: border-box; }
+
+  @media (min-width: 861px) { .gallery { top: 120px; } }
+
+  @media (min-width: 900px) {
+    /* Try On: wide, two columns (photo left, controls right) */
+    .tryon-modal { max-width: 940px; padding: 24px; }
+    #tryWork:not([hidden]) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: 24px;
+      align-content: start;
+    }
+    #tryWork > #tryStage { grid-column: 1; grid-row: 1 / span 8; align-self: start; width: min(100%, calc(76vh * var(--ar, .75))); margin: 0; }
+    #tryWork > :not(#tryStage) { grid-column: 2; }
+    .tryon-drop { padding: 70px 24px; }
+
+    /* Size Advisor: wide, two columns */
+    .sa-sheet { max-width: 760px; padding: 26px 28px 20px; }
+    #saS1:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; }
+    #saS1 > .sa-h, #saS1 > .sa-sub, #saS1 > .sa-tabs, #saS1 > .sa-live { grid-column: 1 / -1; }
+    #saS2:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; }
+    #saS2 > .sa-h, #saS2 > .sa-sub { grid-column: 1 / -1; }
+    #saS3:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; align-items: start; }
+    #saS3 > .sa-title, #saS3 > .sa-ring, #saS3 > .sa-msg { grid-column: 1; }
+    #saS3 > .sa-rows { grid-column: 2; grid-row: 1 / span 3; }
+    #saS3 > .sa-chips, #saS3 > .sa-you, #saS3 > .sa-note { grid-column: 1 / -1; }
+  }
+
+  /* AI try-on result */
+  .ai-btn { width: 100%; height: 50px; margin: 0 0 10px; border: none; border-radius: 10px; background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #fff; font-family: "Syne", sans-serif; font-weight: 700; font-size: .95rem; letter-spacing: .5px; cursor: pointer; transition: .2s; }
+  .ai-btn:hover { transform: translateY(-2px); }
+  .ai-btn:disabled { opacity: .6; cursor: wait; transform: none; }
+  .ai-status { color: var(--muted); font-size: .84rem; line-height: 1.5; margin: 0 0 10px; }
+  .ai-status.err { color: #ff8a7a; }
+  .ai-result[hidden] { display: none; }
+  .ai-result img { width: 100%; border-radius: 12px; display: block; margin-bottom: 10px; background: #0b0b13; }
+  .ai-result .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ai-result .row button { flex: 1 1 30%; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--text); cursor: pointer; font-family: "DM Sans", sans-serif; font-weight: 600; font-size: .82rem; }
+  .ai-result .row .primary { background: var(--accent); border-color: var(--accent); font-family: "Syne", sans-serif; font-weight: 700; }
+</style>
+
+<!-- ===== AI "Generate my look" (calls your Render server) ===== -->
+<script>
+(function () {
+  'use strict';
+  /* PUT YOUR RENDER SERVER ADDRESS HERE: the same address order.html uses, with no slash at the end.
+     Example: 'https://aarambh-api.onrender.com' */
+  var API_BASE = 'PASTE_YOUR_RENDER_URL_HERE';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var work = $('tryWork');
+  if (!work || !$('tryPhoto')) return;
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'ai-btn';
+  btn.id = 'aiGen';
+  btn.textContent = 'GENERATE MY LOOK (AI)';
+
+  var status = document.createElement('p');
+  status.className = 'ai-status';
+  status.id = 'aiStatus';
+  status.textContent = 'Creates a realistic photo of you wearing this exact product. Takes about 30 to 90 seconds.';
+
+  var result = document.createElement('div');
+  result.className = 'ai-result';
+  result.id = 'aiResult';
+  result.hidden = true;
+  result.innerHTML = '<img id="aiImg" alt="You wearing AARAMBH">' +
+    '<div class="row"><button type="button" id="aiSave">Save look</button><button type="button" id="aiAgain">Try again</button>' +
+    '<button type="button" class="primary" id="aiCart" style="flex-basis:100%;">ADD TO CART</button></div>';
+
+  work.appendChild(btn);
+  work.appendChild(status);
+  work.appendChild(result);
+
+  function prepPhoto() {
+    var p = $('tryPhoto');
+    var s = Math.min(1, 1024 / Math.max(p.naturalWidth, p.naturalHeight));
+    var c = document.createElement('canvas');
+    c.width = Math.round(p.naturalWidth * s);
+    c.height = Math.round(p.naturalHeight * s);
+    c.getContext('2d').drawImage(p, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.9);
+  }
+
+  var timer = null;
+  function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+
+  btn.addEventListener('click', function () {
+    if (API_BASE.indexOf('http') !== 0) {
+      status.className = 'ai-status err';
+      status.textContent = 'The server address is not set yet.';
+      return;
+    }
+    var front = $('imgFront');
+    var src = front ? (front.currentSrc || front.src) : '';
+    if (!src || src.indexOf('data:') === 0) {
+      status.className = 'ai-status err';
+      status.textContent = 'This product photo is not available yet.';
+      return;
+    }
+    var garmentUrl = new URL(src, location.href).href;
+    var label = ((($('productName') || {}).textContent || '') + ' ' + ((($('fitDetail') || {}).textContent) || '')).trim();
+
+    btn.disabled = true;
+    result.hidden = true;
+    status.className = 'ai-status';
+    var t0 = Date.now();
+    status.textContent = 'Creating your look... 0s';
+    stopTimer();
+    timer = setInterval(function () {
+      status.textContent = 'Creating your look... ' + Math.round((Date.now() - t0) / 1000) + 's (please keep this window open)';
+    }, 1000);
+
+    var ctrl = new AbortController();
+    var kill = setTimeout(function () { ctrl.abort(); }, 200000);
+
+    fetch(API_BASE.replace(/\/$/, '') + '/api/tryon', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photo: prepPhoto(), garmentUrl: garmentUrl, label: label }),
+      signal: ctrl.signal
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        if (!r.ok || !d.image) throw new Error(d.error || 'Could not create your look. Please try again.');
+        return d;
+      });
+    }).then(function (d) {
+      $('aiImg').src = d.image;
+      result.hidden = false;
+      status.className = 'ai-status';
+      status.textContent = 'Here is your look. AI previews can differ slightly from the real product, so check the size chart for fit.';
+    }).catch(function (e) {
+      status.className = 'ai-status err';
+      status.textContent = e && e.name === 'AbortError' ? 'It took too long. Please try again.' : (e.message || 'Could not create your look.');
+    }).then(function () {
+      clearTimeout(kill);
+      stopTimer();
+      btn.disabled = false;
+    });
+  });
+
+  $('aiAgain').addEventListener('click', function () { result.hidden = true; btn.click(); });
+  $('aiCart').addEventListener('click', function () { var b = $('tryCart'); if (b) b.click(); });
+  $('aiSave').addEventListener('click', function () {
+    var a = document.createElement('a');
+    a.href = $('aiImg').src;
+    a.download = 'AARAMBH-my-look.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  /* Clear the old result when the customer picks another photo or colour */
+  var f = $('tryFile');
+  if (f) f.addEventListener('change', function () { result.hidden = true; });
+  var sw = $('trySwatches');
+  if (sw) sw.addEventListener('click', function () { result.hidden = true; });
 })();
 </script>
 </body>

@@ -120,7 +120,7 @@
 <body>
 
   <nav>
-    <a href="index.html" class="nav-logo"><img src="LOGO,png alt="AARAMBH"></a>
+    <a href="index.html" class="nav-logo"><img src="LOGO.png" alt="AARAMBH"></a>
     <a href="javascript:history.back()" class="nav-back">← Back to Shop</a>
   </nav>
 
@@ -483,6 +483,16 @@
     const $ = (id) => document.getElementById(id);
     const COUPONS = { NITG10: 0.10, FIRSTDROP10: 0.10 };
     const BUNDLE_COUPONS = { TRIO10: { rate: 0.10, minQty: 3 } };
+
+    // BLACK FRIDAY SALE: 15% off all oversized tees (plain + printed oversized).
+    // Keep these dates the same as BLACK_FRIDAY in server.js and index.html.
+    const BF = {
+      rate: 0.15,
+      start: new Date('2026-11-27T00:00:00+05:30'),
+      end: new Date('2026-11-30T00:00:00+05:30')
+    };
+    const saleActive = () => { const n = Date.now(); return n >= BF.start && n < BF.end; };
+
     let appliedCoupon = '';
     let pincodeConfirmed = false;
     let isNearZone = false;
@@ -533,8 +543,10 @@
     renderSummary();
 
     // ---------- Pricing (mirrors the server rules) ----------
+    // Oversized tees = plain oversized + printed oversized. Printed regular fit and crop tops do not count.
+    // This reads the item "type" text, so regular fit items must have "regular" in their type.
     function isBundleItem(i) {
-      return /(oversized|printed)/i.test(i.type) && !/crop/i.test(i.type);
+      return /oversized/i.test(i.type) || (/printed/i.test(i.type) && !/regular|crop/i.test(i.type));
     }
 
     function calcPricing() {
@@ -545,8 +557,14 @@
 
       let discount = 0;
       let coupon = '';
+      let sale = false;
       const bundle = BUNDLE_COUPONS[appliedCoupon];
-      if (bundle) {
+
+      if (saleActive() && bundleSubtotal > 0) {
+        // Black Friday: 15% on oversized tees. Replaces the 3-tee 8% and discount codes (no stacking).
+        discount = Math.round(bundleSubtotal * BF.rate);
+        sale = true;
+      } else if (bundle) {
         // TRIO10: 10% on the qualifying tees, replaces the automatic 3-tee discount
         if (bundleQty >= bundle.minQty) {
           discount = Math.round(bundleSubtotal * bundle.rate);
@@ -561,7 +579,7 @@
       }
 
       const delivery = pincodeConfirmed ? (isNearZone ? 30 : 50) : 0;
-      return { subtotal, discount, delivery, total: subtotal - discount + delivery, coupon, bundleQty };
+      return { subtotal, discount, delivery, total: subtotal - discount + delivery, coupon, bundleQty, sale };
     }
 
     function refreshCouponStatus() {
@@ -587,6 +605,7 @@
       $('productLineLabel').textContent = orderItems.length > 1 ? 'Items (' + orderItems.reduce((s, i) => s + i.qty, 0) + ')' : 'Product';
       $('productLineValue').textContent = orderItems.length ? '₹' + p.subtotal : '—';
       $('discountRow').style.display = p.discount ? '' : 'none';
+      $('discountLabel').textContent = p.sale ? 'Black Friday 15% off' : 'Discount';
       $('discountValue').textContent = '−₹' + p.discount;
       $('deliveryChargeValue').textContent = '₹' + p.delivery;
       $('deliveryZoneValue').innerHTML = pincodeConfirmed
@@ -646,7 +665,14 @@
         appliedCoupon = '';
         st.className = 'pincode-status';
       } else if (COUPONS[code] || BUNDLE_COUPONS[code]) {
-        appliedCoupon = code;
+        if (saleActive() && calcPricing().bundleQty > 0) {
+          // Black Friday already gives 15% on oversized tees, so codes cannot be added on top
+          appliedCoupon = '';
+          st.className = 'pincode-status show error';
+          $('couponStatusText').textContent = 'Codes cannot be combined with the Black Friday sale (15% already applied)';
+        } else {
+          appliedCoupon = code;
+        }
       } else {
         appliedCoupon = '';
         st.className = 'pincode-status show error';
@@ -729,7 +755,7 @@
       );
 
       const discountLine = d.discount > 0
-        ? line('Discount' + (d.coupon ? ' (' + esc(d.coupon) + ')' : ''), '&minus;&#8377;' + esc(d.discount), false, '#1a8f4a')
+        ? line('Discount' + (d.sale ? ' (Black Friday 15%)' : (d.coupon ? ' (' + esc(d.coupon) + ')' : '')), '&minus;&#8377;' + esc(d.discount), false, '#1a8f4a')
         : '';
       const notesBlock = d.notes
         ? '<p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#555555;"><b>Order notes:</b> ' + esc(d.notes) + '</p>'

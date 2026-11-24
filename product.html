@@ -1238,7 +1238,15 @@
 
   @media (min-width: 861px) { .gallery { top: 120px; } }
 
-  @media (min-width: 900px) {
+  /* Phones and tablets (touch screens), including Chrome's "Desktop site" mode: always one stacked column that fits the screen */
+  .tryon-modal, .sa-sheet { max-width: calc(100vw - 24px); box-sizing: border-box; overflow-x: hidden; }
+  .tryon-overlay, .sa-overlay { overflow-x: hidden; }
+  .tryon-stage { max-width: 100%; }
+  #tryWork > .ai-btn { margin-top: 14px; }
+  #tryWork > .tryon-actions { margin-bottom: 14px; }
+
+
+  @media (min-width: 900px) and (pointer: fine) {
     /* Try On: wide, two columns (photo left, controls right) */
     .tryon-modal { max-width: 940px; padding: 24px; }
     #tryWork:not([hidden]) {
@@ -1366,33 +1374,4 @@
     }).then(function (d) {
       $('aiImg').src = d.image;
       result.hidden = false;
-      status.className = 'ai-status';
-      status.textContent = 'Here is your look. AI previews can differ slightly from the real product, so check the size chart for fit.';
-    }).catch(function (e) {
-      status.className = 'ai-status err';
-      status.textContent = e && e.name === 'AbortError' ? 'It took too long. Please try again.' : (e.message || 'Could not create your look.');
-    }).then(function () {
-      clearTimeout(kill);
-      stopTimer();
-      btn.disabled = false;
-    });
-  });
-
-  $('aiAgain').addEventListener('click', function () { result.hidden = true; btn.click(); });
-  $('aiCart').addEventListener('click', function () { var b = $('tryCart'); if (b) b.click(); });
-  $('aiSave').addEventListener('click', function () {
-    var a = document.createElement('a');
-    a.href = $('aiImg').src;
-    a.download = 'AARAMBH-my-look.png';
-    document.body.appendChild(a); a.click(); a.remove();
-  });
-
-  /* Clear the old result when the customer picks another photo or colour */
-  var f = $('tryFile');
-  if (f) f.addEventListener('change', function () { result.hidden = true; });
-  var sw = $('trySwatches');
-  if (sw) sw.addEventListener('click', function () { result.hidden = true; });
-})();
-</script>
-</body>
-</html>
+      status.classN

@@ -351,7 +351,7 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
-<div class="announce" id="announce">🔥 First order? Use code <b>FIRSTDROP10</b> for 10% off · Plain and printed tees in Oversized and Regular Fit
+<div class="announce" id="announce"><span id="announceText">🔥 First order? Use code <b>FIRSTDROP10</b> for 10% off · Plain and printed tees in Oversized and Regular Fit</span>
   <button type="button" id="announceClose" aria-label="Close announcement">×</button>
 </div>
 
@@ -691,6 +691,16 @@ nav{padding:12px 20px}nav.scrolled{padding:10px 20px}
 <script>
 /* Hide any image that fails to load so no broken-image icons ever show */
 document.querySelectorAll('img').forEach(img => img.addEventListener('error', () => { img.style.visibility = 'hidden'; }));
+
+/* Black Friday banner: 15% off all oversized tees. Keep these dates the same as BLACK_FRIDAY in server.js and order.html. */
+(function () {
+  const s = new Date('2026-11-27T00:00:00+05:30');
+  const e = new Date('2026-11-30T00:00:00+05:30');
+  const n = new Date();
+  const t = document.getElementById('announceText');
+  if (n >= s && n < e) t.innerHTML = '🖤 <b>BLACK FRIDAY SALE</b>: 15% OFF all oversized tees · Plain + Printed · Applied automatically at checkout';
+  else if (n < s) t.innerHTML = '🖤 <b>BLACK FRIDAY</b> starts 27 Nov: 15% OFF all oversized tees';
+})();
 
 /* Announcement bar */
 const announce = document.getElementById('announce');

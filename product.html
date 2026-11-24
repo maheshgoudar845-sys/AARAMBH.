@@ -1374,4 +1374,33 @@
     }).then(function (d) {
       $('aiImg').src = d.image;
       result.hidden = false;
-      status.classN
+      status.className = 'ai-status';
+      status.textContent = 'Here is your look. AI previews can differ slightly from the real product, so check the size chart for fit.';
+    }).catch(function (e) {
+      status.className = 'ai-status err';
+      status.textContent = e && e.name === 'AbortError' ? 'It took too long. Please try again.' : (e.message || 'Could not create your look.');
+    }).then(function () {
+      clearTimeout(kill);
+      stopTimer();
+      btn.disabled = false;
+    });
+  });
+
+  $('aiAgain').addEventListener('click', function () { result.hidden = true; btn.click(); });
+  $('aiCart').addEventListener('click', function () { var b = $('tryCart'); if (b) b.click(); });
+  $('aiSave').addEventListener('click', function () {
+    var a = document.createElement('a');
+    a.href = $('aiImg').src;
+    a.download = 'AARAMBH-my-look.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  /* Clear the old result when the customer picks another photo or colour */
+  var f = $('tryFile');
+  if (f) f.addEventListener('change', function () { result.hidden = true; });
+  var sw = $('trySwatches');
+  if (sw) sw.addEventListener('click', function () { result.hidden = true; });
+})();
+</script>
+</body>
+</html>

@@ -125,6 +125,16 @@ nav.scrolled{padding:12px 40px}
 .offer-code:hover{background:rgba(8,8,16,.7);transform:translateY(-2px)}
 .offer-code small{display:block;font-size:10px;font-weight:600;letter-spacing:.6px;color:rgba(240,240,240,.7);margin-top:2px;text-transform:none}
 
+/* LOOKBOOK */
+.lookbook{max-width:1200px;margin:60px auto 0;padding:0 40px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.lookbook-img{border-radius:28px;overflow:hidden;border:1px solid var(--border);box-shadow:0 30px 60px rgba(0,0,0,.5);background:var(--surface)}
+.lookbook-img img{width:100%;display:block;aspect-ratio:5/6;object-fit:cover}
+.lookbook-info p{color:var(--muted);font-size:16px;line-height:1.65;max-width:420px;margin-bottom:26px}
+.look-chips{display:flex;flex-wrap:wrap;gap:10px}
+.look-chip{font:700 11px 'Syne',sans-serif;letter-spacing:1.4px;text-transform:uppercase;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:10px 18px;border-radius:100px;cursor:pointer;transition:background .25s,border-color .25s,color .25s}
+.look-chip:hover{background:var(--btn);border-color:var(--btn);color:var(--btn-fg)}
+.look-chip:focus-visible{outline:2px solid var(--hi);outline-offset:3px}
+
 /* FINDER */
 .finder{max-width:1280px;margin:0 auto;padding:56px 40px 90px;scroll-margin-top:90px}
 .finder-head{margin-bottom:26px}
@@ -225,6 +235,7 @@ footer a{color:var(--hi);text-decoration:none}
 @media (max-width:900px){
 .trust-strip{grid-template-columns:repeat(2,1fr);padding:22px 20px 0}
 .offer-banner{margin:34px 20px 0}
+.lookbook{grid-template-columns:1fr;gap:28px;margin-top:44px;padding:0 20px}
 .nav-links{display:none}
 .hamburger{display:flex}
 .page-header{min-height:auto;padding-top:120px;padding-bottom:40px}
@@ -353,6 +364,23 @@ footer{padding:30px 20px}
     <button type="button" class="offer-code" data-code="FIRSTDROP10">FIRSTDROP10<small>10% off your first order</small></button>
   </div>
 </div>
+
+<section class="lookbook reveal">
+  <div class="lookbook-img">
+    <img src="regular-group-shoot.png" alt="Five models in black AARAMBH tees on concrete steps wearing Fatality, Lost Garden, Make It Real and Seedhe Maut designs" loading="lazy">
+  </div>
+  <div class="lookbook-info">
+    <span class="section-label">The crew</span>
+    <h2 class="section-title" style="margin-bottom:18px;">WORN ON THE STREETS</h2>
+    <p>Black tees, bold prints, zero effort. Tap a design from the shoot to jump straight to it.</p>
+    <div class="look-chips">
+      <button type="button" class="look-chip" data-look="regular-fatality">Fatality</button>
+      <button type="button" class="look-chip" data-look="regular-lost-garden">Lost Garden</button>
+      <button type="button" class="look-chip" data-look="regular-make-it-real">Make It Real</button>
+      <button type="button" class="look-chip" data-look="regular-seedhe-maut">Seedhe Maut</button>
+    </div>
+  </div>
+</section>
 
 <section class="finder" id="designs">
   <div class="finder-head">
@@ -742,6 +770,16 @@ function applyHash() {
 }
 applyHash();
 window.addEventListener('hashchange', applyHash);
+
+/* lookbook chips jump to the matching card */
+document.querySelectorAll('.look-chip').forEach(b => b.addEventListener('click', () => {
+  setTab('all', false);
+  const c = document.querySelector(`.tee-card[data-id="${b.dataset.look}"]`);
+  if (!c) return;
+  c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  c.style.borderColor = 'var(--hi)';
+  setTimeout(() => { c.style.borderColor = ''; }, 2000);
+}));
 
 /* tap an offer code to copy it */
 document.querySelectorAll('.offer-code[data-code]').forEach(b => b.addEventListener('click', () => {

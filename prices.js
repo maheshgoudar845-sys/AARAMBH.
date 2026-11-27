@@ -85,6 +85,7 @@
         'Conquer Acid Wash': 649,
         'Spider Acid Wash': 669,
         'Explore Space Acid Wash': 679,
+         'Dr Doom': 549,
         /* Regular fit printed tees */
         'Snake Skull': 349,
         'Insane': 349,
